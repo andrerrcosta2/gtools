@@ -2,6 +2,9 @@
 
 package functions
 
+// Runnable represents a function that returns nothing.
+type Runnable func()
+
 // Function represents a function that takes a value of type T and returns a value of type R.
 type Function[T any, R any] func(T) R
 
@@ -246,7 +249,7 @@ func Memoize[T comparable, R any](f func(T) R) func(T) R {
 // Returns:
 //   - A new function that, when called, will call the provided function `f` only once.
 //     The result of the first call to `f` is stored and returned on subsequent calls.
-func Once[T any](f func() T) func() T {
+func Once[T any](f Supplier[T]) Supplier[T] {
 	// Initialize a flag to track if the function has been called
 	var once bool
 
