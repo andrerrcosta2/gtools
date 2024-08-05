@@ -259,6 +259,13 @@ func Sorted[T constraints.Ordered](arr []T) []T {
 	return arr
 }
 
+func SortedBy[T any, K constraints.Ordered](arr []T, f functions.Function[T, K]) []T {
+	sort.Slice(arr, func(i, j int) bool {
+		return f(arr[i]) < f(arr[j])
+	})
+	return arr
+}
+
 // Fold applies a binary function to each element of a slice, starting from an initial value,
 // and returns the final result.
 //
@@ -269,7 +276,7 @@ func Sorted[T constraints.Ordered](arr []T) []T {
 //
 // Returns:
 // - R: the final result
-func Fold[T, R any](arr []T, f functions.BiFunction[R, T, R], initial R) R {
+func Fold[T, R any](arr []T, initial R, f functions.BiFunction[R, T, R]) R {
 	// Initialize the result with the initial value
 	result := initial
 
@@ -293,7 +300,7 @@ func Fold[T, R any](arr []T, f functions.BiFunction[R, T, R], initial R) R {
 //
 // Returns:
 // - R: the final result
-func FoldRight[T, R any](arr []T, f functions.BiFunction[T, R, R], initial R) R {
+func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R {
 	// Initialize the result with the initial value
 	result := initial
 
