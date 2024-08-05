@@ -182,6 +182,30 @@ func Find[T any](arr []T, f functions.Function[T, bool]) int {
 	return -1
 }
 
+// FindAll returns all the indexes of elements in the slice that satisfy the condition defined by the provided function.
+//
+// Parameters:
+// - arr: the input slice
+// - f: a function that takes an element of type T and returns a boolean
+//
+// Returns:
+// - []int: a slice of indexes of elements that satisfy the condition
+func FindAll[T any](arr []T, f functions.Function[T, bool]) []int {
+	var indexes []int // slice to store the indexes
+
+	// Iterate over the slice
+	for i, v := range arr {
+		// Check if the current element satisfies the condition defined by the provided function
+		if f(v) {
+			// If it does, append the index to the slice
+			indexes = append(indexes, i)
+		}
+	}
+
+	// Return the slice of indexes
+	return indexes
+}
+
 // OutOfBounds checks if the index is out of bounds of the given slice.
 //
 // Parameters:

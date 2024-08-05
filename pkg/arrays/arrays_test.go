@@ -41,6 +41,49 @@ func TestFind(t *testing.T) {
 	}
 }
 
+func TestFindAll(t *testing.T) {
+	arr := []int{1, 4, 9, 16, 25, 36, 49, 64, 81, 100}
+
+	isPerfectSquare := func(x int) bool {
+		for i := 1; i*i <= x; i++ {
+			if i*i == x {
+				return true
+			}
+		}
+		return false
+	}
+
+	isGreaterThan20 := func(x int) bool {
+		return x > 20
+	}
+
+	equal := func(a, b []int) bool {
+		if len(a) != len(b) {
+			return false
+		}
+		for i := range a {
+			if a[i] != b[i] {
+				return false
+			}
+		}
+		return true
+	}
+
+	result := FindAll(arr, isPerfectSquare)
+	expected := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	if !equal(result, expected) {
+		t.Errorf("FindAll(arr, isPerfectSquare) = %v; want %v", result, expected)
+	}
+
+	result = FindAll(arr, isGreaterThan20)
+	expected = []int{4, 5, 6, 7, 8, 9}
+
+	if !equal(result, expected) {
+		t.Errorf("FindAll(arr, isGreaterThan20) = %v; want %v", result, expected)
+	}
+}
+
 func TestUnique(t *testing.T) {
 	arr := []int{1, 2, 3, 4, 5}
 	unique := Unique(arr)
