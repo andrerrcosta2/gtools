@@ -1,0 +1,117 @@
+// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
+
+package opt
+
+import (
+	"testing"
+)
+
+func TestOfNullable(t *testing.T) {
+
+	settedPrimitive := 10
+	if !OfNullable(&settedPrimitive).IsPresent() {
+		t.Errorf("The value offers its own memory address as a pointer")
+	}
+
+	var unsettedPrimitive int // It's a zero value
+	if !OfNullable(&unsettedPrimitive).IsPresent() {
+		t.Errorf("A primitive variable holds a zero-value")
+	}
+
+	var unsettedPrimitivePointer *int // It's a nil pointer, since the address isn't set
+	if OfNullable(unsettedPrimitivePointer).IsPresent() {
+		t.Errorf("A pointer to a primitive address has no address as value")
+	}
+	if !OfNullable(&unsettedPrimitivePointer).IsPresent() {
+		t.Errorf("The address of a variable which points to a primitive address cannot be nil")
+	}
+
+	if !OfNullable(&struct{ value int }{10}).IsPresent() {
+		t.Errorf("The value offers its own memory address as a pointer")
+	}
+
+	settedStruct := struct{ value int }{10} // It's a value
+	if !OfNullable(&settedStruct).IsPresent() {
+		t.Errorf("The value offers its own memory address as a pointer")
+	}
+
+	settedStructAddress := &struct{ value int }{10} // Is a pointer to an anonymous struct with a field value initialized to 10.
+
+	if !OfNullable(settedStructAddress).IsPresent() {
+		t.Errorf("The pointer holds a non nil value")
+	}
+	// This is just redundancy
+	if !OfNullable(&settedStructAddress).IsPresent() {
+		t.Errorf("The pointer holds a non nil value")
+	}
+
+	//
+	var unsettedStruct struct{ value int } // It's a zero value
+	if !OfNullable(&unsettedStruct).IsPresent() {
+		t.Error("This is a value with its own address as zero")
+	}
+	// Later i finish that
+	//
+	//var unsettedStructPointer *struct {
+	//	value int
+	//}
+	//unsettedStructPointerVar := OfNullable(unsettedStructPointer).IsPresent()
+	//unsettedStrunctPointerAsAddress := OfNullable(&unsettedStructPointer).IsPresent()
+	//// It must panic because unsettedStructPointer is nil, and it is trying to dereference a nil pointer
+	//assert.Panics(t, func() { OfNullable(*unsettedStructPointer).IsPresent() })
+	//
+	//rawArray := OfNullable([]int{1, 2, 3}).IsPresent()
+	//rawEmptyArray := OfNullable([]int{}).IsPresent()
+	//
+	//settedArray := []int{1, 2, 3}
+	//settedArrayVar := OfNullable(settedArray).IsPresent()
+	//
+	//var unsettedArray []int
+	//unsettedArrayVar := OfNullable(unsettedArray).IsPresent()
+	//unsettedArrayAddress := OfNullable(&unsettedArray).IsPresent()
+	//
+	//var unsettedArrayPointer *[]int
+	//unsettedArrayPointerVar := OfNullable(unsettedArrayPointer).IsPresent()
+	//unsettedArrayPointerAsAddress := OfNullable(&unsettedArrayPointer).IsPresent()
+	//assert.Panics(t, func() { OfNullable(*unsettedArrayPointer).IsPresent() })
+	//
+	//var unsettedArrayOfPointers []*int
+	//unsettedArrayOfPointersVar := OfNullable(unsettedArrayOfPointers).IsPresent()
+	//unsettedArrayOfPointersAsAddress := OfNullable(&unsettedArrayOfPointers).IsPresent()
+	//
+	//var unsettedArrayPointerOfPointers *[]*int
+	//unsettedArrayPointerOfPointersVar := OfNullable(unsettedArrayPointerOfPointers).IsPresent()
+	//unsettedArrayPointerOfPointersAsAddress := OfNullable(&unsettedArrayPointerOfPointers).IsPresent()
+	//assert.Panics(t, func() { OfNullable(*unsettedArrayPointerOfPointers).IsPresent() })
+	//
+	//rawMap := OfNullable(map[string]int{"key": 1}).IsPresent()
+	//rawEmptyMap := OfNullable(map[string]int{}).IsPresent()
+	//
+	//settedMap := map[string]int{"key": 1}
+	//settedMapVar := OfNullable(settedMap).IsPresent()
+	//settedMapVarAsAddress := OfNullable(&settedMap).IsPresent()
+	//
+	//var settedMapPointer *map[string]int
+	//settedMapPointerVar := OfNullable(settedMapPointer).IsPresent()
+	//settedMapPointerAsAddress := OfNullable(&settedMapPointer).IsPresent()
+	//assert.Panics(t, func() { OfNullable(*settedMapPointer).IsPresent() })
+	//
+	//var settedMapOfPointers map[string]*int
+	//settedMapOfPointersVar := OfNullable(settedMapOfPointers).IsPresent()
+	//settedMapOfPointersAsAddress := OfNullable(&settedMapOfPointers).IsPresent()
+	//
+	//var settedMapPointerOfPointers *map[string]*int
+	//settedMapPointerOfPointersVar := OfNullable(settedMapPointerOfPointers).IsPresent()
+	//settedMapPointerOfPointersAsAddress := OfNullable(&settedMapPointerOfPointers).IsPresent()
+	//assert.Panics(t, func() { OfNullable(*settedMapPointerOfPointers).IsPresent() })
+	//
+	//var unsettedMap map[string]int
+	//unsettedMapVar := OfNullable(unsettedMap).IsPresent()
+	//unsettedMapAddress := OfNullable(&unsettedMap).IsPresent()
+	//
+	//var unsettedMapPointer *map[string]int
+	//unsettedMapPointerVar := OfNullable(unsettedMapPointer).IsPresent()
+	//unsettedMapPointerAsAddress := OfNullable(&unsettedMapPointer).IsPresent()
+	//assert.Panics(t, func() { OfNullable(*unsettedMapPointer).IsPresent() })
+
+}
