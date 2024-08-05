@@ -3,10 +3,10 @@
 package maps
 
 import (
-	"com.github/andrerrcosta2/gtools/pkg/functions"
-	"com.github/andrerrcosta2/gtools/pkg/generics"
 	"errors"
 	"fmt"
+	"github.com/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/pkg/generics"
 )
 
 type Entry[K comparable, V any] struct {

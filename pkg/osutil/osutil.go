@@ -3,7 +3,7 @@
 package osutil
 
 import (
-	"com.github/andrerrcosta2/gtools/pkg/fsutil"
+	"github.com/andrerrcosta2/gtools/pkg/fsutil"
 	"os"
 )
 

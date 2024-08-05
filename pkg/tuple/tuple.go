@@ -2,7 +2,7 @@
 
 package tuple
 
-import "com.github/andrerrcosta2/gtools/pkg/generics"
+import "github.com/andrerrcosta2/gtools/pkg/generics"
 
 type Pair[A any, B any] struct {
 	first  A

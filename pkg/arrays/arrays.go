@@ -3,8 +3,8 @@
 package arrays
 
 import (
-	"com.github/andrerrcosta2/gtools/pkg/constraints"
-	"com.github/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/pkg/constraints"
+	"github.com/andrerrcosta2/gtools/pkg/functions"
 	"sort"
 )
 
