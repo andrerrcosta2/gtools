@@ -110,6 +110,7 @@ func First[T any](arr []T) T {
 
 // LastIndexOf returns the index of the last occurrence of a given value in a slice.
 // If the value is not found, it returns -1.
+// It has a complexity of O(n) where n is the length of the slice.
 //
 // Parameters:
 // - arr: the input slice
@@ -132,6 +133,7 @@ func LastIndexOf[T comparable](arr []T, val T) int {
 
 // IndexOf returns the index of the first occurrence of a given value in a slice.
 // If the value is not found, it returns -1.
+// It has a complexity of O(n) where n is the length of the slice.
 //
 // Parameters:
 // - arr: the input slice
@@ -149,6 +151,7 @@ func IndexOf[T comparable](arr []T, val T) int {
 }
 
 // Empty checks if a given slice is empty.
+// It has a complexity of O(1).
 //
 // Parameters:
 // - arr: the input slice
@@ -162,6 +165,7 @@ func Empty[T any](arr []T) bool {
 
 // Find returns the index of the first element in the slice that satisfies the condition defined by the provided function.
 // If no elements satisfy the condition, it returns -1.
+// It has a complexity of O(n) where n is the length of the slice.
 //
 // Parameters:
 // - arr: the input slice
@@ -183,6 +187,7 @@ func Find[T any](arr []T, f functions.Function[T, bool]) int {
 }
 
 // FindAll returns all the indexes of elements in the slice that satisfy the condition defined by the provided function.
+// It has a complexity of O(n) where n is the length of the slice.
 //
 // Parameters:
 // - arr: the input slice
@@ -203,6 +208,35 @@ func FindAll[T any](arr []T, f functions.Function[T, bool]) []int {
 	}
 
 	// Return the slice of indexes
+	return indexes
+}
+
+// Compare compares two slices and returns the indexes of elements that satisfy the comparison function.
+// It has a complexity of O[m * n] where m is the length of the first slice and n is the length of the second slice.
+//
+// Parameters:
+// - arr1: the first input slice
+// - arr2: the second input slice
+// - compare: a function that compares elements of type T and R and returns a boolean
+//
+// Returns:
+// - []int: a slice of indexes of elements that satisfy the comparison function
+func Compare[T any, R any](arr1 []T, arr2 []R, compare functions.BiFunction[T, R, bool]) []int {
+	var indexes []int
+
+	// Iterate over the first slice
+	for i, v1 := range arr1 {
+		// Iterate over the second slice
+		for _, v2 := range arr2 {
+			// Check if the current elements satisfy the comparison function
+			if compare(v1, v2) {
+				// If they do, store the index from the first slice
+				indexes = append(indexes, i)
+				break
+			}
+		}
+	}
+
 	return indexes
 }
 
