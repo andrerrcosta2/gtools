@@ -43,7 +43,7 @@ func TestFlip(t *testing.T) {
 		t.Errorf("Flip() = %v, want %v", flipFunc(5, 10), 2.0)
 	}
 	if flipFunc(2, 10) != 5.0 {
-		t.Errorf("Flip() = %v, want %v", flipFunc(2, 10), 0.2)
+		t.Errorf("Flip() = %v, want %v", flipFunc(2, 10), 5.0)
 	}
 }
 

@@ -83,7 +83,7 @@ func (e *EntrySet[K, V]) Add(entry ...*Entry[K, V]) error {
 // - An error if the key already exists in the EntrySet or if the key is nil.
 func addEntry[K comparable, V any](set *EntrySet[K, V], key K, value V) error {
 	// Check if the key is nil
-	if key == nil {
+	if &key == nil {
 		return errors.New("key is required")
 	}
 

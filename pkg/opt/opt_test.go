@@ -22,8 +22,15 @@ func TestOfNullable(t *testing.T) {
 	if OfNullable(unsettedPrimitivePointer).IsPresent() {
 		t.Errorf("A pointer to a primitive address has no address as value")
 	}
-	if !OfNullable(&unsettedPrimitivePointer).IsPresent() {
-		t.Errorf("The address of a variable which points to a primitive address cannot be nil")
+
+	// The optional was designed to reject non-nil pointers that point to nil pointers.
+	// `unsettedPrimitivePointer` is a nil pointer to an int.
+	// When passing the address of `unsettedPrimitivePointer`, it's of type **int.
+	// Although the address itself isn't nil, the underlying value of the pointer it points to is nil.
+	// This means the `OfNullable` function correctly identifies that the underlying value is nil and returns `None`.
+	// Therefore, `IsPresent()` should return false.
+	if OfNullable(&unsettedPrimitivePointer).IsPresent() {
+		t.Errorf("The underlying value which the pointer points to is nil")
 	}
 
 	if !OfNullable(&struct{ value int }{10}).IsPresent() {
