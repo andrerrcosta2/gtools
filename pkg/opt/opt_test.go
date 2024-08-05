@@ -24,6 +24,10 @@ func TestOfNullable(t *testing.T) {
 	}
 
 	// The optional was designed to reject non-nil pointers that point to nil pointers.
+	//
+	//	val := reflect.ValueOf(value).Elem()
+	//	if val.Kind() == reflect.Ptr && val.IsNil() { return None[T]() }
+	//
 	// `unsettedPrimitivePointer` is a nil pointer to an int.
 	// When passing the address of `unsettedPrimitivePointer`, it's of type **int.
 	// Although the address itself isn't nil, the underlying value of the pointer it points to is nil.

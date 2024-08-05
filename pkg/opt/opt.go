@@ -122,6 +122,8 @@ func OfNullable[T any](value *T) *Option[T] {
 		return None[T]()
 	}
 	// Check if the value is nil
+	// Reflection pays the price of generalizations.
+	// If you don't agree, you may create different optionals for each type then handle it natively
 	val := reflect.ValueOf(value).Elem()
 	if val.Kind() == reflect.Ptr && val.IsNil() {
 		return None[T]()

@@ -35,6 +35,8 @@ type EntrySet[K comparable, V any] struct {
 }
 
 // NewEntrySet creates a new EntrySet struct from a slice of Entry structs.
+// As the underlying map of entries is a map, the keys of the input slice should be unique.
+// As a side effect, these entries are always unsorted.
 //
 // Parameters:
 // - e: a slice of Entry structs.
@@ -99,6 +101,7 @@ func addEntry[K comparable, V any](set *EntrySet[K, V], key K, value V) error {
 }
 
 // Keys returns all the keys in the EntrySet.
+// The keys of the EntrySet aren't guaranteed to be in any particular order.
 //
 // Returns:
 // - A slice of keys.
@@ -117,6 +120,7 @@ func (e *EntrySet[K, V]) Keys() []K {
 }
 
 // Values returns all the values in the EntrySet.
+// The values of the EntrySet aren't guaranteed to be in any particular order.
 //
 // Returns:
 // - A slice of values.
@@ -294,6 +298,7 @@ func MapWithKeys[K comparable, L comparable, V any](keys []K, f functions.Functi
 }
 
 // MapWithValues applies a given function to each value in a slice and returns a new map with keys and values obtained by applying the function to each value.
+// It's from logical awareness the generated keys for this map can be overridden by the function which is applied to each value.
 //
 // Parameters:
 // - values: The input slice of values.
