@@ -277,6 +277,37 @@ func Contains[T comparable](arr []T, val T) bool {
 	return false
 }
 
+// ContainsAllBy checks if all elements in the expected slice (exp) are present in the result slice (res) using the provided comparison function (compare).
+// It has a complexity of O(n*m) where n is the length of exp and m is the length of res.
+//
+// Parameters:
+// - exp: the expected slice of type T
+// - res: the result slice of type R
+// - compare: the comparison function that takes two elements of type T and R and returns a boolean indicating if they are equal
+//
+// Returns:
+// - bool: true if all elements in exp are present in res, false otherwise
+func ContainsAllBy[T any, R any](exp []T, res []R, compare functions.BiFunction[T, R, bool]) bool {
+	// Iterate over each element in the expected slice
+	for _, expStc := range exp {
+		found := false
+		// Iterate over each element in the result slice
+		for _, resStc := range res {
+			// Check if the current element in the result slice is equal to the current element in the expected slice using the provided comparison function
+			if compare(expStc, resStc) {
+				found = true
+				break
+			}
+		}
+		// If the current element in the expected slice is not found in the result slice, return false
+		if !found {
+			return false
+		}
+	}
+	// If all elements in the expected slice are found in the result slice, return true
+	return true
+}
+
 // ContainsBy checks if a value exists in a slice using a predicate function.
 //
 // The function iterates over the elements of the slice and applies the predicate
