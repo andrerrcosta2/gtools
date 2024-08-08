@@ -72,6 +72,10 @@ func (o *Option[T]) Unset() *Option[T] {
 }
 
 func (o *Option[T]) OrAssert(value *T) *Option[T] {
+	// Check if the previous value exists
+	if o.isSet {
+		return o
+	}
 	// Check if the pointer is nil
 	if value == nil {
 		// Panic if the pointer is nil
