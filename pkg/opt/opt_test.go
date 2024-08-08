@@ -3,7 +3,6 @@
 package opt
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -127,13 +126,24 @@ func TestOfNullable(t *testing.T) {
 	//assert.Panics(t, func() { OfNullable(*unsettedMapPointer).IsPresent() })
 }
 
-func TestOption_OrAssert(t *testing.T) {
-	orAssertShouldPanic(t)
-	orAssertValidPointer(t)
-	orAssertNilInnerPointerShouldPanic(t)
+func TestOrAssert_ReturnExistingValue(t *testing.T) {
+	existingValue := 100
+	opt := Of(existingValue)
+
+	newValue := 200
+	result := opt.OrAssert(&newValue)
+
+	if !result.isSet {
+		t.Errorf("Expected isSet to be true, but got false")
+	}
+
+	if *result.value != existingValue {
+		t.Errorf("Expected value %v, but got %v", existingValue, *result.value)
+	}
 }
 
-func orAssertShouldPanic(t *testing.T) {
+// TestOrAssert_PanicOnNilPointer tests that OrAssert panics when a nil pointer is provided.
+func TestOrAssert_PanicOnNilPointer(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("Expected panic when passing a nil pointer, but got none")
@@ -141,38 +151,56 @@ func orAssertShouldPanic(t *testing.T) {
 	}()
 
 	var nilValue *int
-	option := &Option[int]{}
-	option.OrAssert(nilValue)
+	opt := None[int]()
+	opt.OrAssert(nilValue)
 }
 
-// TestOrAssert_ValidPointer tests that OrAssert returns a valid Option when given a non-nil pointer.
-func orAssertValidPointer(t *testing.T) {
-	val := 42
-	option := &Option[int]{}
-	newOption := option.OrAssert(&val)
-
-	if newOption == nil {
-		t.Errorf("Expected a valid Option, but got nil")
-	}
-
-	if !newOption.isSet {
-		t.Errorf("Expected isSet to be true, but got false")
-	}
-
-	if !reflect.DeepEqual(*newOption.value, val) {
-		t.Errorf("Expected value %v, but got %v", val, *newOption.value)
-	}
-}
-
-// TestOrAssert_NilInnerPointer tests that OrAssert panics when given a pointer to a nil pointer.
-func orAssertNilInnerPointerShouldPanic(t *testing.T) {
+// TestOrAssert_PanicOnNilInnerPointer tests that OrAssert panics when a pointer to a nil value is provided.
+func TestOrAssert_PanicOnNilInnerPointer(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Errorf("Expected panic when passing a pointer to a nil pointer, but got none")
+			t.Errorf("Expected panic when passing a pointer to a nil value, but got none")
 		}
 	}()
 
-	var nilPointer *int
-	option := &Option[*int]{}
-	option.OrAssert(&nilPointer)
+	var nilPointer *int = nil
+	opt := None[*int]()
+	opt.OrAssert(&nilPointer)
+}
+
+// TestOrAssert_ReturnNewValue tests that OrAssert returns a new Option when the original Option is not set.
+func TestOrAssert_ReturnNewValue(t *testing.T) {
+	newValue := 300
+	opt := None[int]()
+
+	result := opt.OrAssert(&newValue)
+
+	if !result.isSet {
+		t.Errorf("Expected isSet to be true, but got false")
+	}
+
+	if *result.value != newValue {
+		t.Errorf("Expected value %v, but got %v", newValue, *result.value)
+	}
+}
+
+// TestOrAssert_HandleComplexType tests OrAssert with a more complex type.
+func TestOrAssert_HandleComplexType(t *testing.T) {
+	type ComplexStruct struct {
+		Name  string
+		Value int
+	}
+
+	cs := ComplexStruct{Name: "Test", Value: 42}
+	opt := None[ComplexStruct]()
+
+	result := opt.OrAssert(&cs)
+
+	if !result.isSet {
+		t.Errorf("Expected isSet to be true, but got false")
+	}
+
+	if result.value.Name != "Test" || result.value.Value != 42 {
+		t.Errorf("Expected ComplexStruct {Name: 'Test', Value: 42}, but got {Name: %v, Value: %v}", result.value.Name, result.value.Value)
+	}
 }
