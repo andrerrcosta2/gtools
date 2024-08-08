@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+type Plant struct {
+	Nm string
+}
+
 func TestReverse(t *testing.T) {
 
 	arr := []int{1, 2, 3, 4, 5}
@@ -162,6 +166,115 @@ func TestContainsBy(t *testing.T) {
 		return v
 	}) {
 		t.Errorf("ContainsBy() = %v, want %v", true, false)
+	}
+}
+
+// TestContainsAllBy_Success tests that ContainsAllBy returns true when all elements are found
+func TestContainsAllBy_Success(t *testing.T) {
+	exp := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Flower"},
+	}
+
+	res := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Flower"},
+		{Nm: "Grass"},
+	}
+
+	result := ContainsAllBy(exp, res, func(a, b Plant) bool {
+		return a.Nm == b.Nm
+	})
+
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+}
+
+// TestContainsAllBy_Failure tests that ContainsAllBy returns false when not all elements are found
+func TestContainsAllBy_Failure(t *testing.T) {
+	exp := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Flower"},
+	}
+
+	res := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Grass"},
+	}
+
+	result := ContainsAllBy(exp, res, func(a, b Plant) bool {
+		return a.Nm == b.Nm
+	})
+
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
+}
+
+// TestContainsAllBy_EmptyExp tests that ContainsAllBy returns true when the expected slice is empty
+func TestContainsAllBy_EmptyExp(t *testing.T) {
+	exp := []Plant{}
+
+	res := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Flower"},
+		{Nm: "Grass"},
+	}
+
+	result := ContainsAllBy(exp, res, func(a, b Plant) bool {
+		return a.Nm == b.Nm
+	})
+
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+}
+
+// TestContainsAllBy_EmptyRes tests that ContainsAllBy returns false when the result slice is empty
+func TestContainsAllBy_EmptyRes(t *testing.T) {
+	exp := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+	}
+
+	res := []Plant{}
+
+	result := ContainsAllBy(exp, res, func(a, b Plant) bool {
+		return a.Nm == b.Nm
+	})
+
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
+}
+
+// TestContainsAllBy_PartialMatch tests that ContainsAllBy returns false when only some elements are found
+func TestContainsAllBy_PartialMatch(t *testing.T) {
+	exp := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Flower"},
+	}
+
+	res := []Plant{
+		{Nm: "Tree"},
+		{Nm: "Shrub"},
+		{Nm: "Grass"},
+		{Nm: "Flower"},
+	}
+
+	result := ContainsAllBy(exp, res, func(a, b Plant) bool {
+		return a.Nm == b.Nm
+	})
+
+	if !result {
+		t.Errorf("Expected true, but got false")
 	}
 }
 
