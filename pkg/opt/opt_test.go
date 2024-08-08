@@ -204,3 +204,76 @@ func TestOrAssert_HandleComplexType(t *testing.T) {
 		t.Errorf("Expected ComplexStruct {Name: 'Test', Value: 42}, but got {Name: %v, Value: %v}", result.value.Name, result.value.Value)
 	}
 }
+
+func TestReflectHardNullable(t *testing.T) {
+	// Test case: nil slice
+	var nilSlice []string
+	if !reflectHardNullable(&nilSlice) {
+		t.Errorf("Expected true for nil slice, got false")
+	}
+
+	// Test case: non-nil slice
+	nonNilSlice := []string{"test"}
+	if reflectHardNullable(&nonNilSlice) {
+		t.Errorf("Expected false for non-nil slice, got true")
+	}
+
+	// Test case: nil map
+	var nilMap map[string]string
+	if !reflectHardNullable(&nilMap) {
+		t.Errorf("Expected true for nil map, got false")
+	}
+
+	// Test case: non-nil map
+	nonNilMap := map[string]string{"key": "value"}
+	if reflectHardNullable(&nonNilMap) {
+		t.Errorf("Expected false for non-nil map, got true")
+	}
+
+	// Test case: nil pointer
+	var nilPtr *int
+	if !reflectHardNullable(nilPtr) {
+		t.Errorf("Expected true for nil pointer, got false")
+	}
+
+	// Test case: non-nil pointer
+	value := 10
+	nonNilPtr := &value
+	if reflectHardNullable(nonNilPtr) {
+		t.Errorf("Expected false for non-nil pointer, got true")
+	}
+
+	// Test case: struct (non-nil, always)
+	type TestStruct struct {
+		Field1 string
+		Field2 int
+	}
+	structVal := TestStruct{Field1: "test", Field2: 42}
+	if reflectHardNullable(&structVal) {
+		t.Errorf("Expected false for non-nil struct, got true")
+	}
+
+	// Test case: nil interface
+	var nilInterface interface{}
+	if reflectHardNullable(&nilInterface) {
+		t.Errorf("Expected false for nil interface, got true")
+	}
+
+	// Test case: non-nil interface
+	var nonNilInterface interface{} = "some value"
+	if reflectHardNullable(&nonNilInterface) {
+		t.Errorf("Expected false for non-nil interface, got true")
+	}
+
+	// Test case: empty but non-nil slice
+	emptySlice := []string{}
+	if reflectHardNullable(&emptySlice) {
+		t.Errorf("Expected false for non-nil empty slice, got true")
+	}
+
+	// Test case: empty but non-nil map
+	emptyMap := map[string]string{}
+	if reflectHardNullable(&emptyMap) {
+		t.Errorf("Expected false for non-nil empty map, got true")
+	}
+}

@@ -82,10 +82,9 @@ func (o *Option[T]) OrAssert(value *T) *Option[T] {
 		panic("Or assert will panic if the provided pointer is nil")
 	}
 	// Check if the value is nil
-	// Reflection pays the price of generalizations.
+	// Reflection pays the price for generalizations.
 	// If you don't agree, you may create different optionals for each type then handle it natively
-	val := reflect.ValueOf(value).Elem()
-	if val.Kind() == reflect.Ptr && val.IsNil() {
+	if reflectHardNullable(value) {
 		// Panic if the pointer is nil
 		panic("Or assert will panic if the provided pointer is nil")
 	}
@@ -143,12 +142,13 @@ func OfNullable[T any](value *T) *Option[T] {
 		return None[T]()
 	}
 	// Check if the value is nil
-	// Reflection pays the price of generalizations.
+	// Reflection pays the price for generalizations.
 	// If you don't agree, you may create different optionals for each type then handle it natively
-	val := reflect.ValueOf(value).Elem()
-	if val.Kind() == reflect.Ptr && val.IsNil() {
+	if reflectHardNullable(value) {
+		// Return a None Option
 		return None[T]()
 	}
+
 	// Return a new Option with the value of the given pointer
 	return Of(*value)
 }
@@ -172,6 +172,16 @@ func (o *Option[T]) IfPresent(consumer functions.Consumer[T]) {
 		// If it is, call the provided function with the value
 		consumer(*o.value)
 	}
+}
+
+func reflectHardNullable[T any](value *T) bool {
+	if value == nil {
+		return true
+	}
+
+	// Use reflection to check for nil slices, maps, or pointers
+	val := reflect.ValueOf(value).Elem()
+	return (val.Kind() == reflect.Slice || val.Kind() == reflect.Map || val.Kind() == reflect.Ptr) && val.IsNil()
 }
 
 // EmptyString returns the non-empty string between `a` and `b`.
