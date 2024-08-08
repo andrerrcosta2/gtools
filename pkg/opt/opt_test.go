@@ -3,6 +3,7 @@
 package opt
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -124,5 +125,54 @@ func TestOfNullable(t *testing.T) {
 	//unsettedMapPointerVar := OfNullable(unsettedMapPointer).IsPresent()
 	//unsettedMapPointerAsAddress := OfNullable(&unsettedMapPointer).IsPresent()
 	//assert.Panics(t, func() { OfNullable(*unsettedMapPointer).IsPresent() })
+}
 
+func TestOption_OrAssert(t *testing.T) {
+	orAssertShouldPanic(t)
+	orAssertValidPointer(t)
+	orAssertNilInnerPointerShouldPanic(t)
+}
+
+func orAssertShouldPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic when passing a nil pointer, but got none")
+		}
+	}()
+
+	var nilValue *int
+	option := &Option[int]{}
+	option.OrAssert(nilValue)
+}
+
+// TestOrAssert_ValidPointer tests that OrAssert returns a valid Option when given a non-nil pointer.
+func orAssertValidPointer(t *testing.T) {
+	val := 42
+	option := &Option[int]{}
+	newOption := option.OrAssert(&val)
+
+	if newOption == nil {
+		t.Errorf("Expected a valid Option, but got nil")
+	}
+
+	if !newOption.isSet {
+		t.Errorf("Expected isSet to be true, but got false")
+	}
+
+	if !reflect.DeepEqual(*newOption.value, val) {
+		t.Errorf("Expected value %v, but got %v", val, *newOption.value)
+	}
+}
+
+// TestOrAssert_NilInnerPointer tests that OrAssert panics when given a pointer to a nil pointer.
+func orAssertNilInnerPointerShouldPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic when passing a pointer to a nil pointer, but got none")
+		}
+	}()
+
+	var nilPointer *int
+	option := &Option[*int]{}
+	option.OrAssert(&nilPointer)
 }

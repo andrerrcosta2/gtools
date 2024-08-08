@@ -71,6 +71,23 @@ func (o *Option[T]) Unset() *Option[T] {
 	return o        // Return a pointer to the modified Option struct
 }
 
+func (o *Option[T]) OrAssert(value *T) *Option[T] {
+	// Check if the pointer is nil
+	if value == nil {
+		// Panic if the pointer is nil
+		panic("Or assert will panic if the provided pointer is nil")
+	}
+	// Check if the value is nil
+	// Reflection pays the price of generalizations.
+	// If you don't agree, you may create different optionals for each type then handle it natively
+	val := reflect.ValueOf(value).Elem()
+	if val.Kind() == reflect.Ptr && val.IsNil() {
+		// Panic if the pointer is nil
+		panic("Or assert will panic if the provided pointer is nil")
+	}
+	return Of(*value)
+}
+
 // OrElseGet returns the value of the Option if it is set, otherwise it returns the provided default value.
 //
 // Parameters:
