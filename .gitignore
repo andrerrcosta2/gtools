@@ -1,3 +1,4 @@
 /.idea/
 /pkg/structs/tree/
 /pkg/pipe/_pipe2/
+/pkg/pipe/connectable/
