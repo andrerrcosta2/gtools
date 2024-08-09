@@ -5,7 +5,6 @@ package fsutil
 import (
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -32,15 +31,15 @@ func BuildPath(pathType PathType, dir string) (string, error) {
 	switch pathType {
 	case Relative:
 		// Construct a path relative to the current working directory
-		dir = path.Join(workDir, dir)
+		dir = filepath.ToSlash(filepath.Join(workDir, dir))
 	case Root:
 		// Get the module path
-		mod, err := modPath(workDir)
+		mod, err := FindPathContainingFileRecursivelyBackward(workDir, "go.mod")
 		if err != nil {
 			return "", fmt.Errorf("error getting module path: %v", err)
 		}
 		// Construct a path relative to the module path
-		dir = path.Join(mod, dir)
+		dir = filepath.ToSlash(filepath.Join(mod, dir))
 	default:
 		// Return an error if the pathType is unknown
 		return "", fmt.Errorf("unknown PathType: %v", pathType)
@@ -48,19 +47,17 @@ func BuildPath(pathType PathType, dir string) (string, error) {
 	return dir, nil
 }
 
-// modPath searches for the directory containing the go.mod file starting from the given directory.
-// It takes a startDir of type string as input and returns the directory path as a string and an error if any.
-// If the go.mod file is found, the function returns the directory path.
-// If the go.mod file isn't found, the function continues searching in the parent directories until the root directory is reached.
-// If the go.mod file isn't found in any directory, an error is returned.
-func modPath(startDir string) (string, error) {
+// FindPathContainingFileRecursivelyBackward searches for a file recursively in the parent directories of the given start directory.
+// It takes a startDir (string) and a file (string) as input and returns the directory path where the file is found (string) and an error if the file is not found (error).
+// The function starts from the given start directory and recursively checks the parent directories until the file is found or there are no more parent directories.
+func FindPathContainingFileRecursivelyBackward(startDir string, file string) (string, error) {
 	for {
-		// Construct the path to the go.mod file in the current directory
-		goModPath := filepath.Join(startDir, "go.mod")
+		// Construct the path to the file in the current directory
+		goModPath := filepath.Join(startDir, file)
 
-		// Check if the go.mod file exists
+		// Check if the file exists
 		if _, err := os.Stat(goModPath); !os.IsNotExist(err) {
-			// If the go.mod file exists, return the directory path
+			// If the file exists, return the directory path
 			return startDir, nil
 		}
 
@@ -69,8 +66,8 @@ func modPath(startDir string) (string, error) {
 
 		// Check if the parent directory is the same as the current directory
 		if parentDir == startDir {
-			// If the parent directory is the same as the current directory, it means the go.mod file was not found in any directory
-			return "", fmt.Errorf("go.mod not found")
+			// If the parent directory is the same as the current directory, it means the file was not found in any directory
+			return "", fmt.Errorf("%s not found", file)
 		}
 
 		// Update the start directory to the parent directory
