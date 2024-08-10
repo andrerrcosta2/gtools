@@ -33,11 +33,8 @@ func UnmarshalSingle[T any](out *T, data []byte) error {
 	case *Void:
 		return nil
 	case string:
-		var str string
-		err = json.Unmarshal(data, &str)
-		if err == nil {
-			*out = any(str).(T)
-		}
+		str := string(data)
+		*out = any(str).(T)
 	default:
 		err = json.Unmarshal(data, out)
 	}
