@@ -3,8 +3,13 @@
 package maps
 
 import (
+	"github.com/andrerrcosta2/gtools/pkg/arrays"
+	"github.com/andrerrcosta2/gtools/pkg/functions"
 	"github.com/andrerrcosta2/gtools/pkg/generics"
 	"github.com/andrerrcosta2/gtools/pkg/tuple"
+	"reflect"
+	"sort"
+	"strings"
 	"testing"
 )
 
@@ -170,13 +175,115 @@ func TestMapValues(t *testing.T) {
 	}
 }
 
+func TestFlatValues(t *testing.T) {
+	// Test Case 1: Flattening without transformation (identity function)
+	map1 := map[string][]int{
+		"numbers": {1, 2, 3},
+		"more":    {4, 5, 6},
+	}
+	expected1 := []int{1, 2, 3, 4, 5, 6}
+	result1 := FlatValues(map1, functions.Identity[int])
+	sort.Ints(result1)
+	sort.Ints(expected1)
+
+	if !reflect.DeepEqual(result1, expected1) {
+		t.Errorf("Test Case 1 Failed: expected %v, got %v", expected1, result1)
+	}
+
+	// Test Case 2: Flattening with transformation (string length)
+	map2 := map[string][]string{
+		"fruits":  {"apple", "banana"},
+		"colors":  {"red", "blue"},
+		"animals": {"cat", "dog"},
+	}
+	expected2 := []int{5, 6, 3, 4, 3, 3}
+	result2 := FlatValues(map2, func(v string) int { return len(v) })
+	sort.Ints(result2)
+	sort.Ints(expected2)
+
+	if !reflect.DeepEqual(result2, expected2) {
+		t.Errorf("Test Case 2 Failed: expected %v, got %v", expected2, result2)
+	}
+
+	// Test Case 3: Flattening with transformation to uppercase
+	map3 := map[string][]string{
+		"words": {"hello", "world"},
+	}
+	expected3 := []string{"HELLO", "WORLD"}
+	result3 := FlatValues(map3, func(v string) string { return strings.ToUpper(v) })
+	sort.Strings(result3)
+	sort.Strings(expected3)
+
+	if !reflect.DeepEqual(result3, expected3) {
+		t.Errorf("Test Case 3 Failed: expected %v, got %v", expected3, result3)
+	}
+
+	// Test Case 4: Flattening with transformation to get first characters
+	map4 := map[string][]string{
+		"names": {"Alice", "Bob", "Charlie"},
+	}
+	expected4 := []string{"A", "B", "C"}
+	result4 := FlatValues(map4, func(v string) string { return string(v[0]) })
+	sort.Strings(result4)
+	sort.Strings(expected4)
+
+	if !reflect.DeepEqual(result4, expected4) {
+		t.Errorf("Test Case 4 Failed: expected %v, got %v", expected4, result4)
+	}
+}
+
+func TestFlatValuesSorted(t *testing.T) {
+	// Test Case 1: Sort integers in descending order
+	map1 := map[string][]int{
+		"numbers": {1, 2, 3},
+		"more":    {4, 5, 6},
+	}
+	expected1 := []int{6, 5, 4, 3, 2, 1}
+	result1 := FlatValuesSorted(map1, func(v int) int { return v }, func(i, j int) bool { return i > j })
+
+	if !arrays.Equal(result1, expected1) {
+		t.Errorf("Test Case 1 Failed: expected %v, got %v", expected1, result1)
+	}
+
+	// Test Case 2: Sort strings by length
+	map2 := map[string][]string{
+		"fruits":  {"apple", "banana"},
+		"colors":  {"carmine", "red"},
+		"animals": {"lion", "antelope"},
+	}
+	expected2 := []string{"antelope", "carmine", "banana", "apple", "lion", "red"}
+	result2 := FlatValuesSorted(map2, func(v string) string { return v }, func(i, j string) bool { return len(i) > len(j) })
+
+	if !arrays.Equal(result2, expected2) {
+		t.Errorf("Test Case 2 Failed: expected %v, got %v", expected2, result2)
+	}
+
+	// Test Case 3: Sort strings alphabetically
+	map3 := map[string][]string{
+		"words": {"banana", "apple", "cherry"},
+	}
+	expected3 := []string{"APPLE", "BANANA", "CHERRY"}
+	result3 := FlatValuesSorted(map3, func(v string) string { return strings.ToUpper(v) }, func(i, j string) bool { return i < j })
+
+	if !arrays.Equal(result3, expected3) {
+		t.Errorf("Test Case 3 Failed: expected %v, got %v", expected3, result3)
+	}
+}
+
 func TestMapKeys(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
 	v := MapKeys(m, func(k string) string {
 		return k + "1"
 	})
-	if v[0] != "a1" || v[1] != "b1" || v[2] != "c1" {
-		t.Errorf("MapKeys() = %v, want %v", v, []string{"a1", "b1", "c1"})
+
+	sort.Strings(v)
+
+	expected := []string{"a1", "b1", "c1"}
+	for i := range expected {
+		if v[i] != expected[i] {
+			t.Errorf("MapKeys() = %v, want %v", v, expected)
+			break
+		}
 	}
 }
 

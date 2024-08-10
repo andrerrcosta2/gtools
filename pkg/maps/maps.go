@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/pkg/functions"
 	"github.com/andrerrcosta2/gtools/pkg/generics"
+	"sort"
 )
 
 type Entry[K comparable, V any] struct {
@@ -228,6 +229,66 @@ func MapValues[K comparable, V any, X any](m map[K]V, f functions.Function[V, X]
 	}
 
 	// Return the resulting slice.
+	return result
+}
+
+func MapValuesSorted[K comparable, V any, X any](m map[K]V, f functions.Function[V, X], less functions.BiFunction[X, X, bool]) []X {
+	// Create a new slice with initial capacity equal to the number of entries in the input map.
+	result := make([]X, 0, len(m))
+
+	// Iterate over each value in the input map.
+	for _, v := range m {
+		// Apply the function to the current value and append the result to the result slice.
+		result = append(result, f(v))
+	}
+
+	// Sort the result slice using the provided less function.
+	sort.Slice(result, func(i, j int) bool {
+		return less(result[i], result[j])
+	})
+
+	// Return the resulting slice.
+	return result
+}
+
+// FlatValues applies a function to each element in a map of slices and returns a new slice with the transformed values.
+//
+// Parameters:
+// - m: The input map with slices of values.
+// - f: The function to apply to each value.
+//
+// Returns:
+// - A new slice with the transformed values obtained by applying the function to each element in the map.
+
+func FlatValues[K comparable, V any, X any](m map[K][]V, f functions.Function[V, X]) []X {
+	// Create a slice to store the flattened and transformed values.
+	var result []X
+
+	// Iterate over each slice of values in the map.
+	for _, slice := range m {
+		// Apply the function to each element in the slice and append the result to the final slice.
+		for _, v := range slice {
+			result = append(result, f(v))
+		}
+	}
+
+	// Return the flattened and transformed slice.
+	return result
+}
+
+func FlatValuesSorted[K comparable, V any, X any](m map[K][]V, f functions.Function[V, X], less functions.BiFunction[X, X, bool]) []X {
+	var result []X
+	for _, slice := range m {
+		for _, v := range slice {
+			result = append(result, f(v))
+		}
+	}
+
+	// Sort the result using the provided comparison function
+	sort.Slice(result, func(i, j int) bool {
+		return less(result[i], result[j])
+	})
+
 	return result
 }
 
