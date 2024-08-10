@@ -4,10 +4,11 @@ package ser
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
+
+const FailedMessage = "failed unmarshalling data: %v [%s]"
 
 func Json(s any) string {
 	var buf strings.Builder
@@ -28,19 +29,23 @@ func Json(s any) string {
 // It returns an error if the unmarshalling fails.
 func UnmarshalSingle[T any](out *T, data []byte) error {
 	var err error
+
+	if data[0] == '[' {
+		return fmt.Errorf("unexpected array data for single value unmarshal: %s", string(data))
+	}
+
 	// Check the type of T to determine the unmarshalling strategy
 	switch any(*out).(type) {
 	case *Void:
 		return nil
 	case string:
-		str := string(data)
-		*out = any(str).(T)
+		*out = any(string(data)).(T)
 	default:
 		err = json.Unmarshal(data, out)
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed unmarshalling data: %v [%s]", err, string(data))
+		return fmt.Errorf(FailedMessage, err, string(data))
 	}
 
 	return nil
@@ -52,31 +57,40 @@ func UnmarshalInto[T any](out *[]T, data []byte) error {
 	var it T
 	var err error
 
+	// Check if the data is a JSON array
+	if data[0] == '[' {
+		var arr []T
+		err = json.Unmarshal(data, &arr)
+		if err != nil {
+			return fmt.Errorf(FailedMessage, err, string(data))
+		}
+		*out = append(*out, arr...)
+		return nil
+	}
+
 	// Check the type of T to determine the unmarshalling strategy
 	switch any(it).(type) {
 	// Do nothing if it's a Void type
 	case *Void:
 		return nil
 	case string:
-		it, err = unmarshalRawString[T](data)
+		it = any(string(data)).(T)
 	default:
 		err = json.Unmarshal(data, &it)
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed unmarshalling data: %v [%s]", err, string(data))
+		return fmt.Errorf(FailedMessage, err, string(data))
 	}
 	*out = append(*out, it)
 	return nil
 }
 
-// unmarshalRawString unmarshals raw string data into the specified type.
-func unmarshalRawString[T any](data []byte) (T, error) {
+func UnmarshalJson[T any](data []byte) (any, error) {
 	var it T
-	strData := string(data)
-	it, ok := any(strData).(T)
-	if !ok {
-		return it, errors.New("type assertion to string failed")
+	err := json.Unmarshal(data, &it)
+	if err != nil {
+		return it, fmt.Errorf(FailedMessage, err, string(data))
 	}
 	return it, nil
 }
