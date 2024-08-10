@@ -20,6 +20,35 @@ func Json(s any) string {
 	return buf.String()
 }
 
+// UnmarshalSingle unmarshals data into a single value of type T.
+// It supports JSON and raw string formats.
+// If the type of T is a Void, it returns nil.
+// If the type of T is a string, it uses the unmarshalRawString function.
+// Otherwise, it uses the json.Unmarshal function.
+// It returns an error if the unmarshalling fails.
+func UnmarshalSingle[T any](out *T, data []byte) error {
+	var err error
+	// Check the type of T to determine the unmarshalling strategy
+	switch any(*out).(type) {
+	case *Void:
+		return nil
+	case string:
+		var str string
+		err = json.Unmarshal(data, &str)
+		if err == nil {
+			*out = any(str).(T)
+		}
+	default:
+		err = json.Unmarshal(data, out)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed unmarshalling data: %v [%s]", err, string(data))
+	}
+
+	return nil
+}
+
 // UnmarshalInto unmarshals data into the specified type.
 // It supports JSON and raw string formats.
 func UnmarshalInto[T any](out *[]T, data []byte) error {
@@ -28,6 +57,7 @@ func UnmarshalInto[T any](out *[]T, data []byte) error {
 
 	// Check the type of T to determine the unmarshalling strategy
 	switch any(it).(type) {
+	// Do nothing if it's a Void type
 	case *Void:
 		return nil
 	case string:
