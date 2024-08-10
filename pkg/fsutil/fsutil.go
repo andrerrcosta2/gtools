@@ -8,13 +8,6 @@ import (
 	"path/filepath"
 )
 
-type PathType int
-
-const (
-	Relative PathType = iota
-	Root
-)
-
 // BuildPath constructs a file path based on the given path type and directory.
 // It takes a pathType of type PathType and a dir of type string as input.
 // The function returns the constructed path as a string and an error if any.
