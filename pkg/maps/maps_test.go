@@ -145,8 +145,28 @@ func TestMapValues(t *testing.T) {
 	v := MapValues(m, func(v int) int {
 		return v * 2
 	})
-	if v[0] != 2 || v[1] != 4 || v[2] != 6 {
-		t.Errorf("MapValues() = %v, want %v", v, []int{2, 4, 6})
+
+	// Check that the length of the result slice is correct
+	if len(v) != 3 {
+		t.Errorf("MapValues() length = %v, want %v", len(v), 3)
+	}
+
+	// Create a map to track the expected values
+	expected := map[int]bool{2: false, 4: false, 6: false}
+
+	// Check that all expected values are in the result slice
+	for _, value := range v {
+		if _, ok := expected[value]; !ok {
+			t.Errorf("MapValues() = %v, unexpected value found", value)
+		}
+		expected[value] = true
+	}
+
+	// Check that all expected values were found
+	for value, found := range expected {
+		if !found {
+			t.Errorf("MapValues() missing expected value %v", value)
+		}
 	}
 }
 
