@@ -71,6 +71,7 @@ func TestKeys(t *testing.T) {
 		NewEntry("2", 4)},
 	)
 	keys := e1.Keys()
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
 	if keys[0] != "1" || keys[1] != "2" {
 		t.Errorf("Keys() = %v, want %v", keys, []string{"1", "2"})
 	}
