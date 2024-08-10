@@ -402,3 +402,56 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 	// Return the final result
 	return result
 }
+
+// Equal checks if two slices of comparable elements are equal.
+//
+// Parameters:
+// - a: the first slice
+// - b: the second slice
+//
+// Returns:
+// - bool: true if the slices are equal, false otherwise
+func Equal[T comparable](a, b []T) bool {
+	// Check if the slices have different lengths
+	if len(a) != len(b) {
+		return false
+	}
+
+	// Compare each element of the slices
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	// Slices are equal
+	return true
+}
+
+// EqualBy checks if two slices of elements are equal based on a given function.
+// The function f is used to compare elements of the slices.
+// The function returns true if the slices are equal, false otherwise.
+//
+// Parameters:
+// - a: the first slice
+// - b: the second slice
+// - f: the function used to compare elements of the slices
+//
+// Returns:
+// - bool: true if the slices are equal, false otherwise
+func EqualBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
+	// Check if the slices have different lengths
+	if len(a) != len(b) {
+		return false
+	}
+
+	// Compare each element of the slices using the function f
+	for i := range a {
+		if f(a[i]) != f(b[i]) {
+			return false
+		}
+	}
+
+	// Slices are equal
+	return true
+}
