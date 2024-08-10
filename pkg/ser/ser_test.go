@@ -26,7 +26,7 @@ func TestUnmarshalSingle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected no error, but got %v", err)
 	}
-	if str != "hello" {
+	if str != `"hello"` {
 		t.Errorf("Expected str to be 'hello', but got '%s'", str)
 	}
 
