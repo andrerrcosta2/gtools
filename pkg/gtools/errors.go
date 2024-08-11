@@ -235,6 +235,15 @@ func (s *ConcurrentStackableError) String() string {
 	return ReadTrace(s.stk)
 }
 
+func (s *ConcurrentStackableError) Return() error {
+	s.mtx.Lock()
+	defer s.mtx.Unlock()
+	if s.Empty() {
+		return nil
+	}
+	return s
+}
+
 var _ error = (*ConcurrentStackableError)(nil)
 var _ StackableError = (*ConcurrentStackableError)(nil)
 var _ WrappedError = (*ConcurrentStackableError)(nil)

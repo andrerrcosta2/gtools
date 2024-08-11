@@ -68,7 +68,6 @@ func TestReadFiles_Error(t *testing.T) {
 }
 
 func TestReadFiles_Concurrency(t *testing.T) {
-
 	// Collect file paths
 	files, err := filepath.Glob(filepath.Join(seedDir, "*.txt"))
 	if err != nil {
