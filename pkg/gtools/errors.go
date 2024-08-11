@@ -236,8 +236,8 @@ func (s *ConcurrentStackableError) String() string {
 }
 
 func (s *ConcurrentStackableError) Return() error {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
 	if s.Empty() {
 		return nil
 	}
