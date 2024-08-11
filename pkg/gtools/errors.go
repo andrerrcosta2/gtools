@@ -5,13 +5,20 @@ package gtools
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 	"sync"
 )
 
-type StackableError interface {
-	Trace() string
-	Error() string
+type ErrorSeverity int
+
+type ErrorLevel struct {
+	key      string
+	severity ErrorSeverity
+}
+
+func (e ErrorLevel) String() string {
+	return e.key
 }
 
 // AsStackable checks if the error is of type StackableError and returns it.
@@ -31,9 +38,9 @@ func AsStackable(err error) (StackableError, bool) {
 	return err.(StackableError), true
 }
 
-type WrappedError interface {
+type StackableError interface {
+	Trace() string
 	Error() string
-	Unwrap() error
 }
 
 // AsWrapped checks if the given error is of type WrappedError.
@@ -60,6 +67,88 @@ func AsWrapped(err error) (WrappedError, bool) {
 	return err.(WrappedError), true
 }
 
+type WrappedError interface {
+	Error() string
+	Unwrap() error
+}
+
+// AsLeveled checks if the given error is of type LeveledError.
+// If it is, it returns the error as LeveledError and true.
+// If it's not, it returns nil and false.
+//
+// Parameters:
+// - err: The error to check.
+//
+// Returns:
+// - LeveledError: The error as LeveledError if it's of type LeveledError.
+// - Bool: True if the error is of type LeveledError, false otherwise.
+func AsLeveled(err error) (LeveledError, bool) {
+	// Declare a variable of type LeveledError
+	var leveledError LeveledError
+
+	// Check if the error is of type LeveledError
+	if !errors.As(err, &leveledError) {
+		// If not, return nil and false
+		return nil, false
+	}
+
+	// If the error is of type LeveledError, return it and true
+	return err.(LeveledError), true
+}
+
+type LeveledError interface {
+	Error() string
+	Level() ErrorLevel
+	Severity(err LeveledError) int
+}
+
+// AsOperational is a function that checks if an error is an OperationalError.
+//
+// Parameters:
+// - err: The error to check.
+//
+// Returns:
+// - OperationalError: The error as OperationalError if it's of type OperationalError.
+// - bool: True if the error is of type OperationalError, false otherwise.
+func AsOperational(err error) (OperationalError, bool) {
+	// Declare a variable of type OperationalError
+	var operationalError OperationalError
+
+	// Check if the error is of type OperationalError
+	if errors.As(err, &operationalError) {
+		// If it is, return the error and true
+		return operationalError, true
+	}
+
+	// If the error is not of type OperationalError, check if it is a pointer to a struct
+	val := reflect.ValueOf(err)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+	if val.Kind() == reflect.Struct {
+		// Check if the struct has a field named "Op" of type string
+		field := val.FieldByName("Op")
+		if field.IsValid() && field.Kind() == reflect.String {
+			// If it does, extract the value of the field and create a new OperationalErrorImpl
+			op := field.String()
+			operationalError = &OperationalErrorImpl{
+				op:  op,
+				err: err,
+			}
+			// Return the new OperationalError and true
+			return operationalError, true
+		}
+	}
+
+	// If the error is not of type OperationalError, return nil and false
+	return nil, false
+}
+
+type OperationalError interface {
+	Error() string
+	Operation() string
+}
+
 // FlattenError takes an error and returns a slice of errors that represent the stack trace of the error,
 // as well as the last error in the stack trace.
 //
@@ -82,7 +171,7 @@ func FlattenError(err error) ([]error, error) {
 	return stk, stk[len(stk)-1]
 }
 
-// ReadTrace takes a slice of errors and returns a formatted string representing the stack trace of those errors.
+// ReadTrace takes a slice of errors and returns a formatted string representing the stack trace of these errors.
 //
 // Parameters:
 // - stack: a slice of errors representing the stack trace.
@@ -143,6 +232,16 @@ func (s *StackableErrorImpl) Unwrap() error {
 
 func (s *StackableErrorImpl) Len() int {
 	return len(s.stk)
+}
+
+func (s *StackableErrorImpl) Stack(e error) error {
+	if e == nil {
+		return nil
+	}
+	stk, err := FlattenError(e)
+	s.stk = append(s.stk, stk...)
+	s.err = err
+	return s
 }
 
 var _ error = (*StackableErrorImpl)(nil)
@@ -247,3 +346,25 @@ func (s *ConcurrentStackableError) Return() error {
 var _ error = (*ConcurrentStackableError)(nil)
 var _ StackableError = (*ConcurrentStackableError)(nil)
 var _ WrappedError = (*ConcurrentStackableError)(nil)
+
+type OperationalErrorImpl struct {
+	op  string
+	err error
+}
+
+func NewOperationalError(op string, err error) *OperationalErrorImpl {
+	return &OperationalErrorImpl{
+		op:  op,
+		err: err,
+	}
+}
+
+func (e *OperationalErrorImpl) Error() string {
+	return e.err.Error()
+}
+
+func (e *OperationalErrorImpl) Operation() string {
+	return e.op
+}
+
+var _ error = (*OperationalErrorImpl)(nil)
