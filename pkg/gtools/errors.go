@@ -17,6 +17,11 @@ type ErrorLevel struct {
 	severity ErrorSeverity
 }
 
+// NewErrorLevel creates a new ErrorLevel instance with the provided key and severity.
+func NewErrorLevel(key string, severity ErrorSeverity) ErrorLevel {
+	return ErrorLevel{key: key, severity: severity}
+}
+
 func (e ErrorLevel) String() string {
 	return e.key
 }
