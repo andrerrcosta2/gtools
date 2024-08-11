@@ -13,12 +13,17 @@ import (
 type ErrorSeverity int
 
 type ErrorLevel struct {
-	key      string
-	severity ErrorSeverity
+	Key      string
+	Severity ErrorSeverity
+}
+
+// NewErrorLevel creates a new ErrorLevel instance with the provided key and severity.
+func NewErrorLevel(key string, severity ErrorSeverity) ErrorLevel {
+	return ErrorLevel{Key: key, Severity: severity}
 }
 
 func (e ErrorLevel) String() string {
-	return e.key
+	return e.Key
 }
 
 // AsStackable checks if the error is of type StackableError and returns it.
