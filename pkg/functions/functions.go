@@ -17,6 +17,9 @@ type Consumer[T any] func(T)
 // Supplier represents a function that returns a value of type T.
 type Supplier[T any] func() T
 
+// Supplier2 represents a function that returns two values of type T and K.
+type Supplier2[T any, K any] func() (T, K)
+
 // BiPredicate represents a function that takes two values of type T and U and returns a boolean.
 type BiPredicate[T any, U any] func(T, U) bool
 

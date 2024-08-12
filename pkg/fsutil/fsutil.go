@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 )
 
 // BuildPath constructs a file path based on the given path type and directory.
@@ -41,12 +43,12 @@ func BuildPath(pathType PathType, dir string) (string, error) {
 }
 
 // FindPathContainingFileRecursivelyBackward searches for a file recursively in the parent directories of the given start directory.
-// It takes a startDir (string) and a file (string) as input and returns the directory path where the file is found (string) and an error if the file is not found (error).
+// It takes a string startDir  and a string filename as input and returns the directory path where the file is found (string) and an error if the file is not found (error).
 // The function starts from the given start directory and recursively checks the parent directories until the file is found or there are no more parent directories.
-func FindPathContainingFileRecursivelyBackward(startDir string, file string) (string, error) {
+func FindPathContainingFileRecursivelyBackward(startDir string, filename string) (string, error) {
 	for {
 		// Construct the path to the file in the current directory
-		goModPath := filepath.Join(startDir, file)
+		goModPath := filepath.Join(startDir, filename)
 
 		// Check if the file exists
 		if _, err := os.Stat(goModPath); !os.IsNotExist(err) {
@@ -60,10 +62,33 @@ func FindPathContainingFileRecursivelyBackward(startDir string, file string) (st
 		// Check if the parent directory is the same as the current directory
 		if parentDir == startDir {
 			// If the parent directory is the same as the current directory, it means the file was not found in any directory
-			return "", fmt.Errorf("%s not found", file)
+			return "", fmt.Errorf("%s not found", filename)
 		}
 
 		// Update the start directory to the parent directory
 		startDir = parentDir
 	}
+}
+
+// IsValidPath checks if the given path is valid.
+func IsValidPath(path string) bool {
+	// TODO:
+	var invalidChars string
+	// Determine the invalid characters based on the operating system
+	if runtime.GOOS == "windows" {
+		// Windows doesn't allow: < > : " / \ | ? *
+		invalidChars = `<>:"/\|?*`
+	} else {
+		// Common invalid characters on UNIX-like systems (e.g., Linux, macOS)
+		// Generally, only null characters (0x00) are not allowed in filenames
+		// However, we also avoid using control characters and '/' in filenames.
+		invalidChars = "/\x00"
+	}
+
+	for _, ch := range path {
+		if strings.ContainsRune(invalidChars, ch) {
+			return false
+		}
+	}
+	return true
 }

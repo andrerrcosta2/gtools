@@ -212,15 +212,15 @@ func StackErrors(currentStack []error, currentErr error, newErr error) ([]error,
 	return currentStack, currentErr
 }
 
-type StackableErrorImpl struct {
-	err error
-	stk []error
-}
-
 func NewStackableError(err error) *StackableErrorImpl {
 	return &StackableErrorImpl{
 		err: err,
 	}
+}
+
+type StackableErrorImpl struct {
+	err error
+	stk []error
 }
 
 func (s *StackableErrorImpl) Error() string {
@@ -253,12 +253,6 @@ var _ error = (*StackableErrorImpl)(nil)
 var _ StackableError = (*StackableErrorImpl)(nil)
 var _ WrappedError = (*StackableErrorImpl)(nil)
 
-type ConcurrentStackableError struct {
-	mtx sync.RWMutex
-	err error
-	stk []error
-}
-
 func NewConcurrentStackableError(e error) *ConcurrentStackableError {
 	err := &ConcurrentStackableError{
 		err: e,
@@ -269,6 +263,12 @@ func NewConcurrentStackableError(e error) *ConcurrentStackableError {
 		err.stk, err.err = FlattenError(e)
 	}
 	return err
+}
+
+type ConcurrentStackableError struct {
+	mtx sync.RWMutex
+	err error
+	stk []error
 }
 
 func (s *ConcurrentStackableError) Error() string {
@@ -352,16 +352,16 @@ var _ error = (*ConcurrentStackableError)(nil)
 var _ StackableError = (*ConcurrentStackableError)(nil)
 var _ WrappedError = (*ConcurrentStackableError)(nil)
 
-type OperationalErrorImpl struct {
-	op  string
-	err error
-}
-
 func NewOperationalError(op string, err error) *OperationalErrorImpl {
 	return &OperationalErrorImpl{
 		op:  op,
 		err: err,
 	}
+}
+
+type OperationalErrorImpl struct {
+	op  string
+	err error
 }
 
 func (e *OperationalErrorImpl) Error() string {
