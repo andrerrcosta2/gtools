@@ -4,6 +4,13 @@ package tuple
 
 import "github.com/andrerrcosta2/gtools/pkg/generics"
 
+func NewPair[A any, B any](a A, b B) *Pair[A, B] {
+	return &Pair[A, B]{
+		first:  a,
+		second: b,
+	}
+}
+
 type Pair[A any, B any] struct {
 	first  A
 	second B
@@ -17,13 +24,6 @@ func (p *Pair[A, B]) Second() B {
 	return p.second
 }
 
-func NewPair[A any, B any](a A, b B) *Pair[A, B] {
-	return &Pair[A, B]{
-		first:  a,
-		second: b,
-	}
-}
-
 func DerefPair[A any, B any](b generics.BiTypedInterface[A, B]) (A, B) {
 	var aZero A
 	var bZero B
@@ -33,20 +33,20 @@ func DerefPair[A any, B any](b generics.BiTypedInterface[A, B]) (A, B) {
 	return aZero, bZero
 }
 
-var _ generics.BiTypedInterface[string, string] = (*Pair[string, string])(nil)
-
-type Triple[A any, B any, C any] struct {
-	first  A
-	second B
-	third  C
-}
-
 func NewTriple[A any, B any, C any](a A, b B, c C) *Triple[A, B, C] {
 	return &Triple[A, B, C]{
 		first:  a,
 		second: b,
 		third:  c,
 	}
+}
+
+var _ generics.BiTypedInterface[string, string] = (*Pair[string, string])(nil)
+
+type Triple[A any, B any, C any] struct {
+	first  A
+	second B
+	third  C
 }
 
 var _ generics.TriTypedInterface[string, string, string] = (*Triple[string, string, string])(nil)

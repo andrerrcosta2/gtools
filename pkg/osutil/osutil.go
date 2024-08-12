@@ -23,7 +23,7 @@ func ReadFile(mode fsutil.PathType, path string) ([]byte, error) {
 	return data, nil
 }
 
-func ReadFiles(paths []fsutil.Path, sem *gtools.Semaphore) ([][]byte, error) {
+func ReadFiles(paths []fsutil.Path, sem gtools.Semaphore) ([][]byte, error) {
 	var wg sync.WaitGroup
 	stack := &gtools.ConcurrentStackableError{}
 	dataSlices := make([][]byte, len(paths))

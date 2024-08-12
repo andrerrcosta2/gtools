@@ -3,6 +3,7 @@
 package osutil
 
 import (
+	"github.com/andrerrcosta2/gtools/pkg/conc"
 	"github.com/andrerrcosta2/gtools/pkg/fsutil"
 	"github.com/andrerrcosta2/gtools/pkg/gtools"
 	"path/filepath"
@@ -28,7 +29,7 @@ func TestReadFiles_Success(t *testing.T) {
 	}
 
 	// Call ReadFiles
-	data, err := ReadFiles(paths, gtools.NewSemaphore(10))
+	data, err := ReadFiles(paths, conc.NewChannelSemaphore(10))
 	if err != nil {
 		if stack, ok := gtools.AsStackable(err); ok {
 			t.Fatalf("ReadFiles returned an error: %v", stack.Trace())
@@ -55,7 +56,7 @@ func TestReadFiles_Error(t *testing.T) {
 	}
 
 	// Semaphore to allow all goroutines to run concurrently
-	sem := gtools.NewSemaphore(2) // Limit concurrency to 2
+	sem := conc.NewChannelSemaphore(2) // Limit concurrency to 2
 
 	// Call ReadFiles
 	data, err := ReadFiles(paths, sem)
@@ -88,7 +89,7 @@ func TestReadFiles_Concurrency(t *testing.T) {
 		{Type: fsutil.Relative, Path: files[2]},
 	}
 
-	sem := gtools.NewSemaphore(2) // Limit concurrency to 2
+	sem := conc.NewChannelSemaphore(2) // Limit concurrency to 2
 
 	// Call ReadFiles
 	data, err := ReadFiles(paths, sem)
@@ -127,7 +128,7 @@ func TestReadFiles_SemaphoreLimit(t *testing.T) {
 		paths[i] = fsutil.Path{Type: fsutil.Relative, Path: files[i]}
 	}
 
-	sem := gtools.NewSemaphore(5) // Limit concurrency to 5
+	sem := conc.NewChannelSemaphore(5) // Limit concurrency to 5
 
 	// Call ReadFiles
 	data, err := ReadFiles(paths, sem)

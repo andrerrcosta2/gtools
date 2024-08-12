@@ -208,38 +208,38 @@ func TestOrAssert_HandleComplexType(t *testing.T) {
 func TestReflectHardNullable(t *testing.T) {
 	// Test case: nil slice
 	var nilSlice []string
-	if !reflectHardNullable(&nilSlice) {
+	if !isDeepReflectedNullable(&nilSlice) {
 		t.Errorf("Expected true for nil slice, got false")
 	}
 
 	// Test case: non-nil slice
 	nonNilSlice := []string{"test"}
-	if reflectHardNullable(&nonNilSlice) {
+	if isDeepReflectedNullable(&nonNilSlice) {
 		t.Errorf("Expected false for non-nil slice, got true")
 	}
 
 	// Test case: nil map
 	var nilMap map[string]string
-	if !reflectHardNullable(&nilMap) {
+	if !isDeepReflectedNullable(&nilMap) {
 		t.Errorf("Expected true for nil map, got false")
 	}
 
 	// Test case: non-nil map
 	nonNilMap := map[string]string{"key": "value"}
-	if reflectHardNullable(&nonNilMap) {
+	if isDeepReflectedNullable(&nonNilMap) {
 		t.Errorf("Expected false for non-nil map, got true")
 	}
 
 	// Test case: nil pointer
 	var nilPtr *int
-	if !reflectHardNullable(nilPtr) {
+	if !isDeepReflectedNullable(nilPtr) {
 		t.Errorf("Expected true for nil pointer, got false")
 	}
 
 	// Test case: non-nil pointer
 	value := 10
 	nonNilPtr := &value
-	if reflectHardNullable(nonNilPtr) {
+	if isDeepReflectedNullable(nonNilPtr) {
 		t.Errorf("Expected false for non-nil pointer, got true")
 	}
 
@@ -249,31 +249,31 @@ func TestReflectHardNullable(t *testing.T) {
 		Field2 int
 	}
 	structVal := TestStruct{Field1: "test", Field2: 42}
-	if reflectHardNullable(&structVal) {
+	if isDeepReflectedNullable(&structVal) {
 		t.Errorf("Expected false for non-nil struct, got true")
 	}
 
 	// Test case: nil interface
 	var nilInterface interface{}
-	if reflectHardNullable(&nilInterface) {
+	if isDeepReflectedNullable(&nilInterface) {
 		t.Errorf("Expected false for nil interface, got true")
 	}
 
 	// Test case: non-nil interface
 	var nonNilInterface interface{} = "some value"
-	if reflectHardNullable(&nonNilInterface) {
+	if isDeepReflectedNullable(&nonNilInterface) {
 		t.Errorf("Expected false for non-nil interface, got true")
 	}
 
 	// Test case: empty but non-nil slice
 	emptySlice := []string{}
-	if reflectHardNullable(&emptySlice) {
+	if isDeepReflectedNullable(&emptySlice) {
 		t.Errorf("Expected false for non-nil empty slice, got true")
 	}
 
 	// Test case: empty but non-nil map
 	emptyMap := map[string]string{}
-	if reflectHardNullable(&emptyMap) {
+	if isDeepReflectedNullable(&emptyMap) {
 		t.Errorf("Expected false for non-nil empty map, got true")
 	}
 }

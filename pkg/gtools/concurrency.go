@@ -2,20 +2,29 @@
 
 package gtools
 
-type Semaphore struct {
-	ch chan struct{}
+type Semaphore interface {
+	// Acq acquires the semaphore, blocking if the semaphore is at capacity.
+	// This method blocks until the semaphore has available slots.
+	Acq()
+	// Rls releases a semaphore, allowing another operation to proceed.
+	// It blocks until a slot is available in the semaphore's buffer.
+	Rls()
 }
 
-func NewSemaphore(maxConcurrent int) *Semaphore {
-	return &Semaphore{
-		ch: make(chan struct{}, maxConcurrent),
-	}
+type RWSemaphore interface {
+	// StartR starts a read operation
+	StartR()
+	// EndR ends a read operation
+	EndR()
+	// StartW starts a write operation
+	StartW()
+	// EndW ends a write operation
+	EndW()
 }
 
-func (s *Semaphore) Acq() {
-	s.ch <- struct{}{}
-}
-
-func (s *Semaphore) Rls() {
-	<-s.ch
+type Barrier interface {
+	// Wait causes the current goroutine to wait until the barrier is ready.
+	Wait()
+	Count() int
+	Threshold() int
 }

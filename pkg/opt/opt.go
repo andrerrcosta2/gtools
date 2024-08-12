@@ -84,7 +84,7 @@ func (o *Option[T]) OrAssert(value *T) *Option[T] {
 	// Check if the value is nil
 	// Reflection pays the price for generalizations.
 	// If you don't agree, you may create different optionals for each type then handle it natively
-	if reflectHardNullable(value) {
+	if isDeepReflectedNullable(value) {
 		// Panic if the pointer is nil
 		panic("Or assert will panic if the provided pointer is nil")
 	}
@@ -144,7 +144,7 @@ func OfNullable[T any](value *T) *Option[T] {
 	// Check if the value is nil
 	// Reflection pays the price for generalizations.
 	// If you don't agree, you may create different optionals for each type then handle it natively
-	if reflectHardNullable(value) {
+	if isDeepReflectedNullable(value) {
 		// Return a None Option
 		return None[T]()
 	}
@@ -174,7 +174,7 @@ func (o *Option[T]) IfPresent(consumer functions.Consumer[T]) {
 	}
 }
 
-func reflectHardNullable[T any](value *T) bool {
+func isDeepReflectedNullable[T any](value *T) bool {
 	if value == nil {
 		return true
 	}
