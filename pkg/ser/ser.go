@@ -5,6 +5,7 @@ package ser
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/andrerrcosta2/gtools/pkg/arrays"
 	"strings"
 )
 
@@ -30,7 +31,7 @@ func Json(s any) string {
 func UnmarshalSingle[T any](out *T, data []byte) error {
 	var err error
 
-	if data[0] == '[' {
+	if !arrays.Empty(data) && data[0] == '[' {
 		return fmt.Errorf("unexpected array data for single value unmarshal: %s", string(data))
 	}
 

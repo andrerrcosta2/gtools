@@ -76,6 +76,20 @@ func TestUnmarshalSingle(t *testing.T) {
 			t.Errorf("expected error: %v, got: %v", expectedErr, err)
 		}
 	})
+
+	t.Run("unmarshal empty string", func(t *testing.T) {
+		emptyString := ""
+		jsonData := []byte(emptyString)
+		var result string
+		err := UnmarshalSingle(&result, jsonData)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		expected := ""
+		if result != expected {
+			t.Errorf("expected: %v, got: %v", expected, result)
+		}
+	})
 }
 
 func TestUnmarshalInto(t *testing.T) {
