@@ -31,10 +31,6 @@ func NewEntry[K comparable, V any](key K, value V) *Entry[K, V] {
 	}
 }
 
-type EntrySet[K comparable, V any] struct {
-	entries map[K]*Entry[K, V]
-}
-
 // NewEntrySet creates a new EntrySet struct from a slice of Entry structs.
 // As the underlying map of entries is a map, the keys of the input slice should be unique.
 // As a side effect, these entries are always unsorted.
@@ -57,6 +53,10 @@ func NewEntrySet[K comparable, V any](e []*Entry[K, V]) *EntrySet[K, V] {
 
 	// Return the newly created EntrySet struct.
 	return entryset
+}
+
+type EntrySet[K comparable, V any] struct {
+	entries map[K]*Entry[K, V]
 }
 
 // Add adds one or more entries to the EntrySet.
@@ -410,4 +410,50 @@ func Fetch[K comparable, V any](entries []generics.BiTypedInterface[K, V], f fun
 
 	// Return the resulting map.
 	return result
+}
+
+func ContainsKey[K comparable, V any](m map[K]V, k K) bool {
+	_, ok := m[k]
+	return ok
+}
+
+func ContainsValue[K comparable, V comparable](m map[K]V, v V) bool {
+	for _, value := range m {
+		if value == v {
+			return true
+		}
+	}
+	return false
+}
+
+func ContainsAllKeys[K comparable, V any](m map[K]V, keys []K) bool {
+	for _, k := range keys {
+		if !ContainsKey(m, k) {
+			return false
+		}
+	}
+	return true
+}
+
+func ContainsAllValues[K comparable, V comparable](m map[K]V, values []V) bool {
+	for _, v := range values {
+		if !ContainsValue(m, v) {
+			return false
+		}
+	}
+	return true
+}
+
+func AreSameKeys[K comparable, V any](m map[K]V, keys []K) bool {
+	if len(m) != len(keys) {
+		return false
+	}
+	return ContainsAllKeys(m, keys)
+}
+
+func AreSameValues[K comparable, V comparable](m map[K]V, values []V) bool {
+	if len(m) != len(values) {
+		return false
+	}
+	return ContainsAllValues(m, values)
 }
