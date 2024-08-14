@@ -17,3 +17,9 @@ func Map[T any, S comparable](arr []T, f func(v T) S) Set[S] {
 	}
 	return s
 }
+
+func NewString(arr ...string) Set[string] {
+	return Map(arr, func(v string) string {
+		return v
+	})
+}
