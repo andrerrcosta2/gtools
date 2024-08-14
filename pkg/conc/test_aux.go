@@ -57,7 +57,7 @@ func (r *Registers) Worker(g *Goroutine) {
 		return
 	}
 
-	fmt.Printf("\nGoroutine %d is working\n", g.id)
+	//fmt.Printf("\nGoroutine %d is working\n", g.id)
 	g.SetState("working")
 	g.Register(time.Since(r.start))
 	r.working[g.id] = g
@@ -72,7 +72,7 @@ func (r *Registers) Done(g *Goroutine) {
 	}
 
 	delete(r.working, g.id)
-	fmt.Printf("\nGoroutine %d is done\n", g.id)
+	//fmt.Printf("\nGoroutine %d is done\n", g.id)
 	g.SetState("finished")
 	r.finished[g.id] = g
 }

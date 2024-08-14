@@ -421,3 +421,130 @@ func TestFetch(t *testing.T) {
 		}
 	}
 }
+
+func TestContainsKey(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		key      string
+		expected bool
+	}{
+		{"a", true},
+		{"b", true},
+		{"d", false},
+	}
+
+	for _, test := range tests {
+		result := ContainsKey(m, test.key)
+		if result != test.expected {
+			t.Errorf("ContainsKey(%v, %v) = %v; expected %v", m, test.key, result, test.expected)
+		}
+	}
+}
+
+// Test ContainsValue
+func TestContainsValue(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		value    int
+		expected bool
+	}{
+		{1, true},
+		{2, true},
+		{4, false},
+	}
+
+	for _, test := range tests {
+		result := ContainsValue(m, test.value)
+		if result != test.expected {
+			t.Errorf("ContainsValue(%v, %v) = %v; expected %v", m, test.value, result, test.expected)
+		}
+	}
+}
+
+// Test ContainsAllKeys
+func TestContainsAllKeys(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		keys     []string
+		expected bool
+	}{
+		{[]string{"a", "b"}, true},
+		{[]string{"a", "b", "c"}, true},
+		{[]string{"a", "b", "d"}, false},
+	}
+
+	for _, test := range tests {
+		result := ContainsAllKeys(m, test.keys)
+		if result != test.expected {
+			t.Errorf("ContainsAllKeys(%v, %v) = %v; expected %v", m, test.keys, result, test.expected)
+		}
+	}
+}
+
+// Test ContainsAllValues
+func TestContainsAllValues(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		values   []int
+		expected bool
+	}{
+		{[]int{1, 2}, true},
+		{[]int{1, 2, 3}, true},
+		{[]int{1, 2, 4}, false},
+	}
+
+	for _, test := range tests {
+		result := ContainsAllValues(m, test.values)
+		if result != test.expected {
+			t.Errorf("ContainsAllValues(%v, %v) = %v; expected %v", m, test.values, result, test.expected)
+		}
+	}
+}
+
+// Test AreSameKeys
+func TestAreSameKeys(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		keys     []string
+		expected bool
+	}{
+		{[]string{"a", "b", "c"}, true},
+		{[]string{"a", "b"}, false},
+		{[]string{"a", "b", "c", "d"}, false},
+		{[]string{"c", "b", "a"}, true}, // Order doesn't matter
+	}
+
+	for _, test := range tests {
+		result := AreSameKeys(m, test.keys)
+		if result != test.expected {
+			t.Errorf("AreSameKeys(%v, %v) = %v; expected %v", m, test.keys, result, test.expected)
+		}
+	}
+}
+
+// Test AreSameValues
+func TestAreSameValues(t *testing.T) {
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+	tests := []struct {
+		values   []int
+		expected bool
+	}{
+		{[]int{1, 2, 3}, true},
+		{[]int{1, 2}, false},
+		{[]int{1, 2, 3, 4}, false},
+		{[]int{3, 2, 1}, true}, // Order doesn't matter
+	}
+
+	for _, test := range tests {
+		result := AreSameValues(m, test.values)
+		if result != test.expected {
+			t.Errorf("AreSameValues(%v, %v) = %v; expected %v", m, test.values, result, test.expected)
+		}
+	}
+}

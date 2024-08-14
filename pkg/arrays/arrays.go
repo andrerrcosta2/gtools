@@ -5,7 +5,6 @@ package arrays
 import (
 	"github.com/andrerrcosta2/gtools/pkg/constraints"
 	"github.com/andrerrcosta2/gtools/pkg/functions"
-	"sort"
 )
 
 // Reverse reverses the order of elements in a slice.
@@ -335,32 +334,12 @@ func ContainsBy[T any, K comparable](arr []T, val K, f functions.Function[T, K])
 	return false
 }
 
-// Sorted sorts a slice of ordered elements in ascending order.
-// It uses the sort.Slice function from the standard library to perform the sorting.
-// The function returns the sorted slice.
-func Sorted[T constraints.Ordered](arr []T) []T {
-	// Sort the slice using the provided less function
-	sort.Slice(arr, func(i, j int) bool {
-		return arr[i] < arr[j]
-	})
-
-	// Return the sorted slice
-	return arr
-}
-
-func SortedBy[T any, K constraints.Ordered](arr []T, f functions.Function[T, K]) []T {
-	sort.Slice(arr, func(i, j int) bool {
-		return f(arr[i]) < f(arr[j])
-	})
-	return arr
-}
-
-// Fold applies a binary function to each element of a slice, starting from an initial value,
+// Fold applies a bi-function to each element of a slice, starting from an initial value,
 // and returns the final result.
 //
 // Parameters:
 // - arr: the input slice
-// - f: the binary function to apply to each element
+// - f: the bi-function to apply to each element
 // - initial: the initial value
 //
 // Returns:
@@ -371,7 +350,7 @@ func Fold[T, R any](arr []T, initial R, f functions.BiFunction[R, T, R]) R {
 
 	// Iterate over each element in the slice
 	for _, v := range arr {
-		// Apply the binary function to the current element and the previous result
+		// Apply the bi-function to the current element and the previous result
 		result = f(result, v)
 	}
 
@@ -379,12 +358,12 @@ func Fold[T, R any](arr []T, initial R, f functions.BiFunction[R, T, R]) R {
 	return result
 }
 
-// FoldRight applies a binary function to each element of a slice in reverse order,
+// FoldRight applies a bi-function to each element of a slice in reverse order,
 // starting from an initial value, and returns the final result.
 //
 // Parameters:
 // - arr: the input slice
-// - f: the binary function to apply to each element
+// - f: the bi-function to apply to each element
 // - initial: the initial value
 //
 // Returns:
@@ -395,7 +374,7 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 
 	// Iterate over the elements of the slice in reverse order
 	for i := len(arr) - 1; i >= 0; i-- {
-		// Apply the binary function to the current element and the previous result
+		// Apply the bi-function to the current element and the previous result
 		result = f(arr[i], result)
 	}
 
@@ -454,4 +433,64 @@ func EqualBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
 
 	// Slices are equal
 	return true
+}
+
+// Higher returns the highest value from a slice of ordered elements.
+//
+// Parameters:
+// - arr: a slice of elements that are ordered.
+//
+// Returns:
+// - T: the highest value from the slice.
+func Higher[T constraints.Ordered](arr []T) T {
+	// If the slice is empty, return the zero value of the element type.
+	if len(arr) == 0 {
+		var zero T
+		return zero
+	}
+
+	// Initialize the highest value with the first element of the slice.
+	out := arr[0]
+
+	// Iterate over the rest of the elements in the slice.
+	for _, v := range arr[1:] {
+		// If the current element is higher than the highest value seen so far,
+		// update the highest value.
+		if v > out {
+			out = v
+		}
+	}
+
+	// Return the highest value.
+	return out
+}
+
+// Lower returns the lowest value from a slice of ordered elements.
+//
+// Parameters:
+// - arr: a slice of elements that are ordered.
+//
+// Returns:
+// - T: the lowest value from the slice.
+func Lower[T constraints.Ordered](arr []T) T {
+	// If the slice is empty, return the zero value of the element type.
+	if len(arr) == 0 {
+		var zero T
+		return zero
+	}
+
+	// Initialize the highest value with the first element of the slice.
+	out := arr[0]
+
+	// Iterate over the rest of the elements in the slice.
+	for _, v := range arr[1:] {
+		// If the current element is higher than the highest value seen so far,
+		// update the lowest value.
+		if v < out {
+			out = v
+		}
+	}
+
+	// Return the lowest value.
+	return out
 }

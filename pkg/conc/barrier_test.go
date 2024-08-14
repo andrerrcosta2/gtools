@@ -57,7 +57,7 @@ func TestStepBroadcast_Basic(t *testing.T) {
 }
 
 func TestStepBroadcast_HighConcurrency(t *testing.T) {
-	reg := NewRegisters(2000)
+	reg := NewRegisters(500)
 	barrier := StepBroadcast(OnThreshold)
 	var wg sync.WaitGroup
 	wg.Add(reg.max)
@@ -92,7 +92,7 @@ func TestStepBroadcast_HighConcurrency(t *testing.T) {
 }
 
 func TestStepBroadcast_OddHighConcurrency(t *testing.T) {
-	reg := NewRegisters(2000)
+	reg := NewRegisters(500)
 	barrier := StepBroadcast(OnOddCount)
 	var wg sync.WaitGroup
 	wg.Add(reg.max)

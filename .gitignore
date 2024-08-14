@@ -2,3 +2,5 @@
 /pkg/structs/tree/
 /pkg/pipe/_pipe2/
 /pkg/pipe/connectable/
+/pkg/arrays/sorted_test.go
+/pkg/structs/search/
