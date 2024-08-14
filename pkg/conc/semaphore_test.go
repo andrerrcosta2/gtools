@@ -25,14 +25,12 @@ func TestSemaphore_AcquireRelease(t *testing.T) {
 
 			// Acquire the semaphore
 			sem.Acq()
-			t.Logf("Goroutine %d acquired the semaphore", id)
 
 			// Simulate work
 			time.Sleep(1 * time.Second)
 
 			// Release the semaphore
 			sem.Rls()
-			t.Logf("Goroutine %d released the semaphore", id)
 		}(i)
 	}
 
@@ -57,14 +55,12 @@ func TestSemaphore_OverCapacity(t *testing.T) {
 
 		// Acquire the semaphore
 		sem.Acq()
-		t.Logf("Goroutine %d acquired the semaphore", id)
 
 		// Simulate work
 		time.Sleep(2 * time.Second)
 
 		// Release the semaphore
 		sem.Rls()
-		t.Logf("Goroutine %d released the semaphore", id)
 	}(1)
 
 	// Start the second goroutine to test blocking behavior
@@ -84,9 +80,6 @@ func TestSemaphore_OverCapacity(t *testing.T) {
 		// Calculate the duration waited
 		duration := time.Since(start)
 
-		// Log the result
-		t.Logf("Goroutine %d acquired the semaphore after waiting %v", id, duration)
-
 		// I'm not sure how to measure more accurately using time.Time. It very often returns imprecise results.
 		if duration < 1*time.Second {
 			t.Errorf("Goroutine %d should have waited at least 2 seconds, waited %v", id, duration)
@@ -94,7 +87,6 @@ func TestSemaphore_OverCapacity(t *testing.T) {
 
 		// Release the semaphore
 		sem.Rls()
-		t.Logf("Goroutine %d released the semaphore", id)
 	}(2)
 
 	// Wait for the goroutines to finish
@@ -117,12 +109,10 @@ func TestSemaphore_ConcurrentAcquisitions(t *testing.T) {
 			defer wg.Done()
 			// Acquire the semaphore.
 			sem.Acq()
-			t.Logf("Goroutine %d acquired the semaphore", id)
 			// Simulate work by sleeping for 1 second.
 			time.Sleep(1 * time.Second)
 			// Release the semaphore.
 			sem.Rls()
-			t.Logf("Goroutine %d released the semaphore", id)
 		}(i)
 	}
 
@@ -150,14 +140,12 @@ func TestSemaphore_Capacity(t *testing.T) {
 
 			// Acquire the semaphore
 			sem.Acq()
-			t.Logf("Goroutine %d acquired the semaphore", id)
 
 			// Simulate work by sleeping for 1 second
 			time.Sleep(1 * time.Second)
 
 			// Release the semaphore
 			sem.Rls()
-			t.Logf("Goroutine %d released the semaphore", id)
 		}(i)
 	}
 
@@ -193,13 +181,9 @@ func TestReadWriteSemaphore_MultipleReaders(t *testing.T) {
 
 			// Start the read operation
 			rw.StartR()
-			t.Logf("Reader %d started reading", id)
 
 			// Simulate the read operation
 			time.Sleep(100 * time.Millisecond)
-
-			// Log the end of the read operation
-			t.Logf("Reader %d finished reading", id)
 
 			// End the read operation
 			rw.EndR()
@@ -239,13 +223,11 @@ func TestReadWriteSemaphore_WriterBlocksUntilReadersDone(t *testing.T) {
 
 			// Start the read operation
 			rw.StartR()
-			t.Logf("Reader %d started reading", id)
 
 			// Simulate the read operation
 			time.Sleep(200 * time.Millisecond)
 
 			// Log the end of the read operation
-			t.Logf("Reader %d finished reading", id)
 
 			// End the read operation
 			rw.EndR()
@@ -262,11 +244,9 @@ func TestReadWriteSemaphore_WriterBlocksUntilReadersDone(t *testing.T) {
 
 		// Start the write operation
 		rw.StartW()
-		t.Log("Writer started writing")
 
 		// End the write operation
 		rw.EndW()
-		t.Log("Writer finished writing")
 	}()
 
 	// Wait for all readers and the writer to finish
@@ -299,13 +279,11 @@ func TestReadWriteSemaphore_ReaderBlocksDuringWrite(t *testing.T) {
 
 		// Start the write operation
 		rw.StartW()
-		t.Log("Writer started writing")
 
 		// Simulate the write operation
 		time.Sleep(200 * time.Millisecond)
 
 		// Log the end of the write operation
-		t.Log("Writer finished writing")
 
 		// End the write operation
 		rw.EndW()
@@ -321,11 +299,9 @@ func TestReadWriteSemaphore_ReaderBlocksDuringWrite(t *testing.T) {
 
 		// Start the read operation
 		rw.StartR()
-		t.Log("Reader started reading")
 
 		// End the read operation
 		rw.EndR()
-		t.Log("Reader finished reading")
 	}()
 
 	// Wait for the writer and reader to finish
@@ -356,10 +332,8 @@ func TestReadWriteSemaphore_OnlyOneWriter(t *testing.T) {
 		defer wg.Done()
 		// Start the write operation
 		rw.StartW()
-		t.Log("Writer 1 started writing")
 		// Simulate the write operation
 		time.Sleep(200 * time.Millisecond)
-		t.Log("Writer 1 finished writing")
 		// End the write operation
 		rw.EndW()
 	}()
@@ -372,10 +346,8 @@ func TestReadWriteSemaphore_OnlyOneWriter(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 		// Start the write operation
 		rw.StartW()
-		t.Log("Writer 2 started writing")
 		// End the write operation
 		rw.EndW()
-		t.Log("Writer 2 finished writing")
 	}()
 
 	// Wait for the writers to finish
