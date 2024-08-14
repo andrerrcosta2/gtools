@@ -48,3 +48,32 @@ func TestIsBuiltinType(t *testing.T) {
 		})
 	}
 }
+
+func TestXrtSymbol(t *testing.T) {
+	tests := []struct {
+		input            string
+		expectedSymbol   string
+		expectedVariable string
+	}{
+		{"***lib32.ThreeA", "***", "lib32.ThreeA"},
+		{"&&ThreeA", "&&", "ThreeA"},
+		{"*int", "*", "int"},
+		{"**string", "**", "string"},
+		{"***MyType", "***", "MyType"},
+		{"&&SomeOtherType", "&&", "SomeOtherType"},
+		{"&pkg.TypeName", "&", "pkg.TypeName"},
+		{"**pkg.Subpkg.TypeName", "**", "pkg.Subpkg.TypeName"},
+		{"lib32.ThreeA", "", "lib32.ThreeA"},
+		{"int", "", "int"},
+	}
+
+	for _, tt := range tests {
+		symbol, variable := XrtSymbol(tt.input)
+		if symbol != tt.expectedSymbol {
+			t.Errorf("XrtSymbol(%q) symbol = %v, want %v", tt.input, symbol, tt.expectedSymbol)
+		}
+		if variable != tt.expectedVariable {
+			t.Errorf("XrtSymbol(%q) variable = %v, want %v", tt.input, variable, tt.expectedVariable)
+		}
+	}
+}
