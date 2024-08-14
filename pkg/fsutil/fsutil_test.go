@@ -52,6 +52,12 @@ func TestBuildPath(t *testing.T) {
 			expected:  "",
 			expectErr: true,
 		},
+		{
+			name:     "Literal",
+			pathType: Literal,
+			dir:      "any/dir",
+			expected: "any/dir",
+		},
 	}
 
 	for _, tt := range tests {

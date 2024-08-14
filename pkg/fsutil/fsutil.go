@@ -14,9 +14,10 @@ import (
 // It takes a pathType of type PathType and a dir of type string as input.
 // The function returns the constructed path as a string and an error if any.
 // The pathType parameter determines the type of path to be constructed.
+// If pathType is Literal, the function returns the directory as-is.
 // If pathType is Relative, the function constructs a path relative to the current working directory.
 // If pathType is Root, the function constructs a path relative to the module path.
-// If pathType is neither Relative nor Root, an error is returned.
+// If pathType is neither Literal, Relative nor Root, an error is returned.
 func BuildPath(pathType PathType, dir string) (string, error) {
 	// Get the current working directory
 	workDir, err := os.Getwd()
@@ -24,6 +25,9 @@ func BuildPath(pathType PathType, dir string) (string, error) {
 		return "", fmt.Errorf("error getting current working directory: %v", err)
 	}
 	switch pathType {
+	case Literal:
+		// Return the directory as-is
+		return dir, nil
 	case Relative:
 		// Construct a path relative to the current working directory
 		dir = filepath.ToSlash(filepath.Join(workDir, dir))

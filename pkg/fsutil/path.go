@@ -7,6 +7,7 @@ type PathType int
 const (
 	Relative PathType = iota
 	Root
+	Literal
 )
 
 type Path struct {
