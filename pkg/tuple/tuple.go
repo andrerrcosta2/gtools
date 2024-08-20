@@ -49,6 +49,28 @@ type Triple[A any, B any, C any] struct {
 	third  C
 }
 
+func (t *Triple[A, B, C]) First() A {
+	return t.first
+}
+
+func (t *Triple[A, B, C]) Second() B {
+	return t.second
+}
+
+func (t *Triple[A, B, C]) Third() C {
+	return t.third
+}
+
+func DerefTriple[A any, B any, C any](t generics.TriTypedInterface[A, B, C]) (A, B, C) {
+	var aZero A
+	var bZero B
+	var cZero C
+	if p, ok := t.(*Triple[A, B, C]); ok {
+		return p.first, p.second, p.third
+	}
+	return aZero, bZero, cZero
+}
+
 var _ generics.TriTypedInterface[string, string, string] = (*Triple[string, string, string])(nil)
 
 type Quad[A any, B any, C any, D any] struct {

@@ -8,6 +8,8 @@ type Set[T any] interface {
 	Remove(T)
 	Len() int
 	Values() []T
+	Clear()
+	Equals(Set[T]) bool
 }
 
 func Map[T any, S comparable](arr []T, f func(v T) S) Set[S] {

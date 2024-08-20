@@ -3,6 +3,7 @@
 package gtools
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -59,7 +60,7 @@ func TestConcurrentStackableError_From(t *testing.T) {
 		t.Fatalf("expected stack length of 2 but got %d", got)
 	}
 
-	if got := cse.Unwrap(); got != secondErr {
+	if got := cse.Unwrap(); !errors.Is(got, secondErr) {
 		t.Fatalf("expected second error but got %v", got)
 	}
 }

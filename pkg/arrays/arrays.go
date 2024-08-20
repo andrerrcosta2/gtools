@@ -287,6 +287,9 @@ func Contains[T comparable](arr []T, val T) bool {
 // Returns:
 // - bool: true if all elements in exp are present in res, false otherwise
 func ContainsAllBy[T any, R any](exp []T, res []R, compare functions.BiFunction[T, R, bool]) bool {
+	if len(exp) > len(res) {
+		return false
+	}
 	// Iterate over each element in the expected slice
 	for _, expStc := range exp {
 		found := false
@@ -298,7 +301,7 @@ func ContainsAllBy[T any, R any](exp []T, res []R, compare functions.BiFunction[
 				break
 			}
 		}
-		// If the current element in the expected slice is not found in the result slice, return false
+		// If the current element in the expected slice isn't found in the result slice, return false
 		if !found {
 			return false
 		}
@@ -382,7 +385,7 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 	return result
 }
 
-// Equal checks if two slices of comparable elements are equal.
+// Equals checks if two slices of comparable elements are equal.
 //
 // Parameters:
 // - a: the first slice
@@ -390,7 +393,7 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 //
 // Returns:
 // - bool: true if the slices are equal, false otherwise
-func Equal[T comparable](a, b []T) bool {
+func Equals[T comparable](a, b []T) bool {
 	// Check if the slices have different lengths
 	if len(a) != len(b) {
 		return false
@@ -407,7 +410,7 @@ func Equal[T comparable](a, b []T) bool {
 	return true
 }
 
-// EqualBy checks if two slices of elements are equal based on a given function.
+// EqualsBy checks if two slices of elements are equal based on a given function.
 // The function f is used to compare elements of the slices.
 // The function returns true if the slices are equal, false otherwise.
 //
@@ -418,7 +421,7 @@ func Equal[T comparable](a, b []T) bool {
 //
 // Returns:
 // - bool: true if the slices are equal, false otherwise
-func EqualBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
+func EqualsBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
 	// Check if the slices have different lengths
 	if len(a) != len(b) {
 		return false
@@ -432,6 +435,36 @@ func EqualBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
 	}
 
 	// Slices are equal
+	return true
+}
+
+// SortedEqualsBy checks if two sorted slices of elements are equal based on a given equality function.
+// The function eq is used to compare elements of the slices.
+// The function returns true if the slices are equal, false otherwise.
+//
+// Parameters:
+// - a: the first slice
+// - b: the second slice
+// - eq: the function used to compare elements of the slices
+//
+// Returns:
+// - bool: true if the slices are equal, false otherwise
+func SortedEqualsBy[T any](a, b []T, eq functions.BiFunction[T, T, bool]) bool {
+	// Check if the slices have different lengths
+	if len(a) != len(b) {
+		// If lengths are different, slices cannot be equal
+		return false
+	}
+
+	// Compare each element of the slices using the function eq
+	for i := range a {
+		// If any pair of elements is not equal, return false
+		if !eq(a[i], b[i]) {
+			return false
+		}
+	}
+
+	// If all elements are equal, return true
 	return true
 }
 

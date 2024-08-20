@@ -20,6 +20,9 @@ type Supplier[T any] func() T
 // Supplier2 represents a function that returns two values of type T and K.
 type Supplier2[T any, K any] func() (T, K)
 
+// Predicate represents a function that takes a value of type T and returns a boolean.
+type Predicate[T any] func(T) bool
+
 // BiPredicate represents a function that takes two values of type T and U and returns a boolean.
 type BiPredicate[T any, U any] func(T, U) bool
 
@@ -31,6 +34,9 @@ type BiFunction2[T any, U any, R any, R2 any] func(T, U) (R, R2)
 
 // BiConsumer represents a function that takes two values of type T and U and returns nothing.
 type BiConsumer[T any, U any] func(T, U)
+
+// TriConsumer represents a function that takes three values of type T, U, and V and returns nothing.
+type TriConsumer[T any, U any, V any] func(T, U, V)
 
 // Identity returns the input value unchanged.
 // This function serves as an identity function for any type.

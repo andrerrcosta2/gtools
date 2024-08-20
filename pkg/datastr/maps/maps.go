@@ -10,12 +10,14 @@ import (
 	"sort"
 )
 
-type Entry[K comparable, V any] struct {
-	Key   K
-	Value V
+// Entry is an interface that represents an entry in a map.
+type Entry[K any, V any] interface {
+	Key() K
+	Value() V
+	String() string
 }
 
-// NewEntry creates a new Entry struct with the given key and value.
+// NewAnyEntry creates a new AnyEntry struct with the given key and value.
 //
 // Parameters:
 // - key: The key of the Entry.
@@ -23,12 +25,63 @@ type Entry[K comparable, V any] struct {
 //
 // Returns:
 // - A pointer to the newly created Entry.
-func NewEntry[K comparable, V any](key K, value V) *Entry[K, V] {
+func NewAnyEntry[K any, V any](key K, value V) *AnyEntry[K, V] {
 	// Create a new Entry struct with the given key and value.
-	return &Entry[K, V]{
-		Key:   key,   // Set the key of the Entry.
-		Value: value, // Set the value of the Entry.
+	return &AnyEntry[K, V]{
+		key:   key,   // Set the key of the Entry.
+		value: value, // Set the value of the Entry.
 	}
+}
+
+// AnyEntry is a struct that implements the Entry interface for any type of key and value.
+type AnyEntry[K any, V any] struct {
+	key   K
+	value V
+}
+
+func (e *AnyEntry[K, V]) Key() K {
+	return e.key
+}
+
+func (e *AnyEntry[K, V]) Value() V {
+	return e.value
+}
+
+func (e *AnyEntry[K, V]) String() string {
+	return fmt.Sprintf("%v: %v", e.key, e.value)
+}
+
+// NewComparableEntry creates a new ComparableEntry struct with the given key and value.
+//
+// Parameters:
+// - key: The key of the entry.
+// - value: The value of the entry.
+//
+// Returns:
+// - A pointer to the newly created ComparableEntry.
+func NewComparableEntry[K comparable, V any](key K, value V) *ComparableEntry[K, V] {
+	// Create a new ComparableEntry struct with the given key and value.
+	return &ComparableEntry[K, V]{
+		key:   key,   // Set the key of the entry.
+		value: value, // Set the value of the entry.
+	}
+}
+
+type ComparableEntry[K comparable, V any] struct {
+	key   K
+	value V
+}
+
+func (e *ComparableEntry[K, V]) Key() K {
+	return e.key
+}
+
+func (e *ComparableEntry[K, V]) Value() V {
+	return e.value
+}
+
+func (e *ComparableEntry[K, V]) String() string {
+	return fmt.Sprintf("%v: %v", e.key, e.value)
 }
 
 // NewEntrySet creates a new EntrySet struct from a slice of Entry structs.
@@ -40,15 +93,15 @@ func NewEntry[K comparable, V any](key K, value V) *Entry[K, V] {
 //
 // Returns:
 // - A pointer to the newly created EntrySet struct.
-func NewEntrySet[K comparable, V any](e []*Entry[K, V]) *EntrySet[K, V] {
+func NewEntrySet[K comparable, V any](e []*ComparableEntry[K, V]) *EntrySet[K, V] {
 	// Create a new EntrySet struct with an empty map of entries.
 	entryset := &EntrySet[K, V]{
-		entries: make(map[K]*Entry[K, V]),
+		entries: make(map[K]*ComparableEntry[K, V]),
 	}
 
 	// Add each entry from the input slice to the EntrySet's map of entries.
 	for _, entry := range e {
-		entryset.entries[entry.Key] = entry
+		entryset.entries[entry.Key()] = entry
 	}
 
 	// Return the newly created EntrySet struct.
@@ -56,7 +109,7 @@ func NewEntrySet[K comparable, V any](e []*Entry[K, V]) *EntrySet[K, V] {
 }
 
 type EntrySet[K comparable, V any] struct {
-	entries map[K]*Entry[K, V]
+	entries map[K]*ComparableEntry[K, V]
 }
 
 // Add adds one or more entries to the EntrySet.
@@ -66,9 +119,9 @@ type EntrySet[K comparable, V any] struct {
 //
 // Returns:
 // - An error if any entry addition fails.
-func (e *EntrySet[K, V]) Add(entry ...*Entry[K, V]) error {
+func (e *EntrySet[K, V]) Add(entry ...*ComparableEntry[K, V]) error {
 	for _, ent := range entry {
-		if err := addEntry[K, V](e, ent.Key, ent.Value); err != nil {
+		if err := addEntry[K, V](e, ent.Key(), ent.Value()); err != nil {
 			return err
 		}
 	}
@@ -93,7 +146,7 @@ func addEntry[K comparable, V any](set *EntrySet[K, V], key K, value V) error {
 	// Check if the key already exists in the EntrySet
 	if _, ok := set.entries[key]; !ok {
 		// If the key doesn't exist, create a new Entry with the given key and value and add it to the EntrySet
-		set.entries[key] = &Entry[K, V]{Key: key, Value: value}
+		set.entries[key] = &ComparableEntry[K, V]{key: key, value: value}
 		return nil
 	}
 
@@ -113,7 +166,7 @@ func (e *EntrySet[K, V]) Keys() []K {
 	// Iterate over all the entries in the EntrySet.
 	for _, entry := range e.entries {
 		// Append the key of the current entry to the result slice.
-		result = append(result, entry.Key)
+		result = append(result, entry.Key())
 	}
 
 	// Return the resulting slice.
@@ -132,7 +185,7 @@ func (e *EntrySet[K, V]) Values() []V {
 	// Iterate over all the entries in the EntrySet.
 	for _, entry := range e.entries {
 		// Append the value of the current entry to the result slice.
-		result = append(result, entry.Value)
+		result = append(result, entry.Value())
 	}
 
 	// Return the resulting slice.
@@ -168,7 +221,7 @@ func Each[K comparable, V any](m map[K]V, f functions.BiConsumer[K, V]) {
 //
 // Returns:
 // - A new map with the same keys as the input map, but with values obtained by applying the BiFunction to each key-value pair.
-func Map[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *Entry[L, X]]) map[L]X {
+func Map[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *ComparableEntry[L, X]]) map[L]X {
 	// Create a new map with initial capacity equal to the number of entries in the input map.
 	result := make(map[L]X, len(m))
 
@@ -178,7 +231,7 @@ func Map[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunc
 		entry := f(k, v)
 
 		// Add the key-value pair from the Entry to the result map.
-		result[entry.Key] = entry.Value
+		result[entry.Key()] = entry.Value()
 	}
 
 	// Return the resulting map.
@@ -193,9 +246,9 @@ func Map[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunc
 //
 // Returns:
 // - A new EntrySet with the same keys as the input map, but with values obtained by applying the BiFunction to each key-value pair.
-func MapEntries[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *Entry[L, X]]) *EntrySet[L, X] {
+func MapEntries[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *ComparableEntry[L, X]]) *EntrySet[L, X] {
 	// Create a new EntrySet with initial capacity equal to the number of entries in the input map.
-	entries := NewEntrySet(make([]*Entry[L, X], 0, len(m)))
+	entries := NewEntrySet(make([]*ComparableEntry[L, X], 0, len(m)))
 
 	// Iterate over each key-value pair in the input map.
 	for k, v := range m {

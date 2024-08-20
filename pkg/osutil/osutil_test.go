@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-const seedDir = "./../_test/seed/txt/"
+const seedDir = "./../testdata/seed/txt/"
 
 func TestReadFiles_Success(t *testing.T) {
 	pattern := filepath.Join(seedDir, "*.txt")
