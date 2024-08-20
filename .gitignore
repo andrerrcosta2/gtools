@@ -4,3 +4,4 @@
 /pkg/pipe/connectable/
 /pkg/arrays/sorted_test.go
 /pkg/structs/search/
+/pkg/datastr/tree/

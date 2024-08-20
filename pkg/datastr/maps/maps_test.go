@@ -13,62 +13,62 @@ import (
 	"testing"
 )
 
-func TestNewEntry(t *testing.T) {
-	e1 := NewEntry(1, 2)
-	if e1.Key != 1 || e1.Value != 2 {
-		t.Errorf("NewEntry() = %v, want %v", e1, Entry[int, int]{1, 2})
+func TestNewComparableEntry(t *testing.T) {
+	e1 := NewComparableEntry(1, 2)
+	if e1.Key() != 1 || e1.Value() != 2 {
+		t.Errorf("NewComparableEntry() = %v, want %v", e1, ComparableEntry[int, int]{1, 2})
 	}
-	e2 := NewEntry("key", "value")
-	if e2.Key != "key" || e2.Value != "value" {
-		t.Errorf("NewEntry() = %v, want %v", e2, Entry[string, string]{"key", "value"})
+	e2 := NewComparableEntry("key", "value")
+	if e2.Key() != "key" || e2.Value() != "value" {
+		t.Errorf("NewComparableEntry() = %v, want %v", e2, ComparableEntry[string, string]{"key", "value"})
 	}
 }
 
 func TestNewEntrySet(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
 
-	if e1.entries["1"].Key != "1" || e1.entries["1"].Value != 2 || e1.entries["2"].Key != "2" || e1.entries["2"].Value != 4 {
+	if e1.entries["1"].Key() != "1" || e1.entries["1"].Value() != 2 || e1.entries["2"].Key() != "2" || e1.entries["2"].Value() != 4 {
 		t.Errorf("NewEntrySet() = %v, want %v", e1, EntrySet[string, int]{
-			entries: map[string]*Entry[string, int]{
-				"1": NewEntry("1", 2),
-				"2": NewEntry("2", 4),
+			entries: map[string]*ComparableEntry[string, int]{
+				"1": NewComparableEntry("1", 2),
+				"2": NewComparableEntry("2", 4),
 			},
 		})
 	}
 
-	e2 := NewEntrySet([]*Entry[string, string]{NewEntry("key", "value")})
-	if e2.entries["key"].Key != "key" || e2.entries["key"].Value != "value" {
+	e2 := NewEntrySet([]*ComparableEntry[string, string]{NewComparableEntry("key", "value")})
+	if e2.entries["key"].Key() != "key" || e2.entries["key"].Value() != "value" {
 		t.Errorf("NewEntrySet() = %v, want %v", e2, EntrySet[string, string]{
-			entries: map[string]*Entry[string, string]{"key": NewEntry("key", "value")},
+			entries: map[string]*ComparableEntry[string, string]{"key": NewComparableEntry("key", "value")},
 		})
 	}
 }
 
 func TestAddEntry(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
-	e1.Add(NewEntry("3", 6), NewEntry("4", 8))
-	if e1.entries["3"].Key != "3" || e1.entries["3"].Value != 6 {
+	e1.Add(NewComparableEntry("3", 6), NewComparableEntry("4", 8))
+	if e1.entries["3"].Key() != "3" || e1.entries["3"].Value() != 6 {
 		t.Errorf("AddEntry() = %v, want %v", e1, EntrySet[string, int]{
-			entries: map[string]*Entry[string, int]{
-				"1": NewEntry("1", 2),
-				"2": NewEntry("2", 4),
-				"3": NewEntry("3", 6),
-				"4": NewEntry("4", 8),
+			entries: map[string]*ComparableEntry[string, int]{
+				"1": NewComparableEntry("1", 2),
+				"2": NewComparableEntry("2", 4),
+				"3": NewComparableEntry("3", 6),
+				"4": NewComparableEntry("4", 8),
 			},
 		})
 	}
 }
 
 func TestKeys(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
 	keys := e1.Keys()
 	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
@@ -78,9 +78,9 @@ func TestKeys(t *testing.T) {
 }
 
 func TestValues(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
 	values := e1.Values()
 	if values[0] != 2 && values[0] != 4 || values[1] != 2 && values[1] != 4 {
@@ -89,9 +89,9 @@ func TestValues(t *testing.T) {
 }
 
 func TestEntrySet_Len(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
 	if e1.Len() != 2 {
 		t.Errorf("EntrySet.Len() = %v, want %v", e1.Len(), 2)
@@ -99,17 +99,17 @@ func TestEntrySet_Len(t *testing.T) {
 }
 
 func TestEach(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
 
-	Each(e1.entries, func(k string, v *Entry[string, int]) {
-		if k != "1" && k != "2" || v.Value != 2 && v.Value != 4 {
+	Each(e1.entries, func(k string, v *ComparableEntry[string, int]) {
+		if k != "1" && k != "2" || v.Value() != 2 && v.Value() != 4 {
 			t.Errorf("Each() = %v, want %v", e1, EntrySet[string, int]{
-				entries: map[string]*Entry[string, int]{
-					"1": NewEntry("1", 2),
-					"2": NewEntry("2", 4),
+				entries: map[string]*ComparableEntry[string, int]{
+					"1": NewComparableEntry("1", 2),
+					"2": NewComparableEntry("2", 4),
 				},
 			})
 		}
@@ -117,30 +117,31 @@ func TestEach(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
-	e1 := NewEntrySet([]*Entry[string, int]{
-		NewEntry("1", 2),
-		NewEntry("2", 4)},
+	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+		NewComparableEntry("1", 2),
+		NewComparableEntry("2", 4)},
 	)
-	m := Map(e1.entries, func(k string, v *Entry[string, int]) *Entry[string, int] {
-		return NewEntry(k, v.Value*2)
+	m := Map(e1.entries, func(k string, v *ComparableEntry[string, int]) *ComparableEntry[string, int] {
+		return NewComparableEntry[string, int](k, v.Value()*2)
 	})
 
 	if m["1"] != 4 || m["2"] != 8 {
-		t.Errorf("Map() = %v, want %v", m, map[string]*Entry[string, int]{"1": NewEntry("1", 4), "2": NewEntry("2", 8)})
+		t.Errorf("Map() = %v, want %v", m, map[string]*ComparableEntry[string, int]{"1": NewComparableEntry("1", 4), "2": NewComparableEntry("2", 8)})
 	}
 }
 
 func TestMapEntries(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
-	e1 := MapEntries(m, func(k string, v int) *Entry[string, int] {
-		return NewEntry(k, v)
+	e1 := MapEntries(m, func(k string, v int) *ComparableEntry[string, int] {
+		return NewComparableEntry(k, v)
 	})
-	if e1.entries["a"].Key != "a" || e1.entries["a"].Value != 1 || e1.entries["b"].Key != "b" || e1.entries["b"].Value != 2 || e1.entries["c"].Key != "c" || e1.entries["c"].Value != 3 {
+	if e1.entries["a"].Key() != "a" || e1.entries["a"].Value() != 1 || e1.entries["b"].Key() != "b" ||
+		e1.entries["b"].Value() != 2 || e1.entries["c"].Key() != "c" || e1.entries["c"].Value() != 3 {
 		t.Errorf("MapEntries() = %v, want %v", e1, EntrySet[string, int]{
-			entries: map[string]*Entry[string, int]{
-				"a": NewEntry("a", 1),
-				"b": NewEntry("b", 2),
-				"c": NewEntry("c", 3),
+			entries: map[string]*ComparableEntry[string, int]{
+				"a": NewComparableEntry("a", 1),
+				"b": NewComparableEntry("b", 2),
+				"c": NewComparableEntry("c", 3),
 			},
 		})
 	}
@@ -242,7 +243,7 @@ func TestFlatValuesSorted(t *testing.T) {
 	expected1 := []int{6, 5, 4, 3, 2, 1}
 	result1 := FlatValuesSorted(map1, func(v int) int { return v }, func(i, j int) bool { return i > j })
 
-	if !arrays.Equal(result1, expected1) {
+	if !arrays.Equals(result1, expected1) {
 		t.Errorf("Test Case 1 Failed: expected %v, got %v", expected1, result1)
 	}
 
@@ -255,7 +256,7 @@ func TestFlatValuesSorted(t *testing.T) {
 	expected2 := []string{"antelope", "carmine", "banana", "apple", "lion", "red"}
 	result2 := FlatValuesSorted(map2, func(v string) string { return v }, func(i, j string) bool { return len(i) > len(j) })
 
-	if !arrays.Equal(result2, expected2) {
+	if !arrays.Equals(result2, expected2) {
 		t.Errorf("Test Case 2 Failed: expected %v, got %v", expected2, result2)
 	}
 
@@ -266,7 +267,7 @@ func TestFlatValuesSorted(t *testing.T) {
 	expected3 := []string{"APPLE", "BANANA", "CHERRY"}
 	result3 := FlatValuesSorted(map3, func(v string) string { return strings.ToUpper(v) }, func(i, j string) bool { return i < j })
 
-	if !arrays.Equal(result3, expected3) {
+	if !arrays.Equals(result3, expected3) {
 		t.Errorf("Test Case 3 Failed: expected %v, got %v", expected3, result3)
 	}
 }

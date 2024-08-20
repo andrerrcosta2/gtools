@@ -1,13 +1,12 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package types
+package typers
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/structs/sets"
 	"strings"
 )
 
-var Builtins = sets.NewString(
+var Builtins = []string{
 	"string", "bool", "int", "int8", "int16", "int32", "int64",
 	"uint", "uint8", "uint16", "uint32", "uint64", "uintptr",
 	"byte", "rune", "float32", "float64", "complex64", "complex128",
@@ -24,12 +23,17 @@ var Builtins = sets.NewString(
 	"&uint", "&uint8", "&uint16", "&uint32", "&uint64", "&uintptr",
 	"&byte", "&rune", "&float32", "&float64", "&complex64", "&complex128",
 	"&error", "&interface{}", "&struct{}", "&map", "&chan", "&func", "&any",
-)
+}
 
 func IsBuiltinType(typ string) bool {
 	// Remove leading pointer/reference symbols
 	trimmedType := strings.TrimPrefix(strings.TrimPrefix(typ, "*"), "&")
-	return Builtins.Has(typ) || Builtins.Has(trimmedType)
+	for _, builtin := range Builtins {
+		if builtin == trimmedType || builtin == typ {
+			return true
+		}
+	}
+	return false
 }
 
 // XrtSymbol extracts the symbol and variable from a type string.
@@ -47,4 +51,29 @@ func XrtSymbol(typ string) (symbol string, variable string) {
 	}
 	// If there are no symbols, return an empty symbol and the full type as the variable
 	return "", typ
+}
+
+func Or[G any, K any](a any) any {
+	if val, ok := a.(G); ok {
+		return val
+	}
+	if val, ok := a.(K); ok {
+		return val
+	}
+	return nil
+}
+
+func Ors[G any, K any](a ...any) ([]G, []K) {
+	gs := make([]G, 0, len(a))
+	ks := make([]K, 0, len(a))
+
+	for _, value := range a {
+		if val, ok := value.(G); ok {
+			gs = append(gs, val)
+		}
+		if val, ok := value.(K); ok {
+			ks = append(ks, val)
+		}
+	}
+	return gs, ks
 }

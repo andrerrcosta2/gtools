@@ -16,7 +16,6 @@ func Sorted[T constraints.Ordered](arr []T) SortedSlice[T] {
 	sort.Slice(arr, func(i, j int) bool {
 		return arr[i] < arr[j]
 	})
-
 	// Return the sorted slice
 	return arr
 }
