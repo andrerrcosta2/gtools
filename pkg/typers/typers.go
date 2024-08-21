@@ -33,7 +33,10 @@ func IsBuiltinType(typ string) bool {
 		strings.HasPrefix(typ, "func(") ||
 		strings.HasPrefix(typ, "func ") ||
 		strings.HasPrefix(typ, "map[") ||
-		strings.HasPrefix(typ, "map ") {
+		strings.HasPrefix(typ, "map ") ||
+		strings.HasPrefix(typ, "[]") ||
+		strings.HasPrefix(typ, "[] ") ||
+		strings.HasPrefix(typ, "[ ") {
 		return true
 	}
 	for _, builtin := range Builtins {
