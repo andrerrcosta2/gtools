@@ -19,7 +19,7 @@ func DepthFirst[T any, K constraints.Ordered](g iterables.Deliverer[T], nodeKey 
 	visited := map[K]struct{}{}
 
 	// Start the depth-first search from the given start node.
-	dfs[T, K](nodeKey, visited, g, result)
+	dfs(g, nodeKey, visited, &result)
 
 	// Return the slice of visited nodes in the order they were visited.
 	return result
@@ -27,9 +27,9 @@ func DepthFirst[T any, K constraints.Ordered](g iterables.Deliverer[T], nodeKey 
 
 // dfs performs a recursive depth-first search on the graph starting from the given node.
 // It marks the node as visited, adds it to the result, and recursively visits all its neighbors.
-func dfs[T any, K constraints.Ordered](currentKey K, visited map[K]struct{}, g iterables.Deliverer[T], result []T) {
+func dfs[T any, K constraints.Ordered](g iterables.Deliverer[T], currentKey K, visited map[K]struct{}, result *[]T) {
 	// Check if the node has already been visited to avoid infinite loops.
-	if visited[currentKey] == struct{}{} {
+	if _, ok := visited[currentKey]; ok {
 		// If the node is already visited, return immediately to prevent revisiting.
 		return
 	}
@@ -40,14 +40,14 @@ func dfs[T any, K constraints.Ordered](currentKey K, visited map[K]struct{}, g i
 	// Convert the key back to the node type (T) to add it to the result.
 	currentNode := any(currentKey).(T)
 	// Add the current node to the result slice.
-	result = append(result, currentNode)
+	*result = append(*result, currentNode)
 
 	// Recursively visit all neighbors of the current node.
 	for _, neighbor := range g.Deliver(currentNode) {
 		// Convert the neighbor to the appropriate key type (K) for the recursive call.
 		neighborKey := xnk(neighbor).(K)
 		// Recursively call dfs on the neighbor node.
-		dfs[T, K](neighborKey, visited, g, result)
+		dfs(g, neighborKey, visited, result)
 	}
 }
 
