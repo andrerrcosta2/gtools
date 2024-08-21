@@ -29,6 +29,9 @@ var Builtins = []string{
 func IsBuiltinType(typ string) bool {
 	// Remove leading pointer/reference symbols
 	trimmedType := strings.TrimPrefix(strings.TrimPrefix(typ, "*"), "&")
+	if strings.HasPrefix(typ, "chan ") {
+		return true
+	}
 	for _, builtin := range Builtins {
 		if builtin == trimmedType || builtin == typ {
 			return true
