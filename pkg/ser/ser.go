@@ -31,7 +31,7 @@ func Json(s any) string {
 func UnmarshalSingle[T any](out *T, data []byte) error {
 	var err error
 
-	if !arrays.Empty(data) && data[0] == '[' {
+	if !arrays.Empty(&data) && data[0] == '[' {
 		return fmt.Errorf("unexpected array data for single value unmarshal: %s", string(data))
 	}
 

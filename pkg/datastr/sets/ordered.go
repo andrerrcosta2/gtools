@@ -82,7 +82,7 @@ func (o *OrderedSet[T]) Values() []T {
 
 // Get returns the element at the given index.
 func (o *OrderedSet[T]) Get(i int) (T, bool) {
-	if !arrays.OutOfBounds(o.items, i) {
+	if !arrays.OutOfBounds(&o.items, i) {
 		return o.items[i], true
 	}
 	var zeroValue T
@@ -91,7 +91,7 @@ func (o *OrderedSet[T]) Get(i int) (T, bool) {
 
 // Exclude removes an element at the given index.
 func (o *OrderedSet[T]) Exclude(i int) bool {
-	if !arrays.OutOfBounds(o.items, i) {
+	if !arrays.OutOfBounds(&o.items, i) {
 		o.items = append(o.items[:i], o.items[i+1:]...)
 		return true
 	}
@@ -122,8 +122,9 @@ func (o *OrderedSet[T]) Equals(other Set[T]) bool {
 	}
 	switch set := other.(type) {
 	case *OrderedSet[T]:
-		return arrays.Equals[T](o.items, set.items) && maps.Equal(o.index, set.index)
+		return arrays.Equals[T](&o.items, &set.items) && maps.Equal(o.index, set.index)
 	default:
-		return arrays.Equals[T](o.items, set.Values())
+		setValues := set.Values()
+		return arrays.Equals[T](&o.items, &setValues)
 	}
 }

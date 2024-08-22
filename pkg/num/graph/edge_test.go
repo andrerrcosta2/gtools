@@ -3,13 +3,13 @@
 package graph
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/testdata"
+	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"
 )
 
 func TestSingleTypedEdge_Construction(t *testing.T) {
-	from := testdata.TestNode("A")
-	to := testdata.TestNode("B")
+	from := testsortables.TestNode("A")
+	to := testsortables.TestNode("B")
 	edge := NewEdge(from, to)
 
 	if edge.From() != from {
@@ -21,8 +21,8 @@ func TestSingleTypedEdge_Construction(t *testing.T) {
 }
 
 func TestSingleTypedEdge_Unique(t *testing.T) {
-	from := testdata.TestNode("A")
-	to := testdata.TestNode("B")
+	from := testsortables.TestNode("A")
+	to := testsortables.TestNode("B")
 
 	edge := NewEdge(from, to)
 	expectedUnique := "A <-> B"
@@ -33,12 +33,12 @@ func TestSingleTypedEdge_Unique(t *testing.T) {
 }
 
 func TestSingleTypedEdge_Equal(t *testing.T) {
-	from1 := testdata.TestNode("A")
-	to1 := testdata.TestNode("B")
+	from1 := testsortables.TestNode("A")
+	to1 := testsortables.TestNode("B")
 	edge1 := NewEdge(from1, to1)
 
-	from2 := testdata.TestNode("A")
-	to2 := testdata.TestNode("B")
+	from2 := testsortables.TestNode("A")
+	to2 := testsortables.TestNode("B")
 	edge2 := NewEdge(from2, to2)
 
 	if !edge1.Equal(edge2) {
@@ -47,12 +47,12 @@ func TestSingleTypedEdge_Equal(t *testing.T) {
 }
 
 func TestSingleTypedEdge_Less(t *testing.T) {
-	from1 := testdata.TestNode("A")
-	to1 := testdata.TestNode("B")
+	from1 := testsortables.TestNode("A")
+	to1 := testsortables.TestNode("B")
 	edge1 := NewEdge(from1, to1)
 
-	from2 := testdata.TestNode("A")
-	to2 := testdata.TestNode("C")
+	from2 := testsortables.TestNode("A")
+	to2 := testsortables.TestNode("C")
 	edge2 := NewEdge(from2, to2)
 
 	if !edge1.Less(edge2) {
@@ -61,8 +61,8 @@ func TestSingleTypedEdge_Less(t *testing.T) {
 }
 
 func TestSingleTypedWeightedEdge_Construction(t *testing.T) {
-	from := testdata.TestNode("A")
-	to := testdata.TestNode("B")
+	from := testsortables.TestNode("A")
+	to := testsortables.TestNode("B")
 	weight := 10
 	edge := NewWeightedEdge(from, to, weight)
 
@@ -78,8 +78,8 @@ func TestSingleTypedWeightedEdge_Construction(t *testing.T) {
 }
 
 func TestSingleTypedWeightedEdge_Unique(t *testing.T) {
-	from := testdata.TestNode("A")
-	to := testdata.TestNode("B")
+	from := testsortables.TestNode("A")
+	to := testsortables.TestNode("B")
 	weight := 10
 	edge := NewWeightedEdge(from, to, weight)
 	expectedUnique := "A->B"
@@ -90,13 +90,13 @@ func TestSingleTypedWeightedEdge_Unique(t *testing.T) {
 }
 
 func TestSingleTypedWeightedEdge_Equal(t *testing.T) {
-	from1 := testdata.TestNode("A")
-	to1 := testdata.TestNode("B")
+	from1 := testsortables.TestNode("A")
+	to1 := testsortables.TestNode("B")
 	weight1 := 10
 	edge1 := NewWeightedEdge(from1, to1, weight1)
 
-	from2 := testdata.TestNode("A")
-	to2 := testdata.TestNode("B")
+	from2 := testsortables.TestNode("A")
+	to2 := testsortables.TestNode("B")
 	weight2 := 10
 	edge2 := NewWeightedEdge(from2, to2, weight2)
 
@@ -106,13 +106,13 @@ func TestSingleTypedWeightedEdge_Equal(t *testing.T) {
 }
 
 func TestSingleTypedWeightedEdge_Less(t *testing.T) {
-	from1 := testdata.TestNode("A")
-	to1 := testdata.TestNode("B")
+	from1 := testsortables.TestNode("A")
+	to1 := testsortables.TestNode("B")
 	weight1 := 10
 	edge1 := NewWeightedEdge(from1, to1, weight1)
 
-	from2 := testdata.TestNode("A")
-	to2 := testdata.TestNode("C")
+	from2 := testsortables.TestNode("A")
+	to2 := testsortables.TestNode("C")
 	weight2 := 15
 	edge2 := NewWeightedEdge(from2, to2, weight2)
 

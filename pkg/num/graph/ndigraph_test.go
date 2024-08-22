@@ -4,136 +4,125 @@ package graph
 
 import (
 	"github.com/andrerrcosta2/gtools/pkg/arrays"
-	"github.com/andrerrcosta2/gtools/pkg/testdata"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
+	"github.com/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"
 )
 
+// TestAddNode tests adding a node to the undirected graph
 func TestAddNode(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	g.AddNode(nodeA)
+	exp := testsortables.RandomTestNodes(10, "node").Each(g.AddNode)
+	nodesN, expN := g.Nodes(), exp.Values()
 
-	// Assert that the node was added
-	if !g.HasNode(nodeA) {
-		t.Errorf("Node A should be present")
-	}
+	arrays.ContainsAllBy(&nodesN, &expN, functions.ImplementedEquality[testsortables.TestNode])
 }
 
 func TestAddEdge(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	nodeB := testdata.TestNode("B")
+	var expEdges iterables.Slice[*SingleTypedEdge[testsortables.TestNode]]
 
-	g.AddNode(nodeA)
-	g.AddNode(nodeB)
-	g.AddEdge(nodeA, nodeB)
+	testsortables.RandomTestNodes(30, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			g.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				g.AddEdge(it, that)
+				expEdges.Append(NewEdge(it, that))
+			}
+		})
 
-	if !g.HasEdge(nodeA, nodeB) {
-		t.Errorf("Edge from A to B should be present")
-	}
-
-	if !g.HasEdge(nodeB, nodeA) {
-		t.Errorf("Edge from B to A should be present")
-	}
+	expEdges.Each(func(e *SingleTypedEdge[testsortables.TestNode]) {
+		if !g.HasEdge(e.From(), e.To()) {
+			t.Errorf("Expected edge from %s to %s to exist in the graph", e.From(), e.To())
+		}
+	})
 }
 
 func TestNeighbors(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	nodeB := testdata.TestNode("B")
-	nodeC := testdata.TestNode("C")
+	var neighbors iterables.SliceMap[testsortables.TestNode, testsortables.TestNode] = map[testsortables.TestNode][]testsortables.TestNode{}
+	testsortables.RandomTestNodes(10, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			g.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				g.AddEdge(it, that)
+				// Undirected graphs have neighbors in both directions
+				neighbors.PutOrAppend(it, that)
+				neighbors.PutOrAppend(that, it)
+			}
+		})
 
-	g.AddNode(nodeA)
-	g.AddNode(nodeB)
-	g.AddNode(nodeC)
-	g.AddEdge(nodeA, nodeB)
-	g.AddEdge(nodeA, nodeC)
+	for _, node := range g.Nodes() {
+		graphN := g.Neighbors(node)
+		expN := neighbors.At(node)
 
-	// Assert neighbors of nodeA
-	neighbors := g.Neighbors(nodeA)
+		// Check if the number of neighbors is as expected
+		if len(graphN) != len(expN) {
+			t.Errorf("Expected %d neighbors for node %s, got %d", len(expN), node, len(graphN))
+		}
 
-	if len(neighbors) != 2 {
-		t.Errorf("Node A should have 2 neighbors")
-	}
+		// Check if all expected neighbors are present
+		if !arrays.ContainsAllBy(&expN, &graphN, functions.ImplementedEquality[testsortables.TestNode]) {
+			t.Errorf("Neighbors for node %s do not match expected neighbors", node)
+		}
 
-	if !g.HasEdge(nodeA, nodeB) {
-		t.Errorf("Node A should have an edge to B")
-	}
+		// Check if the graph's neighbor list is a subset of the expected neighbors (and vice versa)
+		if !arrays.ContainsAllBy(&graphN, &expN, functions.ImplementedEquality[testsortables.TestNode]) {
+			t.Errorf("Neighbors for node %s do not match expected neighbors", node)
+		}
 
-	if !g.HasEdge(nodeA, nodeC) {
-		t.Errorf("Node A should have an edge to C")
-	}
-
-	// Assert neighbors of nodeB
-	neighbors = g.Neighbors(nodeB)
-
-	if len(neighbors) != 1 {
-		t.Errorf("Node B should have 1 neighbors")
-	}
-
-	if !g.HasEdge(nodeB, nodeA) {
-		t.Errorf("Node B should have an edge to A")
+		// Check if the expected neighbors are a subset of the graph's neighbor list (and vice versa)
+		if !arrays.ContainsAllBy(&expN, &graphN, functions.ImplementedEquality[testsortables.TestNode]) {
+			t.Errorf("Neighbors for node %s do not match expected neighbors", node)
+		}
 	}
 }
 
 func TestEdges(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	nodeB := testdata.TestNode("B")
-	nodeC := testdata.TestNode("C")
+	var expEdges iterables.Slice[*SingleTypedEdge[testsortables.TestNode]]
 
-	g.AddNode(nodeA)
-	g.AddNode(nodeB)
-	g.AddNode(nodeC)
-	g.AddEdge(nodeA, nodeB)
-	g.AddEdge(nodeA, nodeC)
+	testsortables.RandomTestNodes(30, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			g.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				g.AddEdge(it, that)
+				expEdges.Append(NewEdge(it, that))
+			}
+		})
 
-	edges := g.Edges()
-	expectedEdges := []*SingleTypedEdge[testdata.TestNode]{
-		NewEdge(nodeA, nodeB),
-		NewEdge(nodeA, nodeC),
-	}
-
-	if !arrays.ContainsAllBy(edges, expectedEdges, func(edg, exp *SingleTypedEdge[testdata.TestNode]) bool {
-		return edg.Equal(exp)
-	}) {
-		t.Errorf("should contain all expected edges: \nexpected: %v, \ngot: %v\n", expectedEdges, edges)
-	}
+	expEdges.Each(func(e *SingleTypedEdge[testsortables.TestNode]) {
+		if !g.HasEdge(e.From(), e.To()) {
+			t.Errorf("Expected edge from %s to %s to exist in the graph", e.From(), e.To())
+		}
+	})
 }
 
 func TestNodes(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	nodeB := testdata.TestNode("B")
-	nodeC := testdata.TestNode("C")
+	exp := testsortables.RandomTestNodes(10, "node").Each(g.AddNode)
 
-	g.AddNode(nodeA)
-	g.AddNode(nodeB)
-	g.AddNode(nodeC)
-
-	nodes := g.Nodes()
-
-	if len(nodes) != 3 {
-		t.Errorf("Graph should have 3 nodes, got %d: %v", len(nodes), nodes)
-	}
-
-	if !arrays.ContainsAllBy(nodes, []testdata.TestNode{nodeA, nodeB, nodeC}, func(n1, n2 testdata.TestNode) bool {
-		return n1 == n2
-	}) {
-		t.Errorf("Nodes should contain all expected nodes")
-	}
+	exp.Each(func(n testsortables.TestNode) {
+		if !g.HasNode(n) {
+			t.Errorf("Expected node %s to be present in the graph", n)
+		}
+	})
 }
 
 func TestAddEdgeNodesNotExist(t *testing.T) {
-	g := UndirectOf[testdata.TestNode]()
+	g := UndirectOf[testsortables.TestNode]()
 
-	nodeA := testdata.TestNode("A")
-	nodeB := testdata.TestNode("B")
+	nodeA := testsortables.TestNode("A")
+	nodeB := testsortables.TestNode("B")
 
 	// Add only one node
 	g.AddNode(nodeA)
