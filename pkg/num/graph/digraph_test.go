@@ -3,135 +3,166 @@
 package graph
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/sorts"
-	"github.com/andrerrcosta2/gtools/pkg/testdata"
+	"fmt"
+	"github.com/andrerrcosta2/gtools/pkg/arrays"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
+	"github.com/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"
 )
 
 // TestDirectedGraph_AddNode tests adding nodes to the graph.
 func TestDirectedGraph_AddNode(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
-
-	if !graph.HasNode(testdata.TestNode("A")) || !graph.HasNode(testdata.TestNode("B")) {
-		t.Errorf("Expected nodes A and B to be present in the graph")
-	}
+	exp := testsortables.RandomTestNodes(10, "node").Each(graph.AddNode)
+	graphN, expN := graph.Nodes(), exp.Values()
+	arrays.ContainsAllBy(&graphN, &expN, functions.ImplementedEquality[testsortables.TestNode])
 }
 
 // TestDirectedGraph_AddEdge tests adding directed edges to the graph.
 func TestDirectedGraph_AddEdge(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
-	graph.AddEdge(testdata.TestNode("A"), testdata.TestNode("B"))
+	var expEdges iterables.Slice[*SingleTypedEdge[testsortables.TestNode]]
 
-	if !graph.HasEdge(testdata.TestNode("A"), testdata.TestNode("B")) {
-		t.Errorf("Expected edge from A to B to exist in the graph")
-	}
+	testsortables.RandomTestNodes(30, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			graph.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				graph.AddEdge(it, that)
+				expEdges.Append(NewEdge(it, that))
+			}
+		})
 
-	if graph.HasEdge(testdata.TestNode("B"), testdata.TestNode("A")) {
-		t.Errorf("Expected no edge from B to A in the graph")
-	}
+	expEdges.Each(func(e *SingleTypedEdge[testsortables.TestNode]) {
+		if !graph.HasEdge(e.From(), e.To()) {
+			t.Errorf("Expected edge from %s to %s to exist in the graph", e.From(), e.To())
+		}
+	})
 }
 
 // TestDirectedGraph_Neighbors tests retrieving neighbors for a node.
 func TestDirectedGraph_Neighbors(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
-	graph.AddNode(testdata.TestNode("C"))
-	graph.AddEdge(testdata.TestNode("A"), testdata.TestNode("B"))
-	graph.AddEdge(testdata.TestNode("A"), testdata.TestNode("C"))
+	var neighbors iterables.SliceMap[testsortables.TestNode, testsortables.TestNode] = map[testsortables.TestNode][]testsortables.TestNode{}
+	testsortables.RandomTestNodes(10, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			graph.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				graph.AddEdge(it, that)
+				neighbors.PutOrAppend(it, that)
+			}
+		})
 
-	neighbors := graph.Neighbors(testdata.TestNode("A"))
-	expectedNeighbors := []testdata.TestNode{"B", "C"}
-
-	if len(neighbors) != len(expectedNeighbors) {
-		t.Fatalf("Expected %d neighbors, got %d", len(expectedNeighbors), len(neighbors))
-	}
-
-	for i, neighbor := range neighbors {
-		if neighbor != expectedNeighbors[i] {
-			t.Errorf("Expected neighbor %s, got %s", expectedNeighbors[i], neighbor)
+	for _, node := range graph.Nodes() {
+		graphN := graph.Neighbors(node)
+		expN := neighbors.At(node)
+		if len(graphN) != len(expN) {
+			t.Errorf("Expected %d neighbors for node %s, got %d", len(neighbors.At(node)), node, len(graph.Neighbors(node)))
 		}
+		arrays.ContainsAllBy(&expN, &graphN, functions.ImplementedEquality[testsortables.TestNode])
 	}
 }
 
 // TestDirectedGraph_HasNode tests the presence of nodes in the graph.
 func TestDirectedGraph_HasNode(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
+	exp := testsortables.RandomTestNodes(10, "node").Each(graph.AddNode)
 
-	graph.AddNode(testdata.TestNode("A"))
-
-	if !graph.HasNode(testdata.TestNode("A")) {
-		t.Errorf("Expected node A to be present in the graph")
-	}
-
-	if graph.HasNode(testdata.TestNode("B")) {
-		t.Errorf("Expected node B to not be present in the graph")
-	}
+	exp.Each(func(n testsortables.TestNode) {
+		if !graph.HasNode(n) {
+			t.Errorf("Expected node %s to be present in the graph", n)
+		}
+	})
 }
 
 // TestDirectedGraph_HasEdge tests the presence of edges in the graph.
 func TestDirectedGraph_HasEdge(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
-	graph.AddEdge(testdata.TestNode("A"), testdata.TestNode("B"))
+	var expEdges iterables.Slice[*SingleTypedEdge[testsortables.TestNode]]
 
-	if !graph.HasEdge(testdata.TestNode("A"), testdata.TestNode("B")) {
-		t.Errorf("Expected edge from A to B to exist in the graph")
-	}
+	testsortables.RandomTestNodes(30, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			graph.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				graph.AddEdge(it, that)
+				expEdges.Append(NewEdge(it, that))
+			}
+		})
 
-	if graph.HasEdge(testdata.TestNode("B"), testdata.TestNode("A")) {
-		t.Errorf("Expected no edge from B to A in the graph")
-	}
+	expEdges.Each(func(e *SingleTypedEdge[testsortables.TestNode]) {
+		if !graph.HasEdge(e.From(), e.To()) {
+			t.Errorf("Expected edge from %s to %s to exist in the graph", e.From(), e.To())
+		}
+	})
 }
 
 // TestDirectedGraph_Nodes tests retrieving all nodes from the graph.
 func TestDirectedGraph_Nodes(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
+	exp := testsortables.RandomTestNodes(100, "node").Each(graph.AddNode)
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
+	fmt.Printf("Nodes: %v\n", graph.Nodes())
+	fmt.Printf("Expected nodes: %v\n", exp.Values())
 
-	nodes := graph.Nodes()
-	expectedNodes := []testdata.TestNode{"A", "B"}
-
-	sorts.QuickOf(&nodes)
-	sorts.QuickOf(&expectedNodes)
-
-	if len(nodes) != len(expectedNodes) {
-		t.Fatalf("Expected %d nodes, got %d", len(expectedNodes), len(nodes))
+	if len(graph.Nodes()) != exp.Len() {
+		t.Fatalf("Expected %d nodes, got %d", len(graph.Nodes()), exp.Len())
 	}
 
-	for i, node := range nodes {
-		if node != expectedNodes[i] {
-			t.Errorf("Expected node %s, got %s", expectedNodes[i], node)
-		}
-	}
+	graphN, expN := graph.Nodes(), exp.Values()
+
+	arrays.ContainsAllBy(&expN, &graphN, functions.ImplementedEquality[testsortables.TestNode])
 }
 
 // TestDirectedGraph_Edges tests retrieving all directed edges from the graph.
 func TestDirectedGraph_Edges(t *testing.T) {
-	graph := DigraphOf[testdata.TestNode]()
+	graph := DigraphOf[testsortables.TestNode]()
 
-	graph.AddNode(testdata.TestNode("A"))
-	graph.AddNode(testdata.TestNode("B"))
-	graph.AddEdge(testdata.TestNode("A"), testdata.TestNode("B"))
+	var expEdges iterables.Slice[*SingleTypedEdge[testsortables.TestNode]]
 
-	edges := graph.Edges()
-	if len(edges) != 1 {
-		t.Fatalf("Expected 1 edge, got %d", len(edges))
+	testsortables.RandomTestNodes(30, "node").
+		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
+			graph.AddNode(n.At(i))
+			if i%3 == 0 && i+1 < n.Len() && i-1 >= 0 {
+				it, that := n.At(i), n.At(i-1)
+				graph.AddEdge(it, that)
+				expEdges.Append(NewEdge(it, that))
+			}
+		})
+
+	edges := iterables.OfSlice(graph.Edges()...)
+
+	if edges.Len() != expEdges.Len() {
+		t.Fatalf("Expected %d edge(s), got %d\nGraph:\n%v", expEdges.Len(), edges.Len(), graph)
 	}
 
-	expectedEdge := NewEdge(testdata.TestNode("A"), testdata.TestNode("B"))
-	if !edges[0].Equal(expectedEdge) {
-		t.Errorf("Expected edge %v, got %v", expectedEdge, edges[0])
+	edgesN, expN := edges.Values(), expEdges.Values()
+
+	arrays.ContainsAllBy(&edgesN, &expN, func(e1, e2 *SingleTypedEdge[testsortables.TestNode]) bool {
+		return e1.From().Equal(e2.From()) && e1.To().Equal(e2.To())
+	})
+}
+
+func TestDirectedGraph_AddEdgeNodesNotExist(t *testing.T) {
+	g := DigraphOf[testsortables.TestNode]()
+
+	nodeA := testsortables.TestNode("A")
+	nodeB := testsortables.TestNode("B")
+
+	// Add only one node
+	g.AddNode(nodeA)
+
+	// Attempt to add an edge with a non-existent node
+	g.AddEdge(nodeA, nodeB)
+
+	// Assert that the edge was not added
+	if g.HasEdge(nodeA, nodeB) {
+		t.Errorf("Edge from A to B should not be present")
 	}
 }

@@ -81,7 +81,7 @@ func (s *SortableOfSet[T]) Values() []T {
 }
 
 func (s *SortableOfSet[T]) Get(i int) (T, bool) {
-	if !arrays.OutOfBounds(s.items, i) {
+	if !arrays.OutOfBounds(&s.items, i) {
 		return s.items[i], true
 	}
 	var zeroValue T
@@ -89,7 +89,7 @@ func (s *SortableOfSet[T]) Get(i int) (T, bool) {
 }
 
 func (s *SortableOfSet[T]) Exclude(i int) bool {
-	if !arrays.OutOfBounds(s.items, i) {
+	if !arrays.OutOfBounds(&s.items, i) {
 		s.items = append(s.items[:i], s.items[i+1:]...)
 		return true
 	}
@@ -131,13 +131,13 @@ func (s *SortableOfSet[T]) Equals(other Set[T]) bool {
 	}
 
 	if set, ok := other.(*SortableOfSet[T]); ok {
-		return arrays.SortedEqualsBy[T](s.items, set.items, s.comparator.Equals) &&
+		return arrays.SortedEqualsBy[T](&s.items, &set.items, s.comparator.Equals) &&
 			maps.Equal(s.index, set.index)
 	}
 
 	if _, ok := any(values[0]).(gtools.SortableOf); ok {
 		sortable := SortableOf(values...)
-		return arrays.SortedEqualsBy[T](s.items, sortable.items, s.comparator.Equals) &&
+		return arrays.SortedEqualsBy[T](&s.items, &sortable.items, s.comparator.Equals) &&
 			maps.Equal(s.index, sortable.index)
 	}
 

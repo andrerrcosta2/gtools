@@ -2,6 +2,8 @@
 
 package functions
 
+import "github.com/andrerrcosta2/gtools/pkg/gtools"
+
 // Runnable represents a function that returns nothing.
 type Runnable func()
 
@@ -42,6 +44,22 @@ type TriConsumer[T any, U any, V any] func(T, U, V)
 // This function serves as an identity function for any type.
 func Identity[T any](x T) T {
 	return x
+}
+
+// BiIdentity returns the input value unchanged.
+// This function serves as an identity function for any type.
+func BiIdentity[T any](x T) T {
+	return x
+}
+
+// ImplementedEquality returns true if the two values are equal, false otherwise.
+func ImplementedEquality[T gtools.ComparableOf](x T, y T) bool {
+	return x.Equal(y)
+}
+
+// Equality returns true if the two values are equal, false otherwise.
+func Equality[T comparable](x T, y T) bool {
+	return x == y
 }
 
 // Constant returns a function that always returns the provided value.

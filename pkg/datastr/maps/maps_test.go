@@ -3,6 +3,7 @@
 package maps
 
 import (
+	"fmt"
 	"github.com/andrerrcosta2/gtools/pkg/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/functions"
 	"github.com/andrerrcosta2/gtools/pkg/generics"
@@ -25,12 +26,13 @@ func TestNewComparableEntry(t *testing.T) {
 }
 
 func TestNewEntrySet(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
-		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
-	)
+	ce1 := NewComparableEntry("1", 2)
+	ce2 := NewComparableEntry("2", 4)
+	e1 := NewEntrySet[string, int](ce1, ce2)
 
-	if e1.entries["1"].Key() != "1" || e1.entries["1"].Value() != 2 || e1.entries["2"].Key() != "2" || e1.entries["2"].Value() != 4 {
+	expKeys1 := []string{"1", "2"}
+
+	if !ContainsAllKeys[string, *ComparableEntry[string, int]](&e1.entries, &expKeys1) {
 		t.Errorf("NewEntrySet() = %v, want %v", e1, EntrySet[string, int]{
 			entries: map[string]*ComparableEntry[string, int]{
 				"1": NewComparableEntry("1", 2),
@@ -39,20 +41,24 @@ func TestNewEntrySet(t *testing.T) {
 		})
 	}
 
-	e2 := NewEntrySet([]*ComparableEntry[string, string]{NewComparableEntry("key", "value")})
-	if e2.entries["key"].Key() != "key" || e2.entries["key"].Value() != "value" {
-		t.Errorf("NewEntrySet() = %v, want %v", e2, EntrySet[string, string]{
-			entries: map[string]*ComparableEntry[string, string]{"key": NewComparableEntry("key", "value")},
+	if !ContainsAllValues[string, *ComparableEntry[string, int]](&e1.entries, &[]*ComparableEntry[string, int]{ce1, ce2}) {
+		t.Errorf("NewEntrySet() = %v, want %v", e1, EntrySet[string, int]{
+			entries: map[string]*ComparableEntry[string, int]{
+				"1": NewComparableEntry("1", 2),
+				"2": NewComparableEntry("2", 4),
+			},
 		})
 	}
 }
 
 func TestAddEntry(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+	e1 := NewEntrySet(
 		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
+		NewComparableEntry("2", 4),
 	)
+
 	e1.Add(NewComparableEntry("3", 6), NewComparableEntry("4", 8))
+
 	if e1.entries["3"].Key() != "3" || e1.entries["3"].Value() != 6 {
 		t.Errorf("AddEntry() = %v, want %v", e1, EntrySet[string, int]{
 			entries: map[string]*ComparableEntry[string, int]{
@@ -66,9 +72,9 @@ func TestAddEntry(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+	e1 := NewEntrySet(
 		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
+		NewComparableEntry("2", 4),
 	)
 	keys := e1.Keys()
 	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
@@ -78,9 +84,9 @@ func TestKeys(t *testing.T) {
 }
 
 func TestValues(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+	e1 := NewEntrySet(
 		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
+		NewComparableEntry("2", 4),
 	)
 	values := e1.Values()
 	if values[0] != 2 && values[0] != 4 || values[1] != 2 && values[1] != 4 {
@@ -89,9 +95,9 @@ func TestValues(t *testing.T) {
 }
 
 func TestEntrySet_Len(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+	e1 := NewEntrySet(
 		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
+		NewComparableEntry("2", 4),
 	)
 	if e1.Len() != 2 {
 		t.Errorf("EntrySet.Len() = %v, want %v", e1.Len(), 2)
@@ -99,9 +105,9 @@ func TestEntrySet_Len(t *testing.T) {
 }
 
 func TestEach(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
+	e1 := NewEntrySet(
 		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
+		NewComparableEntry("2", 4),
 	)
 
 	Each(e1.entries, func(k string, v *ComparableEntry[string, int]) {
@@ -117,16 +123,37 @@ func TestEach(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
-	e1 := NewEntrySet([]*ComparableEntry[string, int]{
-		NewComparableEntry("1", 2),
-		NewComparableEntry("2", 4)},
-	)
-	m := Map(e1.entries, func(k string, v *ComparableEntry[string, int]) *ComparableEntry[string, int] {
-		return NewComparableEntry[string, int](k, v.Value()*2)
-	})
+	input := map[int]string{
+		1: "one",
+		2: "two",
+		3: "three",
+	}
 
-	if m["1"] != 4 || m["2"] != 8 {
-		t.Errorf("Map() = %v, want %v", m, map[string]*ComparableEntry[string, int]{"1": NewComparableEntry("1", 4), "2": NewComparableEntry("2", 8)})
+	transform := func(key int, value string) *ComparableEntry[string, string] {
+		return &ComparableEntry[string, string]{
+			key:   fmt.Sprintf("Key-%v", key),
+			value: fmt.Sprintf("Value-%v", value),
+		}
+	}
+
+	result := Map(&input, transform)
+
+	// Define the expected output map
+	expected := map[string]string{
+		"Key-1": "Value-one",
+		"Key-2": "Value-two",
+		"Key-3": "Value-three",
+	}
+
+	// Compare the result with the expected map
+	if len(*result) != len(expected) {
+		t.Errorf("Expected map of length %d, but got %d", len(expected), len(*result))
+	}
+
+	for k, v := range expected {
+		if val, exists := (*result)[k]; !exists || val != v {
+			t.Errorf("Expected %v: %v, but got %v", k, v, val)
+		}
 	}
 }
 
@@ -149,7 +176,7 @@ func TestMapEntries(t *testing.T) {
 
 func TestMapValues(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
-	v := MapValues(m, func(v int) int {
+	v := MapValues(&m, func(v int) int {
 		return v * 2
 	})
 
@@ -184,7 +211,7 @@ func TestFlatValues(t *testing.T) {
 		"more":    {4, 5, 6},
 	}
 	expected1 := []int{1, 2, 3, 4, 5, 6}
-	result1 := FlatValues(map1, functions.Identity[int])
+	result1 := FlatValues(&map1, functions.Identity[int])
 	sort.Ints(result1)
 	sort.Ints(expected1)
 
@@ -199,7 +226,7 @@ func TestFlatValues(t *testing.T) {
 		"animals": {"cat", "dog"},
 	}
 	expected2 := []int{5, 6, 3, 4, 3, 3}
-	result2 := FlatValues(map2, func(v string) int { return len(v) })
+	result2 := FlatValues(&map2, func(v string) int { return len(v) })
 	sort.Ints(result2)
 	sort.Ints(expected2)
 
@@ -212,7 +239,7 @@ func TestFlatValues(t *testing.T) {
 		"words": {"hello", "world"},
 	}
 	expected3 := []string{"HELLO", "WORLD"}
-	result3 := FlatValues(map3, func(v string) string { return strings.ToUpper(v) })
+	result3 := FlatValues(&map3, func(v string) string { return strings.ToUpper(v) })
 	sort.Strings(result3)
 	sort.Strings(expected3)
 
@@ -225,7 +252,7 @@ func TestFlatValues(t *testing.T) {
 		"names": {"Alice", "Bob", "Charlie"},
 	}
 	expected4 := []string{"A", "B", "C"}
-	result4 := FlatValues(map4, func(v string) string { return string(v[0]) })
+	result4 := FlatValues(&map4, func(v string) string { return string(v[0]) })
 	sort.Strings(result4)
 	sort.Strings(expected4)
 
@@ -241,9 +268,9 @@ func TestFlatValuesSorted(t *testing.T) {
 		"more":    {4, 5, 6},
 	}
 	expected1 := []int{6, 5, 4, 3, 2, 1}
-	result1 := FlatValuesSorted(map1, func(v int) int { return v }, func(i, j int) bool { return i > j })
+	result1 := FlatValuesSorted(&map1, func(v int) int { return v }, func(i, j int) bool { return i > j })
 
-	if !arrays.Equals(result1, expected1) {
+	if !arrays.Equals(&result1, &expected1) {
 		t.Errorf("Test Case 1 Failed: expected %v, got %v", expected1, result1)
 	}
 
@@ -254,9 +281,9 @@ func TestFlatValuesSorted(t *testing.T) {
 		"animals": {"lion", "antelope"},
 	}
 	expected2 := []string{"antelope", "carmine", "banana", "apple", "lion", "red"}
-	result2 := FlatValuesSorted(map2, func(v string) string { return v }, func(i, j string) bool { return len(i) > len(j) })
+	result2 := FlatValuesSorted(&map2, func(v string) string { return v }, func(i, j string) bool { return len(i) > len(j) })
 
-	if !arrays.Equals(result2, expected2) {
+	if !arrays.Equals(&result2, &expected2) {
 		t.Errorf("Test Case 2 Failed: expected %v, got %v", expected2, result2)
 	}
 
@@ -265,16 +292,16 @@ func TestFlatValuesSorted(t *testing.T) {
 		"words": {"banana", "apple", "cherry"},
 	}
 	expected3 := []string{"APPLE", "BANANA", "CHERRY"}
-	result3 := FlatValuesSorted(map3, func(v string) string { return strings.ToUpper(v) }, func(i, j string) bool { return i < j })
+	result3 := FlatValuesSorted(&map3, func(v string) string { return strings.ToUpper(v) }, func(i, j string) bool { return i < j })
 
-	if !arrays.Equals(result3, expected3) {
+	if !arrays.Equals(&result3, &expected3) {
 		t.Errorf("Test Case 3 Failed: expected %v, got %v", expected3, result3)
 	}
 }
 
 func TestMapKeys(t *testing.T) {
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
-	v := MapKeys(m, func(k string) string {
+	v := MapKeys(&m, func(k string) string {
 		return k + "1"
 	})
 
@@ -292,7 +319,7 @@ func TestMapKeys(t *testing.T) {
 func TestCast(t *testing.T) {
 	m := map[string]int{"1": 1, "2": 1, "3": 2, "4": 3, "5": 5, "6": 8, "7": 13}
 
-	pairs := Cast(m, func(k string, v int) generics.BiTypedInterface[string, int] {
+	pairs := Cast(&m, func(k string, v int) generics.BiTypedInterface[string, int] {
 		return tuple.NewPair(k, v)
 	})
 
@@ -333,7 +360,7 @@ func TestMapWithKeys(t *testing.T) {
 		return "", 0
 	}
 
-	result := MapWithKeys(keys, f)
+	result := *MapWithKeys(&keys, f)
 
 	if len(result) != len(expected) {
 		t.Errorf("Expected map length %d, got %d", len(expected), len(result))
@@ -354,7 +381,7 @@ func TestMapWithValues(t *testing.T) {
 		return len(v), v
 	}
 
-	result := MapWithValues(values, f)
+	result := *MapWithValues(&values, f)
 
 	if len(result) != len(expected) {
 		t.Errorf("Expected map length %d, got %d", len(expected), len(result))
@@ -372,7 +399,7 @@ func TestMapWithValues(t *testing.T) {
 		{5: "apple", 6: "cherry"}, // If "cherry" overwrites "banana"
 	}
 
-	result2 := MapWithValues(values2, f)
+	result2 := *MapWithValues(&values2, f)
 
 	matchLength := false
 	matchContent := false
@@ -410,7 +437,7 @@ func TestFetch(t *testing.T) {
 		return pair.First(), pair.Second()
 	}
 
-	result := Fetch(entries, f)
+	result := *Fetch(entries, f)
 
 	if len(result) != len(expected) {
 		t.Errorf("Expected map length %d, got %d", len(expected), len(result))
@@ -436,7 +463,7 @@ func TestContainsKey(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := ContainsKey(m, test.key)
+		result := ContainsKey(&m, test.key)
 		if result != test.expected {
 			t.Errorf("ContainsKey(%v, %v) = %v; expected %v", m, test.key, result, test.expected)
 		}
@@ -457,7 +484,7 @@ func TestContainsValue(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := ContainsValue(m, test.value)
+		result := ContainsValue(&m, test.value)
 		if result != test.expected {
 			t.Errorf("ContainsValue(%v, %v) = %v; expected %v", m, test.value, result, test.expected)
 		}
@@ -478,7 +505,7 @@ func TestContainsAllKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := ContainsAllKeys(m, test.keys)
+		result := ContainsAllKeys(&m, &test.keys)
 		if result != test.expected {
 			t.Errorf("ContainsAllKeys(%v, %v) = %v; expected %v", m, test.keys, result, test.expected)
 		}
@@ -499,7 +526,7 @@ func TestContainsAllValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := ContainsAllValues(m, test.values)
+		result := ContainsAllValues(&m, &test.values)
 		if result != test.expected {
 			t.Errorf("ContainsAllValues(%v, %v) = %v; expected %v", m, test.values, result, test.expected)
 		}
@@ -521,7 +548,7 @@ func TestAreSameKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := AreSameKeys(m, test.keys)
+		result := AreSameKeys(&m, &test.keys)
 		if result != test.expected {
 			t.Errorf("AreSameKeys(%v, %v) = %v; expected %v", m, test.keys, result, test.expected)
 		}
@@ -543,7 +570,7 @@ func TestAreSameValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := AreSameValues(m, test.values)
+		result := AreSameValues(&m, &test.values)
 		if result != test.expected {
 			t.Errorf("AreSameValues(%v, %v) = %v; expected %v", m, test.values, result, test.expected)
 		}

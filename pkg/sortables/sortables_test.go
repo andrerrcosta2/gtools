@@ -5,16 +5,16 @@ package sortables
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/pkg/sorts"
-	"github.com/andrerrcosta2/gtools/pkg/testdata"
+	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"
 	"unsafe"
 )
 
 func TestComparatorSortableOf_Compare(t *testing.T) {
-	comp := ComparatorOf[testdata.TestNode]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
-	c := testdata.TestNode("A")
+	comp := ComparatorOf[testsortables.TestNode]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
+	c := testsortables.TestNode("A")
 
 	if comp.Compare(a, b) != 1 {
 		t.Errorf("Compare(A, B) = %d, want 1", comp.Compare(a, b))
@@ -28,10 +28,10 @@ func TestComparatorSortableOf_Compare(t *testing.T) {
 }
 
 func TestComparatorSortableOf_Equals(t *testing.T) {
-	comp := ComparatorOf[testdata.TestNode]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("A")
-	c := testdata.TestNode("B")
+	comp := ComparatorOf[testsortables.TestNode]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("A")
+	c := testsortables.TestNode("B")
 
 	if !comp.Equals(a, b) {
 		t.Errorf("Equals(A, B) = false, want true")
@@ -75,7 +75,7 @@ func TestUnique(t *testing.T) {
 	}
 
 	// Test for TestStruct
-	structVal := testdata.TestStruct{Name: "Alice", Age: 30}
+	structVal := testsortables.TestStruct{Name: "Alice", Age: 30}
 	expectedUniqueStruct := "{Alice 30}"
 
 	if unique := Unique(structVal); unique != expectedUniqueStruct {
@@ -83,7 +83,7 @@ func TestUnique(t *testing.T) {
 	}
 
 	// Test for pointer to TestStruct
-	structPtr := &testdata.TestStruct{Name: "Bob", Age: 40}
+	structPtr := &testsortables.TestStruct{Name: "Bob", Age: 40}
 	expectedUniqueStructPtr := "0x" + fmt.Sprintf("%x", uintptr(unsafe.Pointer(structPtr)))
 
 	if unique := Unique(structPtr); unique != expectedUniqueStructPtr {
@@ -92,11 +92,11 @@ func TestUnique(t *testing.T) {
 }
 
 func TestSort(t *testing.T) {
-	sortAlgorithm := sorts.NewQuicksort[testdata.TestNode](testdata.NewTestNodeComparator())
+	sortAlgorithm := sorts.NewQuicksort[testsortables.TestNode](testsortables.NewTestNodeComparator())
 
-	data := []testdata.TestNode{testdata.TestNode("C"), testdata.TestNode("A"), testdata.TestNode("B")}
+	data := []testsortables.TestNode{testsortables.TestNode("C"), testsortables.TestNode("A"), testsortables.TestNode("B")}
 
-	expected := []testdata.TestNode{testdata.TestNode("A"), testdata.TestNode("B"), testdata.TestNode("C")}
+	expected := []testsortables.TestNode{testsortables.TestNode("A"), testsortables.TestNode("B"), testsortables.TestNode("C")}
 
 	Sort(&data, sortAlgorithm)
 
@@ -109,9 +109,9 @@ func TestSort(t *testing.T) {
 }
 
 func TestEqualsOf(t *testing.T) {
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("A")
-	c := testdata.TestNode("B")
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("A")
+	c := testsortables.TestNode("B")
 
 	if !EqualsOf(a, b) {
 		t.Errorf("EqualsOf(A, B) = false, want true")

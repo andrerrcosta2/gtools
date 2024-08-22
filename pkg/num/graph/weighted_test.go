@@ -5,15 +5,15 @@ package graph
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/pkg/arrays"
-	"github.com/andrerrcosta2/gtools/pkg/testdata"
+	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"
 )
 
 func TestAddingNodesAndEdges(t *testing.T) {
-	g := WeightedOrderedOf[testdata.TestNode, int]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
-	c := testdata.TestNode("C")
+	g := WeightedOrderedOf[testsortables.TestNode, int]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
+	c := testsortables.TestNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
@@ -21,13 +21,13 @@ func TestAddingNodesAndEdges(t *testing.T) {
 	g.AddEdge(b, c, 20)
 
 	nodes := g.Nodes()
-	exp := []testdata.TestNode{a, b, c}
+	exp := []testsortables.TestNode{a, b, c}
 
 	fmt.Println("Nodes from graph:", nodes)
 	fmt.Println("Expected nodes:", exp)
 
 	// Check if nodes contain all expected nodes
-	if !arrays.ContainsAllBy(nodes, exp, func(n1, n2 testdata.TestNode) bool { return n1.Equal(n2) }) {
+	if !arrays.ContainsAllBy(&nodes, &exp, func(n1, n2 testsortables.TestNode) bool { return n1.Equal(n2) }) {
 		t.Errorf("Nodes test failed. \nGot: %v, \nExpected: %v\n", nodes, exp)
 	}
 
@@ -38,30 +38,30 @@ func TestAddingNodesAndEdges(t *testing.T) {
 }
 
 func TestNodeExistence(t *testing.T) {
-	g := WeightedOrderedOf[testdata.TestNode, int]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
+	g := WeightedOrderedOf[testsortables.TestNode, int]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
 	g.AddNode(a)
 	g.AddNode(b)
 
 	nodes := g.Nodes()
-	exp := []testdata.TestNode{a, b}
+	exp := []testsortables.TestNode{a, b}
 
 	if len(nodes) != len(exp) {
 		t.Errorf("Nodes test failed. \nGot: %v, \nexpected: %v\n", nodes, exp)
 		return
 	}
 
-	if !arrays.ContainsAllBy(nodes, exp, func(n1, n2 testdata.TestNode) bool { return n1.Equal(n2) }) {
+	if !arrays.ContainsAllBy(&nodes, &exp, func(n1, n2 testsortables.TestNode) bool { return n1.Equal(n2) }) {
 		t.Errorf("Nodes test failed. \nGot: %v, \nExpected: %v\n", nodes, exp)
 	}
 }
 
 func TestEdgeExistenceAndWeight(t *testing.T) {
-	g := WeightedOrderedOf[testdata.TestNode, int]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
-	c := testdata.TestNode("C")
+	g := WeightedOrderedOf[testsortables.TestNode, int]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
+	c := testsortables.TestNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
@@ -82,10 +82,10 @@ func TestEdgeExistenceAndWeight(t *testing.T) {
 }
 
 func TestNeighborsRetrieval(t *testing.T) {
-	g := WeightedOrderedOf[testdata.TestNode, int]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
-	c := testdata.TestNode("C")
+	g := WeightedOrderedOf[testsortables.TestNode, int]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
+	c := testsortables.TestNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
@@ -99,10 +99,10 @@ func TestNeighborsRetrieval(t *testing.T) {
 }
 
 func TestDisconnectedGraph(t *testing.T) {
-	g := WeightedOrderedOf[testdata.TestNode, int]()
-	a := testdata.TestNode("A")
-	b := testdata.TestNode("B")
-	c := testdata.TestNode("C")
+	g := WeightedOrderedOf[testsortables.TestNode, int]()
+	a := testsortables.TestNode("A")
+	b := testsortables.TestNode("B")
+	c := testsortables.TestNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
@@ -119,7 +119,7 @@ func TestDisconnectedGraph(t *testing.T) {
 }
 
 // Utility function to check if a slice contains a specific element
-func contains(slice []testdata.TestNode, item testdata.TestNode) bool {
+func contains(slice []testsortables.TestNode, item testsortables.TestNode) bool {
 	for _, elem := range slice {
 		if elem.Equal(item) {
 			return true
