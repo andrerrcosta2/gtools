@@ -4,7 +4,7 @@ package sbj
 
 import (
 	"errors"
-	"github.com/andrerrcosta2/gtools/pkg/obs"
+	"github.com/andrerrcosta2/gtools/obs"
 	"sync"
 )
 

@@ -4,8 +4,8 @@ package sets
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/comparables"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/gtools"
 	"github.com/andrerrcosta2/gtools/pkg/search"
 	"github.com/andrerrcosta2/gtools/pkg/sortables"
@@ -17,7 +17,7 @@ import (
 // It creates a new set with an empty slice of items and an empty index map.
 func SortableOf[T gtools.SortableOf](values ...T) *SortableOfSet[T] {
 	// Sort the values in ascending order.
-	sorts.QuickOf(&values)
+	sorts.QuickOf(values)
 	// Initialize a new SortableOfSet with an empty slice of items and an empty index map.
 	set := &SortableOfSet[T]{
 		// The items slice is initialized with the values passed as arguments.

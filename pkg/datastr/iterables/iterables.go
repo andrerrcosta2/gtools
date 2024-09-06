@@ -3,9 +3,9 @@
 package iterables
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/functions"
-	"github.com/andrerrcosta2/gtools/pkg/tuple"
+	"github.com/andrerrcosta2/gtools/core/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/functions"
+	"github.com/andrerrcosta2/gtools/core/generics"
 	"math/rand"
 )
 
@@ -69,7 +69,7 @@ func OfSlice[G any](values ...G) *Slice[G] {
 	return &s
 }
 
-type Map[G constraints.Ordered, K any] map[G]K
+type Map[G prim.Ordered, K any] map[G]K
 
 func (t *Map[G, K]) At(k G) K {
 	return (*t)[k]
@@ -116,7 +116,7 @@ func (t *Map[G, K]) Values() []K {
 	return values
 }
 
-func OfMap[G constraints.Ordered, K any](values ...tuple.Pair[G, K]) *Map[G, K] {
+func OfMap[G prim.Ordered, K any](values ...generics.BiTypedInterface[G, K]) *Map[G, K] {
 	m := Map[G, K]{}
 	for _, entry := range values {
 		m[entry.First()] = entry.Second()
@@ -124,7 +124,7 @@ func OfMap[G constraints.Ordered, K any](values ...tuple.Pair[G, K]) *Map[G, K] 
 	return &m
 }
 
-type SliceMap[G constraints.Ordered, K any] map[G][]K
+type SliceMap[G prim.Ordered, K any] map[G][]K
 
 func (m *SliceMap[G, K]) Append(k G, v K) *SliceMap[G, K] {
 	(*m)[k] = append((*m)[k], v)

@@ -3,7 +3,7 @@
 package maps
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/arrays"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
 	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
 	"testing"

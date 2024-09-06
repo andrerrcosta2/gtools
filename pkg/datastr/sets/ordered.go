@@ -3,8 +3,8 @@
 package sets
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/constraints"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/search"
 	"maps"
 	"sort"

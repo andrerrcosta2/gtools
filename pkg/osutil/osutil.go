@@ -4,8 +4,8 @@ package osutil
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/fsutil"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
+	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/fsutil"
 	"io/fs"
 	"os"
 	"sync"

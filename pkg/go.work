@@ -1,0 +1,22 @@
+go 1.22.0
+
+use (
+	casters
+	comparables
+	core
+	datastr
+	fsutil
+	numbers
+	obs
+	opt
+	osutil
+	patterns
+	pipes
+	ranges
+	retry
+	search
+	sortables
+	sorts
+	testdata
+	typers
+)

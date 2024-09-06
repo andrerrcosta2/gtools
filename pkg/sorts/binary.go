@@ -3,9 +3,8 @@
 package sorts
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
+	"github.com/andrerrcosta2/gtools/comparables"
+	"github.com/andrerrcosta2/gtools/core/gtools"
 )
 
 func NewBinarySort[T any](comparator comparables.Comparator[T]) *BinarySort[T] {
@@ -28,18 +27,36 @@ type BinarySort[T any] struct {
 }
 
 func (b *BinarySort[T]) Sort(arr *[]T) {
-	for i := 1; i < len(*arr); i++ {
+	work := *arr
+	for i := 1; i < len(work); i++ {
 		// Get the current element
-		key := (*arr)[i]
+		key := work[i]
 
 		// Find the correct position to insert the element using binary search
-		pos := b.obs(*arr, key, 0, i)
+		pos := b.obs(work, key, 0, i)
 
 		// Shift elements to the right to make space for the new element
-		copy((*arr)[pos+1:i+1], (*arr)[pos:i])
+		copy(work[pos+1:i+1], work[pos:i])
 
 		// Insert the element at the correct position
-		(*arr)[pos] = key
+		work[pos] = key
+	}
+}
+
+func (b *BinarySort[T]) SortP(arr *[]*T) {
+	work := *arr
+	for i := 1; i < len(work); i++ {
+		// Get the current element
+		key := work[i]
+
+		// Find the correct position to insert the element using binary search
+		pos := b.obsp(work, key, 0, i)
+
+		// Shift elements to the right to make space for the new element
+		copy(work[pos+1:i+1], work[pos:i])
+
+		// Insert the element at the correct position
+		work[pos] = key
 	}
 }
 
@@ -47,6 +64,21 @@ func (b *BinarySort[T]) obs(arr []T, key T, lo, hi int) int {
 	for lo <= hi {
 		mid := lo + (hi-lo)/2
 		c := b.comparator.Compare(key, arr[mid])
+		if c == 0 {
+			return mid
+		} else if c == 1 {
+			hi = mid - 1
+		} else {
+			lo = mid + 1
+		}
+	}
+	return lo
+}
+
+func (b *BinarySort[T]) obsp(arr []*T, key *T, lo, hi int) int {
+	for lo <= hi {
+		mid := lo + (hi-lo)/2
+		c := b.comparator.Compare(*key, *arr[mid])
 		if c == 0 {
 			return mid
 		} else if c == 1 {
@@ -67,23 +99,42 @@ var _ Sort[string] = (*BinarySort[string])(nil)
 // The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
 // The space complexity is O(1) as no additional data structures are used.
 // The function is stable, meaning it preserves the relative order of equal elements.
-func Binary[T constraints.Ordered](arr *[]T) {
-	for i := 1; i < len(*arr); i++ {
-		key := (*arr)[i]
-		pos := obs(*arr, key, 0, i)
+func Binary[T prim.Ordered](arr []T) {
+	for i := 1; i < len(arr); i++ {
+		key := arr[i]
+		pos := obs(arr, key, 0, i)
 
 		// Shift elements to the right to make space for the new element
-		copy((*arr)[pos+1:i+1], (*arr)[pos:i])
+		copy(arr[pos+1:i+1], arr[pos:i])
 
 		// Insert the element at the correct position
-		(*arr)[pos] = key
+		arr[pos] = key
 	}
 }
 
-func OptimisticBinary[T constraints.Ordered](arr *[]T) {
-	for i := 1; i < len(*arr); i++ {
-		key := (*arr)[i]
-		pos := obs(*arr, key, 0, i)
+// BinaryP performs a binary insertion sort on the given slice of pointer elements.
+// It sorts the slice in ascending order.
+//
+// The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
+// The space complexity is O(1) as no additional data structures are used.
+// The function is stable, meaning it preserves the relative order of equal elements.
+func BinaryP[T prim.Ordered](arr []*T) {
+	for i := 1; i < len(arr); i++ {
+		key := arr[i]
+		pos := obsp[T](arr, key, 0, i)
+
+		// Shift elements to the right to make space for the new element
+		copy(arr[pos+1:i+1], arr[pos:i])
+
+		// Insert the element at the correct position
+		arr[pos] = key
+	}
+}
+
+func OptimisticBinary[T prim.Ordered](arr []T) {
+	for i := 1; i < len(arr); i++ {
+		key := arr[i]
+		pos := obs(arr, key, 0, i)
 
 		// If the element is already in the correct position, skip
 		if pos == i {
@@ -91,8 +142,8 @@ func OptimisticBinary[T constraints.Ordered](arr *[]T) {
 		}
 
 		// Shift elements to make space for key
-		copy((*arr)[pos+1:i+1], (*arr)[pos:i])
-		(*arr)[pos] = key
+		copy(arr[pos+1:i+1], arr[pos:i])
+		arr[pos] = key
 	}
 }
 
@@ -100,13 +151,35 @@ func OptimisticBinary[T constraints.Ordered](arr *[]T) {
 // It searches the range [low, high) in the given slice.
 //
 // The time complexity of this function is O(log n).
-func obs[T constraints.Ordered](arr []T, key T, low, high int) int {
+func obs[T prim.Ordered](arr []T, key T, low, high int) int {
 	for low < high {
 		// Calculate the midpoint of the range
 		mid := (low + high) / 2
 
 		// Compare the key with the element at the midpoint
 		if key < arr[mid] {
+			// If the key is less than the midpoint, search the left half
+			high = mid
+		} else {
+			// If the key is greater than or equal to the midpoint, search the right half
+			low = mid + 1
+		}
+	}
+
+	return low
+}
+
+// obs performs a binary search to find the correct position to insert the given element.
+// It searches the range [low, high) in the given slice.
+//
+// The time complexity of this function is O(log n).
+func obsp[T prim.Ordered](arr []*T, key *T, low, high int) int {
+	for low < high {
+		// Calculate the midpoint of the range
+		mid := (low + high) / 2
+
+		// Compare the key with the element at the midpoint
+		if *key < *arr[mid] {
 			// If the key is less than the midpoint, search the left half
 			high = mid
 		} else {

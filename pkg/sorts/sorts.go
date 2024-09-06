@@ -4,6 +4,7 @@ package sorts
 
 type Sort[T any] interface {
 	Sort(arr *[]T)
+	SortP(arr *[]*T)
 }
 
 func shouldSort[T any](arr []T) bool {

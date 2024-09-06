@@ -1,7 +1,9 @@
 /.idea/
 /pkg/structs/tree/
-/pkg/pipe/_pipe2/
-/pkg/pipe/connectable/
-/pkg/arrays/sorted_test.go
+/pkg/pipes/_pipe2/
+/pkg/pipes/connectable/
+/pkg/pipes/arrays/sorted_test.go
 /pkg/structs/search/
 /pkg/datastr/tree/
+/pkg/pipes/_pipe2/
+/pkg/patterns/symbols.go

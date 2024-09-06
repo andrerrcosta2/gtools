@@ -3,14 +3,13 @@
 package search
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
+	"github.com/andrerrcosta2/gtools/comparables"
+	"github.com/andrerrcosta2/gtools/core/constraints/prim"
 )
 
 // NewBinarySearch returns a new instance of BinarySearch with the given comparator.
 // This function is used to create a new binary search algorithm with a custom comparator.
-func NewBinarySearch[T constraints.Ordered](comparator comparables.Comparator[T]) Search[T] {
+func NewBinarySearch[T prim.Ordered](comparator comparables.Comparator[T]) Search[T] {
 	// Return a new BinarySearch instance with the given comparator.
 	return &BinarySearch[T]{comparator}
 }
@@ -60,7 +59,7 @@ func (b *BinarySearch[T]) Search(arr []T, t T) int {
 
 // Binary performs a binary search on a sorted array to find the position of a target value.
 // It returns the index of the target value if found, or the index where it should be inserted to maintain sorted order.
-func Binary[T constraints.Ordered](arr []T, key T) int {
+func Binary[T prim.Ordered](arr []T, key T) int {
 	// Initialize the search interval boundaries
 	low, high := 0, len(arr)
 

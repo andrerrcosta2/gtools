@@ -4,17 +4,16 @@ package sortables
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
-	"github.com/andrerrcosta2/gtools/pkg/objects"
-	"github.com/andrerrcosta2/gtools/pkg/sorts"
-	"github.com/andrerrcosta2/gtools/pkg/typers"
+	"github.com/andrerrcosta2/gtools/comparables"
+	"github.com/andrerrcosta2/gtools/core/functions"
+	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/sorts"
+	"github.com/andrerrcosta2/gtools/typers"
 	"reflect"
 )
 
 // ComparatorOf returns a new ComparatorSortableOf instance for the given type K.
-// This comparator is used to compare and hash values of type K that implement the gtools.SortableOf interface.
+// This comparator is used to compare and hash values of type K that implement the core.SortableOf interface.
 func ComparatorOf[K gtools.SortableOf]() *ComparatorSortableOf[K] {
 	// Return a new instance of ComparatorSortableOf with the given type K.
 	return &ComparatorSortableOf[K]{}
@@ -45,7 +44,7 @@ var _ comparables.KeyComparator[gtools.SortableOf, string] = (*ComparatorSortabl
 var _ comparables.Comparator[gtools.SortableOf] = (*ComparatorSortableOf[gtools.SortableOf])(nil)
 
 // Unique returns a unique string identifier for the given sortable object.
-// If the object implements the gtools.PersistentSortableOf interface, its unique identifier is returned.
+// If the object implements the core.PersistentSortableOf interface, its unique identifier is returned.
 // Otherwise, the object's memory address or its string representation is returned.
 func Unique[T any](sortable T) string {
 	// Try to cast the sortable object to a gtools.PersistentSortableOf
@@ -81,9 +80,9 @@ func Sort[T any](sortables *[]T, sort sorts.Sort[T]) {
 }
 
 // Equals checks if all the given values are equal.
-// It supports both gtools.SortableOf and constraints.Ordered types.
+// It supports both core.SortableOf and constraints.Ordered types.
 // It returns true if all the values are equal, false otherwise.
-func Equals[T constraints.Ordered](values ...interface{}) bool {
+func Equals[T comparable](values ...interface{}) bool {
 	// If there are less than 2 values, all values are equal
 	if len(values) < 2 {
 		return true
@@ -99,7 +98,7 @@ func Equals[T constraints.Ordered](values ...interface{}) bool {
 
 	// If all values are of type constraints.Ordered, use objects.Equals
 	if len(ofs) == 0 && len(ords) == len(values) {
-		return objects.Equals(ords...)
+		return functions.MultipleEquality(ords...)
 	}
 
 	// If there are values of different types, return false
@@ -107,11 +106,8 @@ func Equals[T constraints.Ordered](values ...interface{}) bool {
 }
 
 // EqualsOf checks if all the given values are equal.
-// It uses the Equal method of the gtools.SortableOf interface to compare values.
+// It uses the Equal method of the core.SortableOf interface to compare values.
 func EqualsOf[G gtools.SortableOf](values ...G) bool {
 	// Use the objects.EqualsBy function to compare values using the Equal method
-	return objects.EqualsBy(func(a, b G) bool {
-		// Compare two values using the Equal method
-		return a.Equal(b)
-	}, values...)
+	return functions.MultipleImplementedEquality(values...)
 }

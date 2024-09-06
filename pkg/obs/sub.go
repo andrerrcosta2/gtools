@@ -1,7 +1,7 @@
 package obs
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/core/functions"
 	"github.com/google/uuid"
 )
 

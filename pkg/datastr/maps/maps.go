@@ -154,6 +154,40 @@ func addEntry[K comparable, V any](set *EntrySet[K, V], key K, value V) error {
 	return fmt.Errorf("key already exists: %v", key)
 }
 
+// Get returns the value associated with the given key in the EntrySet.
+// If the key is not found, the zero value and false are returned.
+//
+// Parameters:
+// - key: The key of the entry.
+//
+// Returns:
+// - The value associated with the key, if found.
+func (e *EntrySet[K, V]) Get(key K) (V, bool) {
+	v, ok := e.entries[key]
+	if !ok {
+		var zero V
+		return zero, false
+	}
+	return v.Value(), ok
+}
+
+// Put adds an entry to the EntrySet.
+// If the key already exists, the value is updated.
+//
+// Parameters:
+// - key: The key of the entry.
+// - value: The value of the entry.
+//
+// Returns:
+// - An error if the key is nil.
+func (e *EntrySet[K, V]) Put(key K, value V) error {
+	if &key == nil {
+		return errors.New("key is required")
+	}
+	e.entries[key] = &ComparableEntry[K, V]{key: key, value: value}
+	return nil
+}
+
 // Keys returns all the keys in the EntrySet.
 // The keys of the EntrySet aren't guaranteed to be in any particular order.
 //

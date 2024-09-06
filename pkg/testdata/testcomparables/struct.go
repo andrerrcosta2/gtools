@@ -4,7 +4,7 @@ package testcomparables
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
+	"github.com/andrerrcosta2/gtools/testdata"
 )
 
 func Struct(intValue int, stringValue string) *ComparableStruct {
@@ -16,8 +16,8 @@ type ComparableStruct struct {
 	String string
 }
 
-func RandomStructs(q int) *iterables.Slice[ComparableStruct] {
-	out := make(iterables.Slice[ComparableStruct], q)
+func RandomStructs(q int) *testdata.Slice[ComparableStruct] {
+	out := make(testdata.Slice[ComparableStruct], q)
 
 	for i := 0; i < q; i++ {
 		out[i] = ComparableStruct{i, fmt.Sprintf("string_%d", i)}
@@ -25,11 +25,11 @@ func RandomStructs(q int) *iterables.Slice[ComparableStruct] {
 	return &out
 }
 
-func RandomReferenceStructs(q int) iterables.Slice[*ComparableStruct] {
-	out := make(iterables.Slice[*ComparableStruct], q)
+func RandomReferenceStructs(q int) *testdata.Slice[*ComparableStruct] {
+	out := make(testdata.Slice[*ComparableStruct], q)
 
 	for i := 0; i < q; i++ {
 		out[i] = Struct(i, fmt.Sprintf("string_%d", i))
 	}
-	return out
+	return &out
 }

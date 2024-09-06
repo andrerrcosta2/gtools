@@ -2,16 +2,16 @@
 
 package casters
 
-func Typed[G any](values ...interface{}) ([]G, bool) {
-	var result []G
+func Typed[G any](values ...interface{}) (result []G, allMatches bool) {
+	allMatches = true
 	for _, value := range values {
 		if castValue, ok := value.(G); ok {
 			result = append(result, castValue)
 		} else {
-			return nil, false
+			allMatches = false
 		}
 	}
-	return result, true
+	return
 }
 
 func AssertedTyped[G any](values ...interface{}) []G {

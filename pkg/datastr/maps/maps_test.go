@@ -4,7 +4,7 @@ package maps
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/arrays"
+	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
 	"github.com/andrerrcosta2/gtools/pkg/functions"
 	"github.com/andrerrcosta2/gtools/pkg/generics"
 	"github.com/andrerrcosta2/gtools/pkg/tuple"

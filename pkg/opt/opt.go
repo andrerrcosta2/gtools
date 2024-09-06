@@ -8,7 +8,7 @@
 package opt
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/functions"
+	"github.com/andrerrcosta2/gtools/core/functions"
 	"reflect"
 )
 

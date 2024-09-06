@@ -3,9 +3,9 @@
 package sorts
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
+	"github.com/andrerrcosta2/gtools/comparables"
+	"github.com/andrerrcosta2/gtools/core/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/gtools"
 )
 
 // NewQuicksort creates a new instance of the Quicksort struct with the given comparator.
@@ -38,34 +38,70 @@ func (s *Quicksort[T]) Sort(arr *[]T) {
 	s.quick(arr)
 }
 
+func (s *Quicksort[T]) SortP(arr *[]*T) {
+	s.quickp(arr)
+}
+
 func (s *Quicksort[T]) quick(arr *[]T) {
-	if len(*arr) < 2 {
+	work := *arr
+	if len(work) < 2 {
 		return
 	}
 
 	// Choose the last element as the pivot
-	pivotIndex := len(*arr) - 1
-	pivot := (*arr)[pivotIndex]
+	pivotIndex := len(work) - 1
+	pivot := work[pivotIndex]
 
 	// Partition the array into two parts around the pivot
 	leftIndex := 0
 	for i := 0; i < pivotIndex; i++ {
-		if s.comparator.Compare((*arr)[i], pivot) < 0 {
+		if s.comparator.Compare((work)[i], pivot) < 0 {
 			// Swap elements to place smaller elements before the pivot
-			(*arr)[i], (*arr)[leftIndex] = (*arr)[leftIndex], (*arr)[i]
+			work[i], work[leftIndex] = work[leftIndex], work[i]
 			leftIndex++
 		}
 	}
 
 	// Move the pivot to its correct position
-	(*arr)[leftIndex], (*arr)[pivotIndex] = (*arr)[pivotIndex], (*arr)[leftIndex]
+	work[leftIndex], work[pivotIndex] = work[pivotIndex], work[leftIndex]
 
 	// Recursively sort the left and right sub-arrays
-	leftPart := (*arr)[:leftIndex]
-	rightPart := (*arr)[leftIndex+1:]
+	leftPart := (work)[:leftIndex]
+	rightPart := (work)[leftIndex+1:]
 
 	s.quick(&leftPart)
 	s.quick(&rightPart)
+}
+
+func (s *Quicksort[T]) quickp(arr *[]*T) {
+	work := *arr
+	if len(work) < 2 {
+		return
+	}
+
+	// Choose the last element as the pivot
+	pivotIndex := len(work) - 1
+	pivot := (work)[pivotIndex]
+
+	// Partition the array into two parts around the pivot
+	leftIndex := 0
+	for i := 0; i < pivotIndex; i++ {
+		if s.comparator.Compare(*work[i], *pivot) < 0 {
+			// Swap elements to place smaller elements before the pivot
+			(work)[i], (work)[leftIndex] = (work)[leftIndex], (work)[i]
+			leftIndex++
+		}
+	}
+
+	// Move the pivot to its correct position
+	work[leftIndex], work[pivotIndex] = work[pivotIndex], work[leftIndex]
+
+	// Recursively sort the left and right sub-arrays
+	leftPart := work[:leftIndex]
+	rightPart := work[leftIndex+1:]
+
+	s.quickp(&leftPart)
+	s.quickp(&rightPart)
 }
 
 var _ Sort[any] = (*Quicksort[any])(nil)
@@ -76,27 +112,27 @@ var _ Sort[string] = (*Quicksort[string])(nil)
 // and then sorts each sub-array separately.
 // The pivot element is chosen as the middle element of the array.
 // The function returns the sorted array.
-func Quick[T constraints.Ordered](arr *[]T) {
+func Quick[T prim.Ordered](arr []T) {
 	// Base case: if the array has less than 2 elements, it is already sorted
-	if len(*arr) < 2 {
+	if len(arr) < 2 {
 		return
 	}
 
 	// Choose the middle element as the pivot
-	pivotIndex := len(*arr) / 2
-	pivot := (*arr)[pivotIndex]
+	pivotIndex := len(arr) / 2
+	pivot := (arr)[pivotIndex]
 
 	// Partition the array into two sub-arrays based on the pivot
-	left, right := 0, len(*arr)-1
+	left, right := 0, len(arr)-1
 	for left <= right {
-		for (*arr)[left] < pivot {
+		for (arr)[left] < pivot {
 			left++
 		}
-		for (*arr)[right] > pivot {
+		for (arr)[right] > pivot {
 			right--
 		}
 		if left <= right {
-			(*arr)[left], (*arr)[right] = (*arr)[right], (*arr)[left]
+			(arr)[left], (arr)[right] = (arr)[right], (arr)[left]
 			left++
 			right--
 		}
@@ -104,41 +140,41 @@ func Quick[T constraints.Ordered](arr *[]T) {
 
 	// Recursively sort the sub-arrays
 	if right > 0 {
-		leftPart := (*arr)[:right+1]
-		Quick(&leftPart)
+		leftPart := (arr)[:right+1]
+		Quick(leftPart)
 	}
-	if left < len(*arr) {
-		rightPart := (*arr)[left:]
-		Quick(&rightPart)
+	if left < len(arr) {
+		rightPart := (arr)[left:]
+		Quick(rightPart)
 	}
 }
 
-// QuickOf sorts an array of elements of type T gtools.SortableOf using the quicksort algorithm.
+// QuickOf sorts an array of elements of type T core.SortableOf using the quicksort algorithm.
 // The function recursively partitions the array into two sub-arrays based on a pivot element,
 // and then sorts each sub-array separately.
 // The pivot element is chosen as the middle element of the array.
 // The function returns the sorted array.
-func QuickOf[T gtools.SortableOf](arr *[]T) {
+func QuickOf[T gtools.SortableOf](arr []T) {
 	// Base case: if the array has less than 2 elements, it is already sorted
-	if len(*arr) < 2 {
+	if len(arr) < 2 {
 		return
 	}
 
 	// Choose the middle element as the pivot
-	pivotIndex := len(*arr) / 2
-	pivot := (*arr)[pivotIndex]
+	pivotIndex := len(arr) / 2
+	pivot := (arr)[pivotIndex]
 
 	// Partition the array into two sub-arrays based on the pivot
-	left, right := 0, len(*arr)-1
+	left, right := 0, len(arr)-1
 	for left <= right {
-		for (*arr)[left].Less(pivot) {
+		for (arr)[left].Less(pivot) {
 			left++
 		}
-		for pivot.Less((*arr)[right]) {
+		for pivot.Less((arr)[right]) {
 			right--
 		}
 		if left <= right {
-			(*arr)[left], (*arr)[right] = (*arr)[right], (*arr)[left]
+			(arr)[left], (arr)[right] = (arr)[right], (arr)[left]
 			left++
 			right--
 		}
@@ -146,11 +182,11 @@ func QuickOf[T gtools.SortableOf](arr *[]T) {
 
 	// Recursively sort the sub-arrays
 	if right > 0 {
-		leftPart := (*arr)[:right+1]
-		QuickOf(&leftPart)
+		leftPart := (arr)[:right+1]
+		QuickOf(leftPart)
 	}
-	if left < len(*arr) {
-		rightPart := (*arr)[left:]
-		QuickOf(&rightPart)
+	if left < len(arr) {
+		rightPart := (arr)[left:]
+		QuickOf(rightPart)
 	}
 }

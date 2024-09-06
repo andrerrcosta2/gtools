@@ -5,12 +5,11 @@ package testsortables
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
 	"github.com/andrerrcosta2/gtools/pkg/gtools"
 )
 
 // NewTestNode creates a new TestNode
-// It implements the gtools.SortableOf interface
+// It implements the core.SortableOf interface
 // It implements the comparables.Comparator interface
 // It implements the fmt.Stringer interface
 //
@@ -60,8 +59,8 @@ var _ comparables.Comparator[TestNode] = (*TestNodeComparator)(nil)
 // Example: RandomTestNodes(10, "node")
 //
 // output: node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9
-func RandomTestNodes(i int, prefix string) *iterables.Slice[TestNode] {
-	out := make(iterables.Slice[TestNode], i)
+func RandomTestNodes(i int, prefix string) *testdata.Slice[TestNode] {
+	out := make(testdata.Slice[TestNode], i)
 	for j := 0; j < i; j++ {
 		out[j] = TestNode(fmt.Sprintf("%s_%d", prefix, j))
 	}

@@ -2,25 +2,22 @@
 
 package comparables
 
-import "github.com/andrerrcosta2/gtools/pkg/constraints"
+import (
+	"github.com/andrerrcosta2/gtools/constraints/prim"
+)
 
-type Comparator[O any] interface {
-	Compare(a, b O) int
-	Equals(a, b O) bool
+type Ordered[T prim.Ordered] struct {
 }
 
-type KeyComparator[K any, O constraints.Ordered] interface {
-	Hash(key K) O
-	Comparator[K]
+func (d Ordered[T]) Compare(a, b T) int {
+	if a < b {
+		return -1
+	} else if a > b {
+		return 1
+	}
+	return 0
 }
 
-// FunctionalComparator represents equals using 0, less than using -1 and greater than using 1
-type FunctionalComparator[A any] func(a, b A) int
-
-func (f FunctionalComparator[A]) Equals(a, b A) bool {
-	return f(a, b) == 0
-}
-
-func (f FunctionalComparator[A]) Compare(a, b A) int {
-	return f(a, b)
+func (d Ordered[T]) Equals(a, b T) bool {
+	return a == b
 }

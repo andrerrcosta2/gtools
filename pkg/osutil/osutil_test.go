@@ -3,9 +3,9 @@
 package osutil
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/conc"
-	"github.com/andrerrcosta2/gtools/pkg/fsutil"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
+	"github.com/andrerrcosta2/gtools/core/conc"
+	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/fsutil"
 	"path/filepath"
 	"testing"
 )
