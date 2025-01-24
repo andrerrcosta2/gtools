@@ -2,6 +2,8 @@
 
 package arrays
 
+import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+
 // IsReversed checks if two slices are the same, but in a reversed order.
 //
 // Parameters:
@@ -90,7 +92,7 @@ func Contains[T comparable](arr []T, val T) bool {
 //
 // Returns:
 // - bool: true if the value is found in the slice, false otherwise
-func ContainsBy[T any, K any](arr []T, val K, f functions.BiFunction[T, K, bool]) bool {
+func ContainsBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) bool {
 	// Iterate over the elements of the slice
 	for _, v := range arr {
 		// Check if the predicate function returns the specified value for the current element
@@ -113,15 +115,15 @@ func ContainsBy[T any, K any](arr []T, val K, f functions.BiFunction[T, K, bool]
 //
 // Returns:
 // - bool: true if all elements in exp are present in res, false otherwise
-func ContainsAllBy[T any, R any](exp []T, res []R, compare functions.BiFunction[T, R, bool]) bool {
-	if len(exp) > len(res) {
+func ContainsAllBy[T any, R any](exp []T, all []R, compare functions.BiPredicate[T, R]) bool {
+	if len(exp) > len(all) {
 		return false
 	}
 	// Iterate over each element in the expected slice
 	for _, expStc := range exp {
 		found := false
 		// Iterate over each element in the result slice
-		for _, resStc := range res {
+		for _, resStc := range all {
 			// Check if the current element in the result slice is equal to the current element in the expected slice using the provided comparison function
 			if compare(expStc, resStc) {
 				found = true
@@ -203,7 +205,7 @@ func EqualsBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
 //
 // Returns:
 // - bool: true if the slices are equal, false otherwise
-func SortedEqualsBy[T any](a, b []T, eq functions.BiFunction[T, T, bool]) bool {
+func SortedEqualsBy[T any](a, b []T, eq functions.BiPredicate[T, T]) bool {
 	// Check if the slices have different lengths
 	if len(a) != len(b) {
 		// If lengths are different, slices cannot be equal

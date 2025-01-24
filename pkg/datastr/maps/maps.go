@@ -5,17 +5,10 @@ package maps
 import (
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/functions"
-	"github.com/andrerrcosta2/gtools/pkg/generics"
+	"github.com/andrerrcosta2/gtools/core/generics"
+	"github.com/andrerrcosta2/gtools/core/gtools/functions"
 	"sort"
 )
-
-// Entry is an interface that represents an entry in a map.
-type Entry[K any, V any] interface {
-	Key() K
-	Value() V
-	String() string
-}
 
 // NewAnyEntry creates a new AnyEntry struct with the given key and value.
 //
@@ -94,17 +87,17 @@ func (e *ComparableEntry[K, V]) String() string {
 // Returns:
 // - A pointer to the newly created EntrySet struct.
 func NewEntrySet[K comparable, V any](e ...*ComparableEntry[K, V]) *EntrySet[K, V] {
-	// Create a new EntrySet struct with an empty map of entries.
+	// Create a new Entries struct with an empty map of entries.
 	entryset := &EntrySet[K, V]{
 		entries: make(map[K]*ComparableEntry[K, V]),
 	}
 
-	// Add each entry from the input slice to the EntrySet's map of entries.
+	// Addf each entry from the input slice to the Entries's map of entries.
 	for _, entry := range e {
 		entryset.entries[entry.Key()] = entry
 	}
 
-	// Return the newly created EntrySet struct.
+	// Return the newly created Entries struct.
 	return entryset
 }
 
@@ -143,9 +136,9 @@ func addEntry[K comparable, V any](set *EntrySet[K, V], key K, value V) error {
 		return errors.New("key is required")
 	}
 
-	// Check if the key already exists in the EntrySet
+	// Check if the key already exists in the Entries
 	if _, ok := set.entries[key]; !ok {
-		// If the key doesn't exist, create a new Entry with the given key and value and add it to the EntrySet
+		// If the key doesn't exist, create a new Entry with the given key and value and add it to the Entries
 		set.entries[key] = &ComparableEntry[K, V]{key: key, value: value}
 		return nil
 	}
@@ -197,7 +190,7 @@ func (e *EntrySet[K, V]) Keys() []K {
 	// Create a slice with initial capacity equal to the number of entries.
 	result := make([]K, 0, len(e.entries))
 
-	// Iterate over all the entries in the EntrySet.
+	// Iterate over all the entries in the Entries.
 	for _, entry := range e.entries {
 		// Append the key of the current entry to the result slice.
 		result = append(result, entry.Key())
@@ -216,7 +209,7 @@ func (e *EntrySet[K, V]) Values() []V {
 	// Create a slice with initial capacity equal to the number of entries.
 	result := make([]V, 0, len(e.entries))
 
-	// Iterate over all the entries in the EntrySet.
+	// Iterate over all the entries in the Entries.
 	for _, entry := range e.entries {
 		// Append the value of the current entry to the result slice.
 		result = append(result, entry.Value())
@@ -264,7 +257,7 @@ func Map[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFun
 		// Apply the BiFunction to the current key-value pair and obtain an Entry pointer.
 		entry := f(k, v)
 
-		// Add the key-value pair from the Entry to the result map.
+		// Addf the key-value pair from the Entry to the result map.
 		result[entry.Key()] = entry.Value()
 	}
 
@@ -281,7 +274,7 @@ func Map[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFun
 // Returns:
 // - A new EntrySet with the same keys as the input map, but with values obtained by applying the BiFunction to each key-value pair.
 func MapEntries[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *ComparableEntry[L, X]]) *EntrySet[L, X] {
-	// Create a new EntrySet with initial capacity equal to the number of entries in the input map.
+	// Create a new Entries with initial capacity equal to the number of entries in the input map.
 	entries := NewEntrySet(make([]*ComparableEntry[L, X], 0, len(m))...)
 
 	// Iterate over each key-value pair in the input map.
@@ -289,11 +282,11 @@ func MapEntries[K comparable, V any, L comparable, X any](m map[K]V, f functions
 		// Apply the BiFunction to the current key-value pair and obtain an Entry pointer.
 		entry := f(k, v)
 
-		// Add the Entry to the EntrySet.
+		// Addf the Entry to the Entries.
 		entries.Add(entry)
 	}
 
-	// Return the resulting EntrySet.
+	// Return the resulting Entries.
 	return entries
 }
 
@@ -409,9 +402,9 @@ func MapKeys[K comparable, V any, X any](m *map[K]V, f functions.Function[K, X])
 //
 // Returns:
 // - A new slice with the same length as the input map, but with values obtained by applying the function to each key-value pair.
-func Cast[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFunction[K, V, generics.BiTypedInterface[L, X]]) []generics.BiTypedInterface[L, X] {
+func Cast[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFunction[K, V, generics.BiTyped[L, X]]) []generics.BiTyped[L, X] {
 	// Create a new slice with initial capacity equal to the number of entries in the input map.
-	cast := make([]generics.BiTypedInterface[L, X], 0, len(*m))
+	cast := make([]generics.BiTyped[L, X], 0, len(*m))
 
 	// Iterate over each key-value pair in the input map.
 	for k, v := range *m {
@@ -428,16 +421,16 @@ func Cast[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFu
 // The resulting map has keys of type L and values of type V.
 // The function assumes that the keys in the input keys slice are unique.
 // If the function f generates duplicate keys, the resulting map will only contain the last value for each key.
-func MapWithKeys[K comparable, L comparable, V any](keys *[]K, f functions.Function2[K, L, V]) *map[L]V {
+func MapWithKeys[K comparable, L comparable, V any](keys []K, f functions.Function2[K, L, V]) *map[L]V {
 	// Create a new map with initial capacity equal to the number of keys in the input keys slice.
-	result := make(map[L]V, len(*keys))
+	result := make(map[L]V, len(keys))
 
 	// Iterate over each key in the input keys slice.
-	for _, key := range *keys {
+	for _, key := range keys {
 		// Apply the function f to the current key and obtain a new key of type L and a value of type V.
 		newKey, value := f(key)
 
-		// Add the new key-value pair to the resulting map.
+		// Addf the new key-value pair to the resulting map.
 		result[newKey] = value
 	}
 
@@ -454,16 +447,16 @@ func MapWithKeys[K comparable, L comparable, V any](keys *[]K, f functions.Funct
 //
 // Returns:
 // - A new map with keys and values obtained by applying the function to each value.
-func MapWithValues[K comparable, V any, X any](values *[]V, f functions.Function2[V, K, X]) *map[K]X {
+func MapWithValues[K comparable, V any, X any](values []V, f functions.Function2[V, K, X]) *map[K]X {
 	// Create a new map with initial capacity equal to the number of values in the input slice.
-	result := make(map[K]X, len(*values))
+	result := make(map[K]X, len(values))
 
 	// Iterate over each value in the input slice.
-	for _, value := range *values {
+	for _, value := range values {
 		// Apply the function to the current value and obtain a key-value pair.
 		k, v := f(value)
 
-		// Add the key-value pair to the result map.
+		// Addf the key-value pair to the result map.
 		result[k] = v
 	}
 
@@ -472,7 +465,7 @@ func MapWithValues[K comparable, V any, X any](values *[]V, f functions.Function
 }
 
 // Fetch returns a map with keys and values obtained by applying the function f to each entry in the input slice.
-// The function f takes an entry of type generics.BiTypedInterface[K, V] and returns a key of type K and a value of type V.
+// The function f takes an entry of type generics.BiTyped[K, V] and returns a key of type K and a value of type V.
 // The input slice entries must have unique keys.
 // If there are duplicate keys in the input slice, the last value for each key will be kept in the resulting map.
 //
@@ -482,7 +475,7 @@ func MapWithValues[K comparable, V any, X any](values *[]V, f functions.Function
 //
 // Returns:
 // - A map with keys and values obtained by applying the function to each entry.
-func Fetch[K comparable, V any](entries []generics.BiTypedInterface[K, V], f functions.Function2[generics.BiTypedInterface[K, V], K, V]) *map[K]V {
+func Fetch[K comparable, V any](entries []generics.BiTyped[K, V], f functions.Function2[generics.BiTyped[K, V], K, V]) *map[K]V {
 	// Create a new map with initial capacity equal to the number of entries in the input slice.
 	result := make(map[K]V, len(entries))
 
@@ -491,7 +484,7 @@ func Fetch[K comparable, V any](entries []generics.BiTypedInterface[K, V], f fun
 		// Apply the function f to the current entry and obtain a key of type K and a value of type V.
 		k, v := f(entry)
 
-		// Add the key-value pair to the result map.
+		// Addf the key-value pair to the result map.
 		result[k] = v
 	}
 
@@ -513,8 +506,8 @@ func ContainsValue[K comparable, V comparable](m *map[K]V, v V) bool {
 	return false
 }
 
-func ContainsAllKeys[K comparable, V any](m *map[K]V, keys *[]K) bool {
-	for _, k := range *keys {
+func ContainsAllKeys[K comparable, V any](m *map[K]V, keys []K) bool {
+	for _, k := range keys {
 		if !ContainsKey(m, k) {
 			return false
 		}
@@ -522,8 +515,8 @@ func ContainsAllKeys[K comparable, V any](m *map[K]V, keys *[]K) bool {
 	return true
 }
 
-func ContainsAllValues[K comparable, V comparable](m *map[K]V, values *[]V) bool {
-	for _, v := range *values {
+func ContainsAllValues[K comparable, V comparable](m *map[K]V, values []V) bool {
+	for _, v := range values {
 		if !ContainsValue(m, v) {
 			return false
 		}
@@ -531,15 +524,15 @@ func ContainsAllValues[K comparable, V comparable](m *map[K]V, values *[]V) bool
 	return true
 }
 
-func AreSameKeys[K comparable, V any](m *map[K]V, keys *[]K) bool {
-	if len(*m) != len(*keys) {
+func AreSameKeys[K comparable, V any](m *map[K]V, keys []K) bool {
+	if len(*m) != len(keys) {
 		return false
 	}
 	return ContainsAllKeys(m, keys)
 }
 
-func AreSameValues[K comparable, V comparable](m *map[K]V, values *[]V) bool {
-	if len(*m) != len(*values) {
+func AreSameValues[K comparable, V comparable](m *map[K]V, values []V) bool {
+	if len(*m) != len(values) {
 		return false
 	}
 	return ContainsAllValues(m, values)

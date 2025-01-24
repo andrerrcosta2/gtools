@@ -3,8 +3,8 @@
 package arrays
 
 import (
-	"github.com/andrerrcosta2/gtools/core/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/functions"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/gtools/functions"
 )
 
 // Reverse reverses the order of elements in a slice.
@@ -130,6 +130,26 @@ func LastIndexOf[T comparable](arr []T, val T) int {
 	return -1
 }
 
+// LastIndexOfBy returns the index of the last element in the slice that satisfies the condition defined by the provided function.
+// If no elements satisfy the condition, it returns -1.
+// It has a complexity of O(n) where n is the length of the slice.
+//
+// Parameters:
+// - arr: the input slice
+// - val: the value to search for
+// - f: a function that takes an element of type T and returns a boolean
+//
+// Returns:
+// - int: the index of the last element that satisfies the condition, or -1 if no elements satisfy the condition
+func LastIndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) int {
+	for i := len(arr) - 1; i >= 0; i-- {
+		if f(arr[i], val) {
+			return i
+		}
+	}
+	return -1
+}
+
 // IndexOf returns the index of the first occurrence of a given value in a slice.
 // If the value is not found, it returns -1.
 // It has a complexity of O(n) where n is the length of the slice.
@@ -143,6 +163,26 @@ func LastIndexOf[T comparable](arr []T, val T) int {
 func IndexOf[T comparable](arr []T, val T) int {
 	for i, v := range arr {
 		if v == val {
+			return i
+		}
+	}
+	return -1
+}
+
+// IndexOfBy returns the index of the first element in the slice that satisfies the condition defined by the provided function.
+// If no elements satisfy the condition, it returns -1.
+// It has a complexity of O(n) where n is the length of the slice.
+//
+// Parameters:
+// - arr: the input slice
+// - val: the value to search for
+// - f: a function that takes an element of type T and returns a boolean
+//
+// Returns:
+// - int: the index of the first element that satisfies the condition, or -1 if no elements satisfy the condition
+func IndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) int {
+	for i, v := range arr {
+		if f(v, val) {
 			return i
 		}
 	}
@@ -274,7 +314,7 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 	return result
 }
 
-// Higher returns the highest value from a slice of ordered elements.
+// Higher returns the highest value from a slice of prim.Ordered elements.
 //
 // Parameters:
 // - arr: a slice of elements that are ordered.
@@ -298,6 +338,40 @@ func Higher[T prim.Ordered](arr []T) T {
 		if v > out {
 			out = v
 		}
+	}
+
+	// Return the highest value.
+	return out
+}
+
+// HigherBy returns the highest value from a slice of elements using a BiFunction function.
+//
+// The function iterates over the elements of the slice and applies the BiFunction
+// function to each element. If the predicate function returns true for the current element,
+// the function returns true. Otherwise, it returns false.
+//
+// Parameters:
+// - arr: the input slice
+// - f: the BiFunction function that takes an element of the slice and a value of type T and returns a boolean
+// - T: the type of the value
+//
+// Returns:
+// - bool: true if the value is found in the slice, false otherwise
+func HigherBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
+	// If the slice is empty, return the zero value of the element type.
+	if len(arr) == 0 {
+		var zero T
+		return zero
+	}
+
+	// Initialize the highest value with the first element of the slice.
+	out := arr[0]
+
+	// Iterate over the rest of the elements in the slice.
+	for _, v := range arr[1:] {
+		// If the current element is higher than the highest value seen so far,
+		// update the highest value.
+		out = f(v, out)
 	}
 
 	// Return the highest value.
@@ -334,6 +408,28 @@ func Lower[T prim.Ordered](arr []T) T {
 	return out
 }
 
+// LowerBy returns the lowest value from a slice of elements using a BiFunction function.
+func LowerBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
+	// If the slice is empty, return the zero value of the element type.
+	if len(arr) == 0 {
+		var zero T
+		return zero
+	}
+
+	// Initialize the highest value with the first element of the slice.
+	out := arr[0]
+
+	// Iterate over the rest of the elements in the slice.
+	for _, v := range arr[1:] {
+		// If the current element is higher than the highest value seen so far,
+		// update the lowest value.
+		out = f(v, out)
+	}
+
+	// Return the lowest value.
+	return out
+}
+
 // Kadane returns the maximum sum of a contiguous subarray in an array of integers.
 // If the array is empty, it returns 0.
 // It has a complexity of O(n) where n is the length of the array.
@@ -351,7 +447,7 @@ func Lower[T prim.Ordered](arr []T) T {
 func Kadane[T prim.Ordered](arr []T) T {
 	// If the array is empty, return 0
 	if len(arr) == 0 {
-		return 0
+		return T(0)
 	}
 	// Initialize maxSoFar and maxEndingHere to the first element
 	maxSoFar := arr[0]

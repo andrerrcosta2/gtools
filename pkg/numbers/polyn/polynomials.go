@@ -9,7 +9,7 @@ import (
 // Polynomial evaluates a polynomial of degree `d` with given coefficients
 // for a given value of `n`. For example, if coefficients are [a, b, c, d] for a cubic
 // polynomial, it evaluates a + bn + cn^2 + dn^3.
-func Polynomial[T numbers.Any](n int, coefficients ...T) T {
+func Polynomial[T numbers.Real](n int, coefficients ...T) T {
 	var result T
 	for i, coeff := range coefficients {
 		result += T(float64(coeff) * float64(Pow(n, i)))
@@ -21,7 +21,7 @@ func Polynomial[T numbers.Any](n int, coefficients ...T) T {
 // for a given value of `n`.
 //
 // f(n) = a + b*n
-func Linear[T numbers.Any](a, b T, n int) T {
+func Linear[T numbers.Real](a, b T, n int) T {
 	return a + T(float64(b)*float64(n))
 }
 
@@ -29,7 +29,7 @@ func Linear[T numbers.Any](a, b T, n int) T {
 // for a given value of `n`.
 //
 // f(n) = a + b*n + c*n^2
-func Quadratic[T numbers.Any](a, b, c T, n int) T {
+func Quadratic[T numbers.Real](a, b, c T, n int) T {
 	return a + T(float64(b)*float64(n)) + T(float64(c)*float64(n*n))
 }
 
@@ -37,7 +37,7 @@ func Quadratic[T numbers.Any](a, b, c T, n int) T {
 // for a given value of `n`.
 //
 // f(n) = a + b*n + c*n^2 + d*n^3
-func Cubic[T numbers.Any](a, b, c, d T, n int) T {
+func Cubic[T numbers.Real](a, b, c, d T, n int) T {
 	return a + T(float64(b)*float64(n)) + T(float64(c)*float64(n*n)) + T(float64(d)*float64(n*n*n))
 }
 

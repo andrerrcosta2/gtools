@@ -3,7 +3,7 @@
 package numbers
 
 import (
-	"github.com/andrerrcosta2/gtools/core/constraints/nums"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums"
 )
 
 type Any = nums.Any
@@ -12,6 +12,6 @@ type Natural = nums.Natural
 
 type Integer = nums.Integer
 
-type Real = nums.Float
+type Real = nums.Real
 
 type Complex = nums.Complex

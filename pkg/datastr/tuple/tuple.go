@@ -24,7 +24,7 @@ func (p *Pair[A, B]) Second() B {
 	return p.second
 }
 
-func DerefPair[A any, B any](b generics.BiTypedInterface[A, B]) (A, B) {
+func DerefPair[A any, B any](b generics.BiTyped[A, B]) (A, B) {
 	var aZero A
 	var bZero B
 	if p, ok := b.(*Pair[A, B]); ok {
@@ -41,7 +41,7 @@ func NewTriple[A any, B any, C any](a A, b B, c C) *Triple[A, B, C] {
 	}
 }
 
-var _ generics.BiTypedInterface[string, string] = (*Pair[string, string])(nil)
+var _ generics.BiTyped[string, string] = (*Pair[string, string])(nil)
 
 type Triple[A any, B any, C any] struct {
 	first  A
@@ -61,7 +61,7 @@ func (t *Triple[A, B, C]) Third() C {
 	return t.third
 }
 
-func DerefTriple[A any, B any, C any](t generics.TriTypedInterface[A, B, C]) (A, B, C) {
+func DerefTriple[A any, B any, C any](t generics.TriTyped[A, B, C]) (A, B, C) {
 	var aZero A
 	var bZero B
 	var cZero C
@@ -71,7 +71,7 @@ func DerefTriple[A any, B any, C any](t generics.TriTypedInterface[A, B, C]) (A,
 	return aZero, bZero, cZero
 }
 
-var _ generics.TriTypedInterface[string, string, string] = (*Triple[string, string, string])(nil)
+var _ generics.TriTyped[string, string, string] = (*Triple[string, string, string])(nil)
 
 type Quad[A any, B any, C any, D any] struct {
 	first  A

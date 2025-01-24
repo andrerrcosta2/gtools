@@ -5,11 +5,12 @@ package progression
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/numbers"
+	"github.com/andrerrcosta2/gtools/numbers/polyn"
 	"math/rand"
 )
 
 // Sequence generates a sequence of length `n` with a given starting value.
-func Sequence[T numbers.Any](length int) []T {
+func Sequence[T numbers.Real](length int) []T {
 	sequence := make([]T, length)
 	var zero T
 	for i := range sequence {
@@ -22,7 +23,7 @@ func Sequence[T numbers.Any](length int) []T {
 // with a given starting value and step size.
 //
 // f(n) = start + step * n
-func Arithmetic[T numbers.Any](start T, step T, length int) ([]T, error) {
+func Arithmetic[T numbers.Real](start T, step T, length int) ([]T, error) {
 	ap := make([]T, length)
 	for i := 0; i < length; i++ {
 		ap[i] = polyn.Linear(start, step, i)
@@ -34,7 +35,7 @@ func Arithmetic[T numbers.Any](start T, step T, length int) ([]T, error) {
 // with a given starting value and ratio.
 //
 // f(n) = start * ratio^n
-func Geometric[T numbers.Any](start T, ratio T, length int) ([]T, error) {
+func Geometric[T numbers.Real](start T, ratio T, length int) ([]T, error) {
 	gp := make([]T, length)
 	for i := 0; i < length; i++ {
 		if i == 0 {
@@ -49,7 +50,7 @@ func Geometric[T numbers.Any](start T, ratio T, length int) ([]T, error) {
 // Fibonacci generates a Fibonacci sequence of length `n`.
 //
 // f(n) = f(n-1) + f(n-2)
-func Fibonacci[T numbers.Any](length int) ([]T, error) {
+func Fibonacci[T numbers.Real](length int) ([]T, error) {
 	fib := make([]T, length)
 	fib[0] = 0
 	fib[1] = 1
@@ -60,7 +61,7 @@ func Fibonacci[T numbers.Any](length int) ([]T, error) {
 }
 
 // Random generates a slice of random numbers of type `T` with the specified range.
-func Random[T numbers.Any](length int, min T, max T) ([]T, error) {
+func Random[T numbers.Real](length int, min T, max T) ([]T, error) {
 	randoms := make([]T, length)
 
 	switch any(min).(type) {
@@ -79,7 +80,7 @@ func Random[T numbers.Any](length int, min T, max T) ([]T, error) {
 
 // Quadratic generates a quadratic progression sequence of length `n`
 // with coefficients a, b, and c for the polynomial a + bn + cn^2.
-func Quadratic[T numbers.Any](a, b, c T, length int) ([]T, error) {
+func Quadratic[T numbers.Real](a, b, c T, length int) ([]T, error) {
 	quad := make([]T, length)
 	for n := 0; n < length; n++ {
 		quad[n] = polyn.Quadratic(a, b, c, n)
@@ -89,7 +90,7 @@ func Quadratic[T numbers.Any](a, b, c T, length int) ([]T, error) {
 
 // Cubic generates a cubic progression sequence of length `n`
 // with coefficients a, b, c, and d for the polynomial a + bn + cn^2 + dn^3.
-func Cubic[T numbers.Any](a, b, c, d T, length int) ([]T, error) {
+func Cubic[T numbers.Real](a, b, c, d T, length int) ([]T, error) {
 	cubic := make([]T, length)
 	for n := 0; n < length; n++ {
 		cubic[n] = polyn.Cubic(a, b, c, d, n)
@@ -101,7 +102,7 @@ func Cubic[T numbers.Any](a, b, c, d T, length int) ([]T, error) {
 // with a given starting value and ratio.
 //
 // f(n) = start / ratio^n
-func SquareRoot[T numbers.Any](start T, ratio T, length int) ([]T, error) {
+func SquareRoot[T numbers.Real](start T, ratio T, length int) ([]T, error) {
 	if ratio == 0 {
 		return nil, fmt.Errorf("ratio cannot be zero")
 	}

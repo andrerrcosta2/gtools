@@ -3,6 +3,7 @@
 package progression
 
 import (
+	"github.com/andrerrcosta2/gtools/numbers"
 	"github.com/andrerrcosta2/gtools/numbers/polyn"
 )
 
@@ -16,7 +17,7 @@ import (
 // - n is the input value
 //
 // https://en.wikipedia.org/wiki/Linear_recurrence_relation
-func High[T numbers.Any](coefficients []T, length int) []T {
+func High[T numbers.Real](coefficients []T, length int) []T {
 	progression := make([]T, length)
 
 	for n := 0; n < length; n++ {

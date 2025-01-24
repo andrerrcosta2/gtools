@@ -2,7 +2,10 @@
 
 package iterables
 
-import "github.com/andrerrcosta2/gtools/pkg/comparables"
+import (
+	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data"
+)
 
 // DetectCycle detects if a list has a cycle.
 //
@@ -16,9 +19,11 @@ import "github.com/andrerrcosta2/gtools/pkg/comparables"
 //
 // The time complexity of this function is O(n) where n is the length of the list.
 // The space complexity is O(1) as no additional data structures are used.
-func DetectCycle[T any](head Iterable[T], comparator comparables.Comparator[T]) Iterable[T] {
+func DetectCycle[T any](head data.Iterator[T], comparator comparables.Comparator[T]) T {
+	var zero T
+	// If the list is empty or has only one element, return nil
 	if head == nil || !head.HasNext() {
-		return nil // No cycle if the list is empty or has only one element
+		return zero // No cycle if the list is empty or has only one element
 	}
 
 	tortoise := head
@@ -26,21 +31,25 @@ func DetectCycle[T any](head Iterable[T], comparator comparables.Comparator[T]) 
 
 	// Detect if a cycle exists
 	for hare.HasNext() {
-		tortoise = tortoise.Next() // 1/2
-		if !hare.Next().HasNext() {
-			return nil // No cycle if hare can't move forward safely
-		}
+		tortoise = head // Move tortoise forward by 1
+		tortoiseValue := tortoise.Next()
 
-		// if there's a cycle, return the node where the cycle starts
-		if comparator.Equals(tortoise.Get(), hare.Get()) {
-			tortoise = head                                      // Move tortoise to the start
-			for !comparator.Equals(tortoise.Get(), hare.Get()) { // Move both pointers by 1 step
-				tortoise = tortoise.Next()
-				hare = hare.Next()
+		hareValue := hare.Next() // 1/2
+		if !hare.HasNext() {
+			return zero
+		}
+		hareValue = hare.Next()
+
+		// If there's a cycle, find the starting point of the cycle
+		if comparator.Equals(tortoiseValue, hareValue) {
+			tortoise = head // Move tortoise to the start
+			for !comparator.Equals(tortoise.Next(), hareValue) {
+				tortoiseValue = tortoise.Next()
+				hareValue = hare.Next()
 			}
-			return tortoise
+			return tortoiseValue
 		}
 	}
 
-	return nil // No cycle found
+	return zero
 }

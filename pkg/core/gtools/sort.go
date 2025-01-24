@@ -13,11 +13,20 @@ type SortableOf interface {
 	ComparableOf
 }
 
+type UniqueOf interface {
+	Unique() string
+}
+
 // PersistentSortableOf is an interface for sortable types that are meant to be persisted,
 // so they must be able to be recognizable even when its memory address is changed
 type PersistentSortableOf interface {
 	SortableOf
-	Unique() []byte
+	UniqueOf
+}
+
+type PersistentComparableOf interface {
+	ComparableOf
+	UniqueOf
 }
 
 // AggregableOf is an interface for types that can be aggregated by a method call

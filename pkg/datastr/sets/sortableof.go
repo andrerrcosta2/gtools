@@ -4,22 +4,23 @@ package sets
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
-	"github.com/andrerrcosta2/gtools/pkg/search"
-	"github.com/andrerrcosta2/gtools/pkg/sortables"
-	"github.com/andrerrcosta2/gtools/pkg/sorts"
+	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/search"
+	"github.com/andrerrcosta2/gtools/core/sortables"
+	"github.com/andrerrcosta2/gtools/core/sortables/sorts"
+	"github.com/andrerrcosta2/gtools/pipes/arrays"
 	"maps"
 )
 
-// SortableOf returns a new instance of SortableOfSet.
+// SortableOf returns a new instance of sortableOfSet.
 // It creates a new set with an empty slice of items and an empty index map.
-func SortableOf[T gtools.SortableOf](values ...T) *SortableOfSet[T] {
-	// Sort the values in ascending order.
+func SortableOf[T gtools.SortableOf](values ...T) str.Set[T] {
+	// Sorter the values in ascending order.
 	sorts.QuickOf(values)
-	// Initialize a new SortableOfSet with an empty slice of items and an empty index map.
-	set := &SortableOfSet[T]{
+	// Initialize a new sortableOfSet with an empty slice of items and an empty index map.
+	set := &sortableOfSet[T]{
 		// The items slice is initialized with the values passed as arguments.
 		items: make([]T, 0),
 		// The index map is initialized with an empty map of string to struct{}.
@@ -28,32 +29,33 @@ func SortableOf[T gtools.SortableOf](values ...T) *SortableOfSet[T] {
 		comparator: sortables.ComparatorOf[T](),
 	}
 
-	// Add each value to the set.
+	// Addf each value to the set.
 	for i, value := range values {
 		set.items[i] = value
-		set.index[set.comparator.Hash(value)] = struct{}{}
+		hash := set.comparator.Hash(value)
+		set.index[hash] = struct{}{}
 	}
 
-	// Return the populated SortableOfSet instance.
+	// Return the populated sortableOfSet instance.
 	return set
 }
 
-type SortableOfSet[T gtools.SortableOf] struct {
+type sortableOfSet[T gtools.SortableOf] struct {
 	items      []T
 	index      map[string]struct{}
 	comparator comparables.KeyComparator[T, string]
 }
 
-func (s *SortableOfSet[T]) Has(t T) bool {
+func (s *sortableOfSet[T]) Has(t T) bool {
 	unique := s.comparator.Hash(t)
 	_, exists := s.index[unique]
 	return exists
 }
 
-func (s *SortableOfSet[T]) Add(t T) {
+func (s *sortableOfSet[T]) Add(t T) {
 	unique := s.comparator.Hash(t)
 	if _, exists := s.index[unique]; !exists {
-		// Binary search for insertion point
+		// binary search for insertion point
 		pos := search.BinaryOf(s.items, t)
 		// Insert item at the found position
 		s.items = append(s.items[:pos], append([]T{t}, s.items[pos:]...)...)
@@ -61,9 +63,9 @@ func (s *SortableOfSet[T]) Add(t T) {
 	}
 }
 
-func (s *SortableOfSet[T]) Remove(t T) {
+func (s *sortableOfSet[T]) Remove(t T) {
 	if s.Has(t) {
-		// Binary search for the position of the item
+		// binary search for the position of the item
 		pos := search.BinaryOf(s.items, t)
 		// Remove the item
 		s.items = append(s.items[:pos], s.items[pos+1:]...)
@@ -72,24 +74,24 @@ func (s *SortableOfSet[T]) Remove(t T) {
 	}
 }
 
-func (s *SortableOfSet[T]) Len() int {
+func (s *sortableOfSet[T]) Len() int {
 	return len(s.items)
 }
 
-func (s *SortableOfSet[T]) Values() []T {
+func (s *sortableOfSet[T]) Values() []T {
 	return s.items
 }
 
-func (s *SortableOfSet[T]) Get(i int) (T, bool) {
-	if !arrays.OutOfBounds(&s.items, i) {
+func (s *sortableOfSet[T]) Get(i int) (T, bool) {
+	if !arrays.OutOfBounds(s.items, i) {
 		return s.items[i], true
 	}
 	var zeroValue T
 	return zeroValue, false
 }
 
-func (s *SortableOfSet[T]) Exclude(i int) bool {
-	if !arrays.OutOfBounds(&s.items, i) {
+func (s *sortableOfSet[T]) Exclude(i int) bool {
+	if !arrays.OutOfBounds(s.items, i) {
 		s.items = append(s.items[:i], s.items[i+1:]...)
 		return true
 	}
@@ -103,7 +105,7 @@ func (s *SortableOfSet[T]) Exclude(i int) bool {
 //	for item := range s.Loop() {
 //	  fmt.Println(item)
 //	}
-func (s *SortableOfSet[T]) Loop() <-chan T {
+func (s *sortableOfSet[T]) Loop() <-chan T {
 	ch := make(chan T)
 
 	go func() {
@@ -116,12 +118,12 @@ func (s *SortableOfSet[T]) Loop() <-chan T {
 	return ch
 }
 
-func (s *SortableOfSet[T]) Clear() {
+func (s *sortableOfSet[T]) Clear() {
 	s.items = make([]T, 0)
 	s.index = make(map[string]struct{})
 }
 
-func (s *SortableOfSet[T]) Equals(other Set[T]) bool {
+func (s *sortableOfSet[T]) Equals(other str.Set[T]) bool {
 	if s.Len() != other.Len() {
 		return false
 	}
@@ -130,20 +132,22 @@ func (s *SortableOfSet[T]) Equals(other Set[T]) bool {
 		return false
 	}
 
-	if set, ok := other.(*SortableOfSet[T]); ok {
-		return arrays.SortedEqualsBy[T](&s.items, &set.items, s.comparator.Equals) &&
+	if set, ok := other.(*sortableOfSet[T]); ok {
+		return arrays.SortedEqualsBy[T](s.items, set.items, s.comparator.Equals) &&
 			maps.Equal(s.index, set.index)
 	}
 
 	if _, ok := any(values[0]).(gtools.SortableOf); ok {
-		sortable := SortableOf(values...)
-		return arrays.SortedEqualsBy[T](&s.items, &sortable.items, s.comparator.Equals) &&
+		sortable := SortableOf(values...).(*sortableOfSet[T])
+		return arrays.SortedEqualsBy[T](s.items, sortable.items, s.comparator.Equals) &&
 			maps.Equal(s.index, sortable.index)
 	}
 
 	return false
 }
 
-func (s *SortableOfSet[T]) String() string {
+func (s *sortableOfSet[T]) String() string {
 	return fmt.Sprintf("%v", s.items)
 }
+
+var _ str.Set[gtools.SortableOf] = (*sortableOfSet[gtools.SortableOf])(nil)

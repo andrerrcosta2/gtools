@@ -3,18 +3,18 @@
 package generics
 
 import (
-	"github.com/andrerrcosta2/gtools/core/constraints/nums"
-	"github.com/andrerrcosta2/gtools/core/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums"
 )
 
-// TypedInterface primary single generic-typed interface
-type TypedInterface[A any] interface{}
+// Typed primary single generic-typed interface
+type Typed[A any] interface{}
 
-// BiTypedInterface primary doubled generic-typed interface
-type BiTypedInterface[A any, B any] interface{}
+// BiTyped primary doubled generic-typed interface
+type BiTyped[A any, B any] interface{}
 
-// TriTypedInterface primary tripled generic-typed interface
-type TriTypedInterface[A any, B any, C any] interface{}
+// TriTyped primary tripled generic-typed interface
+type TriTyped[A any, B any, C any] interface{}
 
 // TypedOrdered primary single generic-ordered interface
 type TypedOrdered[A prim.Ordered] interface{}

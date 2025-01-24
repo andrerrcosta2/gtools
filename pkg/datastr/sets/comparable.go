@@ -2,7 +2,10 @@
 
 package sets
 
-import "maps"
+import (
+	"github.com/andrerrcosta2/gtools/core/data/str"
+	"maps"
+)
 
 // Comparable Creates a new ComparableSet from a variable number of values.
 // The set is initialized with the given values.
@@ -14,7 +17,7 @@ func Comparable[T comparable](values ...T) *ComparableSet[T] {
 		set: make(map[T]struct{}),
 	}
 
-	// Add each value to the set.
+	// Addf each value to the set.
 	for _, v := range values {
 		set.Add(v)
 	}
@@ -56,7 +59,7 @@ func (c *ComparableSet[T]) Clear() {
 	c.set = make(map[T]struct{})
 }
 
-func (c *ComparableSet[T]) Equals(o Set[T]) bool {
+func (c *ComparableSet[T]) Equals(o str.Set[T]) bool {
 	switch set := o.(type) {
 	case *ComparableSet[T]:
 		return maps.Equal(c.set, set.set)
@@ -71,3 +74,5 @@ func (c *ComparableSet[T]) Equals(o Set[T]) bool {
 		return maps.Equal(c.set, s)
 	}
 }
+
+var _ str.Set[any] = (*ComparableSet[any])(nil)

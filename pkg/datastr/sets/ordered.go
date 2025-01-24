@@ -3,9 +3,10 @@
 package sets
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/constraints"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
-	"github.com/andrerrcosta2/gtools/pkg/search"
+	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/search"
+	"github.com/andrerrcosta2/gtools/pipes/arrays"
 	"maps"
 	"sort"
 )
@@ -15,7 +16,7 @@ import (
 // This function returns a pointer to a new OrderedSet, which is a set that maintains the order of its elements.
 //
 // Type parameter T must satisfy the constraints.Ordered constraint, meaning it must be a type that supports ordering.
-func Ordered[T constraints.Ordered](values ...T) *OrderedSet[T] {
+func Ordered[T prim.Ordered](values ...T) *OrderedSet[T] {
 	// Sort the values in ascending order.
 	sort.Slice(values, func(i, j int) bool {
 		return values[i] < values[j]
@@ -38,7 +39,7 @@ func Ordered[T constraints.Ordered](values ...T) *OrderedSet[T] {
 	return set
 }
 
-type OrderedSet[T constraints.Ordered] struct {
+type OrderedSet[T prim.Ordered] struct {
 	index map[T]struct{}
 	items []T
 }
@@ -82,7 +83,7 @@ func (o *OrderedSet[T]) Values() []T {
 
 // Get returns the element at the given index.
 func (o *OrderedSet[T]) Get(i int) (T, bool) {
-	if !arrays.OutOfBounds(&o.items, i) {
+	if i >= 0 && len(o.items) < i {
 		return o.items[i], true
 	}
 	var zeroValue T
@@ -91,7 +92,7 @@ func (o *OrderedSet[T]) Get(i int) (T, bool) {
 
 // Exclude removes an element at the given index.
 func (o *OrderedSet[T]) Exclude(i int) bool {
-	if !arrays.OutOfBounds(&o.items, i) {
+	if i >= 0 && len(o.items) < i {
 		o.items = append(o.items[:i], o.items[i+1:]...)
 		return true
 	}
@@ -116,15 +117,17 @@ func (o *OrderedSet[T]) Clear() {
 	o.index = make(map[T]struct{})
 }
 
-func (o *OrderedSet[T]) Equals(other Set[T]) bool {
+func (o *OrderedSet[T]) Equals(other str.Set[T]) bool {
 	if o.Len() != other.Len() {
 		return false
 	}
 	switch set := other.(type) {
 	case *OrderedSet[T]:
-		return arrays.Equals[T](&o.items, &set.items) && maps.Equal(o.index, set.index)
+		return arrays.Equals[T](o.items, set.items) && maps.Equal(o.index, set.index)
 	default:
 		setValues := set.Values()
-		return arrays.Equals[T](&o.items, &setValues)
+		return arrays.Equals[T](o.items, setValues)
 	}
 }
+
+var _ str.Set[int] = (*OrderedSet[int])(nil)

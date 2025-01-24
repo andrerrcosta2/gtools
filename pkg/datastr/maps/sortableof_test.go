@@ -3,128 +3,132 @@
 package maps
 
 import (
-	"github.com/andrerrcosta2/gtools/pkg/datastr/arrays"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
-	"github.com/andrerrcosta2/gtools/pkg/testdata/testsortables"
+	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
+	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"testing"
 )
 
+// TestSortableOfMap_PutAndGet tests the Put and Get methods of the SortableOfMap
 func TestSortableOfMap_PutAndGet(t *testing.T) {
-	mapa := SortableOf[testsortables.TestNode, testsortables.TestNode]()
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	// types
+	type N = *tests.SortableNode
+
+	// Create map
+	m := SortableOf[N, N]()
 
 	// Test Inserting
-	sortables := testsortables.RandomTestNodes(20, "node").Each(func(n testsortables.TestNode) {
-		mapa.Put(n, n)
-	})
+	random.Struct[N](20).
+		// Insert
+		Each(func(n N) { m.Put(n, n) }).
 
-	// Test retrieving
-	sortables.Each(func(n testsortables.TestNode) {
-		if got, ok := mapa.Get(n); !ok || got != n {
-			t.Errorf("Expected %v, got %v", n, got)
-		}
-	})
+		// Test retrieving
+		Each(func(n N) {
+			shouldFindExactKey[N, N](tt, m, n, n, functions.Equality[N])
+		})
 
 	// Test retrieving a non-existent key
-	nonExistentKey := testsortables.TestNode("non-existent")
-	if _, ok := mapa.Get(nonExistentKey); ok {
-		t.Errorf("Expected key %v to not exist", nonExistentKey)
-	}
+	shouldNotFindKey[N, N](tt, m, tests.NewSortableNode("non-existent"))
+
+	tt.PrintLogStack()
 }
 
+// TestSortableOfMap_Delete tests the Delete method of the SortableOfMap
 func TestSortableOfMap_Delete(t *testing.T) {
-	mapa := SortableOf[testsortables.TestNode, testsortables.TestNode]()
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	// types
+	type N = *tests.SortableNode
 
-	sortables := testsortables.RandomTestNodes(20, "node").Each(func(n testsortables.TestNode) {
-		mapa.Put(n, n)
-	})
+	// Create map
+	m := SortableOf[N, N]()
 
-	// Delete a random key
-	deleted := sortables.Rand()
-	mapa.Delete(deleted)
+	random.Struct[N](20).
+		Each(func(n N) { m.Put(n, n) }).
+		Some(5).
+		// Delete 5 random keys
+		Each(func(n N) {
+			shouldDeleteKey[N, N](tt, m, n)
+		})
 
-	// Check that the key was deleted
-	if _, ok := mapa.Get(deleted); ok {
-		t.Errorf("Expected key %v to be deleted", deleted)
-	}
+	tt.PrintLogStack()
 }
 
+// TestSortableOfMap_Contains tests the Contains method of the SortableOfMap
 func TestSortableOfMap_Contains(t *testing.T) {
-	mapa := SortableOf[testsortables.TestNode, testsortables.TestNode]()
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	// types
+	type N = *tests.SortableNode
 
-	sortables := testsortables.RandomTestNodes(10, "node").Each(func(n testsortables.TestNode) {
-		mapa.Put(n, n)
-	})
+	// Create map
+	m := SortableOf[N, N]()
 
-	// Test for existing key
-	sortables.Each(func(n testsortables.TestNode) {
-		if !mapa.Contains(n) {
-			t.Errorf("Expected map to contain key %v", n)
-		}
-	})
+	random.Struct[N](20).Each(func(n N) { m.Put(n, n) }).
+		// Test for existing key
+		Each(func(n *tests.SortableNode) {
+			shouldFindKey[N, N](tt, m, n)
+		})
 
 	// Test for non-existent key
-	nonExistentKey := testsortables.TestNode("non-existent")
-	if mapa.Contains(nonExistentKey) {
-		t.Errorf("Expected map to not contain key %v", nonExistentKey)
-	}
+	shouldNotFindKey[*tests.SortableNode, *tests.SortableNode](tt, m, tests.NewSortableNode("non-existent"))
+
+	tt.PrintLogStack()
 }
 
+// TestSortableOfMap_LenAndClear tests the Len and Clear methods of the SortableOfMap
 func TestSortableOfMap_LenAndClear(t *testing.T) {
-	mapa := SortableOf[testsortables.TestNode, testsortables.TestNode]()
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	// types
+	type N = *tests.SortableNode
 
-	testsortables.RandomTestNodes(10, "node").Each(func(n testsortables.TestNode) {
-		mapa.Put(n, n)
-	})
+	// Create map
+	m := SortableOf[N, N]()
 
-	if mapa.Len() != 10 {
-		t.Errorf("Expected map length to be 10, got %d", mapa.Len())
-	}
+	random.Struct[N](20).
+		Each(func(n N) { m.Put(n, n) })
 
-	mapa.Put(testsortables.TestNode("non-existent"), testsortables.TestNode("non-existent"))
+	shouldHaveLength[N, N](tt, m, 20)
 
-	if mapa.Len() != 11 {
-		t.Errorf("Expected map length to be 11, got %d", mapa.Len())
-	}
+	m.Put(tests.NewSortableNode("non-existent"), tests.NewSortableNode("non-existent"))
 
-	mapa.Delete(testsortables.TestNode("non-existent"))
+	shouldHaveLength[N, N](tt, m, 21)
 
-	if mapa.Len() != 10 {
-		t.Errorf("Expected map length to be 10, got %d", mapa.Len())
-	}
+	m.Delete(tests.NewSortableNode("non-existent"))
 
-	mapa.Clear()
+	shouldHaveLength[N, N](tt, m, 20)
 
-	if mapa.Len() != 0 {
-		t.Errorf("Expected map length to be 0 after Clear, got %d", mapa.Len())
-	}
+	m.Clear()
+
+	shouldHaveLength[N, N](tt, m, 0)
+
+	tt.PrintLogStack()
 }
 
+// TestSortableOfMap_Iterator tests the Iterator method of the SortableOfMap
 func TestSortableOfMap_Iterator(t *testing.T) {
-	mapa := SortableOf[testsortables.TestNode, testsortables.TestNode]()
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	// types
+	type N = *tests.SortableNode
 
-	exp := make([]Entry[testsortables.TestNode, testsortables.TestNode], 20)
+	// Create map
+	sm := SortableOf[N, N]()
+	mm := make(map[N]N)
 
-	sortables := testsortables.RandomTestNodes(20, "node").
-		Operation(func(i int, n *iterables.Slice[testsortables.TestNode]) {
-			it, that := n.At(i), n.Rand()
-			mapa.Put(it, that)
-			exp[i] = NewAnyEntry(it, that)
-		}).Values()
+	random.Struct[N](20).
+		Each(func(n N) {
+			sm.Put(n, n)
+			mm[n] = n
+		}).
+		Values()
 
-	iter := mapa.Iterator()
+	shouldFindAllUsingIteratorBy(tt, sm.Iterator(), mm, functions.Equality[N])
 
-	count := 0
-	for key, value, ok := iter.Next(); ok; key, value, ok = iter.Next() {
-		var entry Entry[testsortables.TestNode, testsortables.TestNode] = NewAnyEntry(key, value)
-		if !arrays.ContainsBy(&exp, entry, func(a, b Entry[testsortables.TestNode, testsortables.TestNode]) bool {
-			return a.Key().Equal(b.Key()) && a.Value().Equal(b.Value())
-		}) {
-			t.Errorf("Expected key-value pair %v to be in the map", entry)
-		}
-		count++
-	}
-
-	if count != len(sortables) {
-		t.Errorf("Expected to iterate over 10 elements, iterated over %d", count)
-	}
+	tt.PrintLogStack()
 }

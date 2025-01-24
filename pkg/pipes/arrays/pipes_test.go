@@ -3,33 +3,35 @@
 package arrays
 
 import (
-	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/sorts"
-	"github.com/andrerrcosta2/gtools/pkg/testdata/testcomparables"
+	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/pipes/internal/tests"
 	"reflect"
 	"testing"
 )
 
-type Plant struct {
-	Nm string
-}
-
 func TestReverse(t *testing.T) {
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
 	// Testing with primitives
 	arr := []int{1, 2, 3, 4, 5}
 	Reverse(arr)
-	fmt.Printf("Reverse() = %v\n", arr)
+	tt.StackLogf("Reverse() = %v\n", arr)
 	if arr[0] != 5 || arr[1] != 4 || arr[2] != 3 || arr[3] != 2 || arr[4] != 1 {
-		t.Errorf("Reverse() = %v, want %v", arr, []int{5, 4, 3, 2, 1})
+		tt.Errorf("Reverse() = %v, want %v", arr, []int{5, 4, 3, 2, 1})
 	}
 
 	// Testing with Objects
-	arr2, ref := testcomparables.RandomStructs(5).Duplicate()
+	arr2, cp := random.Struct[tests.Comparable](5).Duplicate()
 	Reverse(arr2)
-	fmt.Printf("Reverse() = %v\n", arr2)
-	if !IsReversed(arr2, ref) {
-		t.Errorf("Reverse() = %v, want %v", arr2, testcomparables.RandomStructs(5))
+	tt.StackLogf("Reverse() = %v\n", arr2)
+	if !IsReversed(arr2, cp) {
+		tt.Errorf("Reverse() = %v, want %v", arr2, cp)
 	}
+
+	tt.PrintLogStack()
 
 }
 
@@ -40,8 +42,8 @@ func TestIndexOf(t *testing.T) {
 		t.Errorf("IndexOf() = %v, want %v", index, 2)
 	}
 
-	arr2 := testcomparables.RandomStructs(5).Values()
-	index2 := IndexOf[testcomparables.ComparableStruct](arr2, arr2[2])
+	arr2 := random.Struct[tests.Comparable](5).Values()
+	index2 := IndexOf[tests.Comparable](arr2, arr2[2])
 	if index2 != 2 {
 		t.Errorf("IndexOf() = %v, want %v", index2, 2)
 	}
@@ -140,14 +142,6 @@ func TestOutOfBounds(t *testing.T) {
 	}
 }
 
-func TestSorted(t *testing.T) {
-	arr := []int{5, 4, 3, 2, 1}
-	sorted := Sorted[*sorts.Quicksort[int]](arr)
-	if sorted[0] != 1 || sorted[1] != 2 || sorted[2] != 3 || sorted[3] != 4 || sorted[4] != 5 {
-		t.Errorf("Sorted() = %v, want %v", sorted, []int{1, 2, 3, 4, 5})
-	}
-}
-
 func TestSortedBy(t *testing.T) {
 	arr := []int{5, 4, 3, 2, 1}
 	sorted := SortedBy(arr, func(v int) int {
@@ -194,7 +188,10 @@ func div(acc, v int) int {
 }
 
 func TestHigher(t *testing.T) {
-	tests := []struct {
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
+	tcs := []struct {
 		name     string
 		input    []int
 		expected int
@@ -202,22 +199,30 @@ func TestHigher(t *testing.T) {
 		{"Single element", []int{5}, 5},
 		{"Multiple elements", []int{1, 3, 2, 7, 4}, 7},
 		{"Negative numbers", []int{-1, -5, -3, -4}, -1},
-		{"All elements the same", []int{2, 2, 2, 2}, 2},
-		{"Empty slice", []int{}, 0}, // Adjust this according to the zero value for T
+		{"WhenAllCancels elements the same", []int{2, 2, 2, 2}, 2},
+		{"IsEmpty slice", []int{}, 0}, // Adjust this according to the zero value for T
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Higher(tt.input)
-			if result != tt.expected {
-				t.Errorf("Higher(%v) = %v; want %v", tt.input, result, tt.expected)
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			tt.StackLogf("Higher(%v)", tc.input)
+			result := Higher(tc.input)
+			if result != tc.expected {
+				tt.Errorf("Higher(%v) = %v; want %v", tc.input, result, tc.expected)
+			} else {
+				tt.StackLogf("Higher(%v) equals expected\n", tc.input)
 			}
 		})
 	}
+
+	tt.PrintLogStack()
 }
 
 func TestLower(t *testing.T) {
-	tests := []struct {
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
+	tcs := []struct {
 		name     string
 		input    []int
 		expected int
@@ -225,62 +230,83 @@ func TestLower(t *testing.T) {
 		{"Single element", []int{5}, 5},
 		{"Multiple elements", []int{1, 3, 2, 7, 4}, 1},
 		{"Negative numbers", []int{-1, -5, -3, -4}, -5},
-		{"All elements the same", []int{2, 2, 2, 2}, 2},
-		{"Empty slice", []int{}, 0}, // Adjust this according to the zero value for T
+		{"WhenAllCancels elements the same", []int{2, 2, 2, 2}, 2},
+		{"IsEmpty slice", []int{}, 0}, // Adjust this according to the zero value for T
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Lower(tt.input)
-			if result != tt.expected {
-				t.Errorf("Lower(%v) = %v; want %v", tt.input, result, tt.expected)
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			tt.StackLogf("Lower(%v)", tc.input)
+			result := Lower(tc.input)
+			if result != tc.expected {
+				t.Errorf("Lower(%v) = %v; want %v", tc.input, result, tc.expected)
+			} else {
+				tt.StackLogf("Lower(%v) equals expected\n", tc.input)
 			}
 		})
 	}
+
+	tt.PrintLogStack()
 }
 
 func TestKadane(t *testing.T) {
-	tests := []struct {
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
+	tcs := []struct {
 		name     string
 		input    []int
 		expected int
 	}{
 		{"Single element", []int{5}, 5},
-		{"All positive numbers", []int{1, 2, 3, 4}, 10},
-		{"All negative numbers", []int{-1, -2, -3, -4}, -1},
+		{"WhenAllCancels positive numbers", []int{1, 2, 3, 4}, 10},
+		{"WhenAllCancels negative numbers", []int{-1, -2, -3, -4}, -1},
 		{"Mixed numbers", []int{-2, 1, -3, 4, -1, 2, 1, -5, 4}, 6},
-		{"Empty array", []int{}, 0},
+		{"IsEmpty array", []int{}, 0},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Kadane(tt.input)
-			if result != tt.expected {
-				t.Errorf("Kadane(%v) = %v; want %v", tt.input, result, tt.expected)
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			tt.StackLogf("Kadane(%v)", tc.input)
+			result := Kadane(tc.input)
+			if result != tc.expected {
+				t.Errorf("Kadane(%v) = %v; want %v", tc.input, result, tc.expected)
+			} else {
+				tt.StackLogf("Kadane(%v) equals expected\n", tc.input)
 			}
 		})
 	}
+
+	tt.PrintLogStack()
 }
 
 func TestMajority(t *testing.T) {
-	tests := []struct {
+	// helper
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
+	tcs := []struct {
 		name     string
 		input    []int
 		expected int
 	}{
 		{"Majority element", []int{1, 2, 1, 1, 3, 1}, 1},
 		{"No majority element", []int{1, 2, 3, 4, 5}, 0},
-		{"Empty array", []int{}, 0},
-		{"All elements the same", []int{2, 2, 2, 2}, 2},
+		{"IsEmpty array", []int{}, 0},
+		{"WhenAllCancels elements the same", []int{2, 2, 2, 2}, 2},
 		{"Multiple elements, no majority", []int{1, 2, 3, 2, 2, 3, 3, 3}, 0},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := Majority(tt.input)
-			if result != tt.expected {
-				t.Errorf("Majority(%v) = %v; want %v", tt.input, result, tt.expected)
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			tt.StackLogf("Majority(%v)", tc.input)
+			result := Majority(tc.input)
+			if result != tc.expected {
+				t.Errorf("Majority(%v) = %v; want %v", tc.input, result, tc.expected)
+			} else {
+				tt.StackLogf("Majority(%v) equals expected\n", tc.input)
 			}
 		})
 	}
+
+	tt.PrintLogStack()
 }

@@ -3,8 +3,9 @@
 package subsets
 
 import (
-	"github.com/andrerrcosta2/gtools/core/functions"
-	"github.com/andrerrcosta2/gtools/sorts"
+	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/sortables/sorts"
 )
 
 // Xor returns all the subsets of a set of size n with k elements
@@ -134,13 +135,14 @@ func XorFilterOf[T prim.Ordered](arr []T, min, max, k int, filter func(excl, inc
 	return subsets
 }
 
-// Of Name it Of()
+// Of returns the elements in arr that aren't in indexes and the
+// elements in arr that are in indexes in different slices.
 func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 	if len(indexes) == 0 {
 		return arr, nil
 	}
 
-	// Sort the indexes to ensure they are in ascending order
+	// Sorter the indexes to ensure they are in ascending order
 	sorts.Quick[int](indexes)
 
 	// Allocate slices with the correct size
@@ -153,7 +155,7 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 	for i, idx := range indexes {
 		// Append the elements before the current index to the excluded slice
 		excl = append(excl, arr[currIdx:idx]...)
-		// Add the current index element to the included slice
+		// Addf the current index element to the included slice
 		incl[i] = arr[idx]
 		// Move the current index forward
 		currIdx = idx + 1

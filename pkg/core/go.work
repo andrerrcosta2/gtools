@@ -1,0 +1,10 @@
+go 1.23.1
+
+use (
+    ./gtools
+    ./data
+    ./format
+    ./seeders
+    ./typers
+	.
+)

@@ -4,7 +4,7 @@
 package pipes
 
 import (
-	"github.com/andrerrcosta2/gtools/core/functions"
+	"github.com/andrerrcosta2/gtools/core/gtools/functions"
 	"sync"
 )
 

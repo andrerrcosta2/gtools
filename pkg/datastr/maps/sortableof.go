@@ -4,11 +4,11 @@ package maps
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/pkg/comparables"
-	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
-	"github.com/andrerrcosta2/gtools/pkg/gtools"
-	"github.com/andrerrcosta2/gtools/pkg/sortables"
-	"github.com/andrerrcosta2/gtools/pkg/sorts"
+	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/sortables"
+	"github.com/andrerrcosta2/gtools/core/sortables/sorters"
 	"sort"
 	"strings"
 )
@@ -19,14 +19,14 @@ func SortableOf[K gtools.SortableOf, V any]() *SortableOfMap[K, V] {
 	// Create a new instance of SortableOfMap with an empty map and a comparator.
 	return &SortableOfMap[K, V]{
 		// Initialize the map with a string key type.
-		data: make(map[string]Entry[K, V]),
+		data: make(map[string]str.Entry[K, V]),
 		// Create a comparator for the given key type K.
 		comparator: sortables.ComparatorOf[K](),
 	}
 }
 
 type SortableOfMap[K gtools.SortableOf, V any] struct {
-	data       map[string]Entry[K, V]
+	data       map[string]str.Entry[K, V]
 	comparator comparables.KeyComparator[K, string]
 }
 
@@ -60,7 +60,7 @@ func (m *SortableOfMap[K, V]) Len() int {
 }
 
 func (m *SortableOfMap[K, V]) Clear() {
-	m.data = make(map[string]Entry[K, V])
+	m.data = make(map[string]str.Entry[K, V])
 }
 
 func (m *SortableOfMap[K, V]) Keys() []K {
@@ -81,14 +81,15 @@ func (m *SortableOfMap[K, V]) Values() []V {
 
 // Iterator the variadic parameter is just a trick to allow to use the iterator without requiring parameters.
 // its presence indicates the keys must be sorted.
-func (m *SortableOfMap[K, V]) Iterator(comparator ...comparables.FunctionalComparator[K]) iterables.MapIterator[K, V] {
+func (m *SortableOfMap[K, V]) Iterator(comparator ...comparables.FunctionalComparator[K]) str.MapIterator[K, V] {
 	keys := make([]K, 0, len(m.data))
 	for _, v := range m.data {
 		keys = append(keys, v.Key())
 	}
 
 	if comparator != nil && len(comparator) > 0 {
-		sortables.Sort[K](&keys, sorts.NewQuicksort[K](comparator[0]))
+		sorter := sorters.Quick[K](comparator[0])
+		sorter.Sort(&keys)
 	}
 
 	return &SortableOfMapIterator[K, V]{
@@ -128,7 +129,7 @@ func (m *SortableOfMap[K, V]) String() string {
 		keys = append(keys, key)
 	}
 
-	// Sort keys to maintain a consistent order
+	// Sorter keys to maintain a consistent order
 	sort.Strings(keys)
 
 	var sb strings.Builder

@@ -1,0 +1,39 @@
+// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
+
+package collectors
+
+import (
+	"fmt"
+	"github.com/andrerrcosta2/gtools/core/datastr/iterables"
+	"github.com/andrerrcosta2/gtools/core/tests"
+	"github.com/andrerrcosta2/gtools/core/tests/testingtools"
+	"testing"
+)
+
+func TestAsyncBranchTree_AddSequentially(t *testing.T) {
+	tt := testingtools.LoggersLite(t, tests.AlwaysPrintLog)
+	tree := abt[*branchableMock]()
+
+	iterables.OfSlice(smallBranchableTestData...).
+		// Shuffle the order of the data
+		Some(len(smallBranchableTestData)).
+		Each(func(data *branchableMock) {
+			shouldAddToAbtSucc(tt, tree, data)
+		})
+
+	tt.PrintLogStack()
+	branches := tree.GetBranches()
+	for i, branch := range branches {
+		fmt.Printf("Branch %d:\n", i)
+		for j, value := range branch {
+			fmt.Printf("  [%d]: {id:%d data:%s branch:%+v}\n", j, value.id, value.data, dereferenceBranch(value.branch))
+		}
+	}
+}
+
+func dereferenceBranch(branch *branchableMock) interface{} {
+	if branch == nil {
+		return nil
+	}
+	return *branch
+}

@@ -1,0 +1,12 @@
+// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
+
+package helpers
+
+import (
+	"fmt"
+	"github.com/andrerrcosta2/gtools/conc/collectors/internal/test/mocks"
+	"github.com/andrerrcosta2/gtools/core/datastr/iterables"
+	"github.com/andrerrcosta2/gtools/core/tests"
+	"github.com/andrerrcosta2/gtools/core/tests/testingtools"
+	"testing"
+)
