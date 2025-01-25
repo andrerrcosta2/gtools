@@ -7,13 +7,13 @@ import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/conc/streams"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 	"sync/atomic"
 )
 
-// BufferedSupplier creates a gtools.AsyncCloseableSupplier that uses a channel with the given buffer size
+// BufferedSupplier creates a domain.AsyncCloseableSupplier that uses a channel with the given buffer size
 // to store the values to be produced.
 //
 // Parameters:

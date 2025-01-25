@@ -3,8 +3,8 @@
 package collectors
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 type Collector[I any, O any] interface {

@@ -4,7 +4,7 @@ package nodes
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
 type Node[V any] interface {

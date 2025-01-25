@@ -5,9 +5,9 @@ package random
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/constr"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
-	"github.com/andrerrcosta2/gtools/core/typers"
 	"github.com/google/uuid"
 	"math/big"
 	"math/rand"
@@ -126,7 +126,7 @@ func randOf(t reflect.Type) any {
 	case reflect.String:
 		// TODO: This method lacks constraints control. Finish validation library
 		// TODO: Add its interface to the core package
-		return randString(prng.Int(1, 50), typers.AlphaNumeric)
+		return randString(prng.Int(1, 50), constr.AlphaNumeric)
 	default:
 		panic(fmt.Sprintf("gtools:random: nil or invalid type: '%T' passed to be randomized", t))
 	}
@@ -376,7 +376,7 @@ func Alphanumeric(q int, minMax ...int) *iterables.Slice[string] {
 
 	// Generate the random strings
 	Int(q, minMax...).EachN(func(i, l int) {
-		result[i] = randString(l, typers.AlphaNumeric)
+		result[i] = randString(l, constr.AlphaNumeric)
 	})
 
 	return &result

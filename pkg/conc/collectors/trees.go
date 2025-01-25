@@ -29,9 +29,9 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/collectors/internal/datastr"
 	"github.com/andrerrcosta2/gtools/conc/collectors/internal/helpers"
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/gflux/core/tasks"
 )

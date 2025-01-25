@@ -4,7 +4,7 @@ package tasks
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 type Runnable interface {

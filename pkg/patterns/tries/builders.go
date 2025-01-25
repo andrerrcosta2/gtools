@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"sync"
 )

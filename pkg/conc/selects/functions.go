@@ -4,7 +4,7 @@ package selects
 
 import (
 	"github.com/andrerrcosta2/gtools/conc/channels"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/io"
 )
 

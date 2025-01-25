@@ -3,7 +3,7 @@
 package arrays
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/pipes/internal/tests"
 	"strings"

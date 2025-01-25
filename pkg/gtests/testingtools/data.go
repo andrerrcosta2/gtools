@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/format"
-	"github.com/andrerrcosta2/gtools/core/format/serializations"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/format"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/format/serializations"
 	"reflect"
 )
 

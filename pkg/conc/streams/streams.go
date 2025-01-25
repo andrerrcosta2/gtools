@@ -7,13 +7,13 @@ import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/conc/producers/streamables"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync/atomic"
 )
 
-// HotCloseable returns a gtools.CloseableStreamable that is filled with the given values and starts streaming immediately.
-// It implements a gtools.CloseableStreamable so once it is closed it cannot be opened or supply any more values.
+// HotCloseable returns a domain.CloseableStreamable that is filled with the given values and starts streaming immediately.
+// It implements a domain.CloseableStreamable so once it is closed it cannot be opened or supply any more values.
 // It's thread-safe and can be used concurrently.
 func HotCloseable[T any](bufferSize int, values ...T) gtools.CloseableStreamable[T] {
 	s := &hotStreamableChannel[T]{
@@ -30,7 +30,7 @@ func HotCloseable[T any](bufferSize int, values ...T) gtools.CloseableStreamable
 	return s
 }
 
-// AsyncHotCloseable returns a gtools.CloseableStreamable that is filled with the given supplier function asynchronously
+// AsyncHotCloseable returns a domain.CloseableStreamable that is filled with the given supplier function asynchronously
 // and starts streaming immediately. It's thread-safe and can be used concurrently.
 func AsyncHotCloseable[T any](bufferSize int, supplier functions.Supplier[[]T]) gtools.CloseableStreamable[T] {
 	s := &hotStreamableChannel[T]{
@@ -81,7 +81,7 @@ func (c *hotStreamableChannel[T]) Stream() gtools.Stream[T] {
 
 var _ gtools.CloseableStreamable[any] = (*hotStreamableChannel[any])(nil)
 
-// HotCancellable creates a new gtools.Streamable with the specified buffer size and given values.
+// HotCancellable creates a new domain.Streamable with the specified buffer size and given values.
 // It's thread-safe and can be used concurrently.
 //
 // The given values are sent to the channel when the channel is opened.
@@ -96,7 +96,7 @@ func HotCancellable[T any](ctx context.Context, bufferSize int, values ...T) gto
 	return s
 }
 
-// HotCancellableAsync creates a new gtools.Streamable with the specified buffer size and given supplier function.
+// HotCancellableAsync creates a new domain.Streamable with the specified buffer size and given supplier function.
 // It's thread-safe and can be used concurrently.
 //
 // The supplier function is called asynchronously to generate values.

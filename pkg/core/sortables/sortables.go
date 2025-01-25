@@ -4,10 +4,10 @@ package sortables
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/comparables"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"unsafe"
 )
 
@@ -43,7 +43,7 @@ var _ comparables.KeyComparator[gtools.SortableOf, string] = (*Comparator[gtools
 var _ comparables.Comparator[gtools.SortableOf] = (*Comparator[gtools.SortableOf])(nil)
 
 // Unique returns a unique string identifier for the given object.
-// If the object implements the gtools.UniqueOf interface, its unique identifier is returned.
+// If the object implements the domain.UniqueOf interface, its unique identifier is returned.
 // Otherwise, the object's memory address or its string representation is returned.
 // This method doesn't return any error and currently doesn't handle interfaces
 // as generic type, so its reliability is the best it can be guaranteed based on what

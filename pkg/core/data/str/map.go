@@ -3,9 +3,9 @@
 package str
 
 import (
-	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
 	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
 type Map[K any, V any] interface {

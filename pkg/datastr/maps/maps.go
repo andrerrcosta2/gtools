@@ -5,8 +5,8 @@ package maps
 import (
 	"errors"
 	"fmt"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/generics"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
 	"sort"
 )
 

@@ -3,9 +3,9 @@
 package search
 
 import (
-	"github.com/andrerrcosta2/gtools/core/comparables"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 // NewBinarySearch returns a new instance of BinarySearch with the given comparator.

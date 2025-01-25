@@ -4,10 +4,10 @@ package gtests
 
 import (
 	"context"
-	"github.com/andrerrcosta2/gtools/core/format"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/conc/syncs"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/format"
 )
 
 type Tools interface {

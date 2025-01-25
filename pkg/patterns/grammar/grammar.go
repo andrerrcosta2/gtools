@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	io2 "github.com/andrerrcosta2/gtools/core/io"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"io"

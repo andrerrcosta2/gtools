@@ -4,7 +4,7 @@ package random
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/gtools/validators"
+	"github.com/andrerrcosta2/gtools/core/domain/validators"
 	"reflect"
 )
 

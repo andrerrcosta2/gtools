@@ -1,6 +1,6 @@
 package obs
 
-import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
 type Obv[T any] struct {
 	Nxt functions.Consumer[T]

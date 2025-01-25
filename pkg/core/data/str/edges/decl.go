@@ -2,7 +2,7 @@
 
 package edges
 
-import "github.com/andrerrcosta2/gtools/core/gtools"
+import "github.com/andrerrcosta2/gtools/core/domain/gtools"
 
 type Edge[F any, T any] interface {
 	From() F

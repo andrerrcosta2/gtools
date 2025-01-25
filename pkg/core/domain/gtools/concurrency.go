@@ -3,8 +3,7 @@
 package gtools
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
-	"github.com/andrerrcosta2/gtools/core/io"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 type Semaphore interface {
@@ -72,7 +71,7 @@ type Streamable[T any] interface {
 // CloseableStreamable is a Streamable that is also Closeable.
 // Once it is closed, it cannot be reopened or supply new values.
 type CloseableStreamable[S any] interface {
-	io.Closeable
+	data.Closeable
 	Streamable[S]
 }
 
@@ -95,7 +94,7 @@ type Supplier[T any] interface {
 }
 
 type CloseableSupplier[T any] interface {
-	io.Closeable
+	data.Closeable
 	Supplier[T]
 }
 
@@ -109,12 +108,12 @@ type Consumer[T any] interface {
 }
 
 type CloseableConsumer[T any] interface {
-	io.Closeable
+	data.Closeable
 	Consumer[T]
 }
 
 type SemaphoredChannel[T any] interface {
-	io.Closeable
+	data.Closeable
 	// AddRoutine decrease the number of concurrent slots.
 	AddRoutine()
 	// IsEmpty returns true if the channel is empty, false otherwise.

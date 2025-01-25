@@ -4,8 +4,8 @@ package consumers
 
 import (
 	"context"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/core/io"
 	"sync"
 	"time"
@@ -41,11 +41,11 @@ func ContextRelease[T any](fn functions.Consumer[T], data T, ctx context.Context
 	<-ctx.Done()
 }
 
-// SemaphoredSync is a wrapper function that takes a sync.WaitGroup, a gtools.Semaphore, and a functions.Runnable
+// SemaphoredSync is a wrapper function that takes a sync.WaitGroup, a domain.Semaphore, and a functions.Runnable
 // and calls the provided runnable function. The function acquires the semaphore before calling the provided runnable function,
 // releases the semaphore after the runnable function returns, and decreases the sync.WaitGroup
 //
-// The function takes a sync.WaitGroup, a gtools.Semaphore, and a functions.Runnable as parameters.
+// The function takes a sync.WaitGroup, a domain.Semaphore, and a functions.Runnable as parameters.
 // The returned functions.Runnable will acquire the semaphore, call the provided runnable function,
 // release the semaphore, then decreases the sync.WaitGroup
 func SemaphoredSync[T any](wait *sync.WaitGroup, semaphore gtools.Semaphore, fn functions.Consumer[T], data T) {
@@ -63,11 +63,11 @@ func SemaphoredSync[T any](wait *sync.WaitGroup, semaphore gtools.Semaphore, fn 
 	fn(data)
 }
 
-// Semaphored is a wrapper function that takes a gtools.Semaphore and a functions.Runnable as parameters.
+// Semaphored is a wrapper function that takes a domain.Semaphore and a functions.Runnable as parameters.
 // It acquires the semaphore before calling the provided runnable function, releases the semaphore after the runnable function returns,
 // and does not wait for the runnable function to finish.
 //
-// The function takes a gtools.Semaphore, and a functions.Runnable as parameters.
+// The function takes a domain.Semaphore, and a functions.Runnable as parameters.
 // The returned functions.Runnable will acquire the semaphore, call the provided runnable function,
 // release the semaphore, then return without waiting.
 func Semaphored[T any](semaphore gtools.Semaphore, fn functions.Consumer[T], data T) {

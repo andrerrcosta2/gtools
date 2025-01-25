@@ -4,12 +4,12 @@ package streamables
 
 import (
 	"github.com/andrerrcosta2/gtools/conc/channels"
-	"github.com/andrerrcosta2/gtools/core/functions/suppliers"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/funcs/suppliers"
 	"github.com/andrerrcosta2/gtools/core/io"
 )
 
-// OpenCloseableSync is a helper function that opens a gtools.CloseableStreamable[T] synchronously
+// OpenCloseableSync is a helper function that opens a domain.CloseableStreamable[T] synchronously
 // and fills it with the given values. It uses a goroutine to send all values
 // to the channel and then closes the channel. If a signal is sent to the
 // signal channel, it stops sending values and closes the channel.
@@ -28,7 +28,7 @@ func OpenCloseableSync[T any](values []T, channel chan T, closeSignal channels.S
 	}()
 }
 
-// OpenCloseableAsync is a helper function that opens a gtools.CloseableStreamable[T] asynchronously
+// OpenCloseableAsync is a helper function that opens a domain.CloseableStreamable[T] asynchronously
 // and fills it with the given values. It uses a goroutine to send all values
 // to the channel and then closes the channel. If a signal is sent to the
 // signal channel, it stops sending values and closes the channel.

@@ -4,9 +4,9 @@ package sets
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/core/search"
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/core/sortables/sorts"

@@ -3,7 +3,7 @@
 package numbers
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
 )
 
 type Any = nums.Any

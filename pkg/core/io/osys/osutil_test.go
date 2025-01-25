@@ -3,7 +3,7 @@
 package osys
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
 	"github.com/andrerrcosta2/gtools/core/io/fsys"
 	"os"
 	"path/filepath"

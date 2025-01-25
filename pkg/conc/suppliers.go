@@ -7,7 +7,7 @@ import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/conc/streams"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 	"sync/atomic"
 )

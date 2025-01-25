@@ -23,7 +23,7 @@ func (s *ChannelSemaphore) Rls() {
 	<-s.ch
 }
 
-// Capacity returns the maximum number of slots in the semaphore.
+// Cap returns the maximum number of slots in the semaphore.
 // The capacity is the maximum number of operations that can be performed
 // concurrently.
 func (s *ChannelSemaphore) Cap() int {
@@ -33,7 +33,7 @@ func (s *ChannelSemaphore) Cap() int {
 	return cap(s.ch)
 }
 
-// RemainingCapacity returns the number of available slots in the semaphore.
+// func (s *ChannelSemaphore) Rem() int { returns the number of available slots in the semaphore.
 func (s *ChannelSemaphore) Rem() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

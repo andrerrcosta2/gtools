@@ -4,7 +4,7 @@ package gerrors
 
 import (
 	"errors"
-	"github.com/andrerrcosta2/gtools/core/data"
+	"github.com/andrerrcosta2/gtools/core/domain/data"
 )
 
 type ErrorSeverity int

@@ -5,8 +5,8 @@ package grammar
 import (
 	"bytes"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/bins"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/bins"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"regexp"
 )
 

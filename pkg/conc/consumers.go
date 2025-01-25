@@ -6,14 +6,14 @@ import (
 	"context"
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/conc/consumers"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"log"
 	"sync"
 	"sync/atomic"
 )
 
-// SemaphoredConsumer returns a new gtools.CloseableConsumer that consumes values from the provided supplier and applies the given function to each value.
+// SemaphoredConsumer returns a new domain.CloseableConsumer that consumes values from the provided supplier and applies the given function to each value.
 // The returned consumer uses the provided semaphore to limit the number of concurrent operations.
 //
 // It's a blocking function that waits for all operations to complete before returning.

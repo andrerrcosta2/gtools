@@ -2,7 +2,7 @@
 
 package objects
 
-import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
 func Equals[T comparable](values ...T) bool {
 	return EqualsBy[T](func(a, b T) bool { return a == b }, values...)

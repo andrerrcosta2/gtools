@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/core/functions/runnables"
+	"github.com/andrerrcosta2/gtools/core/funcs/runnables"
 	"sync/atomic"
 	"testing"
 )

@@ -4,7 +4,7 @@ package collectors
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 )
 

@@ -3,7 +3,7 @@
 package maps
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/funcs"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
 	"github.com/andrerrcosta2/gtools/gtests"
@@ -28,7 +28,7 @@ func TestSortableOfMap_PutAndGet(t *testing.T) {
 
 		// Test retrieving
 		Each(func(n N) {
-			shouldFindExactKey[N, N](tt, m, n, n, functions.Equality[N])
+			shouldFindExactKey[N, N](tt, m, n, n, funcs.Equality[N])
 		})
 
 	// Test retrieving a non-existent key
@@ -128,7 +128,7 @@ func TestSortableOfMap_Iterator(t *testing.T) {
 		}).
 		Values()
 
-	shouldFindAllUsingIteratorBy(tt, sm.Iterator(), mm, functions.Equality[N])
+	shouldFindAllUsingIteratorBy(tt, sm.Iterator(), mm, funcs.Equality[N])
 
 	tt.PrintLogStack()
 }

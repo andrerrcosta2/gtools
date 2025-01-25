@@ -3,7 +3,7 @@
 package collections
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
 type Ordered[T prim.Ordered] interface {

@@ -2,7 +2,7 @@
 
 package datastr
 
-import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
 type AsyncValueMap[K comparable, V any] struct {
 	values map[K]*AsyncValue[K, V]

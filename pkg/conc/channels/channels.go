@@ -5,8 +5,8 @@ package channels
 import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 	"sync/atomic"
 )
@@ -53,7 +53,7 @@ func Closed[T any]() <-chan T {
 
 var ClosedChannel = gerrors.Tagged(errors.New("closed chn"), "Closed closing")
 
-// Synchronizable creates a new gtools.SynchronizableChannel[T].
+// Synchronizable creates a new domain.SynchronizableChannel[T].
 // It creates a synchronizable chn of type T which can be used to send - receive values
 // as well to synchronize goroutines.
 func Synchronizable[T any](maxCapacity, maxConcurrency int) gtools.SynchronizableChannel[T] {
@@ -134,7 +134,7 @@ func (ch *synchronizable[T]) ToArray() []T {
 	return result
 }
 
-// SynchronizableSet creates a new gtools.SynchronizableChannel[T].
+// SynchronizableSet creates a new domain.SynchronizableChannel[T].
 // It creates a synchronizable chn of unique values of
 // type T which can be used to send - receive values as well to synchronize goroutines.
 func SynchronizableSet[T comparable](maxCapacity, maxConcurrency int) gtools.SynchronizableChannel[T] {

@@ -3,7 +3,7 @@
 package seeders
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/validators"
+	"github.com/andrerrcosta2/gtools/core/domain/validators"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 )
 

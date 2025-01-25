@@ -8,8 +8,9 @@ require (
     github.com/andrerrcosta2/gtools/gflux/core v0.0.1-modular
 )
 
-//replace (
-//	github.com/andrerrcosta2/gtools/gflux/obs => ./obs
-//	github.com/andrerrcosta2/gtools/gflux/retry => ./retry
-//	github.com/andrerrcosta2/gtools/gflux/core => ./core
+replace (
+	github.com/andrerrcosta2/gtools/gflux/obs => ./obs
+	github.com/andrerrcosta2/gtools/gflux/retry => ./retry
+	github.com/andrerrcosta2/gtools/gflux/core => ./core
+	)
 //)

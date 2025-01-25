@@ -3,7 +3,7 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/patterns/tries"
 )
 

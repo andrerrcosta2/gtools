@@ -3,8 +3,8 @@
 package suppliers
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 	"time"
 )
@@ -33,11 +33,11 @@ func After[T any](fn functions.Supplier[T], timeout time.Duration) T {
 	return fn()
 }
 
-// SemaphoredSync is a wrapper function that takes a gtools.Semaphore and a functions.Supplier[T]
+// SemaphoredSync is a wrapper function that takes a domain.Semaphore and a functions.Supplier[T]
 // and returns a new the result of that function call. The function acquires the semaphore before calling the provided
 // supplier function, releases the semaphore after the supplier function returns, and decrements the sync.WaitGroup
 //
-// The function takes a gtools.Semaphore, a sync.WaitGroup, and a functions.Supplier[T] as parameters.
+// The function takes a domain.Semaphore, a sync.WaitGroup, and a functions.Supplier[T] as parameters.
 // The returned functions.Supplier[T] acquires the semaphore, call the provided supplier function,
 // release the semaphore, and decrements the sync.WaitGroup.
 func SemaphoredSync[T any](semaphore gtools.Semaphore, wait *sync.WaitGroup, fn functions.Supplier[T]) T {
@@ -55,11 +55,11 @@ func SemaphoredSync[T any](semaphore gtools.Semaphore, wait *sync.WaitGroup, fn 
 	return fn()
 }
 
-// Semaphored is a wrapper function that takes a gtools.Semaphore and a functions.Supplier[T]
+// Semaphored is a wrapper function that takes a domain.Semaphore and a functions.Supplier[T]
 // and returns a new the result of that function call. The function acquires the semaphore before calling the provided
 // supplier function, releases the semaphore after the supplier function returns, and decrements the sync.WaitGroup
 //
-// The function takes a gtools.Semaphore, a sync.WaitGroup, and a functions.Supplier[T] as parameters.
+// The function takes a domain.Semaphore, a sync.WaitGroup, and a functions.Supplier[T] as parameters.
 // The returned functions.Supplier[T] acquires the semaphore, call the provided supplier function,
 // release the semaphore, and decrements the sync.WaitGroup.
 func Semaphored[T any](semaphore gtools.Semaphore, fn functions.Supplier[T]) T {

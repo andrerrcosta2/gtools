@@ -3,7 +3,7 @@
 package sorters
 
 import (
-	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
 )
 
 // Quick creates a new instance of Sorter that uses the quickSorter with the given comparator.

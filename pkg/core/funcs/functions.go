@@ -3,8 +3,9 @@
 package funcs
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 // Identity returns the input value unchanged.
@@ -300,4 +301,8 @@ func Less[T prim.Ordered](a, b T) int {
 		return 1
 	}
 	return 0
+}
+
+func ValidRange[T nums.Ordered](min, max T) bool {
+	return min < max
 }

@@ -3,8 +3,8 @@
 package generics
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
 )
 
 // Typed primary single generic-typed interface

@@ -4,7 +4,7 @@ package graphs
 
 //import (
 //	"fmt"
-//	"github.com/andrerrcosta2/gtools/core/gtools"
+//	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 //)
 //
 //type Type int

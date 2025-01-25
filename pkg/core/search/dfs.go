@@ -6,8 +6,8 @@ package search
 Generalize it
 */
 //import (
-//	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
-//	"github.com/andrerrcosta2/gtools/core/gtools"
+//	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+//	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 //	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
 //	"github.com/andrerrcosta2/gtools/pkg/sortables"
 //)

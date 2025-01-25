@@ -4,8 +4,8 @@ package conc
 
 import (
 	"errors"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
-	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
 	"github.com/andrerrcosta2/gtools/gflux/core/tasks"
 	"sync"
 )

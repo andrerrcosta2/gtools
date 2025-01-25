@@ -8,7 +8,7 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/consumers"
 	"github.com/andrerrcosta2/gtools/conc/streams"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"testing"

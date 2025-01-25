@@ -7,7 +7,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/data"
 	"github.com/andrerrcosta2/gtools/core/data/iterators"
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/nodes"

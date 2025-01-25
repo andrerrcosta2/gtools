@@ -4,7 +4,7 @@ package testingtools
 
 import (
 	"bytes"
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 func seedComparableOf(data []byte) gtools.ComparableOf {

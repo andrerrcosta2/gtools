@@ -3,8 +3,8 @@
 package gtools
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
-	"github.com/andrerrcosta2/gtools/core/io"
+	"github.com/andrerrcosta2/gtools/core/domain/data"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 type AsyncSupplier[T any] interface {
@@ -21,6 +21,6 @@ type AsyncSupplier[T any] interface {
 }
 
 type AsyncCloseableSupplier[T any] interface {
-	io.Closeable
+	data.Closeable
 	AsyncSupplier[T]
 }

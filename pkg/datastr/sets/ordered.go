@@ -4,7 +4,7 @@ package sets
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/search"
 	"github.com/andrerrcosta2/gtools/pipes/arrays"
 	"maps"

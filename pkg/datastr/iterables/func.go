@@ -3,8 +3,8 @@
 package iterables
 
 import (
-	"github.com/andrerrcosta2/gtools/core/comparables"
 	"github.com/andrerrcosta2/gtools/core/data"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
 )
 
 // DetectCycle detects if a list has a cycle.

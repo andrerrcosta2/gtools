@@ -6,7 +6,7 @@ package assertlite
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"reflect"
 )
 

@@ -5,7 +5,7 @@ package testingtools
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"strings"
 	"sync"
 )

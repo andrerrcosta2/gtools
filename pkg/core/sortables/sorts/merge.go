@@ -3,8 +3,8 @@
 package sorts
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 // Merge sorts an array of elements using the merge sort algorithm.

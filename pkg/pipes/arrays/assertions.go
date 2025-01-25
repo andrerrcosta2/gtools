@@ -2,7 +2,7 @@
 
 package arrays
 
-import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
 // IsReversed checks if two slices are the same, but in a reversed order.
 //

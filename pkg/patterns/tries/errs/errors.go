@@ -5,7 +5,7 @@ package errs
 import (
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/def"
 )

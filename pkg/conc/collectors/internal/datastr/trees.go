@@ -2,7 +2,7 @@
 
 package datastr
 
-import "github.com/andrerrcosta2/gtools/core/gtools/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
 // TreeAsyncFlattenedData This structure represents the
 // asynchronously flattened data from a tree as a slice

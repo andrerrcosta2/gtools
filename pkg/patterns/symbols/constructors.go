@@ -4,8 +4,8 @@ package symbols
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums/floats"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/nums/ints"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/floats"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/ints"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"strings"
 )

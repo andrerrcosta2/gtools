@@ -3,7 +3,7 @@
 package conc
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"math/rand"
 	"sync"
 	"testing"

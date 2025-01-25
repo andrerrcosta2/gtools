@@ -5,7 +5,7 @@ package streams
 import (
 	"context"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
-	"github.com/andrerrcosta2/gtools/core/functions/runnables"
+	"github.com/andrerrcosta2/gtools/core/funcs/runnables"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"sync"

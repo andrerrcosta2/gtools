@@ -5,13 +5,13 @@ package graphs
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/edges"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/datastr/maps"
 	"github.com/andrerrcosta2/gtools/datastr/sets"
 )
 
-// WeightedSortableDigraphOf returns a new instance of str.WOrderedGraphOf of gtools.SortableOf node type.
+// WeightedSortableDigraphOf returns a new instance of str.WOrderedGraphOf of domain.SortableOf node type.
 // This function initializes the adjacency list as a map of maps.
 func WeightedSortableDigraphOf[G gtools.SortableOf, W prim.Ordered](nods ...G) str.WOrderedGraphOf[G, W, edges.SortableSingleTypedWeighted[G, W]] {
 	// Initialize the adjacency list with a map of maps.

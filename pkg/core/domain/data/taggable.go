@@ -3,7 +3,7 @@
 package data
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
 // AsTaggable returns the given error as a data.Taggable[string] if it
@@ -20,14 +20,6 @@ func AsTaggable[T prim.Hashable](data any) (Taggable[T], bool) {
 func IsTaggable[T prim.Hashable](data any) bool {
 	_, ok := data.(Taggable[T])
 	return ok
-}
-
-type Taggable[T prim.Hashable] interface {
-	// Tag adds the given tags to the Taggable and returns the tag string.
-	// It returns a string in the format "tag1,tag2,...,tagN".
-	Tag(tags ...T)
-	// Tags returns the current tags associated with the Taggable.
-	Tags() []T
 }
 
 // HasAnyTag checks if the given Taggable has any of the given tags.

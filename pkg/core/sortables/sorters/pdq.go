@@ -3,7 +3,7 @@
 package sorters
 
 import (
-	"github.com/andrerrcosta2/gtools/core/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparables"
 	"slices"
 )
 

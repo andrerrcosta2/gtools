@@ -4,7 +4,7 @@ package contexts
 
 import (
 	"context"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 func Runnable(runnable functions.Runnable, ctx context.Context) {

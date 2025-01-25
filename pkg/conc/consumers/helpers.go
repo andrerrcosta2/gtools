@@ -6,9 +6,9 @@ import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/conc/selects"
-	"github.com/andrerrcosta2/gtools/core/functions/runnables"
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
+	"github.com/andrerrcosta2/gtools/core/funcs/runnables"
 	"github.com/andrerrcosta2/gtools/core/io"
 	"log"
 	"sync"
@@ -21,7 +21,7 @@ var ClosedConsumerOnTheFly = errors.New("consumer was found unexpectedly closed 
 var Closed = errors.New("consumer is already closed...\n")
 
 // CloseableSelect is a helper function to be used with goroutines.
-// It receives a gtools.Streamable, a gtools.CloseableConsumer, a WaitGroup, a Semaphore, a channel as signal, and a functions.BiConsumer[int, T] function.
+// It receives a domain.Streamable, a domain.CloseableConsumer, a WaitGroup, a Semaphore, a channel as signal, and a functions.BiConsumer[int, T] function.
 // It checks if the signal is sent, if so it call the closeable and returns false.
 // Otherwise, it tries to consume the value from the channel using the BiConsumer function
 func CloseableSelect[T any](closeable io.Closeable, stream gtools.Stream[T], signal channels.Signal, wait *sync.WaitGroup,

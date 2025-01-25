@@ -3,8 +3,8 @@
 package sorts
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools"
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 // Quick sorts an array of elements of type T constraints.Ordered using the quicksort algorithm.

@@ -3,7 +3,7 @@
 package grammar
 
 import (
-	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim/bins"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/bins"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 )
 
