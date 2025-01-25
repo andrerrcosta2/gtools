@@ -33,7 +33,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/gtools/functions"
 	"github.com/andrerrcosta2/gtools/core/sortables"
-	"github.com/andrerrcosta2/gtools/core/tasks"
+	"github.com/andrerrcosta2/gtools/gflux/core/tasks"
 )
 
 //type BranchableCollector[B data.Branchable, H any, C ~[][]B] Collector[B, C]

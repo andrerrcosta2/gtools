@@ -5,8 +5,8 @@ package channels
 import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
-	"github.com/andrerrcosta2/gtools/core/gerrors"
 	"github.com/andrerrcosta2/gtools/core/gtools"
+	"github.com/andrerrcosta2/gtools/core/gtools/gerrors"
 	"sync"
 	"sync/atomic"
 )

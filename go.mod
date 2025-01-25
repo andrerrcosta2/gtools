@@ -2,19 +2,6 @@ module github.com/andrerrcosta2/gtools
 
 go 1.23.1
 
-//require (
-//	github.com/andrerrcosta2/gtools/conc v0.0.0
-//	github.com/andrerrcosta2/gtools/core v0.0.0
-//	github.com/andrerrcosta2/gtools/datastr v0.0.0
-//	github.com/andrerrcosta2/gtools/gflux v0.0.0
-//	github.com/andrerrcosta2/gtools/gtests v0.0.0
-//	github.com/andrerrcosta2/gtools/gvalidation v0.0.0
-//	github.com/andrerrcosta2/gtools/numbers v0.0.0
-//	github.com/andrerrcosta2/gtools/patterns v0.0.0
-//	github.com/andrerrcosta2/gtools/pipes v0.0.0
-//	//github.com/andrerrcosta2/gtools/pkg/reflect4 v0.0.0
-//)
-//
 //replace (
 //	github.com/andrerrcosta2/gtools/conc => ./pkg/conc
 //	github.com/andrerrcosta2/gtools/core => ./pkg/core
