@@ -3,7 +3,7 @@
 package str
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data"
+	"github.com/andrerrcosta2/gtools/core/comparables"
 	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
 	"github.com/andrerrcosta2/gtools/core/gtools/constraints/prim"
 )
@@ -56,7 +56,7 @@ type Map[K any, V any] interface {
 	// The comparator parameter is an optional parameter that can be used to sort
 	// the keys in the map.
 	// Returns an iterator for the map.
-	Iterator(comparator ...data.FunctionalComparator[K]) MapIterator[K, V]
+	Iterator(comparator ...comparables.FunctionalComparator[K]) MapIterator[K, V]
 }
 
 type BiMap[K any, V any] interface {
@@ -123,7 +123,7 @@ type BiMap[K any, V any] interface {
 	// The comparator parameter is an optional parameter that can be used to sort
 	// the keys in the map.
 	// Returns an iterator for the map.
-	Iterator(comparator ...data.FunctionalComparator[K]) MapIterator[K, V]
+	Iterator(comparator ...comparables.FunctionalComparator[K]) MapIterator[K, V]
 }
 
 // Entry is an interface that represents an entry in a map.
