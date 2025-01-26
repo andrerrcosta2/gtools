@@ -3,7 +3,7 @@
 package symbols
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data"
+	"github.com/andrerrcosta2/gtools/core/domain/data"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 )
 

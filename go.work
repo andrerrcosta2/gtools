@@ -7,7 +7,6 @@ use (
 	./pkg/numbers
 	./pkg/gflux
 	./pkg/patterns
-	./pkg/pipes
 	./pkg/gtests
 	./pkg/gvalidation
 	./pkg/reflect4

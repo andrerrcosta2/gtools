@@ -5,8 +5,8 @@ package conc
 import (
 	"context"
 	"fmt"
+	"github.com/andrerrcosta2/gtools/core/domain/functions/runnables"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/core/funcs/runnables"
 	"sync/atomic"
 	"testing"
 )

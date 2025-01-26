@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-//go:build testseed
+//go:build tt
 
 package assertlite
 

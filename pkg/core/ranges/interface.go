@@ -2,7 +2,9 @@
 
 package ranges
 
-import "errors"
+import (
+	"fmt"
+)
 
 type Range interface {
 	// Next tries to increase the range value and returns true if the value was increased
@@ -73,11 +75,11 @@ func prevAsc(r Range) bool {
 }
 
 func sizeAsc(r Range) int {
-	return r.Last() - r.First()
+	return r.Last() - r.First() + 1
 }
 
 func sizeDesc(r Range) int {
-	return r.First() - r.Last()
+	return r.First() - r.Last() + 1
 }
 
 // prevDesc advances the range and returns true if the range didn't reach the end
@@ -132,26 +134,14 @@ func reset(r Range) {
 
 func canSetRangeAsc(r Range, start int, end int) error {
 	if start > end {
-		return errors.New("start must be less than end")
-	}
-	if start < r.First() {
-		return errors.New("start must be greater than or equal to the first element")
-	}
-	if end > r.Last() {
-		return errors.New("end must be less than or equal to the last element")
+		return fmt.Errorf("start '%d' must be less than end '%d'", start, end)
 	}
 	return nil
 }
 
 func canSetRangeDesc(r Range, start int, end int) error {
 	if start < end {
-		return errors.New("start must be greater than end")
-	}
-	if start > r.First() {
-		return errors.New("start must be less than or equal to the first element")
-	}
-	if end < r.Last() {
-		return errors.New("end must be greater than or equal to the last element")
+		return fmt.Errorf("start '%d' must be greater than end '%d'", start, end)
 	}
 	return nil
 }

@@ -4,7 +4,6 @@ package grammar
 
 import (
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/bins"
-	"github.com/andrerrcosta2/gtools/patterns/symbols"
 )
 
 // GetSymbolValue takes a symbol and attempts to convert it to a value of type K.
@@ -97,7 +96,7 @@ func HasSymbolAtAll(pattern, symbol Symbol, idx ...int) bool {
 	return true
 }
 
-func mapToSymbol[V any, T symbols.Logical](s ...V) (T, error) {
+func mapToSymbol[V any, T Symbol](s ...V) (T, error) {
 	bs, err := NewSymbol(s)
 	return bs.(T), err
 }

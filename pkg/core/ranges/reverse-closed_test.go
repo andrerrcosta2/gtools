@@ -91,18 +91,28 @@ func TestReverseClosedRangeSize(t *testing.T) {
 
 func TestReverseClosedRangeSetRange(t *testing.T) {
 	r := New(ReverseClosed, 10, 5)
-	r.SetRange(20, 15)
-	expectedStart, expectedEnd := 20, 15
-	if r.Start() != expectedStart || r.End() != expectedEnd {
-		t.Errorf("SetRange() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), expectedStart, expectedEnd)
+	xs, xe := 8, 6
+	err := r.SetRange(8, 6)
+	if err != nil {
+		t.Errorf("SetRange() failed: %v", err)
+	}
+
+	if r.Start() != xs || r.End() != xe {
+		t.Errorf("SetRange() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), xs, xe)
+	}
+
+	// Try set an invalid range
+	err = r.SetRange(20, 21)
+	if err == nil {
+		t.Error("SetRange() should have failed")
 	}
 }
 
 func TestReverseClosedRangeTune(t *testing.T) {
 	r := New(ReverseClosed, 10, 5)
 	r.Tune(2, 1)
-	expectedStart, expectedEnd := 8, 4
-	if r.Start() != expectedStart || r.End() != expectedEnd {
-		t.Errorf("Tune() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), expectedStart, expectedEnd)
+	xs, xe := 11, 7
+	if r.Start() != xs || r.End() != xe {
+		t.Errorf("Tune() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), xs, xe)
 	}
 }

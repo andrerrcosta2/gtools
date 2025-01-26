@@ -45,9 +45,7 @@ func (t *asyncContextToolsLite) AsyncBefore(fn functions.Runnable, ctx context.C
 }
 
 func (t *asyncContextToolsLite) Semaphore(maxConcurrent int) *syncs.ChannelSemaphore {
-	return &syncs.ChannelSemaphore{
-		ch: make(chan struct{}, maxConcurrent),
-	}
+	return syncs.NewChannelSemaphore(maxConcurrent)
 }
 
 type concurrentContextToolsLite struct {
@@ -66,7 +64,5 @@ func (t *concurrentContextToolsLite) Before(fn functions.Runnable, ctx context.C
 }
 
 func (t *concurrentContextToolsLite) Semaphore(maxConcurrent int) *syncs.ChannelSemaphore {
-	return &syncs.ChannelSemaphore{
-		ch: make(chan struct{}, maxConcurrent),
-	}
+	return syncs.NewChannelSemaphore(maxConcurrent)
 }

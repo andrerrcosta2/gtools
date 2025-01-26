@@ -4,19 +4,19 @@ package sets
 
 import "github.com/andrerrcosta2/gtools/core/data/str"
 
-// Map takes a slice of elements of type T and a function that maps each element of
-// type T to an element of type S. It returns a Set of elements of type S.
+// Map takes a slice of elements of type K and a function that maps each element of
+// type K to an element of type V. It returns a Set of elements of type V.
 // The function f is applied to each element of the slice and the results are added
 // to the Set.
 //
 // Parameters:
-// - arr: a slice of elements of type T
-// - f: a function that maps an element of type T to an element of type S
+// - arr: a slice of elements of type K
+// - f: a function that maps an element of type K to an element of type V
 //
 // Returns:
-// - A Set of elements of type S
+// - A Set of elements of type V
 func Map[T any, S comparable](arr []T, f func(v T) S) str.Set[S] {
-	// Create an empty Set of type S
+	// Create an empty Set of type V
 	s := Comparable[S]()
 	// Iterate over the elements of the slice
 	for _, v := range arr {

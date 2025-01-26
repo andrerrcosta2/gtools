@@ -10,7 +10,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/search"
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/core/sortables/sorts"
-	"github.com/andrerrcosta2/gtools/pipes/arrays"
+	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
 	"maps"
 )
 

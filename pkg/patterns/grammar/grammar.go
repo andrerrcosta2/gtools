@@ -5,17 +5,16 @@ package grammar
 import (
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	io2 "github.com/andrerrcosta2/gtools/core/io"
-	"github.com/andrerrcosta2/gtools/patterns/symbols"
-	"io"
+	"github.com/andrerrcosta2/gtools/core/io"
 	"os"
 )
 
-// Dictionary creates a new empty dictionary of symbols.
-func Dictionary[K prim.Hashable, V ~[]S, S symbols.Logical](entries ...str.Entry[K, V]) str.Dictionary[K, V] {
+// Dictionary creates a new empty dictionary of symbols
+func Dictionary[K prim.Hashable, V ~[]S, S Symbol](entries ...str.Entry[K, V]) str.Dictionary[K, V] {
 	d := make(SymbolDictionary[K, V, S], len(entries))
 
 	// Iterate over the given entries and add them to the dictionary.
@@ -26,7 +25,7 @@ func Dictionary[K prim.Hashable, V ~[]S, S symbols.Logical](entries ...str.Entry
 	return &d
 }
 
-type SymbolDictionary[K prim.Hashable, V ~[]S, S symbols.Logical] map[K]V
+type SymbolDictionary[K prim.Hashable, V ~[]S, S Symbol] map[K]V
 
 func (d *SymbolDictionary[K, V, S]) EntrySet() map[K]V {
 	return *d
@@ -71,13 +70,12 @@ func (d *SymbolDictionary[K, V, S]) IsEmpty() bool {
 func (d *SymbolDictionary[K, V, S]) Entries() []str.Entry[K, V] {
 	var entries []str.Entry[K, V]
 	// Iterate over each key-value pair in the dictionary
-	for key, value := range *d {
-		for _, v := range value {
-			// Create a new Entry from the current key-value pair
-			entry := SymbolEntry[K, V, S](key, V{v})
-			// Append the Entry to the slice of Entries
-			entries = append(entries, entry)
-		}
+	for key, values := range *d {
+		// Create a new Entry from the current key-value pair
+		entry := SymbolEntry[K, V, S](key, values...)
+		// Append the Entry to the slice of Entries
+		entries = append(entries, entry)
+
 	}
 	// Return the slice of Entries
 	return entries
@@ -147,7 +145,7 @@ func (d *SymbolDictionary[K, V, S]) LoadFromFile(filePath string, fileType Dicti
 		return err
 	}
 	// It's only reading, I want to log it anyway
-	defer io2.CloseOrLog(file, "grammar.SymbolDictionary.LoadFromFile")
+	defer io.CloseOrLog(file, "grammar.SymbolDictionary.LoadFromFile")
 
 	// Parse the file based on fileType
 	switch fileType {
@@ -177,7 +175,7 @@ func (d *SymbolDictionary[K, V, S]) loadFromCSV(file *os.File) error {
 	reader := csv.NewReader(file)
 	for {
 		record, err := reader.Read()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
@@ -204,7 +202,7 @@ func (d *SymbolDictionary[K, V, S]) loadFromCSV(file *os.File) error {
 	return nil
 }
 
-var _ str.Dictionary[string, []symbols.Logical] = (*SymbolDictionary[string, []symbols.Logical, symbols.Logical])(nil)
+var _ str.Dictionary[string, []Symbol] = (*SymbolDictionary[string, []Symbol, Symbol])(nil)
 
 // SymbolEntry creates a new Entry for a SymbolDictionary.
 //
@@ -212,13 +210,13 @@ var _ str.Dictionary[string, []symbols.Logical] = (*SymbolDictionary[string, []s
 // The function takes two parameters, the key and the value, and returns a new Entry.
 //
 // The Entry is created using the symbolEntry struct, which contains the key and value.
-func SymbolEntry[K prim.Hashable, V ~[]S, S symbols.Logical](key K, value V) str.Entry[K, V] {
-	return &symbolEntry[K, V, S]{key: key, value: value}
+func SymbolEntry[K prim.Hashable, V ~[]S, S Symbol](key K, values ...S) str.Entry[K, V] {
+	return &symbolEntry[K, V, S]{key: key, values: values}
 }
 
-type symbolEntry[K prim.Hashable, V ~[]S, S symbols.Logical] struct {
-	key   K
-	value V
+type symbolEntry[K prim.Hashable, V ~[]S, S Symbol] struct {
+	key    K
+	values V
 }
 
 // Key returns the key of the Entry.
@@ -236,7 +234,7 @@ func (e *symbolEntry[K, V, S]) Key() K {
 //
 // Returns the value of the Entry.
 func (e *symbolEntry[K, V, S]) Value() V {
-	return e.value
+	return e.values
 }
 
 // String returns a string representation of the Entry.
@@ -248,10 +246,10 @@ func (e *symbolEntry[K, V, S]) Value() V {
 //
 // Returns a string representation of the Entry.
 func (e *symbolEntry[K, V, S]) String() string {
-	return fmt.Sprintf("{ key: %v, value: %v }", e.key, e.value)
+	return fmt.Sprintf("{ key: %v, value: %v }", e.key, e.values)
 }
 
-var _ str.Entry[string, []symbols.Logical] = (*symbolEntry[string, []symbols.Logical, symbols.Logical])(nil)
+var _ str.Entry[string, []Symbol] = (*symbolEntry[string, []Symbol, Symbol])(nil)
 
 type DictionaryFileType int
 
@@ -260,4 +258,4 @@ const (
 	CSVDictionary
 )
 
-type PatternTrieDictionary SymbolDictionary[string, []symbols.Logical, symbols.Logical]
+type PatternTrieDictionary SymbolDictionary[string, []Symbol, Symbol]

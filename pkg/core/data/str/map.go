@@ -144,22 +144,22 @@ type Entry[K any, V any] interface {
 
 var _ nodes.KeyValue[string, any] = (Entry[string, any])(nil)
 
-type Dictionary[T comparable, S any] interface {
+type Dictionary[K comparable, V any] interface {
 	// Put adds a new key-value pair to the dictionary.
 	//
-	// It takes two parameters: the key of type T and the value of type S.
+	// It takes two parameters: the key of type K and the value of type V.
 	// It returns nothing.
-	Put(key T, value S)
+	Put(key K, value V)
 	// EntrySet returns a map containing all the key-value pairs in the dictionary.
 	//
 	// It takes no parameters.
 	// Returns a map containing all the key-value pairs in the dictionary.
-	EntrySet() map[T]S
+	EntrySet() map[K]V
 	// Entries returns a slice of Entry objects representing the key-value pairs in the dictionary.
 	//
 	// It takes no parameters.
 	// Returns a slice of Entry objects representing the key-value pairs in the dictionary.
-	Entries() []Entry[T, S]
+	Entries() []Entry[K, V]
 	// Get returns the value associated with the given key.
 	// If the key does not exist in the dictionary, it returns the zero value for the value type and false.
 	//
@@ -169,15 +169,15 @@ type Dictionary[T comparable, S any] interface {
 	// Returns:
 	// - The value associated with the given key, if found.
 	// - A boolean indicating whether the key was found.
-	Get(key T) (S, bool)
+	Get(key K) (V, bool)
 	// IsEmpty checks if the dictionary is empty.
 	//
 	// Returns true if the dictionary is empty, false otherwise.
 	IsEmpty() bool
 	// Keys returns a slice of keys in the dictionary.
 	//
-	// Returns a slice of type []T containing all the keys in the dictionary.
-	Keys() []T
+	// Returns a slice of type []K containing all the keys in the dictionary.
+	Keys() []K
 	// Size returns the number of key-value pairs in the dictionary.
 	//
 	// Returns an integer representing the number of key-value pairs in the dictionary.
@@ -185,15 +185,15 @@ type Dictionary[T comparable, S any] interface {
 	// Values returns a slice of all the values in the dictionary.
 	//
 	// It takes no parameters.
-	// Returns a slice of type []S containing all the values in the dictionary.
-	Values() []S
+	// Returns a slice of type []V containing all the values in the dictionary.
+	Values() []V
 }
 
 // MergeDictionaries creates a new dictionary by merging the given dictionaries.
 // If two dictionaries share a key, the value from the last dictionary in the list is used.
 //
-// The function takes a variable number of arguments of type Dictionary[T, S].
-// The function returns a pointer to a Dictionary[T, S].
+// The function takes a variable number of arguments of type Dictionary[K, V].
+// The function returns a pointer to a Dictionary[K, V].
 func MergeDictionaries[T prim.Hashable, S any](dictionaries ...Dictionary[T, S]) Dictionary[T, S] {
 	if len(dictionaries) == 0 {
 		// If the input list of dictionaries is empty, return nil.

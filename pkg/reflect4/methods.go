@@ -2,7 +2,7 @@
 
 package reflect4
 
-import "github.com/andrerrcosta2/gtools/pkg/reflect4/internal/handlers/data"
+import "github.com/andrerrcosta2/gtools/reflect4/internal/handlers/data"
 
 //import (
 //	"github.com/andrerrcosta2/gtools/core/util/reflectiv/internal/handlers/data"

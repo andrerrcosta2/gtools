@@ -100,9 +100,9 @@ func TestReverseOpenRangeSetRange(t *testing.T) {
 
 func TestReverseOpenRangeTune(t *testing.T) {
 	r := New(ReverseOpen, 10, 5)
-	r.Tune(2, 1)
-	expectedStart, expectedEnd := 8, 4
-	if r.Start() != expectedStart || r.End() != expectedEnd {
-		t.Errorf("Tune() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), expectedStart, expectedEnd)
+	xs, xe := 12, 4
+	r.Tune(2, -1)
+	if r.Start() != xs || r.End() != xe {
+		t.Errorf("Tune() failed; start = %v, end = %v; want start = %v, end = %v", r.Start(), r.End(), xs, xe)
 	}
 }

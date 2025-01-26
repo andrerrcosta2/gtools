@@ -4,9 +4,9 @@ package arrays
 
 import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/gflux/core/pipes/internal/tests"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/pipes/internal/tests"
 	"reflect"
 	"testing"
 )

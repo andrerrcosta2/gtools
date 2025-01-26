@@ -3,6 +3,6 @@ go 1.23.1
 use (
 	./core
 	./obs
-	./retry
+	./event
 	.
 )

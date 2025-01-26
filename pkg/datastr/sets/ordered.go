@@ -6,7 +6,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/search"
-	"github.com/andrerrcosta2/gtools/pipes/arrays"
+	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
 	"maps"
 	"sort"
 )
@@ -15,7 +15,7 @@ import (
 //
 // This function returns a pointer to a new OrderedSet, which is a set that maintains the order of its elements.
 //
-// Type parameter T must satisfy the constraints.Ordered constraint, meaning it must be a type that supports ordering.
+// Type parameter K must satisfy the constraints.Ordered constraint, meaning it must be a type that supports ordering.
 func Ordered[T prim.Ordered](values ...T) *OrderedSet[T] {
 	// Sort the values in ascending order.
 	sort.Slice(values, func(i, j int) bool {

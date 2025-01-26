@@ -3,14 +3,16 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/core/str"
-	"github.com/andrerrcosta2/gtools/core/tests"
+	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
+	"github.com/andrerrcosta2/gtools/patterns/symbols"
+	"github.com/andrerrcosta2/gtools/patterns/tries"
 )
 
 // shouldInsertEntrySuc is a helper function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
-func shouldInsertEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) {
+func shouldInsertEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Entry: %v, length: %d", e, len(e.Key()))
@@ -30,7 +32,7 @@ func shouldInsertEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol
 
 // shouldNotInsertEntry is a helper function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
-func shouldNotInsertEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) {
+func shouldNotInsertEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Entry: %v, length: %d", e, len(e.Key()))
@@ -48,7 +50,7 @@ func shouldNotInsertEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol
 
 // shouldDeleteEntrySuc is a helper function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
-func shouldDeleteEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) {
+func shouldDeleteEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Deleting entry '%v'...", e)
@@ -70,7 +72,7 @@ func shouldDeleteEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol
 
 // shouldNotDeleteEntry is a helper function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
-func shouldNotDeleteEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) {
+func shouldNotDeleteEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Deleting entry '%v'...", e)
@@ -92,7 +94,7 @@ func shouldNotDeleteEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol
 
 // shouldFindEntrySuc is a helper function that tests the search of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the search and checks if an error occurred.
-func shouldFindEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) []grammar.Symbol {
+func shouldFindEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) []grammar.Symbol {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Entry: %v", e)
@@ -113,7 +115,7 @@ func shouldFindEntrySuc(t tests.Loggable, trie str.Trie[string, grammar.Symbol],
 
 // shouldNotFindEntry is a helper function that tests the search of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the search and checks if an error occurred.
-func shouldNotFindEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol], e str.Entry[string, grammar.Symbol]) {
+func shouldNotFindEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
 	t.StackLogf("Entry: %v", e)
@@ -129,7 +131,7 @@ func shouldNotFindEntry(t tests.Loggable, trie str.Trie[string, grammar.Symbol],
 
 // shouldBeEmpty is a helper function that tests if a str.Trie is empty.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldBeEmpty(t tests.Loggable, trie str.Trie[string, grammar.Symbol]) {
+func shouldBeEmpty(t gtests.Loggable, trie tries.Pattern) {
 	t.Helper()
 	// Log the trie states for debugging
 	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
@@ -152,7 +154,7 @@ func shouldBeEmpty(t tests.Loggable, trie str.Trie[string, grammar.Symbol]) {
 
 // shouldNotBeEmpty is a helper function that tests if a str.Trie is not empty.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldNotBeEmpty(t tests.Loggable, trie str.Trie[string, grammar.Symbol]) {
+func shouldNotBeEmpty(t gtests.Loggable, trie tries.Pattern) {
 	t.Helper()
 	// Log the trie states for debugging
 	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
@@ -175,7 +177,7 @@ func shouldNotBeEmpty(t tests.Loggable, trie str.Trie[string, grammar.Symbol]) {
 
 // shouldHaveSize is a helper function that tests if a str.Trie has a certain size.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveSize(t tests.Loggable, trie str.Trie[string, grammar.Symbol], size int) {
+func shouldHaveSize(t gtests.Loggable, trie tries.Pattern, size int) {
 	t.Helper()
 	// Log the trie states for debugging
 	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
@@ -188,7 +190,7 @@ func shouldHaveSize(t tests.Loggable, trie str.Trie[string, grammar.Symbol], siz
 
 // shouldHaveLength is a helper function that tests if a str.Trie has a certain length.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveLength(t tests.Loggable, trie str.Trie[string, grammar.Symbol], length int) {
+func shouldHaveLength(t gtests.Loggable, trie tries.Pattern, length int) {
 	t.Helper()
 	// Log the trie states for debugging
 	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
@@ -201,7 +203,7 @@ func shouldHaveLength(t tests.Loggable, trie str.Trie[string, grammar.Symbol], l
 
 // shouldHaveSizeAndLength is a helper function that tests if a str.Trie has a certain size and length.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveSizeAndLength(t tests.Loggable, trie str.Trie[string, grammar.Symbol], size int, length int) {
+func shouldHaveSizeAndLength(t gtests.Loggable, trie tries.Pattern, size int, length int) {
 	t.Helper()
 	// Log the trie states for debugging
 	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())

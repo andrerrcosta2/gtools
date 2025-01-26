@@ -3,7 +3,7 @@ module github.com/andrerrcosta2/gtools/core
 go 1.23.1
 
 require (
-	github.com/andrerrcosta2/gtools/core/domain v0.0.1-modular // No dependencies
+	github.com/andrerrcosta2/gtools/core/domain v0.0.1-modular
 	github.com/andrerrcosta2/gtools/core/seeders v0.0.1-modular
 )
 

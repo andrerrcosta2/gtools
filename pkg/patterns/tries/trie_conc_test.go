@@ -10,8 +10,11 @@ import (
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/def"
+	"strings"
 	"testing"
 )
+
+type E = str.Entry[K, []S]
 
 // TestPatternTrie_Build tests the creation of a OfPatterns
 // It tests if the size and length of the newPatternTrie are the same
@@ -57,7 +60,7 @@ func TestPatternTrie_InsertConcurrently(t *testing.T) {
 	trie := OfPatterns(false, 0)
 
 	iterables.OfSlice(linearOpenSymbolsDictionary.Entries()...).
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
+		Parallel(func(i int, e E) {
 			if err := trie.Insert(e.Key(), e.Value()); err != nil {
 				t.Errorf("error while inserting value: %v\n", err)
 			}
@@ -90,7 +93,7 @@ func TestPatternTrie_SearchConcurrently_BasicSearch(t *testing.T) {
 	}
 
 	iterables.OfSlice(linearOpenSymbolsDictionary.Entries()...).
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
+		Parallel(func(i int, e E) {
 			if sym, exists := trie.Search(e.Key()); !exists {
 				t.Errorf("expected to searchSymbol %v but was not found\n", e.Key())
 				return
@@ -101,7 +104,7 @@ func TestPatternTrie_SearchConcurrently_BasicSearch(t *testing.T) {
 					return
 				}
 				// Check if the value found is the same as the value in the dictionary
-				if !e.Value().Equal(sym[0]) {
+				if !e.Value()[0].Equal(sym[0]) {
 					t.Errorf("expected %v but found %v\n", e.Value(), sym[0])
 				}
 			}
@@ -125,25 +128,27 @@ func TestPatternTrie_SearchConcurrently_PlaceholderSymbols(t *testing.T) {
 
 	iterables.
 		OfSlice(dictionaryWithPlaceholders.Entries()...).
-		// Filter entries with Placeholder
-		Filter(func(e str.Entry[string, symbols.Logical]) bool {
-			return e.Value().Contains(def.Placeholder)
+		// Remove symbols without placeholder
+		Filter(func(e E) bool {
+			return strings.Contains(e.Key(), def.Placeholder.String())
 		}).
-		Map(func(e str.Entry[string, symbols.Logical]) str.Entry[string, symbols.Logical] {
-			// Replace Placeholder with a value
-			// As a logical behavior of a "placeholder-able" trie, we should avoid using
-			// as placeholder values any character used as a placeholder delimiter.
-			// In the case of the used dictionary we have a rune "m" being used as delimiter
-			symbol, ok := symbols.Of(e.Key()).ReplaceAll(def.Placeholder, symbols.Of("<-soMe-value->"))
+		// Replace Placeholder with a value
+		// As a logical behavior of a "placeholder-able" trie, we should avoid using
+		// as placeholder values any character used as a placeholder delimiter.
+		// In the case of the used dictionary we have a rune "m" being used as delimiter
+		Map(func(e E) (out E) {
+			key, ok := symbols.Of(e.Key()).ReplaceAll(def.Placeholder, symbols.Of("<-soMe-value->"))
 			if !ok {
-				tt.Errorf("unexpected error while replacing placeholder: %v\n", err)
+				tt.Errorf("unexpected error while replacing placeholder:\n")
 			}
-			// Create a new entry
-			return grammar.SymbolEntry(e.Key(), symbols.OpenOf(symbol))
+			return grammar.SymbolEntry[K, []S, S](key.String(), e.Value()...)
 		}).
-		// Search concurrently
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
-			shouldFindEntrySuc(tt, trie, e)
+		// Search concurrently. This is in fact searching in batches because I had to change the
+		// dictionary from a linear map to a map of slices
+		Parallel(func(i int, e E) {
+			for _, v := range e.Value() {
+				shouldFindEntrySuc(tt, trie, Entry(e.Key(), v))
+			}
 		}, 5)
 
 	tt.PrintLogStack()
@@ -170,10 +175,14 @@ func TestPatternTrie_DeleteConcurrently(t *testing.T) {
 
 	// Concurrently delete half of the symbols
 	iterables.OfSlice(linearOpenSymbolsDictionary.Entries()...).Some(linearOpenSymbolsDictionary.Size()/2).
-		// Delete concurrently
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
-			shouldDeleteEntrySuc(tt, trie, e)
-			tt.RegisterCalls(1, "deleted-symbols")
+		// Delete concurrently. This is in fact deleting in batches because I had to change the
+		// dictionary from a linear map to a map of slices
+		Parallel(func(i int, e E) {
+			for _, v := range e.Value() {
+				shouldDeleteEntrySuc(tt, trie, Entry(e.Key(), v))
+				tt.RegisterCalls(1, "deleted-symbols")
+			}
+			// that only works because this is a linear dictionary
 			tt.RegisterCalls(len(e.Key()), "deleted-nodes")
 		}, 10)
 
@@ -231,10 +240,12 @@ func TestPatternTrie_EdgeCases_InsertConcurrently_EdgeValidDictionary(t *testing
 
 	// Insert all concurrently
 	iterables.OfSlice(edgeValidDictionary.Entries()...).
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
-			shouldInsertEntrySuc(tt, trie, e)
-			// Register how many symbols were inserted
-			tt.RegisterCalls(1, "symbol-insertion")
+		Parallel(func(i int, e E) {
+			for _, v := range e.Value() {
+				shouldInsertEntrySuc(tt, trie, Entry(e.Key(), v))
+				// Register how many symbols were inserted
+				tt.RegisterCalls(1, "symbol-insertion")
+			}
 		}, 10)
 
 	tt.StackLogf("Trie:\n%v", trie)
@@ -267,9 +278,12 @@ func TestPatternTrie_EdgeCases_DeleteConcurrently_EdgeValidDictionary(t *testing
 
 	// Delete a few random symbols concurrently
 	iterables.OfSlice(edgeValidDictionary.Entries()...).Some(40).
-		Parallel(func(i int, e str.Entry[string, symbols.Logical]) {
-			shouldDeleteEntrySuc(tt, trie, e)
-			// this trie is too irregular to predict the deleted nodes, this is in fact why we use tries for these tasks
+		Parallel(func(i int, e E) {
+			// this trie is too irregular to predict the deleted nodes, this is in fact why we use tries
+			// instead of maps for these tasks
+			for _, v := range e.Value() {
+				shouldDeleteEntrySuc(tt, trie, Entry(e.Key(), v))
+			}
 		}, 5)
 
 	tt.Condition(trie.Size() == edgeValidDictionary.Size()-40, "expected trie size to be %d but was %d", edgeValidDictionary.Size()-40, trie.Size())

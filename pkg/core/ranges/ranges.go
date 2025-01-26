@@ -4,43 +4,43 @@ package ranges
 
 import "sync"
 
-type RangeImpl struct {
+type openRng struct {
 	reverse bool
 	current int
 	start   int
 	end     int
 }
 
-func (r *RangeImpl) Next() bool {
+func (r *openRng) Next() bool {
 	if r.reverse {
 		return nextDesc(r)
 	}
 	return nextAsc(r)
 }
 
-func (r *RangeImpl) Prev() bool {
+func (r *openRng) Prev() bool {
 	if r.reverse {
 		return prevDesc(r)
 	}
 	return prevAsc(r)
 }
 
-func (r *RangeImpl) Size() int {
+func (r *openRng) Size() int {
 	if r.reverse {
 		return sizeDesc(r)
 	}
 	return sizeAsc(r)
 }
 
-func (r *RangeImpl) Current() int {
+func (r *openRng) Current() int {
 	return r.current
 }
 
-func (r *RangeImpl) Reset() {
+func (r *openRng) Reset() {
 	reset(r)
 }
 
-func (r *RangeImpl) SetRange(start, end int) error {
+func (r *openRng) SetRange(start, end int) error {
 	if r.reverse {
 		err := canSetRangeDesc(r, start, end)
 		if err != nil {
@@ -59,29 +59,29 @@ func (r *RangeImpl) SetRange(start, end int) error {
 	return nil
 }
 
-func (r *RangeImpl) Start() int {
+func (r *openRng) Start() int {
 	return r.start
 }
 
-func (r *RangeImpl) End() int {
+func (r *openRng) End() int {
 	return r.end
 }
 
 // Tune this method allows changing the range interval by increasing or decreasing the start and end
-func (r *RangeImpl) Tune(start int, end int) {
+func (r *openRng) Tune(start int, end int) {
 	r.start += start
 	r.end += end
 }
 
-func (r *RangeImpl) First() int {
+func (r *openRng) First() int {
 	return r.start
 }
 
-func (r *RangeImpl) Last() int {
+func (r *openRng) Last() int {
 	return r.end
 }
 
-func (r *RangeImpl) SetCurrent(current int) bool {
+func (r *openRng) SetCurrent(current int) bool {
 	if r.reverse {
 		if canSetCurrentDesc(r, current) {
 			r.current = current
@@ -94,30 +94,30 @@ func (r *RangeImpl) SetCurrent(current int) bool {
 	return false
 }
 
-func (r *RangeImpl) IsOnStart() bool {
+func (r *openRng) IsOnStart() bool {
 	return r.current == r.First()
 }
 
-func (r *RangeImpl) IsOnEnd() bool {
+func (r *openRng) IsOnEnd() bool {
 	return r.current == r.Last()
 }
 
-func (r *RangeImpl) RideNext(n int) bool {
+func (r *openRng) RideNext(n int) bool {
 	if r.reverse {
 		return rideNextDesc(r, n)
 	}
 	return rideNextAsc(r, n)
 }
 
-func (r *RangeImpl) RidePrev(n int) bool {
+func (r *openRng) RidePrev(n int) bool {
 	if r.reverse {
 		return ridePrevDesc(r, n)
 	}
 	return ridePrevAsc(r, n)
 }
 
-func (r *RangeImpl) Snap() Range {
-	return &RangeImpl{
+func (r *openRng) Snap() Range {
+	return &openRng{
 		reverse: r.reverse,
 		current: r.current,
 		start:   r.start,
@@ -125,21 +125,21 @@ func (r *RangeImpl) Snap() Range {
 	}
 }
 
-func (r *RangeImpl) DistanceFromStart() int {
+func (r *openRng) DistanceFromStart() int {
 	if r.reverse {
 		return distanceFromStartDesc(r)
 	}
 	return distanceFromStartAsc(r)
 }
 
-func (r *RangeImpl) DistanceToEnd() int {
+func (r *openRng) DistanceToEnd() int {
 	if r.reverse {
 		return distanceToEndDesc(r)
 	}
 	return distanceToEndAsc(r)
 }
 
-type ConcurrentRangeImpl struct {
+type concOpenRng struct {
 	mtx     sync.RWMutex
 	reverse bool
 	current int
@@ -147,7 +147,7 @@ type ConcurrentRangeImpl struct {
 	end     int
 }
 
-func (r *ConcurrentRangeImpl) Next() bool {
+func (r *concOpenRng) Next() bool {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -156,7 +156,7 @@ func (r *ConcurrentRangeImpl) Next() bool {
 	return nextAsc(r)
 }
 
-func (r *ConcurrentRangeImpl) Prev() bool {
+func (r *concOpenRng) Prev() bool {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -165,7 +165,7 @@ func (r *ConcurrentRangeImpl) Prev() bool {
 	return prevAsc(r)
 }
 
-func (r *ConcurrentRangeImpl) Size() int {
+func (r *concOpenRng) Size() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	if r.reverse {
@@ -174,20 +174,20 @@ func (r *ConcurrentRangeImpl) Size() int {
 	return sizeAsc(r)
 }
 
-func (r *ConcurrentRangeImpl) Current() int {
+func (r *concOpenRng) Current() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.current
 }
 
 // Reset resets the range
-func (r *ConcurrentRangeImpl) Reset() {
+func (r *concOpenRng) Reset() {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	reset(r)
 }
 
-func (r *ConcurrentRangeImpl) SetRange(start, end int) error {
+func (r *concOpenRng) SetRange(start, end int) error {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -208,38 +208,38 @@ func (r *ConcurrentRangeImpl) SetRange(start, end int) error {
 	return nil
 }
 
-func (r *ConcurrentRangeImpl) Start() int {
+func (r *concOpenRng) Start() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.start
 }
 
-func (r *ConcurrentRangeImpl) End() int {
+func (r *concOpenRng) End() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.end
 }
 
-func (r *ConcurrentRangeImpl) Tune(start int, end int) {
+func (r *concOpenRng) Tune(start int, end int) {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	r.start += start
 	r.end += end
 }
 
-func (r *ConcurrentRangeImpl) First() int {
+func (r *concOpenRng) First() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.start
 }
 
-func (r *ConcurrentRangeImpl) Last() int {
+func (r *concOpenRng) Last() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.end
 }
 
-func (r *ConcurrentRangeImpl) SetCurrent(current int) bool {
+func (r *concOpenRng) SetCurrent(current int) bool {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -254,19 +254,19 @@ func (r *ConcurrentRangeImpl) SetCurrent(current int) bool {
 	return false
 }
 
-func (r *ConcurrentRangeImpl) IsOnStart() bool {
+func (r *concOpenRng) IsOnStart() bool {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.current == r.First()
 }
 
-func (r *ConcurrentRangeImpl) IsOnEnd() bool {
+func (r *concOpenRng) IsOnEnd() bool {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 	return r.current == r.Last()
 }
 
-func (r *ConcurrentRangeImpl) RideNext(n int) bool {
+func (r *concOpenRng) RideNext(n int) bool {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -275,7 +275,7 @@ func (r *ConcurrentRangeImpl) RideNext(n int) bool {
 	return rideNextAsc(r, n)
 }
 
-func (r *ConcurrentRangeImpl) RidePrev(n int) bool {
+func (r *concOpenRng) RidePrev(n int) bool {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 	if r.reverse {
@@ -284,12 +284,12 @@ func (r *ConcurrentRangeImpl) RidePrev(n int) bool {
 	return ridePrevAsc(r, n)
 }
 
-func (r *ConcurrentRangeImpl) Snap() Range {
+func (r *concOpenRng) Snap() Range {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 
 	// Create a new mutex for the new instance
-	return &ConcurrentRangeImpl{
+	return &concOpenRng{
 		reverse: r.reverse,
 		mtx:     sync.RWMutex{},
 		current: r.current,
@@ -298,7 +298,7 @@ func (r *ConcurrentRangeImpl) Snap() Range {
 	}
 }
 
-func (r *ConcurrentRangeImpl) DistanceFromStart() int {
+func (r *concOpenRng) DistanceFromStart() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 
@@ -308,7 +308,7 @@ func (r *ConcurrentRangeImpl) DistanceFromStart() int {
 	return distanceFromStartAsc(r)
 }
 
-func (r *ConcurrentRangeImpl) DistanceToEnd() int {
+func (r *concOpenRng) DistanceToEnd() int {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 

@@ -4,6 +4,12 @@ package syncs
 
 import "sync"
 
+func NewChannelSemaphore(size int) *ChannelSemaphore {
+	return &ChannelSemaphore{
+		ch: make(chan struct{}, size),
+	}
+}
+
 type ChannelSemaphore struct {
 	mu sync.RWMutex
 	ch chan struct{}
@@ -33,7 +39,7 @@ func (s *ChannelSemaphore) Cap() int {
 	return cap(s.ch)
 }
 
-// func (s *ChannelSemaphore) Rem() int { returns the number of available slots in the semaphore.
+// Rem { returns the number of available slots in the semaphore.
 func (s *ChannelSemaphore) Rem() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

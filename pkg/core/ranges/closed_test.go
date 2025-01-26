@@ -59,6 +59,6 @@ func TestClosedRange_Size(t *testing.T) {
 	// Test 1
 	r := New(Closed, 1, 10)
 	if r.Size() != 8 {
-		t.Errorf("Expected 10, got %d", r.Size())
+		t.Errorf("Expected 8, got %d", r.Size())
 	}
 }

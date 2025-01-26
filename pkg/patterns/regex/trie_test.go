@@ -15,7 +15,7 @@ import (
 func TestBuildTrie(t *testing.T) {
 	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
 
-	trie, err := Trie(nil, false)
+	trie, err := Trie(false, 6, 6)
 
 	if err != nil {
 		tt.Errorf("failed to build trie: %v\n", err)
@@ -36,7 +36,7 @@ func TestSearch_AllSymbols(t *testing.T) {
 	// Get the dictionary instance
 	dictionary := Dictionary()
 
-	trie, err := Trie(nil, false)
+	trie, err := Trie(false, 12, 12)
 
 	if err != nil {
 		tt.Errorf("failed to build trie: %v\n", err)

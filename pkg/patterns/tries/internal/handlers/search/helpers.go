@@ -4,8 +4,8 @@ package search
 
 import (
 	"fmt"
+	"github.com/andrerrcosta2/gtools/core/domain/functions/runnables"
 	"github.com/andrerrcosta2/gtools/core/domain/gtools"
-	"github.com/andrerrcosta2/gtools/core/functions/runnables"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/nodes"

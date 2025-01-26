@@ -691,9 +691,11 @@ func TestPatternTrie_EdgeCases_Insert_EdgeDictionary(t *testing.T) {
 
 	// Insert all the symbols of the valid dictionary concurrently
 	iterables.OfSlice(edgeValidDictionary.Entries()...).
-		EachN(func(i int, e str.Entry[string, symbols.Logical]) {
-			shouldInsertEntrySuc(tt, trie, e)
-			tt.RegisterCalls(1, "symbol-insertion")
+		Each(func(e E) {
+			for _, v := range e.Value() {
+				shouldInsertEntrySuc(tt, trie, Entry(e.Key(), v))
+				tt.RegisterCalls(1, "symbol-insertion")
+			}
 		})
 
 	tt.StackLogf("Trie:\n%v", trie)
@@ -728,9 +730,10 @@ func TestPatternTrie_EdgeCases_Delete_EdgeDictionary(t *testing.T) {
 	// Delete a few random symbols concurrently
 	iterables.OfSlice(edgeValidDictionary.Entries()...).
 		Some(40).
-		Each(func(e str.Entry[string, symbols.Logical]) {
-			// It is not deleting symbols with placeholders
-			shouldDeleteEntrySuc(tt, trie, e)
+		Each(func(e E) {
+			for _, v := range e.Value() {
+				shouldDeleteEntrySuc(tt, trie, Entry(e.Key(), v))
+			}
 		})
 
 	tt.Condition(trie.Size() == edgeValidDictionary.Size()-40, "expected trie size to be %d but was %d", edgeValidDictionary.Size()-40, trie.Size())

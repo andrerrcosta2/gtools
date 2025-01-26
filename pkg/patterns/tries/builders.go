@@ -18,7 +18,7 @@ import (
 // If the semaphore is nil or its capacity is 0, the newPatternTrie is built sequentially.
 // If the strict flag is true, the newPatternTrie is built in strict mode, meaning it will not
 // allow any invalid patterns to be inserted.
-func OfPatternsFrom(dictionary str.Dictionary[string, symbols.Logical], strict bool, maxTrieParallelOps, buildInParallel int) (Pattern, error) {
+func OfPatternsFrom(dictionary str.Dictionary[string, []symbols.Logical], strict bool, maxTrieParallelOps, buildInParallel int) (Pattern, error) {
 	if buildInParallel > 1 {
 		// Build the newPatternTrie concurrently
 		if strict {
@@ -43,7 +43,7 @@ func OfPatternsFrom(dictionary str.Dictionary[string, symbols.Logical], strict b
 // buildConcurrently builds a newPatternTrie from the given dictionary concurrently.
 // It returns the final newPatternTrie and an error if it occurs.
 // It cancels new insertions of patterns if any error occurs.
-func buildConcurrently(trie *patternTrie, dictionary str.Dictionary[string, symbols.Logical], sem gtools.Semaphore) (*patternTrie, error) {
+func buildConcurrently(trie *patternTrie, dictionary str.Dictionary[string, []symbols.Logical], sem gtools.Semaphore) (*patternTrie, error) {
 	// Create a cancellable context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -57,9 +57,9 @@ func buildConcurrently(trie *patternTrie, dictionary str.Dictionary[string, symb
 	wg.Add(dictionary.Size())
 
 	// Iterate over the dictionary and create a goroutine for each pattern
-	for pattern, symbol := range dictionary.EntrySet() {
+	for pattern, entry := range dictionary.EntrySet() {
 
-		go func(pattern string, symbol symbols.Logical) {
+		go func(pattern string, symbols []symbols.Logical) {
 			// If an error has already occurred, return early
 			select {
 			case <-ctx.Done():
@@ -72,13 +72,16 @@ func buildConcurrently(trie *patternTrie, dictionary str.Dictionary[string, symb
 			sem.Acq()
 
 			// Insert the pattern into the newPatternTrie
-			if err := trie.Insert(pattern, symbol); err != nil {
-				// Send the error to the channel and cancel the context
-				select {
-				case errCh <- fmt.Errorf("could not build newPatternTrie from dictionary: %w", err):
-					cancel() // Cancel all remaining goroutines
-				default:
-					// Ignore if an error is already sent
+			for _, symbol := range symbols {
+				if err := trie.Insert(pattern, symbol); err != nil {
+					// Send the error to the channel and cancel the context
+					select {
+					case errCh <- fmt.Errorf("could not build newPatternTrie from dictionary: %w", err):
+						cancel() // Cancel all remaining goroutines
+						break
+					default:
+						// Ignore if an error is already sent
+					}
 				}
 			}
 
@@ -87,7 +90,7 @@ func buildConcurrently(trie *patternTrie, dictionary str.Dictionary[string, symb
 
 			// Mark the goroutine as done
 			wg.Done()
-		}(pattern, symbol)
+		}(pattern, entry)
 	}
 
 	// SetWaitingPoint for all goroutines to finish and close the error channel

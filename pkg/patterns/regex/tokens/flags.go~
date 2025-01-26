@@ -13,10 +13,10 @@ type Flag struct {
 
 var (
 	// Global g: Finds all matches within the input string, instead of stopping after the first match.
-	Global = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'.'}))}
+	Global = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'.'}), true)}
 	// IgnoreCase i: Performs case-insensitive matching.
-	IgnoreCase = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'i'}))}
+	IgnoreCase = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'i'}), true)}
 	// Multiline m: Enables ^ and $ to match the beginning and end of each line, respectively.
-	Multiline = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'m'}))}
+	Multiline = Flag{Logical: symbols.OpenOf(grammar.ByteSymbol([]byte{'m'}), true)}
 	// Singleline s: Disables ^ and $ from matching the beginning and end of each line, respectively.
 )

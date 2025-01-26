@@ -5,7 +5,7 @@ package streamables
 import (
 	"github.com/andrerrcosta2/gtools/conc/channels"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/funcs/suppliers"
+	"github.com/andrerrcosta2/gtools/core/domain/functions/suppliers"
 	"github.com/andrerrcosta2/gtools/core/io"
 )
 

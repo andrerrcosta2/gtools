@@ -1,11 +1,9 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package funcs
+package functions
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 // Identity returns the input value unchanged.
@@ -255,7 +253,7 @@ func Memoize[T comparable, R any](f func(T) R) func(T) R {
 // Returns:
 //   - A new function that, when called, will call the provided function `f` only once.
 //     The result of the first call to `f` is stored and returned on subsequent calls.
-func Once[T any](f functions.Supplier[T]) functions.Supplier[T] {
+func Once[T any](f Supplier[T]) Supplier[T] {
 	// Initialize a flag to track if the function has been called
 	var once bool
 
@@ -290,17 +288,6 @@ func Partial[A, B, C any](f func(A, B) C, a A) func(B) C {
 	return func(b B) C {
 		return f(a, b)
 	}
-}
-
-// Less returns -1 if a < b, 1 if a > b, and 0 if a == b.
-func Less[T prim.Ordered](a, b T) int {
-	if a < b {
-		return -1
-	}
-	if a > b {
-		return 1
-	}
-	return 0
 }
 
 func ValidRange[T nums.Ordered](min, max T) bool {

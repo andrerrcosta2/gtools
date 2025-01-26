@@ -3,6 +3,7 @@
 package gtools
 
 import (
+	"github.com/andrerrcosta2/gtools/core/domain/data"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 

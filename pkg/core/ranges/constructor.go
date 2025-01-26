@@ -12,112 +12,112 @@ package ranges
 func New(typ Type, start int, end int) Range {
 	switch typ {
 	case Closed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: false,
 			current: start + 1,
 			start:   start + 1,
 			end:     end - 1,
 		}
 	case ConcurrentClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: false,
 			current: start + 1,
 			start:   start + 1,
 			end:     end - 1,
 		}
 	case Open:
-		return &RangeImpl{
+		return &openRng{
 			reverse: false,
 			current: start,
 			start:   start,
 			end:     end,
 		}
 	case ConcurrentOpen:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: false,
 			current: start,
 			start:   start,
 			end:     end,
 		}
 	case LeftClosed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: false,
 			current: start + 1,
 			start:   start + 1,
 			end:     end,
 		}
 	case ConcurrentLeftClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: false,
 			current: start + 1,
 			start:   start + 1,
 			end:     end,
 		}
 	case RightClosed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: false,
 			current: start,
 			start:   start,
 			end:     end - 1,
 		}
 	case ConcurrentRightClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: false,
 			current: start,
 			start:   start,
 			end:     end - 1,
 		}
 	case ReverseClosed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: true,
 			current: start - 1,
 			start:   start - 1,
 			end:     end + 1,
 		}
 	case ConcurrentReverseClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: true,
 			current: start - 1,
 			start:   start - 1,
 			end:     end + 1,
 		}
 	case ReverseOpen:
-		return &RangeImpl{
+		return &openRng{
 			reverse: true,
 			current: start,
 			start:   start,
 			end:     end,
 		}
 	case ConcurrentReverseOpen:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: true,
 			current: start,
 			start:   start,
 			end:     end,
 		}
 	case ReverseLeftClosed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: true,
 			current: start - 1,
 			start:   start - 1,
 			end:     end,
 		}
 	case ConcurrentReverseLeftClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: true,
 			current: start - 1,
 			start:   start - 1,
 			end:     end,
 		}
 	case ReverseRightClosed:
-		return &RangeImpl{
+		return &openRng{
 			reverse: true,
 			current: start,
 			start:   start,
 			end:     end + 1,
 		}
 	case ConcurrentReverseRightClosed:
-		return &ConcurrentRangeImpl{
+		return &concOpenRng{
 			reverse: true,
 			current: start,
 			start:   start,

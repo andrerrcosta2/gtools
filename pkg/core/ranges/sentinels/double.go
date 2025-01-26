@@ -3,7 +3,7 @@
 package sentinels
 
 import (
-	"github.com/andrerrcosta2/gtools/core/funcs"
+	"cmp"
 	"github.com/andrerrcosta2/gtools/core/ranges"
 )
 
@@ -38,7 +38,7 @@ func (d *DoubleSentinel) Right() int {
 }
 
 func (d *DoubleSentinel) Gap() int {
-	less := funcs.Less(d.Left(), d.Right())
+	less := cmp.Compare(d.Left(), d.Right())
 	return less * (d.Left() - d.Right())
 }
 
@@ -84,18 +84,18 @@ func (d *DoubleRangedSentinel) Right() int {
 
 func (d *DoubleRangedSentinel) DistanceToEnd() (left, right, less int) {
 	left, right = d.left.ToEnd(), d.right.ToEnd()
-	less = funcs.Less(left, right)
+	less = cmp.Compare(left, right)
 	return
 }
 
 func (d *DoubleRangedSentinel) DistanceFromStart() (left, right, less int) {
 	left, right = d.left.FromStart(), d.right.FromStart()
-	less = funcs.Less(left, right)
+	less = cmp.Compare(left, right)
 	return
 }
 
 func (d *DoubleRangedSentinel) Gap() int {
-	less := funcs.Less(d.left.Val(), d.right.Val())
+	less := cmp.Compare(d.left.Val(), d.right.Val())
 	return less * (d.Left() - d.Right())
 }
 
@@ -271,13 +271,13 @@ func (d *DoubleRangedCloseableSentinel) Right() int {
 
 func (d *DoubleRangedCloseableSentinel) DistanceToEnd() (left, right, less int) {
 	left, right = d.left.ToEnd(), d.right.ToEnd()
-	less = funcs.Less(left, right)
+	less = cmp.Compare(left, right)
 	return
 }
 
 func (d *DoubleRangedCloseableSentinel) DistanceFromStart() (left, right, less int) {
 	left, right = d.left.FromStart(), d.right.FromStart()
-	less = funcs.Less(left, right)
+	less = cmp.Compare(left, right)
 	return
 }
 
@@ -286,7 +286,7 @@ func (d *DoubleRangedCloseableSentinel) Sum() int {
 }
 
 func (d *DoubleRangedCloseableSentinel) Gap() int {
-	less := funcs.Less(d.left.Val(), d.right.Val())
+	less := cmp.Compare(d.left.Val(), d.right.Val())
 	return less * (d.Left() - d.Right())
 }
 

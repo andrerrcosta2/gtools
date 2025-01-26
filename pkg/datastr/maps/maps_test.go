@@ -7,7 +7,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/generics"
 	"github.com/andrerrcosta2/gtools/datastr/tuple"
-	"github.com/andrerrcosta2/gtools/pipes/arrays"
+	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
 	"reflect"
 	"sort"
 	"strings"

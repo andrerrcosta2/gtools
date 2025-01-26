@@ -1,8 +1,8 @@
 /.idea/
 /pkg/structs/tree/
-/pkg/pipes/pipe2/
-/pkg/pipes/connectable/
-/pkg/pipes/arrays/sorted_test.go
+/pkg/gflux/core/pipes/pipe2/
+/pkg/gflux/core/pipes/connectable/
+/pkg/gflux/core/pipes/arrays/sorted_test.go
 /pkg/structs/search/
 /pkg/datastr/tree/
 /pkg/patterns/egg/
@@ -14,3 +14,5 @@
 /golangci-lint.yml
 /atks/
 /pkg/core/ranges/sentinels/
+/pkg/gflux/event/amc/
+/pkg/gflux/event/mtd/
