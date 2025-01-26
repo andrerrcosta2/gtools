@@ -6,6 +6,6 @@ require (
     github.com/andrerrcosta2/gtools/core/data v0.0.1-modular // data imports domain
 )
 
-replace (
-    github.com/andrerrcosta2/gtools/core/data => ../data
-)
+//replace (
+//    github.com/andrerrcosta2/gtools/core/data v0.0.1-modular => ../data
+//)
