@@ -1,14 +1,14 @@
 go 1.23.1
 
 use (
-	./pkg/conc
-	./pkg/core
-	./pkg/datastr
-	./pkg/numbers
-	./pkg/gflux
-	./pkg/patterns
-	./pkg/gtests
-	./pkg/gvalidation
-	./pkg/reflect4
+	./conc
+	./core
+	./datastr
+	./numbers
+	./gflux
+	./patterns
+	./gtests
+	./gvalidation
+	./reflect4
 	.
 )
