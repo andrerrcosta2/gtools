@@ -4,7 +4,7 @@
 package sbj
 
 import (
-	"github.com/andrerrcosta2/gtools/obs"
+	"github.com/andrerrcosta2/gtools/gflux/obs"
 	"sync/atomic"
 )
 

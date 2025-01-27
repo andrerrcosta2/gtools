@@ -2,6 +2,6 @@ module github.com/andrerrcosta2/gtools/numbers
 
 go 1.23.1
 
-require github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha
+require github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha.1
 
-//replace github.com/andrerrcosta2/gtools/core/domain => ../core/domain
+replace github.com/andrerrcosta2/gtools/core/domain => ../core/domain

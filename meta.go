@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package dep
+package gtools
 
 import (
 	_ "github.com/andrerrcosta2/gtools/conc"
