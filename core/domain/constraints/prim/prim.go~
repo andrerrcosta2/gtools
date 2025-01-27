@@ -1,0 +1,42 @@
+// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
+
+package prim
+
+// Any covers all primitive types
+// Runes and bytes are int32 and uint8 respectively
+type Any interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+	~uintptr | ~float32 | ~float64 | ~string |
+	~bool | ~complex64 | ~complex128
+}
+
+// Ordered covers all ordered primitive types
+// Runes and bytes are int32 and uint8 respectively
+type Ordered interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+	~uintptr | ~float32 | ~float64 | ~string
+}
+
+// Hashable covers all primitive types that are suited to be hashed
+type Hashable interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+	~string
+}
+
+type Serializable interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+	~string
+}
+
+// Comparable covers all comparable primitive types
+// Runes and bytes are int32 and uint8 respectively
+type Comparable interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
+	~float32 | ~float64 | ~string | ~bool |
+	~complex64 | ~complex128
+}

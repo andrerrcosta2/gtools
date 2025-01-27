@@ -1,0 +1,14 @@
+go 1.23.1
+
+use (
+	./conc
+	./core
+	./datastr
+	./numbers
+	./gflux
+	./patterns
+	./gtests
+	./gvalidation
+	./reflect4
+	.
+)

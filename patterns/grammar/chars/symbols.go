@@ -1,0 +1,96 @@
+// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
+
+package chars
+
+import (
+	"github.com/andrerrcosta2/gtools/patterns/grammar"
+)
+
+type Digit grammar.Symbol
+
+var (
+	Zero  Digit = grammar.ByteSymbol("0")
+	One   Digit = grammar.ByteSymbol("1")
+	Two   Digit = grammar.ByteSymbol("2")
+	Three Digit = grammar.ByteSymbol("3")
+	Four  Digit = grammar.ByteSymbol("4")
+	Five  Digit = grammar.ByteSymbol("5")
+	Six   Digit = grammar.ByteSymbol("6")
+	Seven Digit = grammar.ByteSymbol("7")
+	Eight Digit = grammar.ByteSymbol("8")
+	Nine  Digit = grammar.ByteSymbol("9")
+)
+
+type Alphabet grammar.Symbol
+
+var (
+	ALower Alphabet = grammar.ByteSymbol("a")
+	BLower Alphabet = grammar.ByteSymbol("b")
+	CLower Alphabet = grammar.ByteSymbol("c")
+	DLower Alphabet = grammar.ByteSymbol("d")
+	ELower Alphabet = grammar.ByteSymbol("e")
+	FLower Alphabet = grammar.ByteSymbol("f")
+	GLower Alphabet = grammar.ByteSymbol("g")
+	HLower Alphabet = grammar.ByteSymbol("h")
+	ILower Alphabet = grammar.ByteSymbol("i")
+	JLower Alphabet = grammar.ByteSymbol("j")
+	KLower Alphabet = grammar.ByteSymbol("k")
+	LLower Alphabet = grammar.ByteSymbol("l")
+	MLower Alphabet = grammar.ByteSymbol("m")
+	NLower Alphabet = grammar.ByteSymbol("n")
+	OLower Alphabet = grammar.ByteSymbol("o")
+	PLower Alphabet = grammar.ByteSymbol("p")
+	QLower Alphabet = grammar.ByteSymbol("q")
+	RLower Alphabet = grammar.ByteSymbol("r")
+	SLower Alphabet = grammar.ByteSymbol("s")
+	TLower Alphabet = grammar.ByteSymbol("t")
+	ULower Alphabet = grammar.ByteSymbol("u")
+	VLower Alphabet = grammar.ByteSymbol("v")
+	WLower Alphabet = grammar.ByteSymbol("w")
+	XLower Alphabet = grammar.ByteSymbol("x")
+	YLower Alphabet = grammar.ByteSymbol("y")
+	ZLower Alphabet = grammar.ByteSymbol("z")
+	AUpper Alphabet = grammar.ByteSymbol("A")
+	BUpper Alphabet = grammar.ByteSymbol("B")
+	CUpper Alphabet = grammar.ByteSymbol("C")
+	DUpper Alphabet = grammar.ByteSymbol("D")
+	EUpper Alphabet = grammar.ByteSymbol("E")
+	FUpper Alphabet = grammar.ByteSymbol("F")
+	GUpper Alphabet = grammar.ByteSymbol("G")
+	HUpper Alphabet = grammar.ByteSymbol("H")
+	IUpper Alphabet = grammar.ByteSymbol("I")
+	JUpper Alphabet = grammar.ByteSymbol("J")
+	KUpper Alphabet = grammar.ByteSymbol("K")
+	LUpper Alphabet = grammar.ByteSymbol("L")
+	MUpper Alphabet = grammar.ByteSymbol("M")
+	NUpper Alphabet = grammar.ByteSymbol("N")
+	OUpper Alphabet = grammar.ByteSymbol("O")
+	PUpper Alphabet = grammar.ByteSymbol("P")
+	QUpper Alphabet = grammar.ByteSymbol("Q")
+	RUpper Alphabet = grammar.ByteSymbol("R")
+	SUpper Alphabet = grammar.ByteSymbol("S")
+	TUpper Alphabet = grammar.ByteSymbol("T")
+	UUpper Alphabet = grammar.ByteSymbol("U")
+	VUpper Alphabet = grammar.ByteSymbol("V")
+	WUpper Alphabet = grammar.ByteSymbol("W")
+	XUpper Alphabet = grammar.ByteSymbol("X")
+	YUpper Alphabet = grammar.ByteSymbol("Y")
+	ZUpper Alphabet = grammar.ByteSymbol("Z")
+)
+
+type Punctuation grammar.Symbol
+
+var (
+	Comma       Punctuation = grammar.ByteSymbol(",")
+	Dot         Punctuation = grammar.ByteSymbol(".")
+	Colon       Punctuation = grammar.ByteSymbol(":")
+	Semicolon   Punctuation = grammar.ByteSymbol(";")
+	Question    Punctuation = grammar.ByteSymbol("'")
+	Exclamation Punctuation = grammar.ByteSymbol("!")
+	Underscore  Punctuation = grammar.ByteSymbol("_")
+	Hash        Punctuation = grammar.ByteSymbol("#")
+	Percent     Punctuation = grammar.ByteSymbol("%")
+	Caret       Punctuation = grammar.ByteSymbol("^")
+	Ampersand   Punctuation = grammar.ByteSymbol("&")
+	Star        Punctuation = grammar.ByteSymbol("*")
+)

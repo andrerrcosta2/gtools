@@ -21,11 +21,159 @@ jobs:
         with:
           go-version: '1.22.0'
 
-      - name: Install dependencies
-        run: go mod download
+      ## conc
+      - name: Install core dependencies
+        run: |
+          cd ./conc
+          go mod download
 
       - name: Run tests
-        run: go test -v ./...
+        run: |
+          cd ./conc
+          go test -v -tags=tt ./...
+
+      ## core
+      - name: Install core dependencies
+        run: |
+          cd ./core
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core
+          go test -v -tags=tt ./...
+
+      ## core/domain
+      - name: Install core dependencies
+        run: |
+          cd ./core/domain
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/domain
+          go test -v -tags=tt ./...
+
+      ## core/data
+      - name: Install core dependencies
+        run: |
+          cd ./core/domain
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/data
+          go test -v -tags=tt ./...
+
+      ## core/seeders
+      - name: Install core dependencies
+        run: |
+          cd ./core/seeders
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/seeders
+          go test -v -tags=tt ./...
+
+      ## datastr
+      - name: Install core dependencies
+        run: |
+          cd ./datastr
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./datastr
+          go test -v -tags=tt ./...
+
+      ## gflux
+      - name: Install core dependencies
+        run: |
+          cd ./gflux
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./gflux
+          go test -v -tags=tt ./...
+
+      ## gflux/core
+      - name: Install core dependencies
+        run: |
+          cd ./gflux/core
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./gflux/core
+          go test -v -tags=tt ./...
+
+      ## gflux/obs
+      - name: Install core dependencies
+        run: |
+          cd ./gflux/obs
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./gflux/obs
+          go test -v -tags=tt ./...
+
+      ## gtests
+      - name: Install core dependencies
+        run: |
+          cd ./gtests
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./gtests
+          go test -v -tags=tt ./...
+
+      ## gvalidation
+      - name: Install core dependencies
+        run: |
+          cd ./gvalidation
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./gvalidation
+          go test -v -tags=tt ./...
+
+      ## numbers
+      - name: Install core dependencies
+        run: |
+          cd ./numbers
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./numbers
+          go test -v -tags=tt ./...
+
+      ## patterns
+      - name: Install core dependencies
+        run: |
+          cd ./patterns
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./patterns
+          go test -v -tags=tt ./...
+
+      ## patterns
+      - name: Install core dependencies
+        run: |
+          cd ./reflect4
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./reflect4
+          go test -v -tags=tt ./...
 
       - name: Upload gtools results
         if: always()
