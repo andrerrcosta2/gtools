@@ -3,7 +3,7 @@ module github.com/andrerrcosta2/gtools/gflux/obs
 go 1.23.1
 
 require (
-	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha.2
+	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha.3
 	github.com/google/uuid v1.6.0
 )
 
