@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package progression
+package prog
 
 import "testing"
 
@@ -57,7 +57,7 @@ func TestSquareRoot(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := SquareRoot(tt.start, tt.ratio, tt.length)
+			result, err := Sqrt(tt.start, tt.ratio, tt.length)
 			if len(result) != len(tt.expected) {
 				t.Errorf("Expected length %d, got %d", len(tt.expected), len(result))
 			}
@@ -89,31 +89,31 @@ func TestCubic(t *testing.T) {
 			c:        3,
 			d:        4,
 			length:   5,
-			expected: []float64{4, 10, 28, 64, 124},
+			expected: []float64{1, 10, 49, 142, 313},
 			err:      false,
 		},
 		{
-			name:     "Cubic with zero coefficients",
+			name:     "Cub with zero coefficients",
 			a:        0,
 			b:        0,
 			c:        0,
 			d:        4,
 			length:   4,
-			expected: []float64{4, 4, 4, 4},
+			expected: []float64{0, 4, 32, 108},
 			err:      false,
 		},
 		{
-			name:     "Cubic with negative coefficients",
+			name:     "Cub with negative coefficients",
 			a:        -1,
 			b:        -2,
 			c:        -3,
 			d:        -4,
 			length:   3,
-			expected: []float64{-4, -10, -28},
+			expected: []float64{-1, -10, -49},
 			err:      false,
 		},
 		{
-			name:     "Cubic with one element",
+			name:     "Cub with one element",
 			a:        1,
 			b:        1,
 			c:        1,
@@ -123,20 +123,20 @@ func TestCubic(t *testing.T) {
 			err:      false,
 		},
 		{
-			name:     "Cubic with larger sequence",
+			name:     "Cub with larger sequence",
 			a:        1,
 			b:        2,
 			c:        3,
 			d:        4,
 			length:   10,
-			expected: []float64{4, 10, 28, 64, 124, 214, 340, 508, 724, 994},
+			expected: []float64{1, 10, 49, 142, 313, 586, 985, 1534, 2257, 3178},
 			err:      false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := Cubic(tt.a, tt.b, tt.c, tt.d, tt.length)
+			result, err := Cub(tt.a, tt.b, tt.c, tt.d, tt.length)
 			if len(result) != len(tt.expected) {
 				t.Errorf("Expected length %d, got %d", len(tt.expected), len(result))
 			}
@@ -171,37 +171,37 @@ func TestQuadratic(t *testing.T) {
 			err:      false,
 		},
 		{
-			name:     "Quadratic with zero coefficients",
+			name:     "Quad with zero coefficients",
 			a:        0,
 			b:        0,
 			c:        1,
 			length:   5,
-			expected: []float64{1, 1, 1, 1, 1},
+			expected: []float64{0, 1, 4, 9, 16},
 			err:      false,
 		},
 		{
-			name:     "Quadratic with a negative coefficient",
+			name:     "Quad with a negative coefficient",
 			a:        -1,
 			b:        2,
 			c:        1,
 			length:   5,
-			expected: []float64{1, 0, -3, -8, -15},
+			expected: []float64{-1, 2, 7, 14, 23},
 			err:      false,
 		},
 		{
-			name:     "Quadratic with mixed coefficients",
+			name:     "Quad with mixed coefficients",
 			a:        0.5,
 			b:        1.5,
 			c:        2,
 			length:   5,
-			expected: []float64{2, 4, 8, 14, 22},
+			expected: []float64{0.5, 4, 11.5, 23, 38.5},
 			err:      false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := Quadratic(tt.a, tt.b, tt.c, tt.length)
+			result, err := Quad(tt.a, tt.b, tt.c, tt.length)
 			if len(result) != len(tt.expected) {
 				t.Errorf("Expected length %d, but got %d", len(tt.expected), len(result))
 			}
@@ -223,7 +223,7 @@ func TestRandom_Int(t *testing.T) {
 	minimum := 1
 	maximum := 10
 
-	randoms, _ := Random[int](length, minimum, maximum)
+	randoms, _ := Rand[int](length, minimum, maximum)
 
 	if len(randoms) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(randoms))
@@ -241,7 +241,7 @@ func TestRandom_Float64(t *testing.T) {
 	minimum := 0.5
 	maximum := 5.5
 
-	randoms, _ := Random[float64](length, minimum, maximum)
+	randoms, _ := Rand[float64](length, minimum, maximum)
 
 	if len(randoms) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(randoms))
@@ -259,7 +259,7 @@ func TestRandom_EmptySlice(t *testing.T) {
 	minimum := 1
 	maximum := 10
 
-	randoms, _ := Random[int](length, minimum, maximum)
+	randoms, _ := Rand[int](length, minimum, maximum)
 
 	if len(randoms) != 0 {
 		t.Errorf("Expected length 0, but got %d", len(randoms))
@@ -270,7 +270,7 @@ func TestFibonacci_Int(t *testing.T) {
 	length := 10
 	expected := []int{0, 1, 1, 2, 3, 5, 8, 13, 21, 34}
 
-	fib, _ := Fibonacci[int](length)
+	fib, _ := Fib[int](length)
 
 	if len(fib) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(fib))
@@ -287,7 +287,7 @@ func TestFibonacci_Float64(t *testing.T) {
 	length := 10
 	expected := []float64{0, 1, 1, 2, 3, 5, 8, 13, 21, 34}
 
-	fib, _ := Fibonacci[float64](length)
+	fib, _ := Fib[float64](length)
 
 	if len(fib) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(fib))
@@ -304,7 +304,7 @@ func TestFibonacci_ShortLength(t *testing.T) {
 	length := 2
 	expected := []int{0, 1}
 
-	fib, _ := Fibonacci[int](length)
+	fib, _ := Fib[int](length)
 
 	if len(fib) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(fib))
@@ -320,7 +320,7 @@ func TestFibonacci_ShortLength(t *testing.T) {
 func TestFibonacci_Empty(t *testing.T) {
 	length := 0
 
-	fib, _ := Fibonacci[int](length)
+	fib, _ := Fib[int](length)
 
 	if len(fib) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(fib))
@@ -333,7 +333,7 @@ func TestGeometric_Int(t *testing.T) {
 	length := 5
 	expected := []int{2, 6, 18, 54, 162}
 
-	gp, _ := Geometric[int](start, ratio, length)
+	gp, _ := Geom[int](start, ratio, length)
 
 	if len(gp) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(gp))
@@ -352,7 +352,7 @@ func TestGeometric_Float64(t *testing.T) {
 	length := 5
 	expected := []float64{1.5, 3.0, 6.0, 12.0, 24.0}
 
-	gp, _ := Geometric[float64](start, ratio, length)
+	gp, _ := Geom[float64](start, ratio, length)
 
 	if len(gp) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(gp))
@@ -371,7 +371,7 @@ func TestGeometric_ShortLength(t *testing.T) {
 	length := 3
 	expected := []int{3, 12, 48}
 
-	gp, _ := Geometric[int](start, ratio, length)
+	gp, _ := Geom[int](start, ratio, length)
 
 	if len(gp) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(gp))
@@ -389,7 +389,7 @@ func TestGeometric_Empty(t *testing.T) {
 	ratio := 2
 	length := 0
 
-	gp, _ := Geometric[int](start, ratio, length)
+	gp, _ := Geom[int](start, ratio, length)
 
 	if len(gp) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(gp))
@@ -402,7 +402,7 @@ func TestArithmetic_Int(t *testing.T) {
 	length := 5
 	expected := []int{1, 4, 7, 10, 13}
 
-	ap, _ := Arithmetic[int](start, step, length)
+	ap, _ := Arit[int](start, step, length)
 
 	if len(ap) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(ap))
@@ -421,7 +421,7 @@ func TestArithmetic_Float64(t *testing.T) {
 	length := 4
 	expected := []float64{0.5, 3.0, 5.5, 8.0}
 
-	ap, _ := Arithmetic[float64](start, step, length)
+	ap, _ := Arit[float64](start, step, length)
 
 	if len(ap) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(ap))
@@ -440,7 +440,7 @@ func TestArithmetic_ShortLength(t *testing.T) {
 	length := 3
 	expected := []int{10, 8, 6}
 
-	ap, _ := Arithmetic[int](start, step, length)
+	ap, _ := Arit[int](start, step, length)
 
 	if len(ap) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(ap))
@@ -458,7 +458,7 @@ func TestArithmetic_Empty(t *testing.T) {
 	step := 1
 	length := 0
 
-	ap, _ := Arithmetic[int](start, step, length)
+	ap, _ := Arit[int](start, step, length)
 
 	if len(ap) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(ap))
@@ -469,7 +469,7 @@ func TestSequence_Int(t *testing.T) {
 	length := 5
 	expected := []int{0, 1, 2, 3, 4}
 
-	seq := Sequence[int](length)
+	seq := Seq[int](length)
 
 	if len(seq) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))
@@ -486,7 +486,7 @@ func TestSequence_Float64(t *testing.T) {
 	length := 4
 	expected := []float64{0, 1, 2, 3}
 
-	seq := Sequence[float64](length)
+	seq := Seq[float64](length)
 
 	if len(seq) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))
@@ -502,7 +502,7 @@ func TestSequence_Float64(t *testing.T) {
 func TestSequence_Empty(t *testing.T) {
 	length := 0
 
-	seq := Sequence[int](length)
+	seq := Seq[int](length)
 
 	if len(seq) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))

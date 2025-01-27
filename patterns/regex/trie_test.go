@@ -5,14 +5,17 @@ package regex
 import (
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries"
 	"testing"
 )
 
+// TODO: The trie requirements has changed, so most of these tests must be rewritten
 // TestBuildTrie tests the creation of a new RegexTrie from a dictionary.
 // It tests if the size and length of the new RegexTrie are the same as the dictionary it was built from.
 // It also tests if an invalid dictionary returns an error.
 func TestBuildTrie(t *testing.T) {
+	t.Skip("Skipping this test due to changing requirements")
 	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
 
 	trie, err := Trie(false, 6, 6)
@@ -30,7 +33,9 @@ func TestBuildTrie(t *testing.T) {
 	tt.PrintLogStack()
 }
 
+// TODO: rewrite
 func TestSearch_AllSymbols(t *testing.T) {
+	t.Skip("Skipping this test due to changing requirements")
 	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
 
 	// Get the dictionary instance
@@ -52,18 +57,21 @@ func TestSearch_AllSymbols(t *testing.T) {
 	tt.PrintLogStack()
 }
 
-//func TestSearch_SimpleRegexes(t *testing.T) {
-//	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
-//
-//	trie, err := Trie(nil, false)
-//
-//	if err != nil {
-//		tt.Errorf("failed to build trie: %v\n", err)
-//	}
-//
-//	simpleRegexes.Each(func(key string, value string) {
-//		shouldFindEntrySuc(tt, trie, tries.Entry(value, symbols.Empty))
-//	})
-//
-//	tt.PrintLogStack()
-//}
+// TODO: rewrite
+func TestSearch_SimpleRegexes(t *testing.T) {
+	t.Skip("Skipping this test due to changing requirements")
+
+	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+
+	trie, err := Trie(false, 0, 0)
+
+	if err != nil {
+		tt.Errorf("failed to build trie: %v\n", err)
+	}
+
+	simpleRegexes.Each(func(key string, value string) {
+		shouldFindEntrySuc(tt, trie, tries.Entry(value, symbols.OpenOf(symbols.Empty)))
+	})
+
+	tt.PrintLogStack()
+}

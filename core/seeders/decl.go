@@ -2,7 +2,7 @@
 
 package seeders
 
-import "github.com/andrerrcosta2/gtools/core/domain"
+import "github.com/andrerrcosta2/gtools/core/domain/gtools"
 
 type Slice[T any] interface {
 	Seed(int) []T

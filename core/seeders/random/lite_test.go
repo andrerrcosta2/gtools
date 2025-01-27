@@ -4,7 +4,7 @@
 package random
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data"
+	"github.com/andrerrcosta2/gtools/core/domain/data"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/tests/assertlite"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/tests/testseed"
 	"strings"

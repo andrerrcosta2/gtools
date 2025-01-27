@@ -45,6 +45,12 @@ func TestBuildPath(t *testing.T) {
 			dir:      "any/dir",
 			expected: "any/dir",
 		},
+		{
+			name:     "ModRoot",
+			pathType: ModRoot,
+			dir:      "any/dir",
+			expected: "gtools/core/any/dir",
+		},
 	}
 
 	for _, tt := range tests {

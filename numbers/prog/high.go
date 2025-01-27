@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package progression
+package prog
 
 import (
 	"github.com/andrerrcosta2/gtools/numbers"
@@ -21,7 +21,7 @@ func High[T numbers.Real](coefficients []T, length int) []T {
 	progression := make([]T, length)
 
 	for n := 0; n < length; n++ {
-		progression[n] = polyn.Polynomial(n, coefficients...)
+		progression[n] = polyn.N(n, coefficients...)
 	}
 
 	return progression

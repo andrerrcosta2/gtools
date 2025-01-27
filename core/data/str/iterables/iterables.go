@@ -254,11 +254,11 @@ func (s *Slice[G]) Values() []G {
 }
 
 // OfMap creates a new Map from the given pairs of values.
-// It takes a variable number of arguments of type tuple.Pair[N, K] and returns a pointer to a Map[N, K].
+// It takes a variable number of arguments of type tuple.Pair[N, V] and returns a pointer to a Map[N, V].
 // The map is initialized with the given key-value pairs.
-func OfMap[G prim.Ordered, K any](values ...str.Entry[G, K]) *Map[G, K] {
+func OfMap[K prim.Ordered, V any](values ...str.Entry[K, V]) *Map[K, V] {
 	// Initialize the map with the given key-value pairs.
-	m := Map[G, K]{}
+	m := Map[K, V]{}
 	for _, entry := range values {
 		m[entry.Key()] = entry.Value()
 	}
@@ -266,28 +266,28 @@ func OfMap[G prim.Ordered, K any](values ...str.Entry[G, K]) *Map[G, K] {
 	return &m
 }
 
-type Map[G prim.Ordered, K any] map[G]K
+type Map[K prim.Ordered, V any] map[K]V
 
 // At returns the value associated with the given key k.
-// It takes a single argument of type N and returns a value of type K.
-func (m *Map[G, K]) At(k G) K {
+// It takes a single argument of type N and returns a value of type V.
+func (m *Map[K, V]) At(k K) V {
 	// Return the value associated with the given key
 	return (*m)[k]
 }
 
 // Contains checks if the map contains the given key k.
 // It takes a single argument of type N and returns a boolean indicating if the key is present in the map.
-func (m *Map[G, K]) Contains(k G) bool {
+func (m *Map[K, V]) Contains(k K) bool {
 	// Check if the map contains the given key
 	_, ok := (*m)[k]
 	return ok
 }
 
 // Each calls the given function for each key-value pair in the map.
-// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type K.
+// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *Map[G, K]) Each(fn functions.BiConsumer[G, K]) *Map[G, K] {
+func (m *Map[K, V]) Each(fn functions.BiConsumer[K, V]) *Map[K, V] {
 	// Iterate over the map and call the function for each key-value pair
 	for k, v := range *m {
 		// Pass the value to the function
@@ -299,7 +299,7 @@ func (m *Map[G, K]) Each(fn functions.BiConsumer[G, K]) *Map[G, K] {
 
 // Len returns the number of key-value pairs in the map.
 // It returns the number of entries in the map.
-func (m *Map[G, K]) Len() int {
+func (m *Map[K, V]) Len() int {
 	// Return the number of entries in the map
 	return len(*m)
 }
@@ -307,7 +307,7 @@ func (m *Map[G, K]) Len() int {
 // Operation calls the given function for each key in the map, passing the key and a pointer to the map itself to the function.
 // It iterates over the map and calls the function for each key.
 // It returns a pointer to the map.
-func (m *Map[G, K]) Operation(fn functions.BiConsumer[G, *Map[G, K]]) *Map[G, K] {
+func (m *Map[K, V]) Operation(fn functions.BiConsumer[K, *Map[K, V]]) *Map[K, V] {
 	// Iterate over the map and call the function for each key
 	for k, _ := range *m {
 		// Pass the map itself to the function
@@ -318,10 +318,10 @@ func (m *Map[G, K]) Operation(fn functions.BiConsumer[G, *Map[G, K]]) *Map[G, K]
 }
 
 // Parallel calls the given function for each key-value pair in the map, passing the key and the value to the function.
-// It takes a BiConsumer function that takes two parameters: the key of type N and the value of type K.
+// It takes a BiConsumer function that takes two parameters: the key of type N and the value of type V.
 // It iterates over the map concurrently and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *Map[G, K]) Parallel(fn functions.BiConsumer[G, K], maxParallels int) *Map[G, K] {
+func (m *Map[K, V]) Parallel(fn functions.BiConsumer[K, V], maxParallels int) *Map[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	// Set the maximum number of goroutines to run concurrently
@@ -331,7 +331,7 @@ func (m *Map[G, K]) Parallel(fn functions.BiConsumer[G, K], maxParallels int) *M
 	// Iterate over the map and call the function for each key-value pair concurrently
 	for k, v := range *m {
 		// Start a goroutine for each key-value pair
-		go func(k G, v K) {
+		go func(k K, v V) {
 			defer wg.Done()
 			// Acquire the Semaphore
 			smp <- struct{}{}
@@ -348,9 +348,9 @@ func (m *Map[G, K]) Parallel(fn functions.BiConsumer[G, K], maxParallels int) *M
 }
 
 // Put adds a new key-value pair to the map.
-// It takes a single argument of type N for the key and a single argument of type K for the value.
+// It takes a single argument of type N for the key and a single argument of type V for the value.
 // It returns a pointer to the map.
-func (m *Map[G, K]) Put(k G, v K) *Map[G, K] {
+func (m *Map[K, V]) Put(k K, v V) *Map[K, V] {
 	// Append the new key-value pair to the map
 	(*m)[k] = v
 	// Return a pointer to the map
@@ -359,7 +359,7 @@ func (m *Map[G, K]) Put(k G, v K) *Map[G, K] {
 
 // Remove deletes the key-value pair with the given key k from the map.
 // It takes a single argument of type N and returns a pointer to the map.
-func (m *Map[G, K]) Remove(k G) *Map[G, K] {
+func (m *Map[K, V]) Remove(k K) *Map[K, V] {
 	// Delete the key-value pair with the given key from the map.
 	delete(*m, k)
 	// Return a pointer to the map.
@@ -369,9 +369,9 @@ func (m *Map[G, K]) Remove(k G) *Map[G, K] {
 // Values returns a slice of all values in the map.
 // It iterates over the map and appends each value to the slice.
 // The length of the returned slice is equal to the number of entries in the map.
-func (m *Map[G, K]) Values() []K {
+func (m *Map[K, V]) Values() []V {
 	// Create a slice to store the values
-	values := make([]K, 0, len(*m))
+	values := make([]V, 0, len(*m))
 	// Iterate over the map and append each value to the slice
 	for _, v := range *m {
 		values = append(values, v)
@@ -381,23 +381,28 @@ func (m *Map[G, K]) Values() []K {
 }
 
 // OfSliceMap creates a new empty SliceMap.
-// It returns a pointer to an empty SliceMap[N, K].
-func OfSliceMap[G comparable, K any]() *SliceMap[G, K] {
-	// Create a new empty SliceMap
-	return &SliceMap[G, K]{}
+// It returns a pointer to an empty SliceMap[N, V].
+func OfSliceMap[K comparable, V any](values ...str.Entry[K, []V]) *SliceMap[K, V] {
+	// Initialize the map with the given key-value pairs.
+	m := SliceMap[K, V]{}
+	for _, entry := range values {
+		m[entry.Key()] = entry.Value()
+	}
+	// Return a pointer to the map.
+	return &m
 }
 
-type SliceMap[G comparable, K any] map[G][]K
+type SliceMap[K comparable, V any] map[K][]V
 
 // Append appends a value to the slice of values associated with the given key in the map.
 // If the key is not present in the map, it creates a new slice with the given value.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) Append(k G, v K) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Append(k K, v V) *SliceMap[K, V] {
 	// Get the slice of values associated with the given key
 	slice, ok := (*m)[k]
 	// If the key is not present in the map, create a new slice with the given value
 	if !ok {
-		(*m)[k] = []K{v}
+		(*m)[k] = []V{v}
 	} else {
 		// Append the value to the existing slice
 		(*m)[k] = append(slice, v)
@@ -407,25 +412,40 @@ func (m *SliceMap[G, K]) Append(k G, v K) *SliceMap[G, K] {
 }
 
 // At returns the slice of values associated with the given key in the map.
-// It returns a slice of type []K where K is the type of the values in the map.
+// It returns a slice of type []V where V is the type of the values in the map.
 // If the key is not present in the map, it returns nil.
-func (m *SliceMap[G, K]) At(k G) []K {
+func (m *SliceMap[K, V]) At(k K) []V {
 	return (*m)[k]
 }
 
 // Contains checks if the map contains the given key k.
 // It takes a single argument of type N for the key and returns a boolean indicating if the key is present in the map.
-func (m *SliceMap[G, K]) Contains(k G) bool {
+func (m *SliceMap[K, V]) Contains(k K) bool {
 	// Check if the map contains the given key
 	_, ok := (*m)[k]
 	return ok
 }
 
 // Each calls the given function for each key-value pair in the map.
-// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type []K.
+// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type []V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) Each(fn functions.BiConsumer[G, *[]K]) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Each(fn functions.BiConsumer[K, *V]) *SliceMap[K, V] {
+	// Iterate over each key-value pair in the map
+	for k, v := range *m {
+		for i := range v {
+			fn(k, &v[i])
+		}
+	}
+	// Return a pointer to the map
+	return m
+}
+
+// EachSlice calls the given function for each key-value pair in the map.
+// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type []V.
+// It iterates over the map and calls the function for each key-value pair.
+// It returns a pointer to the map.
+func (m *SliceMap[K, V]) EachSlice(fn functions.BiConsumer[K, *[]V]) *SliceMap[K, V] {
 	// Iterate over each key-value pair in the map
 	for k, v := range *m {
 		// Call the function with the key and a pointer to the value
@@ -437,15 +457,32 @@ func (m *SliceMap[G, K]) Each(fn functions.BiConsumer[G, *[]K]) *SliceMap[G, K] 
 
 // Len returns the number of key-value pairs in the map.
 // It returns an integer representing the number of entries in the map.
-func (m *SliceMap[G, K]) Len() int {
+func (m *SliceMap[K, V]) Len() int {
 	// Return the length of the map
 	return len(*m)
+}
+
+func (m *SliceMap[K, V]) MapValues(fn functions.BiFunction[K, []V, []V]) *SliceMap[K, V] {
+	for k, v := range *m {
+		(*m)[k] = fn(k, v)
+	}
+	return m
+}
+
+func (m *SliceMap[K, V]) MapEach(fn functions.BiFunction[K, *V, V]) *SliceMap[K, V] {
+	for k, slice := range *m {
+		for i := range slice {
+
+			slice[i] = fn(k, &slice[i])
+		}
+	}
+	return m
 }
 
 // Operation calls the given function for each key in the map, passing the key and a pointer to the map itself to the function.
 // It iterates over the map and calls the function for each key.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) Operation(fn functions.BiConsumer[G, *SliceMap[G, K]]) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Operation(fn functions.BiConsumer[K, *SliceMap[K, V]]) *SliceMap[K, V] {
 	// Iterate over the map and call the function for each key
 	for k, _ := range *m {
 		// Pass a pointer to the map itself to the function
@@ -455,7 +492,7 @@ func (m *SliceMap[G, K]) Operation(fn functions.BiConsumer[G, *SliceMap[G, K]]) 
 	return m
 }
 
-func (m *SliceMap[G, K]) Parallel(fn functions.BiConsumer[G, []K], maxParallels int) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Parallel(fn functions.BiConsumer[K, []V], maxParallels int) *SliceMap[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	// Set the maximum number of goroutines to run concurrently
@@ -465,7 +502,7 @@ func (m *SliceMap[G, K]) Parallel(fn functions.BiConsumer[G, []K], maxParallels 
 	// Iterate over the map and call the function for each key-value pair concurrently
 	for k, v := range *m {
 		// Start a goroutine for each key-value pair
-		go func(k G, v []K) {
+		go func(k K, v []V) {
 			defer wg.Done()
 			// Acquire the Semaphore
 			smp <- struct{}{}
@@ -482,9 +519,9 @@ func (m *SliceMap[G, K]) Parallel(fn functions.BiConsumer[G, []K], maxParallels 
 }
 
 // Put adds a new key-value pair to the map.
-// It takes a single argument of type N for the key and a single argument of type []K for the value.
+// It takes a single argument of type N for the key and a single argument of type []V for the value.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) Put(k G, v []K) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Put(k K, v []V) *SliceMap[K, V] {
 	// Append the new key-value pair to the map
 	(*m)[k] = v
 	// Return a pointer to the map
@@ -492,9 +529,9 @@ func (m *SliceMap[G, K]) Put(k G, v []K) *SliceMap[G, K] {
 }
 
 // PutIfAbsent adds a new key-value pair to the map if the key is not present.
-// It takes a single argument of type N for the key and a single argument of type []K for the value.
+// It takes a single argument of type N for the key and a single argument of type []V for the value.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) PutIfAbsent(k G, v []K) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) PutIfAbsent(k K, v []V) *SliceMap[K, V] {
 	// Check if the key is not present in the map
 	if _, ok := (*m)[k]; !ok {
 		// Append the new key-value pair to the map
@@ -507,16 +544,16 @@ func (m *SliceMap[G, K]) PutIfAbsent(k G, v []K) *SliceMap[G, K] {
 
 // PutOrAppend adds a new value to the slice of values associated with the given key in the map.
 // If the key is not present in the map, it creates a new slice with the given value.
-// It takes a single argument of type N for the key and a single argument of type K for the value.
+// It takes a single argument of type N for the key and a single argument of type V for the value.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) PutOrAppend(k G, v K) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) PutOrAppend(k K, v V) *SliceMap[K, V] {
 	// Check if the key is present in the map
 	if m.Contains(k) {
 		// If the key is present, append the value to the existing slice
 		m.Append(k, v)
 	} else {
 		// If the key is not present, add the new key-value pair to the map
-		m.Put(k, []K{v})
+		m.Put(k, []V{v})
 	}
 	// Return a pointer to the map
 	return m
@@ -526,16 +563,16 @@ func (m *SliceMap[G, K]) PutOrAppend(k G, v K) *SliceMap[G, K] {
 // If the key is not present in the map, it does nothing.
 // It takes a single argument of type N for the key.
 // It returns a pointer to the map.
-func (m *SliceMap[G, K]) Remove(k G) *SliceMap[G, K] {
+func (m *SliceMap[K, V]) Remove(k K) *SliceMap[K, V] {
 	delete(*m, k)
 	return m
 }
 
 // Values returns a slice of all the values in the map.
-// It returns a slice of type []K where K is the type of the values in the map.
-func (m *SliceMap[G, K]) Values() []K {
+// It returns a slice of type []V where V is the type of the values in the map.
+func (m *SliceMap[K, V]) Values() []V {
 	// Create a slice to store all the values in the map
-	result := make([]K, 0, len(*m))
+	result := make([]V, 0, len(*m))
 
 	// Iterate over each value in the map
 	for _, v := range *m {

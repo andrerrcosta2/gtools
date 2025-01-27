@@ -12,7 +12,7 @@ import (
 	"github.com/andrerrcosta2/gtools/datastr/maps"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/numbers/progression"
+	"github.com/andrerrcosta2/gtools/numbers/prog"
 	"testing"
 )
 
@@ -30,7 +30,7 @@ func TestAddingNodesAndEdges(t *testing.T) {
 	g := WeightedSortableDigraphOf[N, W]()
 
 	var expEdges []E
-	weights, err := progression.SquareRoot(1_073_741_824, 2, 30)
+	weights, err := prog.Sqrt(1_073_741_824, 2, 30)
 	if err != nil {
 		tt.Fatal(err)
 	}

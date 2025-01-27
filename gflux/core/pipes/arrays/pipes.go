@@ -444,13 +444,13 @@ func LowerBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
 //
 // Returns:
 // - int: the maximum sum of a contiguous subarray in the array
-func Kadane[T prim.Ordered](arr []T) T {
+func Kadane[T prim.Ordered](arr []T) (maxSoFar T) {
 	// If the array is empty, return 0
 	if len(arr) == 0 {
-		return T(0)
+		return
 	}
 	// Initialize maxSoFar and maxEndingHere to the first element
-	maxSoFar := arr[0]
+	maxSoFar = arr[0]
 	maxEndingHere := arr[0]
 	for _, v := range arr[1:] { // Start iterating from the second element
 		// Update maxEndingHere to be either the current element itself
@@ -460,7 +460,7 @@ func Kadane[T prim.Ordered](arr []T) T {
 		maxSoFar = max(maxSoFar, maxEndingHere)
 	}
 	// Return the maximum sum of the array
-	return maxSoFar
+	return
 }
 
 // Majority returns the element that appears more than half the time in an array.

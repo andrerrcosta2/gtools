@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package progression
+package prog
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"math/rand"
 )
 
-// Sequence generates a sequence of length `n` with a given starting value.
-func Sequence[T numbers.Real](length int) []T {
+// Seq generates a sequence of length `n` with a given starting value.
+func Seq[T numbers.Real](length int) []T {
 	sequence := make([]T, length)
 	var zero T
 	for i := range sequence {
@@ -19,23 +19,23 @@ func Sequence[T numbers.Real](length int) []T {
 	return sequence
 }
 
-// Arithmetic generates an arithmetic progression sequence of length `n`
+// Arit generates an arithmetic progression sequence of length `n`
 // with a given starting value and step size.
 //
 // f(n) = start + step * n
-func Arithmetic[T numbers.Real](start T, step T, length int) ([]T, error) {
+func Arit[T numbers.Real](start T, step T, length int) ([]T, error) {
 	ap := make([]T, length)
 	for i := 0; i < length; i++ {
-		ap[i] = polyn.Linear(start, step, i)
+		ap[i] = polyn.Lin(start, step, i)
 	}
 	return ap, nil
 }
 
-// Geometric generates a geometric progression sequence of length `n`
+// Geom generates a geometric progression sequence of length `n`
 // with a given starting value and ratio.
 //
 // f(n) = start * ratio^n
-func Geometric[T numbers.Real](start T, ratio T, length int) ([]T, error) {
+func Geom[T numbers.Real](start T, ratio T, length int) ([]T, error) {
 	gp := make([]T, length)
 	for i := 0; i < length; i++ {
 		if i == 0 {
@@ -47,21 +47,27 @@ func Geometric[T numbers.Real](start T, ratio T, length int) ([]T, error) {
 	return gp, nil
 }
 
-// Fibonacci generates a Fibonacci sequence of length `n`.
+// Fib generates a Fib sequence of length `n`.
 //
 // f(n) = f(n-1) + f(n-2)
-func Fibonacci[T numbers.Real](length int) ([]T, error) {
-	fib := make([]T, length)
-	fib[0] = 0
-	fib[1] = 1
-	for i := 2; i < length; i++ {
-		fib[i] = fib[i-1] + fib[i-2]
+func Fib[T numbers.Real](length int) (fib []T, err error) {
+	if length == 0 {
+		return
+	} else if length == 1 {
+		return []T{0}, nil
+	} else {
+		fib = make([]T, length)
+		fib[0] = 0
+		fib[1] = 1
+		for i := 2; i < length; i++ {
+			fib[i] = fib[i-1] + fib[i-2]
+		}
+		return
 	}
-	return fib, nil
 }
 
-// Random generates a slice of random numbers of type `T` with the specified range.
-func Random[T numbers.Real](length int, min T, max T) ([]T, error) {
+// Rand generates a slice of random numbers of type `T` with the specified range.
+func Rand[T numbers.Real](length int, min T, max T) ([]T, error) {
 	randoms := make([]T, length)
 
 	switch any(min).(type) {
@@ -78,31 +84,31 @@ func Random[T numbers.Real](length int, min T, max T) ([]T, error) {
 	return randoms, nil
 }
 
-// Quadratic generates a quadratic progression sequence of length `n`
+// Quad generates a quadratic progression sequence of length `n`
 // with coefficients a, b, and c for the polynomial a + bn + cn^2.
-func Quadratic[T numbers.Real](a, b, c T, length int) ([]T, error) {
+func Quad[T numbers.Real](a, b, c T, length int) ([]T, error) {
 	quad := make([]T, length)
 	for n := 0; n < length; n++ {
-		quad[n] = polyn.Quadratic(a, b, c, n)
+		quad[n] = polyn.Quad(a, b, c, n)
 	}
 	return quad, nil
 }
 
-// Cubic generates a cubic progression sequence of length `n`
+// Cub generates a cubic progression sequence of length `n`
 // with coefficients a, b, c, and d for the polynomial a + bn + cn^2 + dn^3.
-func Cubic[T numbers.Real](a, b, c, d T, length int) ([]T, error) {
+func Cub[T numbers.Real](a, b, c, d T, length int) ([]T, error) {
 	cubic := make([]T, length)
 	for n := 0; n < length; n++ {
-		cubic[n] = polyn.Cubic(a, b, c, d, n)
+		cubic[n] = polyn.Cub(a, b, c, d, n)
 	}
 	return cubic, nil
 }
 
-// SquareRoot generates a square root progression sequence of length `n`
+// Sqrt generates a square root progression sequence of length `n`
 // with a given starting value and ratio.
 //
 // f(n) = start / ratio^n
-func SquareRoot[T numbers.Real](start T, ratio T, length int) ([]T, error) {
+func Sqrt[T numbers.Real](start T, ratio T, length int) ([]T, error) {
 	if ratio == 0 {
 		return nil, fmt.Errorf("ratio cannot be zero")
 	}

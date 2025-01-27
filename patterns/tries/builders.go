@@ -30,10 +30,12 @@ func OfPatternsFrom(dictionary str.Dictionary[string, []symbols.Logical], strict
 	// Build the newPatternTrie sequentially
 	t := OfPatterns(strict, maxTrieParallelOps)
 
-	for pattern, symbol := range dictionary.EntrySet() {
-		err := t.Insert(pattern, symbol)
-		if err != nil {
-			return nil, fmt.Errorf("could not build trie from dictionary: %w", err)
+	for p, ss := range dictionary.EntrySet() {
+		for _, s := range ss {
+			err := t.Insert(p, s)
+			if err != nil {
+				return nil, fmt.Errorf("could not build trie from dictionary: %w", err)
+			}
 		}
 	}
 

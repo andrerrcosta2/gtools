@@ -51,7 +51,7 @@ func TestContainsAllBy_Success(t *testing.T) {
 	dat, dup := random.Struct[tests.Comparable](10).Duplicate()
 
 	// Expects a part to be contained
-	if !ContainsAllBy(dat.Values(), dat.Some(7).Values(), functions.Equality[tests.Comparable]) {
+	if !ContainsAllBy(dat.Some(7).Values(), dat.Values(), functions.Equality[tests.Comparable]) {
 		t.Errorf("expected all elements to be found, but got false\n")
 	}
 
@@ -62,7 +62,7 @@ func TestContainsAllBy_Success(t *testing.T) {
 
 	// Expects false after addition
 	dup.Append(random.Struct[tests.Comparable](2).Values()...)
-	if ContainsAllBy(dat.Values(), dup.Values(), functions.Equality[tests.Comparable]) {
+	if ContainsAllBy(dup.Values(), dat.Values(), functions.Equality[tests.Comparable]) {
 		t.Errorf("expected false, but got true\n")
 	}
 
