@@ -4,7 +4,7 @@ package nodes
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/errs"
@@ -14,7 +14,7 @@ import (
 )
 
 type PatternTrie interface {
-	str.TrieNode[string, grammar.Symbol, PatternTrie]
+	nodes.Trie[string, grammar.Symbol, PatternTrie]
 	AddChild(key string, child PatternTrie) error
 	GetChild(key string) (PatternTrie, bool)
 	HasChildren() bool
@@ -25,7 +25,7 @@ type PatternTrie interface {
 	die() error
 }
 
-var _ str.TrieNode[string, grammar.Symbol, PatternTrie] = (PatternTrie)(nil)
+var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (PatternTrie)(nil)
 
 // Transition creates a new transitionNode with the given key and parent.
 func Transition(key string, parent PatternTrie) PatternTrie {
@@ -175,7 +175,7 @@ func (p *transitionNode) die() error {
 	return nil
 }
 
-var _ str.TrieNode[string, grammar.Symbol, PatternTrie] = (*transitionNode)(nil)
+var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (*transitionNode)(nil)
 var _ PatternTrie = (*transitionNode)(nil)
 
 // Symbol creates a new symbol node with the given key, parent, and symbol.
@@ -329,7 +329,7 @@ func (p *symbolNode) die() error {
 	return nil
 }
 
-var _ str.TrieNode[string, grammar.Symbol, PatternTrie] = (*symbolNode)(nil)
+var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (*symbolNode)(nil)
 var _ PatternTrie = (*symbolNode)(nil)
 
 func NewSearch(root PatternTrie, pattern string, output *[]grammar.Symbol) *Search {

@@ -5,8 +5,8 @@ package tries
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/def"
 	"strings"
@@ -701,7 +701,7 @@ func TestPatternTrie_PlaceholderNode_EdgeCase01_1(t *testing.T) {
 func TestPatternTrie_EdgeCases_Insert_EdgeDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnErrors)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnErrors)
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Insert_FullValidDictionary")
 
 	// Create an empty trie

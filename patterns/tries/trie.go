@@ -19,7 +19,7 @@ var (
 	ROOT = def.Root
 )
 
-type Pattern str.IOTrie[string, symbols.Logical, grammar.Symbol, nodes.PatternTrie]
+type Pattern str.IOTrie[string, symbols.Logical, grammar.Symbol]
 
 // OfPatterns creates a new empty str.Trie of grammar.ByteSymbol
 // It is safe to be used concurrently
@@ -76,6 +76,14 @@ type patternTrie struct {
 	length      int // Number of nodes in the trie. Must keep track of it
 	maxParallel int
 	strict      map[string]bool // TODO: Is a set to keep track of inserted values to apply strict rules
+}
+
+// Clear is a soft clear which relies on the garbage collector to remove dangling nodes.
+// It might not be enough if the algorithm keeps references to any node.
+func (t *patternTrie) Clear() {
+	t.root = nodes.Transition(def.Root.String(), nil)
+	t.size = 0
+	t.length = 0
 }
 
 // Root returns the Root node of the newPatternTrie.
@@ -170,5 +178,5 @@ func (t *patternTrie) printTrie() string {
 	return result.String()
 }
 
-var _ str.Tree[grammar.Symbol, nodes.PatternTrie] = (*patternTrie)(nil)
-var _ str.IOTrie[string, symbols.Logical, grammar.Symbol, nodes.PatternTrie] = (*patternTrie)(nil)
+var _ str.Tree[grammar.Symbol] = (*patternTrie)(nil)
+var _ str.IOTrie[string, symbols.Logical, grammar.Symbol] = (*patternTrie)(nil)
