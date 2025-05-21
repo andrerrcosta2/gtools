@@ -51,7 +51,7 @@ type OpTracker[D any, R any] struct {
 }
 
 // Has checks if the pair (a, b) has already been compared
-func (t *OpTracker[D, R]) Has(a ...any) (cached R, ok bool) {
+func (t *OpTracker[D, R]) Has(a ...D) (cached R, ok bool) {
 	key := t.computeKey(a...)
 	if op, exists := t.ops[key]; exists {
 		return op, true
@@ -60,13 +60,13 @@ func (t *OpTracker[D, R]) Has(a ...any) (cached R, ok bool) {
 }
 
 // Mark marks the pair (a, b) as compared and stores the result
-func (t *OpTracker[D, R]) Mark(result R, a ...any) R {
+func (t *OpTracker[D, R]) Mark(result R, a ...D) R {
 	key := t.computeKey(a...)
 	t.ops[key] = result
 	return result
 }
 
-func (t *OpTracker[D, R]) computeKey(a ...any) string {
+func (t *OpTracker[D, R]) computeKey(a ...D) string {
 	if len(a) == 0 {
 		return "<empty>"
 	}
