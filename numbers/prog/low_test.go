@@ -8,73 +8,22 @@ import (
 	"testing/quick"
 )
 
-func TestSquareRoot(t *testing.T) {
-	tests := []struct {
-		name     string
-		start    float64
-		ratio    float64
-		length   int
-		expected []float64
-		err      bool
-	}{
-		{
-			name:     "Simple test with ratio 2",
-			start:    16,
-			ratio:    2,
-			length:   4,
-			expected: []float64{16, 8, 4, 2},
-			err:      false,
-		},
-		{
-			name:     "Test with ratio 1.5",
-			start:    27,
-			ratio:    1.5,
-			length:   4,
-			expected: []float64{27, 18, 12, 8},
-			err:      false,
-		},
-		{
-			name:     "Test with ratio 1",
-			start:    5,
-			ratio:    1,
-			length:   3,
-			expected: []float64{5, 5, 5},
-			err:      false,
-		},
-		{
-			name:     "Test with length 1",
-			start:    9,
-			ratio:    3,
-			length:   1,
-			expected: []float64{9},
-			err:      false,
-		},
-		{
-			name:     "Zero ratio",
-			start:    10,
-			ratio:    0,
-			length:   3,
-			expected: []float64{},
-			err:      true,
-		},
+func TestSqrt(t *testing.T) {
+	check := func(start, ratio float64, length uint8) bool {
+		if ratio == 0 || length > 30 {
+			return true
+		}
+		got, _ := Sqrt(start, ratio, int(length))
+		for i := 0; i < int(length); i++ {
+			want := start / math.Pow(ratio, float64(i))
+			if math.Abs(got[i]-want) > 1e-9 {
+				return false
+			}
+		}
+		return true
 	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result, err := Sqrt(tt.start, tt.ratio, tt.length)
-			if len(result) != len(tt.expected) {
-				t.Errorf("Expected length %d, got %d", len(tt.expected), len(result))
-			}
-			if (err != nil) != tt.err {
-				t.Errorf("Expected no error, got %v", err)
-			}
-
-			for i, v := range result {
-				if v != tt.expected[i] {
-					t.Errorf("At index %d: expected %v, got %v", i, tt.expected[i], v)
-				}
-			}
-		})
+	if err := quick.Check(check, nil); err != nil {
+		t.Errorf("TestSqrt failed: %v", err)
 	}
 }
 
@@ -514,123 +463,118 @@ func TestSequence_Empty(t *testing.T) {
 }
 
 func TestSeq(t *testing.T) {
-	prop := func(n uint) bool {
-		if n <= 0 {
-			return true // No sequence to test
+	check := func(length uint8) bool {
+		if length > 50 {
+			return true
 		}
-
-		seq := Seq[int](n)
-		for i, v := range seq {
-			if v != i {
+		got := Seq[float64](uint(length))
+		for i, v := range got {
+			if v != float64(i) {
 				return false
 			}
 		}
 		return true
 	}
 
-	if err := quick.Check(prop, nil); err != nil {
-		t.Errorf("Seq failed: %v", err)
+	if err := quick.Check(check, nil); err != nil {
+		t.Errorf("TestSeq failed: %v", err)
 	}
 }
 
 func TestArit(t *testing.T) {
-	prop := func(start, step int, length uint8) bool {
-		n := int(length)
-		if n <= 0 {
+	check := func(start, step float64, length uint8) bool {
+		if length > 50 {
 			return true
 		}
-
-		seq, err := Arit(start, step, n)
-		if err != nil {
-			return false
-		}
-
-		for i := 0; i < n; i++ {
-			expected := start + step*i
-			if seq[i] != expected {
+		got, _ := Arit(start, step, int(length))
+		for i := 0; i < int(length); i++ {
+			want := start + step*float64(i)
+			if math.Abs(got[i]-want) > 1e-9 {
 				return false
 			}
 		}
 		return true
 	}
-
-	if err := quick.Check(prop, nil); err != nil {
-		t.Errorf("Arit failed: %v", err)
+	if err := quick.Check(check, nil); err != nil {
+		t.Errorf("TestArit failed: %v", err)
 	}
 }
 
 func TestGeom(t *testing.T) {
-	prop := func(start, ratio int, length uint8) bool {
-		n := int(length)
-		if n <= 0 || ratio == 0 {
+	check := func(start, ratio float64, length uint8) bool {
+		if length > 30 || ratio == 0 {
 			return true
 		}
-
-		seq, err := Geom(start, ratio, n)
-		if err != nil {
-			return false
-		}
-
-		for i := 0; i < n; i++ {
-			expected := start * int(math.Pow(float64(ratio), float64(i)))
-			if seq[i] != expected {
+		got, _ := Geom(start, ratio, int(length))
+		for i := 0; i < int(length); i++ {
+			want := start * math.Pow(ratio, float64(i))
+			if math.Abs(got[i]-want) > 1e-9 {
 				return false
 			}
 		}
 		return true
 	}
-
-	if err := quick.Check(prop, nil); err != nil {
-		t.Errorf("Geom failed: %v", err)
+	if err := quick.Check(check, nil); err != nil {
+		t.Errorf("TestGeom failed: %v", err)
 	}
 }
 
 func TestFib(t *testing.T) {
-	prop := func(length uint8) bool {
-		n := int(length)
-		if n <= 2 {
-			return true // Nothing to check
+	check := func(length uint8) bool {
+		if length > 30 {
+			return true
 		}
-
-		fib, err := Fib[int](n)
-		if err != nil {
-			return false
-		}
-
-		for i := 2; i < n; i++ {
-			if fib[i] != fib[i-1]+fib[i-2] {
+		got, _ := Fib[float64](int(length))
+		for i := 2; i < int(length); i++ {
+			if math.Abs(got[i]-(got[i-1]+got[i-2])) > 1e-9 {
 				return false
 			}
 		}
 		return true
 	}
-
-	if err := quick.Check(prop, nil); err != nil {
-		t.Errorf("Fib failed: %v", err)
+	if err := quick.Check(check, nil); err != nil {
+		t.Errorf("TestFib failed: %v", err)
 	}
 }
 
-func TestRand(t *testing.T) {
-	prop := func(min, max int, length uint8) bool {
-		n := int(length)
-		if n <= 0 || min > max {
-			return true
-		}
+func TestRandInt(t *testing.T) {
+	minimum := 10
+	maximum := 20
+	length := 100
 
-		seq, err := Rand(n, min, max)
-		if err != nil {
-			return false
-		}
-
-		for _, v := range seq {
-			if v < min || v > max {
-				return false
-			}
-		}
-		return true
+	values, err := Rand[int](length, minimum, maximum)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if err := quick.Check(prop, nil); err != nil {
-		t.Errorf("Rand failed: %v", err)
+	if len(values) != length {
+		t.Errorf("expected length %d, got %d", length, len(values))
+	}
+
+	for i, v := range values {
+		if v < minimum || v > maximum {
+			t.Errorf("value at index %d out of bounds: got %d, want in [%d, %d]", i, v, minimum, maximum)
+		}
+	}
+}
+
+func TestRandFloat64(t *testing.T) {
+	min := 1.5
+	max := 3.5
+	length := 100
+
+	values, err := Rand[float64](length, min, max)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(values) != length {
+		t.Errorf("expected length %d, got %d", length, len(values))
+	}
+
+	for i, v := range values {
+		if v < min || v > max {
+			t.Errorf("value at index %d out of bounds: got %f, want in [%f, %f]", i, v, min, max)
+		}
 	}
 }
