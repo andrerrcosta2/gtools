@@ -8,103 +8,121 @@ import (
 	"github.com/andrerrcosta2/gtools/core/search"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
 	"maps"
-	"sort"
+	"sync"
 )
 
-// Ordered creates a new OrderedSet.
+// Ordered creates a new ordered.
 //
-// This function returns a pointer to a new OrderedSet, which is a set that maintains the order of its elements.
+// This function returns a pointer to a new ordered, which is a set that maintains the order of its elements by its
+// natural order.
 //
 // Type parameter K must satisfy the constraints.Ordered constraint, meaning it must be a type that supports ordering.
-func Ordered[T prim.Ordered](values ...T) *OrderedSet[T] {
-	// Sort the values in ascending order.
-	sort.Slice(values, func(i, j int) bool {
-		return values[i] < values[j]
+func Ordered[T prim.Ordered](values ...T) str.OrderedSet[T] {
+	set := &ordered[T]{
+		idx: make(map[T]struct{}),
+		set: make([]T, 0, len(values)), // Preallocate with capacity
+	}
+	OrderedFilter(values, func(t T) {
+		set.set = append(set.set, t)
+		set.idx[t] = struct{}{}
 	})
-	// Create a new OrderedSet with an empty map and slice.
-	set := &OrderedSet[T]{
-		// The set is used to keep track of the elements in the set for efficient lookups.
-		index: make(map[T]struct{}),
-		// The keys slice is used to maintain the order of the elements.
-		items: make([]T, len(values)),
-	}
-
-	// Populate the index map
-	for i, value := range values {
-		set.index[value] = struct{}{}
-		set.items[i] = value
-	}
-
-	// Return the populated OrderedSet instance.
 	return set
 }
 
-type OrderedSet[T prim.Ordered] struct {
-	index map[T]struct{}
-	items []T
-}
-
-// Has checks if the set contains the element.
-func (o *OrderedSet[T]) Has(t T) bool {
-	_, exists := o.index[t]
-	return exists
+type ordered[T prim.Ordered] struct {
+	idx map[T]struct{}
+	set []T
 }
 
 // Add inserts an element into the set if it doesn't already exist.
-func (o *OrderedSet[T]) Add(t T) {
-	if !o.Has(t) {
-		// Binary search for insertion point
-		pos := search.Binary(o.items, t)
-		o.items = append(o.items[:pos], append([]T{t}, o.items[pos:]...)...)
-		o.index[t] = struct{}{}
+func (s *ordered[T]) Add(t T) {
+	if !s.Has(t) {
+		// Binary search for insSet point
+		pos, _ := search.Binary(s.set, t)
+		s.set = append(s.set[:pos], append([]T{t}, s.set[pos:]...)...)
+		s.idx[t] = struct{}{}
 	}
 }
 
-// Remove deletes an element from the set.
-func (o *OrderedSet[T]) Remove(t T) {
-	if o.Has(t) {
-		// Binary search for the position of the item
-		pos := search.Binary(o.items, t)
-		// Remove the item
-		o.items = append(o.items[:pos], o.items[pos+1:]...)
-		delete(o.index, t)
+func (s *ordered[T]) Clear() {
+	s.set = make([]T, 0)
+	s.idx = make(map[T]struct{})
+}
+
+func (s *ordered[T]) Delete(i int) bool {
+	if i < 0 || i >= len(s.set) {
+		return false
+	}
+	s.set = arrays.RemoveByIndex(s.set, i)
+	delete(s.idx, s.set[i])
+	return true
+}
+
+func (s *ordered[T]) Equals(other str.Set[T]) bool {
+	if s.Len() != other.Len() {
+		return false
+	}
+	switch set := other.(type) {
+	case *ordered[T]:
+		return arrays.Equals[T](s.set, set.set) && maps.Equal(s.idx, set.idx)
+	default:
+		setValues := set.Values()
+		return arrays.Equals[T](s.set, setValues)
 	}
 }
 
-// Len returns the number of elements in the set.
-func (o *OrderedSet[T]) Len() int {
-	return len(o.items)
-}
-
-// Values returns the ordered elements in the set.
-func (o *OrderedSet[T]) Values() []T {
-	return o.items
-}
-
-// Get returns the element at the given index.
-func (o *OrderedSet[T]) Get(i int) (T, bool) {
-	if i >= 0 && len(o.items) < i {
-		return o.items[i], true
+// Get returns the element at the given idx.
+func (s *ordered[T]) Get(i int) (T, bool) {
+	if i >= 0 && len(s.set) < i {
+		return s.set[i], true
 	}
 	var zeroValue T
 	return zeroValue, false
 }
 
-// Exclude removes an element at the given index.
-func (o *OrderedSet[T]) Exclude(i int) bool {
-	if i >= 0 && len(o.items) < i {
-		o.items = append(o.items[:i], o.items[i+1:]...)
-		return true
-	}
-	return false
+// Has checks if the set contains the element.
+func (s *ordered[T]) Has(t T) bool {
+	_, exists := s.idx[t]
+	return exists
 }
 
-func (o *OrderedSet[T]) Loop() <-chan T {
+func (s *ordered[T]) IndexOf(t T) int {
+	i, _ := search.Binary(s.set, t)
+	return i
+}
+
+// IsEmpty checks if the set is empty.
+func (s *ordered[T]) IsEmpty() bool {
+	return len(s.set) == 0
+}
+
+// Len returns the number of elements in the set.
+func (s *ordered[T]) Len() int {
+	return len(s.set)
+}
+
+// Remove deletes an element from the set.
+func (s *ordered[T]) Remove(t T) {
+	if s.Has(t) {
+		// Binary search for the position of the item
+		pos, _ := search.Binary(s.set, t)
+		// Remove the item
+		s.set = append(s.set[:pos], s.set[pos+1:]...)
+		delete(s.idx, t)
+	}
+}
+
+// Values returns the ordered elements in the set.
+func (s *ordered[T]) Values() []T {
+	return s.set
+}
+
+func (s *ordered[T]) Loop() <-chan T {
 	ch := make(chan T)
 
 	go func() {
 		defer close(ch)
-		for _, item := range o.items {
+		for _, item := range s.set {
 			ch <- item
 		}
 	}()
@@ -112,22 +130,28 @@ func (o *OrderedSet[T]) Loop() <-chan T {
 	return ch
 }
 
-func (o *OrderedSet[T]) Clear() {
-	o.items = make([]T, 0)
-	o.index = make(map[T]struct{})
+var _ str.Set[int] = (*ordered[int])(nil)
+
+type concOrder[T prim.Ordered] struct {
+	mtx   sync.RWMutex
+	items []T
+	idx   map[T]struct{}
 }
 
-func (o *OrderedSet[T]) Equals(other str.Set[T]) bool {
-	if o.Len() != other.Len() {
-		return false
-	}
-	switch set := other.(type) {
-	case *OrderedSet[T]:
-		return arrays.Equals[T](o.items, set.items) && maps.Equal(o.index, set.index)
-	default:
-		setValues := set.Values()
-		return arrays.Equals[T](o.items, setValues)
+func (s *concOrder[T]) Add(t T) {
+	s.mtx.Lock()
+	defer s.mtx.Unlock()
+	if !s.Has(t) {
+		// Binary search for insSet point
+		pos, _ := search.Binary(s.items, t)
+		s.items = append(s.items[:pos], append([]T{t}, s.items[pos:]...)...)
+		s.idx[t] = struct{}{}
 	}
 }
 
-var _ str.Set[int] = (*OrderedSet[int])(nil)
+func (s *concOrder[T]) Has(t T) bool {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+	_, exists := s.idx[t]
+	return exists
+}

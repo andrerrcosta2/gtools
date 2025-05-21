@@ -2,38 +2,61 @@
 
 package sets
 
-import "github.com/andrerrcosta2/gtools/core/data/str"
+import (
+	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/sortables/sorters"
+)
 
-// Map takes a slice of elements of type K and a function that maps each element of
-// type K to an element of type V. It returns a Set of elements of type V.
-// The function f is applied to each element of the slice and the results are added
-// to the Set.
-//
-// Parameters:
-// - arr: a slice of elements of type K
-// - f: a function that maps an element of type K to an element of type V
-//
-// Returns:
-// - A Set of elements of type V
-func Map[T any, S comparable](arr []T, f func(v T) S) str.Set[S] {
-	// Create an empty Set of type V
-	s := Comparable[S]()
-	// Iterate over the elements of the slice
-	for _, v := range arr {
-		// Apply the function f to each element and add the result to the Set
-		s.Add(f(v))
-	}
-	// Return the Set
-	return s
+type hashSet[T any, H prim.Hashable] interface {
+	hash(t T) H
 }
 
-// NewString creates a Set from a slice of strings.
-// It uses the Map function to create the Set.
-func NewString(arr ...string) str.Set[string] {
-	// Use the Map function to create the Set
-	// The function takes a slice of strings and a function that maps each string to itself
-	return Map(arr, func(v string) string {
-		// Return the string itself
-		return v
-	})
+type insertionSet[T any, H prim.Hashable] interface {
+	hashSet[T, H]
+	contains(t T) bool
+	size() int
+	setHash(h H, idx int)
+	append(t T)
+}
+
+func Filter[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ...T) []T {
+	values := make(map[H]bool)
+	output := make([]T, 0, len(e))
+
+	for _, v := range e {
+		hash := cmp.Hash(v)
+		if _, ok := values[hash]; !ok {
+			values[hash] = true
+			output = append(output, v)
+		}
+	}
+	return output
+}
+
+func CmpFilter[T comparable](e ...T) []T {
+	values := make(map[T]bool)
+	output := make([]T, 0, len(e))
+	for _, v := range e {
+		if _, ok := values[v]; !ok {
+			values[v] = true
+			output = append(output, v)
+		}
+	}
+	return output
+}
+
+func OrderedFilter[T prim.Ordered](e []T, fn functions.Consumer[T]) {
+	sorters.Quick[T, []T](comparators.Ordered[T]{}).Sort(&e)
+	var prev T
+	first := true
+	for _, value := range e {
+		// just skip duplicates
+		if first || value != prev {
+			fn(value)
+			prev = value
+			first = false
+		}
+	}
 }

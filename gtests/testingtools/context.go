@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/conc/syncs"
+	"sync"
 )
 
 type asyncContextToolsLite struct {
@@ -49,6 +50,7 @@ func (t *asyncContextToolsLite) Semaphore(maxConcurrent int) *syncs.ChannelSemap
 }
 
 type concurrentContextToolsLite struct {
+	mtx sync.Mutex
 }
 
 // After runs the given function and blocks until the given context is done.
@@ -65,4 +67,10 @@ func (t *concurrentContextToolsLite) Before(fn functions.Runnable, ctx context.C
 
 func (t *concurrentContextToolsLite) Semaphore(maxConcurrent int) *syncs.ChannelSemaphore {
 	return syncs.NewChannelSemaphore(maxConcurrent)
+}
+
+func (t *concurrentContextToolsLite) Serial(run functions.Runnable) {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	run()
 }

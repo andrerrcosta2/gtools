@@ -3,41 +3,10 @@
 package testingtools
 
 import (
-	"github.com/andrerrcosta2/gtools/gtests"
-	"github.com/andrerrcosta2/gtools/gtests/internal/logs"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/gtests"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/internal/logs"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
 )
-
-// GtoolsLite returns a new tests.GtoolsLite instance configured with the provided
-// testing and loggerLevel parameters.
-func GtoolsLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy) gtests.GtoolsLite {
-	return gtoolsLiteKit[T](testing, loggerLevel)
-}
-
-// gtoolsLiteKit builds a new gtoolsLite instance with a tests.FailureLoggableTesting,
-// a tests.HelperTesting, a toolsLite and a levelLoggableLite implementations.
-func gtoolsLiteKit[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy) *gtoolsLite[T] {
-	return &gtoolsLite[T]{
-		gtoolsRandSortable:      gtoolsRandSortable{},
-		reflectionDataToolsLite: reflectionDataToolsLite{},
-		HelperTesting:           testing,
-		toolsLite: toolsLite{
-			HelperTesting: testing,
-		},
-		levelLoggableLite: levelLoggableLite[T]{
-			FailureLoggableTesting: testing,
-			loggerLevel:            loggerLevel,
-			logger:                 logs.TimerStack(),
-		},
-	}
-}
-
-type gtoolsLite[T gtests.FailureLoggableTesting] struct {
-	gtoolsRandSortable
-	reflectionDataToolsLite
-	levelLoggableLite[T]
-	gtests.HelperTesting
-	toolsLite
-}
 
 func LoggableToolsLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy) gtests.LoggableTools {
 	return loggableToolsLiteKit[T](testing, loggerLevel)
@@ -48,6 +17,9 @@ func loggableToolsLiteKit[T gtests.FailureLoggableTesting](testing T, loggerLeve
 		HelperTesting: testing,
 		toolsLite: toolsLite{
 			HelperTesting: testing,
+			calls:         make(map[string]*call),
+			flags:         make(map[string]bool),
+			cons:          make(map[string]any),
 		},
 		levelLoggableLite: levelLoggableLite[T]{
 			FailureLoggableTesting: testing,
@@ -89,6 +61,9 @@ func concLiteKit[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.
 	return &concLite[T]{
 		toolsLite: toolsLite{
 			HelperTesting: testing,
+			calls:         make(map[string]*call),
+			flags:         make(map[string]bool),
+			cons:          make(map[string]any),
 		},
 		levelLoggableLite: levelLoggableLite[T]{
 			FailureLoggableTesting: testing,
@@ -122,6 +97,35 @@ func (t *concLite[T]) Error(args ...any) {
 
 var _ gtests.LoggableRunnableTools = (*concLite[gtests.FailureLoggableTesting])(nil)
 
+// ConcLitetm creates a new LoggableRunnableTools instance from a FailureLoggableTesting instance and a loggerLevel.
+// It returns a new concLite instance with the FailureLoggableTesting and loggerLevel parameters.
+// The returned instance of LoggableRunnableTools is thread-safe.
+func ConcLitetm[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy, theme themes.Theme) gtests.LoggableRunnableTools {
+	return concLitetmKit(testing, loggerLevel, theme)
+}
+
+func concLitetmKit[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy, theme themes.Theme) *concLite[T] {
+	return &concLite[T]{
+		toolsLite: toolsLite{
+			HelperTesting: testing,
+			calls:         make(map[string]*call),
+			flags:         make(map[string]bool),
+			cons:          make(map[string]any),
+		},
+		levelLoggableLite: levelLoggableLite[T]{
+			FailureLoggableTesting: testing,
+			loggerLevel:            loggerLevel,
+			logger:                 logs.TmTimerStack(theme),
+		},
+	}
+}
+
+type concLitetm[T gtests.FailureLoggableTesting] struct {
+	concLite[T]
+}
+
+var _ gtests.LoggableRunnableTools = (*concLitetm[gtests.FailureLoggableTesting])(nil)
+
 // AsyncLite returns a new tests.LoggableAsyncRunnableTools instance that can be used to
 // test functions with logging and runnable contexts. The loggerLevel parameter
 // determines the minimum log level for which messages are
@@ -138,6 +142,9 @@ func asyncLiteKit[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests
 	return &asyncLite[T]{
 		toolsLite: toolsLite{
 			HelperTesting: testing,
+			calls:         make(map[string]*call),
+			flags:         make(map[string]bool),
+			cons:          make(map[string]any),
 		},
 		levelLoggableLite: levelLoggableLite[T]{
 			FailureLoggableTesting: testing,

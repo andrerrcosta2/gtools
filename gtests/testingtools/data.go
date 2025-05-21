@@ -5,9 +5,9 @@ package testingtools
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/format"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/format/serializations"
+	"github.com/andrerrcosta2/gtools/core/format"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/format/serials"
 	"reflect"
 )
 
@@ -164,14 +164,14 @@ func (t *reflectionDataToolsLite) ExtractField(obj interface{}, fieldName string
 
 	// Ensure obj is a pointer to a struct.
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
-		return nil, fmt.Errorf("expected a pointer to a struct")
+		return nil, fmx.Errorf("expected a pointer to a struct")
 	}
 	v = v.Elem()
 
 	// Get the field by name
 	field := v.FieldByName(fieldName)
 	if !field.IsValid() {
-		return nil, fmt.Errorf("field '%s' not found", fieldName)
+		return nil, fmx.Errorf("field '%s' not found", fieldName)
 	}
 
 	return field.Interface(), nil
@@ -183,25 +183,25 @@ func (t *reflectionDataToolsLite) InjectField(obj interface{}, fieldName string,
 
 	// Ensure obj is a pointer to a struct.
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
-		return fmt.Errorf("expected a pointer to a struct")
+		return fmx.Errorf("expected a pointer to a struct")
 	}
 	v = v.Elem()
 
 	// Get the field by name.
 	field := v.FieldByName(fieldName)
 	if !field.IsValid() {
-		return fmt.Errorf("field %s not found", fieldName)
+		return fmx.Errorf("field %s not found", fieldName)
 	}
 
 	// Ensure the field is settable.
 	if !field.CanSet() {
-		return fmt.Errorf("field %s is not settable", fieldName)
+		return fmx.Errorf("field %s is not settable", fieldName)
 	}
 
 	// Ensure the value is assignable to the field.
 	val := reflect.ValueOf(value)
 	if val.Type() != field.Type() {
-		return fmt.Errorf("provided value type %s does not match field type %s", val.Type(), field.Type())
+		return fmx.Errorf("provided value type %s does not match field type %s", val.Type(), field.Type())
 	}
 
 	field.Set(val)
@@ -215,10 +215,10 @@ func (t *reflectionDataToolsLite) EqualsBy(a, b interface{}, ignoreFields ...str
 	v2 := reflect.ValueOf(b)
 
 	if v1.Type() != v2.Type() {
-		return false, fmt.Errorf("type mismatch: %T vs %T", a, b)
+		return false, fmx.Errorf("type mismatch: %T vs %T", a, b)
 	}
 	if v1.Kind() != reflect.Struct {
-		return false, fmt.Errorf("only struct types are supported")
+		return false, fmx.Errorf("only struct types are supported")
 	}
 
 	// Create a map for quick lookup of ignored fields.
@@ -245,20 +245,20 @@ func (t *reflectionDataToolsLite) EqualsBy(a, b interface{}, ignoreFields ...str
 
 // Stringify takes an interface{} and returns a string representation of it in the
 // specified format.
-func (t *reflectionDataToolsLite) Stringify(data interface{}, format format.Serialization) (string, error) {
+func (t *reflectionDataToolsLite) Stringify(data interface{}, format format.Ser) (string, error) {
 	var result []byte
 	var err error
 
 	switch format {
-	case serializations.JSON:
+	case serials.JSON:
 		// Marshal the data using the built-in json package.
 		result, err = json.Marshal(data)
-	case serializations.XML:
+	case serials.XML:
 		// Marshal the data using the built-in xml package.
 		result, err = xml.Marshal(data)
 	default:
 		// If the format is unsupported, return an error.
-		return "", fmt.Errorf("unsupported format: %s", format)
+		return "", fmx.Errorf("unsupported format: %s", format)
 	}
 
 	if err != nil {

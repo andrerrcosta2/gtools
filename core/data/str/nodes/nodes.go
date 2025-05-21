@@ -1,13 +1,25 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package nodes
+package node
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
-type Node[V any] interface {
+type Node interface {
+	// Value returns the value of the node.
+	//
+	// Returns the value of the node as a value of type any.
+	Value() any
+}
+
+type Branchable[B any, V any] interface {
+	Typed[V]
+	data.Branchable[B]
+}
+
+type Typed[V any] interface {
 	// Value returns the value of the node.
 	//
 	// Returns the value of the node as a value of type V.
@@ -15,15 +27,15 @@ type Node[V any] interface {
 }
 
 type KeyValue[K any, V any] interface {
-	Node[V]
+	Typed[V]
 	// Key returns the key of the node.
 	//
 	// Returns the key of the node as a value of type K.
 	Key() K
 }
 
-type Linked[V any, N Node[V]] interface {
-	Node[V]
+type Linked[V any, N Typed[V]] interface {
+	Typed[V]
 	data.Linked[N]
 }
 
@@ -32,8 +44,8 @@ type LinkedKeyValue[K any, V any, N KeyValue[K, V]] interface {
 	data.Linked[N]
 }
 
-type DoubleLinked[V any, N Node[V]] interface {
-	Node[V]
+type DoubleLinked[V any, N Typed[V]] interface {
+	Typed[V]
 	data.DoubleLinked[N]
 }
 
@@ -46,13 +58,8 @@ type DoubleLinkedKeyValue[K any, V any, N LinkedKeyValue[K, V, N]] interface {
 }
 
 type Serializable[V any, S prim.Serializable] interface {
-	Node[V]
+	Typed[V]
 	data.Serializable[S]
-}
-
-type Branchable[B any, V any] interface {
-	Node[V]
-	data.Branchable[B]
 }
 
 type SerializableBranchable[B any, V any, S prim.Serializable] interface {
@@ -61,5 +68,4 @@ type SerializableBranchable[B any, V any, S prim.Serializable] interface {
 }
 
 type Sequential[V any] Serializable[V, int]
-
 type SequentialBranchable[B any, V any] SerializableBranchable[B, V, int]

@@ -15,18 +15,19 @@ func caller(value int, name string, callback functions.Runnable) *call {
 }
 
 type call struct {
-	mtx      sync.RWMutex
-	name     string
-	callOn   int
-	value    int
-	callback functions.Runnable
+	mtx         sync.RWMutex
+	name        string
+	callback    functions.Runnable
+	callOn      int
+	value       int
+	hasCallback bool
 }
 
 func (c *call) add(value int) int {
 	c.mtx.Lock()
 
 	defer func() {
-		if c.value == c.callOn {
+		if c.hasCallback && c.value == c.callOn {
 			c.callback()
 		}
 		c.mtx.Unlock()
@@ -41,6 +42,7 @@ func (c *call) setCallback(callback functions.Runnable, on int) {
 	defer c.mtx.Unlock()
 	c.callOn = on
 	c.callback = callback
+	c.hasCallback = true
 }
 
 func (c *call) Name() string {
