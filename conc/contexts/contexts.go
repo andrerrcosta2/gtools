@@ -5,7 +5,7 @@ package contexts
 import (
 	"context"
 	"github.com/andrerrcosta2/gtools/conc/contexts/cancelers"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 )
 
@@ -18,7 +18,7 @@ type Cancellable interface {
 
 type ConditionallyCanceled interface {
 	context.Context
-	str.Loopable[context.Context]
+	gtools.Streamable[context.Context]
 	// AddChild adds a child context to the list.
 	//
 	// It's thread-safe and can be used concurrently.
@@ -90,7 +90,7 @@ func withConditionalCancel(parent context.Context) (ctx *condCanceledCtx, cancel
 	}
 
 	// Create a new canceler
-	cancel = cancelers.ConditionalCanceler(cancelFunc, cond.Loop)
+	cancel = cancelers.ConditionalCanceler(cancelFunc, cond.Stream)
 
 	return cond, cancel
 }
@@ -113,7 +113,7 @@ func (c *condCanceledCtx) AddChild(child context.Context) {
 	c.children[child] = struct{}{}
 }
 
-func (c *condCanceledCtx) Loop() <-chan context.Context {
+func (c *condCanceledCtx) Stream() gtools.Stream[context.Context] {
 	children := make(chan context.Context)
 	go func() {
 		defer close(children)
@@ -170,7 +170,7 @@ func synchronized(parent context.Context) (*synchronizedContext, cancelers.Condi
 	}
 
 	// Create a new canceler
-	cancel := cancelers.SynchronizedCanceler(cancelFunc, syncCtx.Loop)
+	cancel := cancelers.SynchronizedCanceler(cancelFunc, syncCtx.Stream)
 
 	return syncCtx, cancel
 }
@@ -192,7 +192,7 @@ func (c *synchronizedContext) AddChild(ctx context.Context) {
 	c.children[ctx] = struct{}{}
 }
 
-func (c *synchronizedContext) Loop() <-chan context.Context {
+func (c *synchronizedContext) Stream() gtools.Stream[context.Context] {
 	children := make(chan context.Context)
 
 	go func() {

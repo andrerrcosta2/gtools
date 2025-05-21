@@ -7,7 +7,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/domain/data"
 )
 
-type ErrorSeverity int
+type ErrorSeverity uint8
 
 // NewErrorLevel creates a new ErrorLevel instance with the provided key and severity.
 // It's a value object that represents the level of an error, with a key and a severity.
@@ -48,12 +48,6 @@ func AsStackable(err error) (StackableError, bool) {
 
 type StackableError interface {
 	WrappedError
-	// Error returns the error message of the error.
-	// It's the responsibility of the implementing type to
-	// provide a meaningful implementation of this method.
-	// If the type does not have a meaningful implementation,
-	// it should return an empty string.
-	Error() string
 	// From creates a new StackableError from the given error.
 	// It returns a new error with the given error as its underlying error.
 	// If the error is already of type StackableError, it returns the error as is.
@@ -66,6 +60,9 @@ type StackableError interface {
 	// Len returns the number of underlying errors.
 	// It returns 0 if the receiver has no underlying errors.
 	Len() int
+	// Output returns the error.
+	// It returns nil if the receiver is empty.
+	Output() error
 	// Stack returns a new error with the given errors as its underlying errors.
 	// The underlying errors are returned in the order they were passed to this method.
 	// If no errors are passed, it returns the receiver itself.
@@ -113,6 +110,7 @@ func AsWrapped(err error) (WrappedError, bool) {
 }
 
 type WrappedError interface {
+	Cause() error
 	// Error returns the error message of the error.
 	// It's the responsibility of the implementing type to
 	// provide a meaningful implementation of this method.
@@ -160,10 +158,14 @@ type LeveledError interface {
 	//
 	// This method is part of the LeveledError interface.
 	Level() ErrorLevel
-	// Severity returns the severity of the leveled error as an int.
+	// Severity returns the severity of the leveled error.
 	// The bigger the number, the more severe the error is.
 	// This method is part of the LeveledError interface.
-	Severity(err LeveledError) int
+	Severity() ErrorSeverity
+	// SeverityDiff returns the severity difference between the Error
+	// instance and the provided LeveledError.
+	// It returns an integer representing the severity difference.
+	SeverityDiff(err LeveledError) int
 }
 
 type OperationalError interface {

@@ -2,6 +2,8 @@
 
 package gtests
 
+import "testing"
+
 type HelperTesting interface {
 	// Helper is a method that is used to write a message to the console.
 	// It calls the testing.T.Helper method to mark the message as a helper.
@@ -31,6 +33,8 @@ type LoggableTesting interface {
 	// The message is formatted using the fmt.Printf function.
 	// The arguments are passed to the fmt.Printf function to format the message.
 	Logf(format string, args ...interface{})
+	// Fail fails the test
+	Fail()
 	// Fatal methods
 	//
 	// Fatal logs a message to the console and marks the test as failed.
@@ -46,6 +50,8 @@ type LoggableTesting interface {
 
 type FailureLoggableTesting interface {
 	LoggableTesting
+	// Cleanup registers a function to be run after the test completes.
+	Cleanup(func())
 	// Fail marks the test as failed but continues executing the test.
 	//
 	// It takes no arguments.
@@ -63,4 +69,14 @@ type FailureLoggableTesting interface {
 	//
 	// It takes no arguments.
 	Skipped() bool
+}
+
+type SkippableTesting interface {
+	// Skip skips the test
+	Skip(message string)
+}
+
+type LoggableTRunner interface {
+	Loggable
+	Run(name string, fn func(t *testing.T))
 }

@@ -24,7 +24,7 @@ func NewSub[T any](obs Obs[T]) *Sub[T] {
 		return true
 	})
 
-	obs.Rmo(s)
+	obs.RemoveSub(s)
 	return s
 }
 
@@ -32,9 +32,9 @@ func (s *Sub[T]) Gid() string {
 	return s.id
 }
 
-func (s *Sub[T]) Uns() {
+func (s *Sub[T]) Unsub() {
 	if !s.closed {
-		s.obs.Rmo(s)
+		s.obs.RemoveSub(s)
 	}
 }
 

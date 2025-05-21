@@ -4,7 +4,7 @@ package graphs
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/edges"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
@@ -46,8 +46,8 @@ var _ str.GraphOf[gtools.SortableOf, edges.SortableSingleTyped[gtools.SortableOf
 
 // undirectGraphOf is a basic implementation of an undirected graph using an adjacency list.
 type undirectGraphOf[G gtools.SortableOf] struct {
-	adj        *maps.SortableOfMap[G, []G]
-	comparator comparables.KeyComparator[G, string]
+	adj        str.Map[G, []G]
+	comparator comparators.KeyTyped[G, string]
 }
 
 // AddNode adds a node to the graph.

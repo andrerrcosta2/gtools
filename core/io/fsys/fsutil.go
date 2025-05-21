@@ -3,12 +3,20 @@
 package fsys
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
+
+type Reader interface {
+	fs.FS
+	ReadDir(name string) ([]fs.DirEntry, error)
+	ReadFile(name string) ([]byte, error)
+}
 
 // BuildPath constructs a file path based on the given path type and directory.
 // It takes a pathType of type PathType and a dir of type string as input.
@@ -97,62 +105,40 @@ func FindPathContainingFileRecursivelyBackward(startDir string, filename string)
 	}
 }
 
-// IsValidPath checks if the given path is valid based on operating system-specific rules.
-//
-// Notes:
-//   - On Windows, invalid characters include: < > : " / \ | ? *
-//     Additionally, reserved filenames (e.g., CON, NUL) and paths exceeding the maximum length (260 characters by default) are considered invalid.
-//   - On UNIX-like systems, null characters ('\x00') and '/' in filenames are invalid.
-//   - This function does not check if the path exists, only its validity.
-//
-// Parameters:
-//   - path: The path string to validate.
-//
-// Returns:
-//   - A boolean indicating whether the path is valid.
-func IsValidPath(path string) bool {
-	if strings.TrimSpace(path) == "" {
-		// Paths with only whitespace or empty strings are invalid
-		return false
+// ImportPath constructs a full filesystem path by combining the module directory and additional path components.
+func ImportPath(modDir string, parts ...string) (string, error) {
+	// Start with the module directory
+	fullPath := modDir
+
+	// Append additional path components
+	for _, part := range parts {
+		fullPath = path.Join(fullPath, part)
 	}
 
-	// Define invalid characters
-	var invalidChars string
-	if runtime.GOOS == "windows" {
-		// Windows doesn't allow: < > : " / \ | ? *
-		invalidChars = `<>:"/\|?*`
+	// Normalize the path: Replace backslashes with forward slashes
+	normalizedPath := strings.ReplaceAll(fullPath, "\\", "/")
 
-		// Additional checks for Windows
-		// Check if the path length exceeds the maximum allowed
-		if len(path) > 260 {
-			return false
-		}
-
-		// Check for reserved names
-		reservedNames := map[string]struct{}{
-			"CON": {}, "PRN": {}, "AUX": {}, "NUL": {}, "COM1": {}, "COM2": {}, "COM3": {}, "COM4": {}, "COM5": {},
-			"COM6": {}, "COM7": {}, "COM8": {}, "COM9": {}, "LPT1": {}, "LPT2": {}, "LPT3": {}, "LPT4": {}, "LPT5": {},
-			"LPT6": {}, "LPT7": {}, "LPT8": {}, "LPT9": {},
-		}
-		baseName := strings.ToUpper(filepath.Base(path))
-		if _, exists := reservedNames[baseName]; exists {
-			return false
-		}
-	} else {
-		// Common invalid characters for UNIX-like systems
-		invalidChars = "/\x00"
-	}
-
-	// Check for invalid characters
-	invalidCharSet := make(map[rune]struct{}, len(invalidChars))
-	for _, ch := range invalidChars {
-		invalidCharSet[ch] = struct{}{}
-	}
-	for _, ch := range path {
-		if _, exists := invalidCharSet[ch]; exists {
-			return false
+	// Validate the normalized path
+	for i, r := range normalizedPath {
+		if !isValidFileSystemChar(r) {
+			return "", errors.New("invalid filesystem path: contains forbidden characters: " + fmt.Sprintf("'%c' at position %d", r, i))
 		}
 	}
 
-	return true
+	return normalizedPath, nil
+}
+
+// isValidFileSystemChar checks if a character is allowed in a filesystem path.
+func isValidFileSystemChar(r rune) bool {
+	return (r >= 'a' && r <= 'z') || // Lowercase letters
+		(r >= 'A' && r <= 'Z') || // Uppercase letters
+		(r >= '0' && r <= '9') || // Digits
+		r == '/' || // Path separator
+		//r == '\\' || // Backslash
+		r == '.' || // Dot (used in filenames)
+		r == '_' || // Underscore
+		r == '-' || // Hyphen
+		r == '!' || // Exclamation mark (allowed in Windows paths)
+		r == '@' || // At symbol (used in Go module cache paths)
+		r == ':' //
 }

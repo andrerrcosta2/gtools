@@ -2,5 +2,6 @@
 
 package reflect4
 
-//type Reflective = proto.Reflective
-//type Prototype = proto.Prototype
+import "reflect"
+
+type MakeFunc func(args []reflect.Value) (results []reflect.Value)

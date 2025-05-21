@@ -4,11 +4,13 @@ use (
 	./conc
 	./core
 	./datastr
-	./numbers
 	./gflux
-	./patterns
+	./security
 	./gtests
 	./gvalidation
+	./numbers
+	./patterns
 	./reflect4
 	.
+	./gflux/core
 )

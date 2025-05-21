@@ -27,6 +27,7 @@ func DeepCopy[T any](value T) (cp T, err error) {
 	return
 }
 
+// ShallowCopy TODO: unimplemented
 func ShallowCopy[T any](value T) (T, error) {
 	return value, nil
 }

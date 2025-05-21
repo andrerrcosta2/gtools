@@ -43,3 +43,65 @@ func FromBytes(b []byte) (any, error) {
 		return nil, fmt.Errorf("invalid byte slice length %d", len(b))
 	}
 }
+
+func ToFloat32(val any) (float32, error) {
+	switch v := val.(type) {
+	case float64:
+		return float32(v), nil
+	case float32:
+		return v, nil
+	case int:
+		return float32(v), nil
+	case int8:
+		return float32(v), nil
+	case int16:
+		return float32(v), nil
+	case int32:
+		return float32(v), nil
+	case int64:
+		return float32(v), nil
+	case uint:
+		return float32(v), nil
+	case uint8:
+		return float32(v), nil
+	case uint16:
+		return float32(v), nil
+	case uint32:
+		return float32(v), nil
+	case uint64:
+		return float32(v), nil
+	default:
+		return 0, fmt.Errorf("type not convertible to float32: %T", v)
+	}
+}
+
+func ToFloat64(val any) (float64, error) {
+	switch v := val.(type) {
+	case float64:
+		return v, nil
+	case float32:
+		return float64(v), nil
+	case int:
+		return float64(v), nil
+	case int8:
+		return float64(v), nil
+	case int16:
+		return float64(v), nil
+	case int32:
+		return float64(v), nil
+	case int64:
+		return float64(v), nil
+	case uint:
+		return float64(v), nil
+	case uint8:
+		return float64(v), nil
+	case uint16:
+		return float64(v), nil
+	case uint32:
+		return float64(v), nil
+	case uint64:
+		return float64(v), nil
+	default:
+		return 0, fmt.Errorf("type not convertible to float64: %T", v)
+	}
+}

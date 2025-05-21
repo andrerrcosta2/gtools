@@ -17,17 +17,20 @@ import (
 // Returns:
 // - []error: a slice of errors representing the stack trace of the error.
 // - Error: The last error in the stack trace.
-func FlattenError(err error) (stack []error, last error) {
-	unw := errors.Unwrap(err)
-	if unw != nil {
-		return FlattenError(unw)
+func FlattenError(err error) (stk []error, peek error, isWrapped bool) {
+	if err == nil {
+		return
 	}
 
-	var stk []error
-	stk = append(stk, err)
+	errs := []error{err}
+	for err := errors.Unwrap(err); err != nil; err = errors.Unwrap(err) {
+		errs = append(errs, err)
+	}
 
-	// Return the stack trace and the last error
-	return stk, stk[len(stk)-1]
+	for i, j := 0, len(errs)-1; i < j; i, j = i+1, j-1 {
+		errs[i], errs[j] = errs[j], errs[i]
+	}
+	return errs, err, len(errs) > 1
 }
 
 // ReadTrace takes a slice of errors and returns a formatted string representing the stack trace of these errors.
@@ -42,7 +45,7 @@ func ReadTrace(stack []error) string {
 	var sb strings.Builder
 
 	// Write the header of the error trace to the strings.Builder
-	sb.WriteString("Error trace:\n")
+	sb.WriteString("error trace:\n")
 
 	// Loop through each error in the stack trace
 	for i, err := range stack {
@@ -55,13 +58,4 @@ func ReadTrace(stack []error) string {
 
 	// Return the formatted string representing the stack trace
 	return sb.String()
-}
-
-func StackErrors(currentStack []error, currentErr error, newErr error) ([]error, error) {
-	if newErr != nil {
-		tstk, terr := FlattenError(newErr)
-		currentStack = append(currentStack, tstk...)
-		return currentStack, terr
-	}
-	return currentStack, currentErr
 }

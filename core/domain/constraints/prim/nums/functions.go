@@ -2,7 +2,11 @@
 
 package nums
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/floats"
+)
 
 func ToNumeric[T Any](value any) (T, error) {
 	switch v := value.(type) {
@@ -19,4 +23,49 @@ func ToNumeric[T Any](value any) (T, error) {
 		var zero T
 		return zero, errors.New("not a numeric type\n")
 	}
+}
+
+func IsReal(value any) bool {
+	switch value.(type) {
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr, float32, float64:
+		return true
+	default:
+		return false
+	}
+}
+
+func Less[T Real](a, b T) bool {
+	return a < b
+}
+
+func TryLess(a, b any) (bool, error) {
+	aFloat, aErr := floats.ToFloat64(a)
+	if aErr != nil {
+		return false, fmt.Errorf("first argument is not a number: %w", aErr)
+	}
+
+	bFloat, bErr := floats.ToFloat64(b)
+	if bErr != nil {
+		return false, fmt.Errorf("second argument is not a number: %w", bErr)
+	}
+
+	return aFloat < bFloat, nil
+}
+
+func Greater[T Real](a, b T) bool {
+	return a > b
+}
+
+func TryGreater(a, b any) (bool, error) {
+	aFloat, aErr := floats.ToFloat64(a)
+	if aErr != nil {
+		return false, fmt.Errorf("first argument is not a number: %w", aErr)
+	}
+
+	bFloat, bErr := floats.ToFloat64(b)
+	if bErr != nil {
+		return false, fmt.Errorf("second argument is not a number: %w", bErr)
+	}
+
+	return aFloat > bFloat, nil
 }

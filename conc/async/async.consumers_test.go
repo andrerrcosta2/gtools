@@ -8,8 +8,8 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 	"time"
 )
@@ -20,7 +20,7 @@ import (
 // thread finishes.
 func TestSemaphoredConsumer_AsynchronousBehaviour(t *testing.T) {
 	// helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a cancelable context for the runnable
 	ctx, exit := context.WithCancel(context.Background())
 
@@ -73,7 +73,7 @@ func TestSemaphoredConsumer_AsynchronousBehaviour(t *testing.T) {
 // It also tests the Consumer.Consume() method and asserts that an error is returned if the consumer is flag before the Consume() method is called.
 func TestSemaphoredConsumer_CloseableBehaviour_CloseEarly(t *testing.T) {
 	// helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	ctx, exitRunnable := context.WithCancel(context.Background())
 
@@ -118,7 +118,7 @@ func TestSemaphoredConsumer_CloseableBehaviour_CloseEarly(t *testing.T) {
 // This method is just asserting there's no deadlock when the async consumer is flag on fly.
 func TestSemaphoredConsumer_CloseableBehaviour_ClosedOnTheFly(t *testing.T) {
 	// Helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Create a cancellable context
 	mainCtx, exitMain := context.WithCancel(context.Background())

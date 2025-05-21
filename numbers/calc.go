@@ -4,8 +4,8 @@ package numbers
 
 import "math/big"
 
-// BinomialCoefficient calculates C(n, k)
-func BinomialCoefficient(n, k int) *big.Int {
+// BinCoef calculates C(n, k)
+func BinCoef(n, k int) *big.Int {
 	if k > n {
 		return big.NewInt(0)
 	}
@@ -28,14 +28,14 @@ func BinomialCoefficient(n, k int) *big.Int {
 	return result
 }
 
-func ExclBinomialCoefficient(n, k int) *big.Int {
+func ExcBinCoef(n, k int) *big.Int {
 	if k == 0 || k == n {
 		return big.NewInt(0)
 	}
-	return BinomialCoefficient(n, k).Set(BinomialCoefficient(n-1, k-1))
+	return BinCoef(n, k).Set(BinCoef(n-1, k-1))
 }
 
-func ExclAppearances(subsets, setSize, subsetSize int) int {
+func ExcAprc(subsets, setSize, subsetSize int) int {
 	return subsets * subsetSize / setSize
 }
 

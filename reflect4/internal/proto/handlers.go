@@ -75,7 +75,7 @@ package proto
 //		return
 //	}
 //
-//	// Set the extracted element prototype
+//	// ToSet the extracted element prototype
 //	return &reflective.Prototype{
 //		Value: value,
 //	}, err

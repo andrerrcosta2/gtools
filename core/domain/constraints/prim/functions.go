@@ -73,35 +73,6 @@ func ToPrimitive[T Any](value any) (T, error) {
 	}
 }
 
-func IsPrimitive(value any) bool {
-	switch value.(type) {
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr, float32, float64, string, bool, complex64, complex128:
-		return true
-	default:
-		return false
-	}
-}
-
-// IsPointer checks if the provided value is a pointer to a primitive type.
-//
-// It returns true if the value is a pointer to a recognized primitive type,
-// and false otherwise.
-func IsPointer(v any) bool {
-	if v == nil {
-		// A nil value cannot be a pointer
-		return false
-	}
-
-	// Check if the type of the value is a pointer to a primitive type
-	switch v.(type) {
-	case *int, *int8, *int16, *int32, *int64, *uint, *uint8, *uint16, *uint32, *uint64, *uintptr,
-		*float32, *float64, *string, *bool, *complex64, *complex128:
-		return true
-	default:
-		return false
-	}
-}
-
 // ToComparable casts the provided value to the type T and returns it.
 // T must be a primitive comparable type.
 // If the value is not of type G, an error is returned.
@@ -125,29 +96,11 @@ func ToComparable[T Comparable](value any) (T, error) {
 	}
 }
 
-// IsComparable checks if all provided values are of comparable types.
-//
-// It takes a variable number of arguments of any type and returns a boolean indicating
-// if all values are of types that can be compared for equality, such as numeric types,
-// strings, and booleans.
-func IsComparable(value ...any) (is bool) {
-	// Iterate over each value provided
-	for _, v := range value {
-		// Check the type of each value
-		switch v.(type) {
-		// If the value is of a comparable type, set the return value to true
-		case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr, float32, float64, string, bool, complex64, complex128:
-			is = true
-		// If any value is not of a comparable type, return false immediately
-		default:
-			return false
-		}
-	}
-	// Return true if all values are comparable
-	return
+func Less[T Ordered](a, b T) bool {
+	return a < b
 }
 
-func Less(a, b any) (bool, error) {
+func TryLess(a, b any) (bool, error) {
 	switch a := a.(type) {
 	case int:
 		if b, ok := b.(int); ok {
@@ -209,6 +162,15 @@ func Less(a, b any) (bool, error) {
 		return false, fmt.Errorf("types do not match or are not comparable\n")
 	}
 	return false, nil
+}
+
+func Greater[T Ordered](a, b T) bool {
+	return a > b
+}
+
+func TryGreater(a, b any) (bool, error) {
+	less, err := TryLess(b, a)
+	return !less, err
 }
 
 // Compare checks if two values are equal.

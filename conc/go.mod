@@ -5,9 +5,11 @@ go 1.23.1
 require (
 	github.com/andrerrcosta2/gtools/core v0.0.2-alpha.3
 	github.com/andrerrcosta2/gtools/core/data v0.0.2-alpha.3
-	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha.3
-	github.com/andrerrcosta2/gtools/gflux/core v0.0.2-alpha.3
+	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha3
+	github.com/andrerrcosta2/gtools/core/format v0.0.0
+	github.com/andrerrcosta2/gtools/gflux/core v0.0.2-alpha
 	github.com/andrerrcosta2/gtools/gtests v0.0.2-alpha.3
+	github.com/andrerrcosta2/gtools/gtests/testingtools v0.0.0
 )
 
 require (
@@ -19,7 +21,9 @@ replace (
 	github.com/andrerrcosta2/gtools/core => ../core
 	github.com/andrerrcosta2/gtools/core/data => ../core/data
 	github.com/andrerrcosta2/gtools/core/domain => ../core/domain
+	github.com/andrerrcosta2/gtools/core/format v0.0.0 => ../core/format
 	github.com/andrerrcosta2/gtools/core/seeders => ../core/seeders
 	github.com/andrerrcosta2/gtools/gflux/core => ../gflux/core
 	github.com/andrerrcosta2/gtools/gtests => ../gtests
+	github.com/andrerrcosta2/gtools/gtests/testingtools v0.0.0 => ../gtests/testingtools
 )

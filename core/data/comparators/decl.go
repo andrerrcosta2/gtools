@@ -11,7 +11,7 @@ type Typed[O any] interface {
 	Equals(a, b O) bool
 }
 
-type Key[K any, O prim.Ordered] interface {
+type KeyTyped[K any, O prim.Ordered] interface {
 	Typed[K]
 	Hash(key K) O
 }

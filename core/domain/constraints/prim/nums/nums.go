@@ -25,6 +25,10 @@ type Real interface {
 		~float32 | ~float64 | ~uintptr
 }
 
+type Float interface {
+	~float32 | ~float64
+}
+
 type Complex interface {
 	~complex64 | ~complex128
 }

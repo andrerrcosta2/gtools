@@ -203,16 +203,15 @@ func TestCast(t *testing.T) {
 }
 
 func TestFetch(t *testing.T) {
-	entries := []generics.BiTyped[int, string]{
+	entries := []*tuple.Pair[int, string]{
 		tuple.NewPair(1, "one"),
 		tuple.NewPair(2, "two"),
 		tuple.NewPair(3, "three"),
 	}
 	expected := map[int]string{1: "one", 2: "two", 3: "three"}
 
-	f := func(entry generics.BiTyped[int, string]) (int, string) {
-		pair := entry.(*tuple.Pair[int, string])
-		return pair.First(), pair.Second()
+	f := func(entry *tuple.Pair[int, string]) (int, string) {
+		return entry.First(), entry.Second()
 	}
 
 	result := *maps.Fetch(entries, f)

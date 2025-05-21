@@ -8,8 +8,8 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/contexts/cancelers"
 	"github.com/andrerrcosta2/gtools/core/domain/functions/runnables"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 	"time"
 )
@@ -21,7 +21,7 @@ func TestBufferedSupplier_AsyncBehaviour(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := BufferedSupplier[string](5)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Create a context to run the test
 	ctx, closeRunnable := context.WithCancel(context.Background())
@@ -65,7 +65,7 @@ func TestBufferedSupplier_AsyncBehaviour(t *testing.T) {
 				// Increment the counter of consumed values
 				tt.RegisterCalls(1, "consumed-values")
 			}
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 			// Close the context
 			closeRunnable()
@@ -77,7 +77,7 @@ func TestBufferedSupplier_AsyncBehaviour(t *testing.T) {
 		// Assert none of the asynchronous components registered their events
 		tt.AssertCalls(0, "goroutines", "consumed-values", "supplier")
 
-		// Set the flag as false to assert asynchronous consumption
+		// ToSet the flag as false to assert asynchronous consumption
 		tt.Flag(false, "asynchronous-time")
 
 		// Log at the end of the context
@@ -105,7 +105,7 @@ func TestBufferedChannelSupplier_Closed(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := BufferedSupplier[string](5)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Close the supplier
 	err := supplier.Close()
@@ -151,7 +151,7 @@ func TestBufferedChannelSupplier_Closed(t *testing.T) {
 				// Log the consumer call
 				tt.StackLogf("consumer(%v)", value)
 			}
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 			// Close the context
 			closeRunnable()
@@ -163,7 +163,7 @@ func TestBufferedChannelSupplier_Closed(t *testing.T) {
 		// Assert no calls before stream is consumed
 		tt.AssertCalls(0, "goroutines", "supplier", "consumed-values")
 
-		// Set the flag to assert asynchronous consumption
+		// ToSet the flag to assert asynchronous consumption
 		tt.Flag(false, "asynchronous-time")
 
 		// Log at the end of the context
@@ -185,7 +185,7 @@ func TestBufferedSupplier_MultipleAsyncSupplies(t *testing.T) {
 	// Create a supplier
 	var supplier = BufferedSupplier[string](5)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	mainCtx, exit := contexts.Synchronized(context.Background())
 
@@ -233,7 +233,7 @@ func TestBufferedSupplier_MultipleAsyncSupplies(t *testing.T) {
 			}
 			// Assert locally blocking consumption
 			tt.AssertCalls(len(bigSupply), "consumer-one")
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 
 			tt.StackLog("consumer1 cancelled")
@@ -256,7 +256,7 @@ func TestBufferedSupplier_MultipleAsyncSupplies(t *testing.T) {
 			}
 			// Assert locally blocking consumption
 			tt.AssertCalls(len(bigSupply), "consumer-two")
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 
 			tt.StackLog("consumer2 cancelled")
@@ -294,7 +294,7 @@ func TestBufferedSupplier_UpdatedValues(t *testing.T) {
 	// Create a supplier
 	supplier := BufferedSupplier[string](15)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a main context
 	mainCtx, exit := contexts.WithConditionalCancel(context.Background())
 
@@ -349,7 +349,7 @@ func TestBufferedSupplier_UpdatedValues(t *testing.T) {
 			// Assert locally synchronous flow
 			tt.AssertCalls(len(mediumSupply), "consumer-one")
 
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 
 			tt.StackLog("consumer1 cancelled")
@@ -380,7 +380,7 @@ func TestBufferedSupplier_UpdatedValues(t *testing.T) {
 			// Assert locally synchronous flow
 			tt.AssertCalls(len(bigSupply), "consumer-two")
 
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 
 			tt.StackLog("consumer2 cancelled")
@@ -417,7 +417,7 @@ func TestCancellableSupplier_AsyncBehaviour(t *testing.T) {
 	// Create a supplier
 	supplier := CancellableSupplier[string](context.Background(), 10)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	ctx, closeRunnable := context.WithCancel(context.Background())
 
@@ -459,7 +459,7 @@ func TestCancellableSupplier_AsyncBehaviour(t *testing.T) {
 				// Increment the counter of consumed values
 				tt.RegisterCalls(1, "consumed-values")
 			}
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 			// Close the context
 			closeRunnable()
@@ -471,7 +471,7 @@ func TestCancellableSupplier_AsyncBehaviour(t *testing.T) {
 		// Assert none of the asynchronous components registered their calls
 		tt.AssertCalls(0, "goroutines", "consumed-values", "supplier")
 
-		// Set the flag as false to assert asynchronous consumption
+		// ToSet the flag as false to assert asynchronous consumption
 		tt.Flag(false, "asynchronous-time")
 
 		// Log at the end of the context
@@ -499,7 +499,7 @@ func TestCancellableChannelSupplier_Close(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := CancellableSupplier[string](context.Background(), 5)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Close the supplier
 	err := supplier.Close()
@@ -540,7 +540,7 @@ func TestCancellableChannelSupplier_Close(t *testing.T) {
 				// Log the consumer call
 				tt.StackLogf("consumer(%v)", value)
 			}
-			// Set the flag to assert asynchronous consumption
+			// ToSet the flag to assert asynchronous consumption
 			tt.Flag(true, "asynchronous-time")
 			// Close the context
 			closeRunnable()
@@ -552,7 +552,7 @@ func TestCancellableChannelSupplier_Close(t *testing.T) {
 		// Assert no calls before stream is consumed
 		tt.AssertCalls(0, "goroutines", "supplier", "consumed-values")
 
-		// Set the flag to assert asynchronous consumption
+		// ToSet the flag to assert asynchronous consumption
 		tt.Flag(false, "asynchronous-time")
 
 		// Log at the end of the context
@@ -576,7 +576,7 @@ func TestCancellableChannelSupplier_CancelOnTheFly(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := CancellableSupplier[string](supplierCtx, 5)
 	// Call a helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	mainCtx, exitMain := context.WithCancel(context.Background())
 

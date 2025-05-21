@@ -120,42 +120,42 @@ func TestEqualBy(t *testing.T) {
 	// Test Case 1: Compare integer slices by identity (should behave like Equals)
 	a1 := []int{1, 2, 3}
 	b1 := []int{1, 2, 3}
-	if !EqualsBy(a1, b1, functions.Identity[int]) {
+	if !EqualsByHash(a1, b1, functions.Identity[int]) {
 		t.Errorf("Test Case 1 Failed: expected true, got false")
 	}
 
 	// Test Case 2: Compare integer slices by a custom function (modulus)
 	a2 := []int{1, 2, 3}
 	b2 := []int{4, 5, 6} // WhenAllCancels elements are congruent modulo 3
-	if !EqualsBy(a2, b2, func(v int) int { return v % 3 }) {
+	if !EqualsByHash(a2, b2, func(v int) int { return v % 3 }) {
 		t.Errorf("Test Case 2 Failed: expected true, got false")
 	}
 
 	// Test Case 3: Compare string slices by length
 	a3 := []string{"apple", "banana", "melon"}
 	b3 := []string{"grape", "orange", "lemon"} // WhenAllCancels elements have the same lengths
-	if !EqualsBy(a3, b3, func(v string) int { return len(v) }) {
+	if !EqualsByHash(a3, b3, func(v string) int { return len(v) }) {
 		t.Errorf("Test Case 3 Failed: expected true, got false")
 	}
 
 	// Test Case 4: Compare string slices by first letter
 	a4 := []string{"apple", "banana", "cherry"}
 	b4 := []string{"apricot", "blueberry", "cranberry"} // WhenAllCancels elements start with the same letters
-	if !EqualsBy(a4, b4, func(v string) string { return strings.ToLower(string(v[0])) }) {
+	if !EqualsByHash(a4, b4, func(v string) string { return strings.ToLower(string(v[0])) }) {
 		t.Errorf("Test Case 4 Failed: expected true, got false")
 	}
 
 	// Test Case 5: Unequal slices by the given function
 	a5 := []string{"apple", "banana", "cherry"}
 	b5 := []string{"date", "elderberry", "fig"} // Different lengths
-	if EqualsBy(a5, b5, func(v string) int { return len(v) }) {
+	if EqualsByHash(a5, b5, func(v string) int { return len(v) }) {
 		t.Errorf("Test Case 5 Failed: expected false, got true")
 	}
 
 	// Test Case 6: Compare with empty slices
 	var a6 []string
 	var b6 []string
-	if !EqualsBy(a6, b6, func(v string) string { return v }) {
+	if !EqualsByHash(a6, b6, func(v string) string { return v }) {
 		t.Errorf("Test Case 6 Failed: expected true, got false")
 	}
 }

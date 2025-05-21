@@ -9,15 +9,15 @@ import (
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
 	"github.com/andrerrcosta2/gtools/datastr/maps"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
 // TestDirectedGraph_AddNode tests adding nodes to the graph.
 func TestDirectedGraph_AddNode(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	type N = *tests.SortableNode
 
@@ -34,7 +34,7 @@ func TestDirectedGraph_AddNode(t *testing.T) {
 // TestDirectedGraph_AddEdge tests adding directed edges to the graph.
 func TestDirectedGraph_AddEdge(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -66,7 +66,7 @@ func TestDirectedGraph_AddEdge(t *testing.T) {
 // TestDirectedGraph_Neighbors tests retrieving neighbors for a node.
 func TestDirectedGraph_Neighbors(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -97,7 +97,7 @@ func TestDirectedGraph_Neighbors(t *testing.T) {
 // TestDirectedGraph_HasNode tests the presence of nodes in the graph.
 func TestDirectedGraph_HasNode(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -113,7 +113,7 @@ func TestDirectedGraph_HasNode(t *testing.T) {
 // TestDirectedGraph_HasEdge tests the presence of edges in the graph.
 func TestDirectedGraph_HasEdge(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -141,7 +141,7 @@ func TestDirectedGraph_HasEdge(t *testing.T) {
 // TestDirectedGraph_Nodes tests retrieving all nodes from the graph.
 func TestDirectedGraph_Nodes(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -162,7 +162,7 @@ func TestDirectedGraph_Nodes(t *testing.T) {
 // TestDirectedGraph_Edges tests retrieving all directed edges from the graph.
 func TestDirectedGraph_Edges(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -193,7 +193,7 @@ func TestDirectedGraph_Edges(t *testing.T) {
 
 func TestDirectedGraph_AddEdgeNodesNotExist(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode

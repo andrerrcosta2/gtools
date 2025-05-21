@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package internal
+package typeutil
 
 func Or[G any, K any](a any) any {
 	if val, ok := a.(G); ok {

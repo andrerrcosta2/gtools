@@ -10,8 +10,8 @@ import (
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
 	"github.com/andrerrcosta2/gtools/datastr/maps"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/numbers/prog"
 	"testing"
 )
@@ -20,7 +20,7 @@ import (
 // and expecting them to be present
 func TestAddingNodesAndEdges(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
@@ -37,7 +37,7 @@ func TestAddingNodesAndEdges(t *testing.T) {
 
 	random.Struct[N](30).Each(g.AddNode).
 		Operation(func(i int, n *iterables.Slice[N]) {
-			// Left child
+			// LeftChild child
 			if 2*i+1 < n.Len() {
 				err := g.AddEdge(n.At(i), n.At(2*i+1), weights[i])
 				if err != nil {
@@ -45,7 +45,7 @@ func TestAddingNodesAndEdges(t *testing.T) {
 				}
 				expEdges = append(expEdges, SingleTypedWeightedEdge(n.At(i), n.At(2*i+1), weights[i], true))
 			}
-			// Right child
+			// RightChild child
 			if 2*i+2 < n.Len() {
 				err := g.AddEdge(n.At(i), n.At(2*i+2), weights[i])
 				if err != nil {
@@ -63,7 +63,7 @@ func TestAddingNodesAndEdges(t *testing.T) {
 // TestNodeExistence Test the existence of nodes after being inserted
 func TestNodeExistence(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
@@ -88,7 +88,7 @@ func TestNodeExistence(t *testing.T) {
 // and their weights
 func TestEdgeExistenceAndWeight(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
@@ -118,7 +118,7 @@ func TestEdgeExistenceAndWeight(t *testing.T) {
 // TestNeighborsRetrieval Test the retrieval of neighbors
 func TestNeighborsRetrieval(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
@@ -148,7 +148,7 @@ func TestNeighborsRetrieval(t *testing.T) {
 // TestDisconnectedGraph Test a disconnected graph
 func TestDisconnectedGraph(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int

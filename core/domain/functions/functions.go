@@ -16,6 +16,8 @@ type Function2[T any, U any, V any] func(T) (U, V)
 // Consumer represents a function that takes a value of type T and returns nothing.
 type Consumer[T any] func(T)
 
+type SafeConsumer[T any] func(T) error
+
 // Supplier represents a function that returns a value of type T.
 type Supplier[T any] func() T
 
@@ -48,5 +50,3 @@ type BiConsumer[T any, U any] func(T, U)
 
 // TriConsumer represents a function that takes three values of type T, U, and V and returns nothing.
 type TriConsumer[T any, U any, V any] func(T, U, V)
-
-type Looper[T any] func() <-chan T

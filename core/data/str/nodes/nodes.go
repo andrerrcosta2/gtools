@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package node
+package nodes
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"

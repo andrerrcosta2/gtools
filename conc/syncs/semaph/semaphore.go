@@ -36,14 +36,14 @@ func (s *SingleThreadedSemaphore) Rls() {
 	s.locked = false
 }
 
-// Capacity returns the maximum number of slots in the semaphore.
+// Cap returns the maximum number of slots in the semaphore.
 // The capacity is the maximum number of operations that can be performed
 // concurrently.
 func (s *SingleThreadedSemaphore) Cap() int {
 	return 1
 }
 
-// RemainingCapacity returns the remaining capacity of the semaphore.
+// Rem returns the remaining capacity of the semaphore.
 // The remaining capacity is the maximum number of operations that can still be performed
 // concurrently.
 func (s *SingleThreadedSemaphore) Rem() int {
@@ -82,7 +82,7 @@ func (s *ChannelSemaphore) Rls() {
 	<-s.ch
 }
 
-// Capacity returns the maximum number of slots in the semaphore.
+// Cap returns the maximum number of slots in the semaphore.
 // The capacity is the maximum number of operations that can be performed
 // concurrently.
 func (s *ChannelSemaphore) Cap() int {
@@ -92,7 +92,7 @@ func (s *ChannelSemaphore) Cap() int {
 	return cap(s.ch)
 }
 
-// RemainingCapacity returns the number of available slots in the semaphore.
+// Rem returns the number of available slots in the semaphore.
 func (s *ChannelSemaphore) Rem() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -133,7 +133,7 @@ func (s *CounterSemaphore) Rls() {
 	s.mu.Unlock()
 }
 
-// Capacity returns the maximum number of slots in the semaphore.
+// Cap returns the maximum number of slots in the semaphore.
 // The capacity is the maximum number of operations that can be performed
 // concurrently.
 func (s *CounterSemaphore) Cap() int {
@@ -141,7 +141,7 @@ func (s *CounterSemaphore) Cap() int {
 	return s.count
 }
 
-// RemainingCapacity returns the remaining capacity of the semaphore.
+// Rem returns the remaining capacity of the semaphore.
 // The remaining capacity is the maximum number of operations that can still be performed
 // concurrently.
 func (s *CounterSemaphore) Rem() int {
@@ -154,9 +154,7 @@ func Unbounded() *UnboundedSemaphore {
 
 // UnboundedSemaphore represents a semaphore with no capacity limit.
 // It can be useful on interface-bounded operations.
-type UnboundedSemaphore struct {
-	mu sync.Mutex
-}
+type UnboundedSemaphore struct{}
 
 // Acq simulates acquiring a semaphore. Since it's unbounded, it does nothing.
 func (s *UnboundedSemaphore) Acq() {
@@ -168,12 +166,12 @@ func (s *UnboundedSemaphore) Rls() {
 	// No operation, as an unbounded semaphore doesn't track releases.
 }
 
-// Capacity always returns -1 for an unbounded semaphore, indicating no limit.
+// Cap always returns -1 for an unbounded semaphore, indicating no limit.
 func (s *UnboundedSemaphore) Cap() int {
 	return -1
 }
 
-// RemainingCapacity always returns -1, as capacity is unlimited.
+// Rem always returns -1, as capacity is unlimited.
 func (s *UnboundedSemaphore) Rem() int {
 	return -1
 }

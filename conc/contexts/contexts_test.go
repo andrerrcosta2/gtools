@@ -6,8 +6,8 @@ import (
 	"context"
 	"github.com/andrerrcosta2/gtools/conc/contexts/cancelers"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 	"time"
 )
@@ -25,7 +25,7 @@ func TestContexts_ConditionallyCanceled_Create(t *testing.T) {
 
 func TestContexts_ConditionallyCanceled_Cancellation_All(t *testing.T) {
 	main, exit := WithConditionalCancel(context.Background())
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting main context")
 
@@ -69,7 +69,7 @@ func TestContexts_ConditionallyCanceled_Cancellation_All(t *testing.T) {
 
 func TestContexts_ConditionallyCanceled_Cancellation_MixedContexts(t *testing.T) {
 	main, exit := WithConditionalCancel(context.Background())
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting main context")
 
@@ -117,7 +117,7 @@ func TestContexts_ConditionallyCanceled_Cancellation_MixedContexts(t *testing.T)
 func TestContexts_ConditionallyCanceled_Cancellation_Nested(t *testing.T) {
 	main, exit := WithConditionalCancel(context.Background())
 
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	tt.StackLog("Starting main context")
 
 	tt.RunBlocking(func() {
@@ -213,7 +213,7 @@ func TestContexts_Synchronized_Create(t *testing.T) {
 // TestContexts_Synchronized_Cancellation_All: (5,0)-(5,1)
 func TestContexts_Synchronized_Cancellation_All(t *testing.T) {
 	main, exit := Synchronized(context.Background())
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting main context")
 
@@ -261,7 +261,7 @@ func TestContexts_Synchronized_Cancellation_All(t *testing.T) {
 func TestContexts_Synchronized_Cancellation_Nesting(t *testing.T) {
 	main, exit := Synchronized(context.Background())
 
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	tt.StackLog("Starting main context")
 
 	tt.RunBlocking(func() {
@@ -346,7 +346,7 @@ func TestContexts_Synchronized_Cancellation_Nesting(t *testing.T) {
 func TestContexts_Synchronized_Synchronization(t *testing.T) {
 	ctx, _ := Synchronized(context.Background())
 
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	tt.StackLog("Starting ctx context")
 
 	ctx.Add(501)

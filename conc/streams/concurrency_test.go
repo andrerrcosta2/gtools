@@ -6,8 +6,8 @@ import (
 	"context"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
 	"github.com/andrerrcosta2/gtools/core/domain/functions/runnables"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -15,7 +15,7 @@ import (
 
 func TestConsume_Sync_NoDelay(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)
@@ -43,7 +43,7 @@ func TestConsume_Sync_NoDelay(t *testing.T) {
 
 func TestConsume_Sync_NoDelay_OnTheFlyClosedStream(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)
@@ -93,7 +93,7 @@ func TestConsume_Sync_NoDelay_OnTheFlyClosedStream(t *testing.T) {
 
 func TestConsume_Sync_OnTheFlyClosedConsumer(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := HotCloseable[string](3, values...)
@@ -140,7 +140,7 @@ func TestConsume_Sync_OnTheFlyClosedConsumer(t *testing.T) {
 // These tests are dev tests
 //func TestConsume_Cancel_Sync(t *testing.T) {
 //	// helper
-//	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+//	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 //
 //	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 //	stream := make(chan string, 2)
@@ -190,7 +190,7 @@ func TestConsume_Sync_OnTheFlyClosedConsumer(t *testing.T) {
 
 func TestConsume_Cancel_Async(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)

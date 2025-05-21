@@ -4,6 +4,11 @@ package ints
 
 import "encoding/binary"
 
+func Abs(i int32) int32 {
+	mask := i >> 31
+	return (i ^ mask) - mask
+}
+
 // FromBytes converts a byte slice to an int.
 // It assumes that the byte slice is a valid binary representation of a 64-bit unsigned integer.
 // It returns the int value represented by the byte slice.

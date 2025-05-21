@@ -3,7 +3,7 @@
 package serials
 
 import (
-	"fmt"
+	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"reflect"
 	"strings"
 	"testing"
@@ -71,7 +71,7 @@ func TestUnmarshalSingle(t *testing.T) {
 			t.Fatal("expected an error due to array input, but got none")
 		}
 
-		expectedErr := fmt.Sprintf("unexpected array data for single value unmarshal: %s", string(jsonData))
+		expectedErr := printer.Sprintf("unexpected array data for single value unmarshal: %s", string(jsonData))
 		if err.Error() != expectedErr {
 			t.Errorf("expected error: %v, got: %v", expectedErr, err)
 		}

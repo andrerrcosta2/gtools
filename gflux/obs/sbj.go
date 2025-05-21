@@ -1,11 +1,9 @@
 package obs
 
-type Sbj[T any] interface {
-	Sub(*Obv[T]) (*Sub[T], error)
-	Nxt(T)
-	Rmo(*Sub[T])
-	Err(error)
-	Cpt()
-	Uns()
-	Cld() bool
+type Subject[T any] interface {
+	Obs[T]             // Subject is Observable
+	Subscribable[T]    // Subject is Subscribable
+	OnError(err error) // Emit an error
+	OnComplete()       // Signal completion
+	UnsubAll()         // Unsub all observers
 }

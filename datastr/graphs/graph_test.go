@@ -6,15 +6,15 @@ import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/edges"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
 // TestIsCyclicOf tests the isCyclicOf function for various graph structures
 func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[N]
@@ -100,7 +100,7 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
 				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
-				// Node C is disconnected
+				// Next C is disconnected
 				return g
 			},
 			expected: false,
@@ -138,7 +138,7 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 // TestIsCyclicOf_DirectedGraph tests the isCyclicOf function for various directed graph structures
 func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[N]
@@ -242,7 +242,7 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			expected: true,
 		},
 		{
-			name: "Single Node No Edges",
+			name: "Single Next No Edges",
 			setup: func() str.GraphOf[N, E] {
 				g := DigraphOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
@@ -268,7 +268,7 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 // TestIsCyclicOf_WeightedGraph tests the isCyclicOf function for various weighted graph structures
 func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int

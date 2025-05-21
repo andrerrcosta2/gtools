@@ -460,7 +460,7 @@ func (s ByteSymbol) ReplaceAll(target Symbol, replacement Symbol) (Symbol, bool)
 			b.Write(replacement.Bytes())
 			// Move the index to the end of the target symbol
 			i += target.Len()
-			// Set the replaced flag to true
+			// ToSet the replaced flag to true
 			replaced = true
 		} else {
 			// If it's not, write the current byte to the buffer
@@ -540,7 +540,7 @@ func (s ByteSymbol) ReplaceFirst(target Symbol, replacement Symbol) (Symbol, boo
 	b := bytes.Buffer{}
 	// Initialize an index to iterate over the bytes of the symbol
 	i := 0
-	// Set a flag to track if the target symbol has been replaced
+	// ToSet a flag to track if the target symbol has been replaced
 	replaced := false
 	// Iterate until the end of the symbol
 	for i < len(s) {
@@ -550,7 +550,7 @@ func (s ByteSymbol) ReplaceFirst(target Symbol, replacement Symbol) (Symbol, boo
 			b.Write(replacement.Bytes())
 			// Move the index to the end of the target symbol
 			i += target.Len()
-			// Set the flag to true
+			// ToSet the flag to true
 			replaced = true
 		} else {
 			// If it's not, write the current byte to the buffer
@@ -643,7 +643,7 @@ func (s ByteSymbol) ReplaceMany(replacement Symbol, targets ...Symbol) (Symbol, 
 				b.Write(replacement.Bytes())
 				// Move the index to the end of the target symbol
 				i += target.Len()
-				// Set the boolean to true
+				// ToSet the boolean to true
 				replaced = true
 				replacedInCurrent = true
 				// Break the loop since we've already replaced the current byte

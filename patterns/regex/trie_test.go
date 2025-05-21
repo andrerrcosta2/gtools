@@ -3,7 +3,6 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries"
@@ -16,7 +15,7 @@ import (
 // It also tests if an invalid dictionary returns an error.
 func TestBuildTrie(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie, err := Trie(false, 6, 6)
 
@@ -36,7 +35,7 @@ func TestBuildTrie(t *testing.T) {
 // TODO: rewrite
 func TestSearch_AllSymbols(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Get the dictionary instance
 	dictionary := Dictionary()
@@ -61,7 +60,7 @@ func TestSearch_AllSymbols(t *testing.T) {
 func TestSearch_SimpleRegexes(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie, err := Trie(false, 0, 0)
 

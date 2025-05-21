@@ -4,7 +4,8 @@ package serials
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"strings"
 )
 
@@ -16,7 +17,7 @@ func Json(s any) string {
 	enc.SetIndent("", "  ")
 	err := enc.Encode(s)
 	if err != nil {
-		return fmt.Sprintf("Error marshaling to JSON: %v\n", err)
+		return printer.Sprintf("Error marshaling to JSON: %v\n", err)
 	}
 	return buf.String()
 }
@@ -31,7 +32,7 @@ func UnmarshalSingle[T any](out *T, data []byte) error {
 	var err error
 
 	if len(data) > 0 && data[0] == '[' {
-		return fmt.Errorf("unexpected array data for single value unmarshal: %s", string(data))
+		return fmx.Errorf("unexpected array data for single value unmarshal: %s", string(data))
 	}
 
 	// Check the type of T to determine the unmarshalling strategy
@@ -45,7 +46,7 @@ func UnmarshalSingle[T any](out *T, data []byte) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf(FailedMessage, err, string(data))
+		return fmx.Errorf(FailedMessage, err, string(data))
 	}
 
 	return nil
@@ -62,7 +63,7 @@ func UnmarshalInto[T any](out *[]T, data []byte) error {
 		var arr []T
 		err = json.Unmarshal(data, &arr)
 		if err != nil {
-			return fmt.Errorf(FailedMessage, err, string(data))
+			return fmx.Errorf(FailedMessage, err, string(data))
 		}
 		*out = append(*out, arr...)
 		return nil
@@ -80,7 +81,7 @@ func UnmarshalInto[T any](out *[]T, data []byte) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf(FailedMessage, err, string(data))
+		return fmx.Errorf(FailedMessage, err, string(data))
 	}
 	*out = append(*out, it)
 	return nil
@@ -90,7 +91,7 @@ func UnmarshalJson[T any](data []byte) (any, error) {
 	var it T
 	err := json.Unmarshal(data, &it)
 	if err != nil {
-		return it, fmt.Errorf(FailedMessage, err, string(data))
+		return it, fmx.Errorf(FailedMessage, err, string(data))
 	}
 	return it, nil
 }

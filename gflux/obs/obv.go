@@ -2,16 +2,16 @@ package obs
 
 import "github.com/andrerrcosta2/gtools/core/domain/functions"
 
-type Obv[T any] struct {
-	Nxt functions.Consumer[T]
-	Err functions.Consumer[error]
-	Cpt functions.Runnable
+type Observer[T any] struct {
+	Next     functions.Consumer[T]
+	Error    functions.Consumer[error]
+	Complete functions.Runnable
 }
 
-func NewObv[T any](nxt func(T), err func(error), cpt func()) *Obv[T] {
-	return &Obv[T]{
-		Nxt: nxt,
-		Err: err,
-		Cpt: cpt,
+func NewObserver[T any](nxt func(T), err func(error), cpt func()) *Observer[T] {
+	return &Observer[T]{
+		Next:     nxt,
+		Error:    err,
+		Complete: cpt,
 	}
 }

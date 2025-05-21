@@ -25,20 +25,32 @@ func IsErrorOfAny(err error, targets ...error) bool {
 // It takes a gtools.StackableError and a variable number of targets as arguments.
 //
 // It returns true if all the errors in the stack of err are one of the targets, false otherwise.
-func AllErrorsOf(err StackableError, targets ...error) bool {
-	// Flatten the stack of errors into a slice of errors.
-	stack, _ := FlattenError(err)
-
-	// Iterate over the slice of errors and check if each error is one of the targets.
-	// If any error is not one of the targets, return false.
-	for _, e := range stack {
-		if !IsErrorOfAny(e, targets...) {
-			return false
+func AllErrorsOf(err error, targets ...error) bool {
+	if se, ok := AsStackable(err); ok {
+		// Iterate over the slice of errors and check if each error is one of the targets.
+		// If any error is not one of the targets, return false.
+		for _, e := range se.Unstack() {
+			if !IsErrorOfAny(e, targets...) {
+				return false
+			}
 		}
+
+		// If all errors are one of the targets, return true.
+		return true
 	}
 
-	// If all errors are one of the targets, return true.
-	return true
+	flat, _, ok := FlattenError(err)
+	if ok {
+		for _, e := range flat {
+			if !IsErrorOfAny(e, targets...) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	return IsErrorOfAny(err, targets...)
 }
 
 // ContainsError checks if any of the errors in the stack of err is one of the targets.
@@ -46,15 +58,37 @@ func AllErrorsOf(err StackableError, targets ...error) bool {
 // It takes a gtools.StackableError and a variable number of targets as arguments.
 //
 // It returns true if any of the errors in the stack of err is one of the targets, false otherwise.
-func ContainsError(err StackableError, targets ...error) bool {
+func ContainsError(err error, targets ...error) bool {
 	// Iterate over the slice of errors and check if each error is one of the targets.
 	// If any error is one of the targets, return true.
+	if se, ok := AsStackable(err); ok {
+		for _, target := range targets {
+			for _, e := range se.Unstack() {
+				if errors.Is(e, target) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
+	flat, _, ok := FlattenError(err)
+	if ok {
+		for _, e := range flat {
+			for _, target := range targets {
+				if errors.Is(e, target) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
 	for _, target := range targets {
 		if errors.Is(err, target) {
 			return true
 		}
 	}
 
-	// If none of the errors are one of the targets, return false.
 	return false
 }

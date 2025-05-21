@@ -2,9 +2,12 @@
 
 package generics
 
-//func IsNil[T any](data T) (null bool) {
-//	if d, ok := any(data).(T); ok {
-//		return d == nil
-//	}
-//	return false
-//}
+func Zero[T any]() T {
+	var zero T
+	return zero
+}
+
+func IsZero[T comparable](value T) bool {
+	var zero T
+	return value == zero
+}

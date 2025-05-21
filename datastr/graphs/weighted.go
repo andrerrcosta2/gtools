@@ -16,7 +16,7 @@ import (
 func WeightedSortableDigraphOf[G gtools.SortableOf, W prim.Ordered](nods ...G) str.WOrderedGraphOf[G, W, edges.SortableSingleTypedWeighted[G, W]] {
 	// Initialize the adjacency list with a map of maps.
 	graph := &weightedSortableDigraphOf[G, W]{
-		adj: maps.SortableOf[G, *maps.SortableOfMap[G, W]](),
+		adj: maps.SortableOf[G, str.Map[G, W]](),
 	}
 
 	// Addf nodes to the graph
@@ -33,7 +33,7 @@ var _ str.SingleWeightedEdgesGraph[gtools.SortableOf, int, edges.SortableSingleT
 var _ str.WOrderedGraphOf[gtools.SortableOf, int, edges.SortableSingleTypedWeighted[gtools.SortableOf, int]] = (*weightedSortableDigraphOf[gtools.SortableOf, int])(nil)
 
 type weightedSortableDigraphOf[G gtools.SortableOf, W prim.Ordered] struct {
-	adj *maps.SortableOfMap[G, *maps.SortableOfMap[G, W]]
+	adj str.Map[G, str.Map[G, W]]
 }
 
 // AddNode adds a node to the graph.

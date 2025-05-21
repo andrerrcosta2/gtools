@@ -5,26 +5,27 @@ package cancelers
 import (
 	"context"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 )
 
 type Pipe interface {
 	// Cancel cancels the context using a particular pipe strategy.
-	Cancel(cancel context.CancelFunc, looper functions.Looper[context.Context])
+	Cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context])
 }
 
 // Function returns a new canceler that calls that cancels the context using the given function.
 //
 // The given function takes two arguments: the context.CancelFunc and a slice of context.Context.
 // The function is expected to cancel the context using the context.CancelFunc and the given slice of context.Context.
-func Function(fn functions.BiConsumer[context.CancelFunc, functions.Looper[context.Context]]) Pipe {
+func Function(fn functions.BiConsumer[context.CancelFunc, func() gtools.Stream[context.Context]]) Pipe {
 	return funcCanceler(fn)
 }
 
-type funcCanceler functions.BiConsumer[context.CancelFunc, functions.Looper[context.Context]]
+type funcCanceler functions.BiConsumer[context.CancelFunc, func() gtools.Stream[context.Context]]
 
-func (f funcCanceler) Cancel(cancel context.CancelFunc, looper functions.Looper[context.Context]) {
-	f(cancel, looper)
+func (f funcCanceler) Cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context]) {
+	f(cancel, stream)
 }
 
 var _ Pipe = funcCanceler(nil)
@@ -49,7 +50,7 @@ type andCanceler struct {
 // It works by adding the total number of contexts to the WaitGroup and then
 // waiting for all contexts to finish. Once all is done, the cancel function
 // is called.
-func (c *andCanceler) Cancel(cancel context.CancelFunc, _ functions.Looper[context.Context]) {
+func (c *andCanceler) Cancel(cancel context.CancelFunc, _ func() gtools.Stream[context.Context]) {
 	go c.cancel(cancel)
 }
 
@@ -95,7 +96,7 @@ type orCanceler struct {
 // Cancel cancels the context when any of the contexts done channels are closed.
 // It works by starting a goroutine for each context to wait for its completion
 // and then call the cancel function when any of them are done.
-func (c *orCanceler) Cancel(cancel context.CancelFunc, _ functions.Looper[context.Context]) {
+func (c *orCanceler) Cancel(cancel context.CancelFunc, _ func() gtools.Stream[context.Context]) {
 	go c.cancel(cancel)
 }
 
@@ -129,13 +130,13 @@ type allCanceler struct {
 // It works by adding the total number of contexts to the WaitGroup and then
 // waiting for all contexts to finish. Once all is done, the cancel function
 // is called.
-func (c *allCanceler) Cancel(cancel context.CancelFunc, looper functions.Looper[context.Context]) {
-	go c.cancel(cancel, looper)
+func (c *allCanceler) Cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context]) {
+	go c.cancel(cancel, stream)
 }
 
-func (c *allCanceler) cancel(cancel context.CancelFunc, looper functions.Looper[context.Context]) {
+func (c *allCanceler) cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context]) {
 	// SetWaitingPoint for all contexts to finish
-	for ctx := range looper() {
+	for ctx := range stream() {
 		// Increment the WaitGroup
 		c.wait.Add(1)
 
@@ -173,13 +174,13 @@ type anyCanceler struct {
 // Cancel cancels the context when any of the contexts done channels are closed.
 // It works by starting a goroutine for each context to wait for its completion
 // and then call the cancel function when any of them are done.
-func (c *anyCanceler) Cancel(cancel context.CancelFunc, looper functions.Looper[context.Context]) {
-	go c.cancel(cancel, looper)
+func (c *anyCanceler) Cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context]) {
+	go c.cancel(cancel, stream)
 }
 
-func (c *anyCanceler) cancel(cancel context.CancelFunc, looper functions.Looper[context.Context]) {
+func (c *anyCanceler) cancel(cancel context.CancelFunc, stream func() gtools.Stream[context.Context]) {
 	// Start a goroutine for each context to wait to check for any completion
-	for ctx := range looper() {
+	for ctx := range stream() {
 		go func(ctx context.Context) {
 			// SetWaitingPoint for the context to be done
 			<-ctx.Done()

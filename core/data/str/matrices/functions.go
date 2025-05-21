@@ -32,7 +32,7 @@ func SetAt[E ~[][]T, T any](m E, row, col int, data T) E {
 		m[row] = newCols
 	}
 
-	// Set the data at the specified row and column
+	// ToSet the data at the specified row and column
 	m[row][col] = data
 
 	return m

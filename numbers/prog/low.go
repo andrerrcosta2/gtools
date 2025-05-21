@@ -10,7 +10,7 @@ import (
 )
 
 // Seq generates a sequence of length `n` with a given starting value.
-func Seq[T numbers.Real](length int) []T {
+func Seq[T numbers.Real](length uint) []T {
 	sequence := make([]T, length)
 	var zero T
 	for i := range sequence {

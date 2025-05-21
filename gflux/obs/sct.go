@@ -1,5 +1,5 @@
 package obs
 
-type Sct[T any] interface {
-	Sub(obv *Obv[T]) (*Sub[T], error)
+type Subscribable[T any] interface {
+	Sub(observer *Observer[T]) (*Sub[T], error)
 }

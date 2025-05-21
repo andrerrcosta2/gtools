@@ -18,15 +18,15 @@ import (
 // SortableOf returns a new instance of sortableOfSet.
 // It creates a new set with an empty slice of set and an empty idx map.
 func SortableOf[T gtools.SortableOf](values ...T) str.Set[T] {
-	// Sorter the values in ascending order.
+	// Sorter the set in ascending order.
 	sorts.QuickOf(values)
 	// Initialize a new sortableOfSet with an empty slice of set and an empty idx map.
 	set := &sortableOfSet[T]{
-		// The set slice is initialized with the values passed as arguments.
+		// The set slice is initialized with the set passed as arguments.
 		items: make([]T, 0),
 		// The idx map is initialized with an empty map of string to struct{}.
 		index: make(map[string]struct{}),
-		// The cmp is initialized with the ComparatorOf function.
+		// The cmpSet is initialized with the ComparatorOf function.
 		comparator: sortables.ComparatorOf[T](),
 	}
 
@@ -50,7 +50,7 @@ type sortableOfSet[T gtools.SortableOf] struct {
 func (s *sortableOfSet[T]) Add(t T) {
 	unique := s.comparator.Hash(t)
 	if _, exists := s.index[unique]; !exists {
-		// binary search for insSet point
+		// binary search for insertion point
 		pos, _ := search.BinaryOf(s.items, t)
 		// Insert item at the found position
 		s.items = append(s.items[:pos], append([]T{t}, s.items[pos:]...)...)
@@ -176,7 +176,7 @@ func (s *concSortableOf[T]) Add(t T) {
 	unique := s.comparator.Hash(t)
 	s.mtx.Lock()
 	if _, exists := s.index[unique]; !exists {
-		// binary search for insSet point
+		// binary search for insertion point
 		pos, _ := search.BinaryOf(s.items, t)
 		// Insert item at the found position
 		s.items = append(s.items[:pos], append([]T{t}, s.items[pos:]...)...)

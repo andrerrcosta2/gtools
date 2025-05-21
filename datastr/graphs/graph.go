@@ -60,7 +60,7 @@ func AddUndirectEdgeIfNodesExist[G prim.Ordered](adj *map[G][]G, from, to G) err
 
 // AddDirectEdgeOfIfNodesExist adds a directed edge from 'from' to 'to' to the adjacency list.
 // If 'from' or 'to' does not exist in the adjacency list, it will be created.
-func AddDirectEdgeOfIfNodesExist[G gtools.SortableOf](adj *maps.SortableOfMap[G, []G], from, to G) error {
+func AddDirectEdgeOfIfNodesExist[G gtools.SortableOf](adj str.Map[G, []G], from, to G) error {
 	if !hasNodeOf[G](adj, from) || !hasNodeOf[G](adj, to) {
 		return fmt.Errorf("The nodes %v and/or %v do not exist in the graph: %v\n", from, to, adj.Keys())
 	}
@@ -91,7 +91,7 @@ func AddDirectEdgeIfNodesExist[G prim.Ordered](adj *map[G][]G, from, to G) error
 
 // AddWeightedEdgeOfIfNodesExist adds a weighted edge from 'from' to 'to' with a given weight to the adjacency list.
 // If 'from' or 'to' does not exist in the adjacency list, it will be created.
-func AddWeightedEdgeOfIfNodesExist[G gtools.SortableOf, W any](adj *maps.SortableOfMap[G, *maps.SortableOfMap[G, W]], from, to G, weight W) error {
+func AddWeightedEdgeOfIfNodesExist[G gtools.SortableOf, W any](adj str.Map[G, str.Map[G, W]], from, to G, weight W) error {
 	if !adj.Contains(from) || !adj.Contains(to) {
 		return fmt.Errorf("The nodes %v and/or %v do not exist in the graph: %v\n", from, to, adj.Keys())
 	}

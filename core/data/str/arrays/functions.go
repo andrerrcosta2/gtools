@@ -13,10 +13,10 @@ func SetAt[E ~[]T, T any](a E, idx int, data T) E {
 		space := make(E, idx+1)
 		// Copy the original array to the new one
 		copy(space, a)
-		// Set the original array to the new resized array
+		// ToSet the original array to the new resized array
 		a = space
 	}
-	// Set the value at the given index in the array
+	// ToSet the value at the given index in the array
 	a[idx] = data
 	// Return the modified array
 	return a

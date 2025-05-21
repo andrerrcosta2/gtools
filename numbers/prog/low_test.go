@@ -2,7 +2,11 @@
 
 package prog
 
-import "testing"
+import (
+	"math"
+	"testing"
+	"testing/quick"
+)
 
 func TestSquareRoot(t *testing.T) {
 	tests := []struct {
@@ -466,12 +470,12 @@ func TestArithmetic_Empty(t *testing.T) {
 }
 
 func TestSequence_Int(t *testing.T) {
-	length := 5
+	length := uint(5)
 	expected := []int{0, 1, 2, 3, 4}
 
 	seq := Seq[int](length)
 
-	if len(seq) != length {
+	if uint(len(seq)) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))
 	}
 
@@ -483,12 +487,12 @@ func TestSequence_Int(t *testing.T) {
 }
 
 func TestSequence_Float64(t *testing.T) {
-	length := 4
+	length := uint(4)
 	expected := []float64{0, 1, 2, 3}
 
 	seq := Seq[float64](length)
 
-	if len(seq) != length {
+	if uint(len(seq)) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))
 	}
 
@@ -500,11 +504,133 @@ func TestSequence_Float64(t *testing.T) {
 }
 
 func TestSequence_Empty(t *testing.T) {
-	length := 0
+	var length uint
 
 	seq := Seq[int](length)
 
-	if len(seq) != length {
+	if uint(len(seq)) != length {
 		t.Errorf("Expected length %d, but got %d", length, len(seq))
+	}
+}
+
+func TestSeq(t *testing.T) {
+	prop := func(n uint) bool {
+		if n <= 0 {
+			return true // No sequence to test
+		}
+
+		seq := Seq[int](n)
+		for i, v := range seq {
+			if v != i {
+				return false
+			}
+		}
+		return true
+	}
+
+	if err := quick.Check(prop, nil); err != nil {
+		t.Errorf("Seq failed: %v", err)
+	}
+}
+
+func TestArit(t *testing.T) {
+	prop := func(start, step int, length uint8) bool {
+		n := int(length)
+		if n <= 0 {
+			return true
+		}
+
+		seq, err := Arit(start, step, n)
+		if err != nil {
+			return false
+		}
+
+		for i := 0; i < n; i++ {
+			expected := start + step*i
+			if seq[i] != expected {
+				return false
+			}
+		}
+		return true
+	}
+
+	if err := quick.Check(prop, nil); err != nil {
+		t.Errorf("Arit failed: %v", err)
+	}
+}
+
+func TestGeom(t *testing.T) {
+	prop := func(start, ratio int, length uint8) bool {
+		n := int(length)
+		if n <= 0 || ratio == 0 {
+			return true
+		}
+
+		seq, err := Geom(start, ratio, n)
+		if err != nil {
+			return false
+		}
+
+		for i := 0; i < n; i++ {
+			expected := start * int(math.Pow(float64(ratio), float64(i)))
+			if seq[i] != expected {
+				return false
+			}
+		}
+		return true
+	}
+
+	if err := quick.Check(prop, nil); err != nil {
+		t.Errorf("Geom failed: %v", err)
+	}
+}
+
+func TestFib(t *testing.T) {
+	prop := func(length uint8) bool {
+		n := int(length)
+		if n <= 2 {
+			return true // Nothing to check
+		}
+
+		fib, err := Fib[int](n)
+		if err != nil {
+			return false
+		}
+
+		for i := 2; i < n; i++ {
+			if fib[i] != fib[i-1]+fib[i-2] {
+				return false
+			}
+		}
+		return true
+	}
+
+	if err := quick.Check(prop, nil); err != nil {
+		t.Errorf("Fib failed: %v", err)
+	}
+}
+
+func TestRand(t *testing.T) {
+	prop := func(min, max int, length uint8) bool {
+		n := int(length)
+		if n <= 0 || min > max {
+			return true
+		}
+
+		seq, err := Rand(n, min, max)
+		if err != nil {
+			return false
+		}
+
+		for _, v := range seq {
+			if v < min || v > max {
+				return false
+			}
+		}
+		return true
+	}
+
+	if err := quick.Check(prop, nil); err != nil {
+		t.Errorf("Rand failed: %v", err)
 	}
 }

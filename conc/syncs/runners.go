@@ -18,7 +18,7 @@ type deferredRunner[H comparable] struct {
 	stack map[context.Context][]functions.Runnable
 }
 
-// Run adds a runnable function to be executed after the context is done.
+// Before adds a runnable function to be executed after the context is done.
 // If it is the first function for this context, a goroutine is started to
 // wait for the context to finish and then run the deferred tasks.
 func (o *deferredRunner[H]) Before(f functions.Runnable, ctx context.Context) {

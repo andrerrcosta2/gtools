@@ -9,15 +9,15 @@ import (
 	"github.com/andrerrcosta2/gtools/core/sortables"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
 	"github.com/andrerrcosta2/gtools/datastr/maps"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
 // TestAddNode tests adding random nodes to the undirected graph then check if they are in the graph
 func TestAddNode(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 
@@ -32,7 +32,7 @@ func TestAddNode(t *testing.T) {
 // TestAddEdge tests adding random edges to the undirected graph then check if they are in the graph
 func TestAddEdge(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Types
 	type N = *tests.SortableNode
@@ -65,7 +65,7 @@ func TestAddEdge(t *testing.T) {
 // correctly stored by its keys
 func TestNeighbors(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 
@@ -107,7 +107,7 @@ func TestNeighbors(t *testing.T) {
 // TestEdges tests retrieving all edges from the graph
 func TestEdges(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[*tests.SortableNode]
@@ -136,7 +136,7 @@ func TestEdges(t *testing.T) {
 
 func TestAddEdgeNodesNotExist(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[*tests.SortableNode]

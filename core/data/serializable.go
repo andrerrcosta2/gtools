@@ -2,8 +2,16 @@
 
 package data
 
-import "github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+import (
+	"encoding/json"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+)
 
 type Serializable[S prim.Serializable] interface {
 	Serial() S
+}
+
+type JSONSerializable interface {
+	json.Marshaler
+	json.Unmarshaler
 }

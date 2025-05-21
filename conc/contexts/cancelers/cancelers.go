@@ -4,7 +4,7 @@ package cancelers
 
 import (
 	"context"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"sync"
 )
 
@@ -22,15 +22,15 @@ type Conditional interface {
 //
 // The returned canceler can be used to cancel the context and all its
 // nested contexts using the When method.
-func ConditionalCanceler(cancelFunc context.CancelFunc, looper functions.Looper[context.Context]) Conditional {
+func ConditionalCanceler(cancelFunc context.CancelFunc, stream func() gtools.Stream[context.Context]) Conditional {
 	return &condCancel{
-		looper:     looper,
+		stream:     stream,
 		cancelFunc: cancelFunc,
 	}
 }
 
 type condCancel struct {
-	looper     functions.Looper[context.Context]
+	stream     func() gtools.Stream[context.Context]
 	once       sync.Once
 	cancelFunc context.CancelFunc
 }
@@ -42,7 +42,7 @@ type condCancel struct {
 // of context.Context. The canceler should cancel the context using the
 // context.CancelFunc and the given slice of context.Context.
 func (c *condCancel) When(pipe Pipe) {
-	pipe.Cancel(c.cancel, c.looper)
+	pipe.Cancel(c.cancel, c.stream)
 }
 
 // Now - Cancels its owner and all its nested contexts immediately.
@@ -62,16 +62,16 @@ func (c *condCancel) cancel() {
 //
 // The returned canceler can be used to cancel the context and all its
 // nested contexts using the When method.
-func SynchronizedCanceler(cancelFunc context.CancelFunc, looper functions.Looper[context.Context]) Conditional {
+func SynchronizedCanceler(cancelFunc context.CancelFunc, stream func() gtools.Stream[context.Context]) Conditional {
 	return &syncCondCancel{
-		looper:     looper,
+		stream:     stream,
 		cancelFunc: cancelFunc,
 	}
 }
 
 type syncCondCancel struct {
 	wg         sync.WaitGroup
-	looper     functions.Looper[context.Context]
+	stream     func() gtools.Stream[context.Context]
 	once       sync.Once
 	cancelFunc context.CancelFunc
 }
@@ -83,7 +83,7 @@ type syncCondCancel struct {
 // of context.Context. The canceler should cancel the context using the
 // context.CancelFunc and the given slice of context.Context.
 func (c *syncCondCancel) When(pipe Pipe) {
-	pipe.Cancel(c.cancel, c.looper)
+	pipe.Cancel(c.cancel, c.stream)
 }
 
 // Now - Cancels its owner and all its nested contexts immediately.

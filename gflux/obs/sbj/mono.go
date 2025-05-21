@@ -8,44 +8,125 @@ import (
 	"sync"
 )
 
-// Mono creates a mono subject
+// Mono creates a Mono sbj
 //
-// A mono subject is a subject that can have only one subscriber
+// A Mono sbj is a one-to-one obs.Subject that can have only one subscriber
 func Mono[T any](obv *obs.Observer[T]) obs.Subject[T] {
 	return &mono[T]{
 		obv: obv,
-		mtx: sync.Mutex{},
 	}
 }
 
 type mono[T any] struct {
-	mtx sync.Mutex
-	obv *obs.Observer[T]
-	sct *obs.Sub[T]
+	obv    *obs.Observer[T]
+	closed bool
+	sub    *obs.Sub[T]
 }
 
 func (s *mono[T]) Emit(t T) {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-
+	if s.closed {
+		return
+	}
 	s.obv.Next(t)
 }
 
 func (s *mono[T]) OnComplete() {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
+	if s.closed {
+		return
+	}
+	s.closed = true
 
 	s.obv.Complete()
 }
 
 func (s *mono[T]) OnError(err error) {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
+	if s.closed {
+		return
+	}
 
 	s.obv.Error(err)
 }
 
 func (s *mono[T]) RemoveSub(sub *obs.Sub[T]) {
+	s.obv = nil
+	if sub == s.sub {
+		s.sub.Close()
+	}
+}
+
+func (s *mono[T]) Sub(obv *obs.Observer[T]) (*obs.Sub[T], error) {
+	if s.obv != nil {
+		return nil, errors.New("this sbj was already subscribed")
+	}
+	s.obv = obv
+	s.sub = obs.NewSub[T](s)
+	return s.sub, nil
+}
+
+func (s *mono[T]) Unsub() {
+	s.obv = nil
+}
+
+func (s *mono[T]) UnsubAll() {
+	s.obv = nil
+	s.sub = nil
+}
+
+func (s *mono[T]) Closed() bool {
+	return s.sub.Closed()
+}
+
+// ConcMono creates a concurrent Mono sbj
+//
+// A Mono sbj is a sbj that can have only one subscriber
+func ConcMono[T any](obv *obs.Observer[T]) obs.Subject[T] {
+	return &concMono[T]{
+		obv: obv,
+		mtx: sync.RWMutex{},
+	}
+}
+
+type concMono[T any] struct {
+	mtx    sync.RWMutex
+	obv    *obs.Observer[T]
+	closed bool
+	sct    *obs.Sub[T]
+}
+
+func (s *concMono[T]) Emit(t T) {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+
+	if s.closed {
+		return
+	}
+	s.obv.Next(t)
+}
+
+func (s *concMono[T]) OnComplete() {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+
+	if s.closed {
+		return
+	}
+	s.closed = true
+
+	s.obv.Complete()
+}
+
+func (s *concMono[T]) OnError(err error) {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+
+	if s.closed {
+		return
+	}
+
+	s.obv.Error(err)
+}
+
+func (s *concMono[T]) RemoveSub(sub *obs.Sub[T]) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	s.obv = nil
@@ -54,35 +135,30 @@ func (s *mono[T]) RemoveSub(sub *obs.Sub[T]) {
 	}
 }
 
-func (s *mono[T]) Sub(obv *obs.Observer[T]) (*obs.Sub[T], error) {
+func (s *concMono[T]) Sub(obv *obs.Observer[T]) (*obs.Sub[T], error) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	if s.obv != nil {
-		return nil, errors.New("this subject was already subscribed")
+		return nil, errors.New("this sbj was already subscribed")
 	}
 	s.obv = obv
 	s.sct = obs.NewSub[T](s)
 	return s.sct, nil
 }
 
-func (s *mono[T]) Unsub() {
+func (s *concMono[T]) Unsub() {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	s.obv = nil
 }
 
-func (s *mono[T]) UnsubscribeAll() {
+func (s *concMono[T]) UnsubAll() {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	s.obv = nil
 	s.sct = nil
 }
 
-func (s *mono[T]) Closed() bool {
+func (s *concMono[T]) Closed() bool {
 	return s.sct.Closed()
 }
-
-var _ obs.Subject[string] = (*mono[string])(nil)
-var _ obs.Obs[string] = (*mono[string])(nil)
-var _ obs.Unsubscribable[string] = (*mono[string])(nil)
-var _ obs.Subscribable[string] = (*mono[string])(nil)

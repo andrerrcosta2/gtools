@@ -4,7 +4,6 @@ package tries
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"testing"
@@ -14,7 +13,7 @@ import (
 // using a linear dictionary of open symbols.
 func TestHandlers_SearchSymbolsByPattern_LinearOpenSymbols(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type V = *symbols.Logical
 	type K = string
@@ -36,7 +35,7 @@ func TestHandlers_SearchSymbolsByPattern_LinearOpenSymbols(t *testing.T) {
 
 func TestHandlers_SearchSymbolsByPattern_LinearClosedSymbols(t *testing.T) {
 	// Helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type V = *symbols.Logical
 	type K = string

@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/conc/collectors/internal/test/mocks"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
 func TestBranchableCollector_collect_AddSequentially(t *testing.T) {
-	tt := testingtools.LoggersLite(t, gtests.AlwaysPrintLog)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	collector := Branchable[*mocks.Branchable, [][]*mocks.Branchable]().(*branchableCollector[*mocks.Branchable, [][]*mocks.Branchable])
 
 	iterables.OfSlice(mocks.SmallBranchableTestData...).

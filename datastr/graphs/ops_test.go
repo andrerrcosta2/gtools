@@ -6,7 +6,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/edges"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/gtests"
 )
 
 // shouldContainNode tests retrieving a node from the graph and comparing

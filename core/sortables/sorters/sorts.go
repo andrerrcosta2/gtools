@@ -2,9 +2,8 @@
 
 package sorters
 
-type Sorter[T any] interface {
-	Sort(arr *[]T)
-	SortP(arr *[]*T)
+type Sorter[T any, S ~[]T] interface {
+	Sort(arr *S)
 }
 
 func shouldSort[T any](arr []T) bool {

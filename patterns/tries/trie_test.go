@@ -19,7 +19,7 @@ import (
 // TestPatternTrie_BasicMethods tests the basic methods of a OfPatterns.
 func TestPatternTrie_BasicMethods(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// create an empty OfPatterns
 	trie := OfPatterns(false, 0)
@@ -62,7 +62,7 @@ func TestPatternTrie_BasicMethods(t *testing.T) {
 // It also tests if an invalid dictionary returns an error.
 func TestBuildTrie(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Build new OfPatterns with a single goroutine
 	trie, err := OfPatternsFrom(smallRootChildrenDictionary, false, 2, 10)
@@ -102,7 +102,7 @@ func TestBuildTrie(t *testing.T) {
 // It also tests if an invalid dictionary returns an error.
 func TestPatternTrie_SimpleInsert(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -143,7 +143,7 @@ func TestPatternTrie_SimpleInsert(t *testing.T) {
 func TestPatternTrie_InsertSymbolWithSymbolChild_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -174,7 +174,7 @@ func TestPatternTrie_InsertSymbolWithSymbolChild_EdgeCase01_0(t *testing.T) {
 func TestPatternTrie_Search(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -205,7 +205,7 @@ func TestPatternTrie_Search(t *testing.T) {
 func TestPatternTrie_Search_PathChildren(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -236,7 +236,7 @@ func TestPatternTrie_Search_PathChildren(t *testing.T) {
 func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -344,7 +344,7 @@ func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_0(t *testing.T) {
 func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Create a new OfPatterns
 	trie, err := OfPatternsFrom(linearOpenSymbolsDictionary, false, 2, 12)
@@ -369,7 +369,7 @@ func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_1(t *testing.T) {
 // When there are no special tokens between placeholders.
 func TestPatternTrie_Search_EmptyTrie_EdgeCase01_0(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -389,7 +389,7 @@ func TestPatternTrie_Search_EmptyTrie_EdgeCase01_0(t *testing.T) {
 func TestPatternTrie_Search_InvalidNodes_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// create an empty trie
 	trie := OfPatterns(false, 0)
 
@@ -430,7 +430,7 @@ func TestPatternTrie_Search_InvalidNodes_EdgeCase01_1(t *testing.T) {
 func TestPatternTrie_Delete(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -471,7 +471,7 @@ func TestPatternTrie_Delete(t *testing.T) {
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -504,7 +504,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_0(t *testing.T) {
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -539,7 +539,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_1(t *testing.T) {
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_2(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -605,7 +605,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_2(t *testing.T) {
 func TestPatternTrie_PlaceholderNode(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	trie := OfPatterns(false, 0)
 
 	abPhEf := def.Placeholder.Format(symbols.Of("ab]%s[ef"), symbols.Repl)
@@ -648,7 +648,7 @@ func TestPatternTrie_PlaceholderNode(t *testing.T) {
 func TestPatternTrie_PlaceholderNode_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -683,7 +683,7 @@ func TestPatternTrie_PlaceholderNode_EdgeCase01_0(t *testing.T) {
 func TestPatternTrie_PlaceholderNode_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
 
@@ -733,7 +733,7 @@ func TestPatternTrie_EdgeCases_Insert_EdgeDictionary(t *testing.T) {
 func TestPatternTrie_EdgeCases_Delete_EdgeDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Delete_FullValidDictionary")
 

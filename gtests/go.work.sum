@@ -1,0 +1,6 @@
+github.com/andrerrcosta2/gtools/core v0.0.2-alpha.3 h1:rssDP2CPzD/YjUfM0OQYfobMZBZMjI7zkTE6EdyLKNg=
+github.com/andrerrcosta2/gtools/core v0.0.2-alpha.3/go.mod h1:XX9+fp5v+oVoGiPz8fsjJUFdGmchGQllMOXw4YHDpxA=
+github.com/andrerrcosta2/gtools/core/data v0.0.2-alpha.3 h1:+G8mHqYqDfKF2dPJs8XMpnCkv6rBVGj4YRnS6C42DnM=
+github.com/andrerrcosta2/gtools/core/data v0.0.2-alpha.3/go.mod h1:tu71PuSHztxXBT0I00iL6Wt7XgPVvFc2HcoLWI06Nzk=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

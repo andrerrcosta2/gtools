@@ -48,6 +48,33 @@ func Of[T any](q int) *iterables.Slice[T] {
 	return &result
 }
 
+// SingleOf generates a random value of type T
+func SingleOf[T any]() (single T) {
+	typx := reflect.TypeOf(single)
+	single, ok := randOf(typx).(T)
+	if !ok {
+		panic("unable to generate a random value of type " + typx.String())
+	}
+	return
+}
+
+// Values returns q random values of the type passed as argument
+func Values(value any, q int) *iterables.Slice[any] {
+	if q <= 0 {
+		return iterables.OfSlice[any]()
+	}
+	typx := reflect.TypeOf(value)
+	result := make(iterables.Slice[any], q)
+	for i := 0; i < q; i++ {
+		result[i] = randOf(typx)
+	}
+	return &result
+}
+
+func Single(value any) (single any) {
+	return randOf(reflect.TypeOf(value))
+}
+
 // randomOf generates a single random value
 func randOf(t reflect.Type) any {
 	if t == nil {

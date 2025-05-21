@@ -12,10 +12,10 @@ import (
 // Sorted sorts a slice of ordered elements in ascending order.
 // It uses the sort.Slice function from the standard library to perform the sorting.
 // The function returns the sorted slice.
-func Sorted[S sorters.Sorter[T], T prim.Ordered](arr []T) SortedSlice[T] {
-	sorter := sorters.Get[S, T]()
+func Sorted[T sorters.Sorter[E, S], E prim.Ordered, S ~[]E](arr S) SortedSlice[E] {
+	sorter := sorters.Get[T, E, S]()
 	sorter.Sort(&arr)
-	return arr
+	return SortedSlice[E](arr)
 }
 
 func SortedBy[T prim.Ordered, K prim.Ordered](arr []T, f functions.Function[T, K]) SortedSlice[T] {

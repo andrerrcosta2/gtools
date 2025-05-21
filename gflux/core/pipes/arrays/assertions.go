@@ -176,7 +176,36 @@ func Equals[T comparable](a, b []T) bool {
 //
 // Returns:
 // - bool: true if the slices are equal, false otherwise
-func EqualsBy[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
+func EqualsBy[A any](a, b []A, f functions.BiPredicate[A, A]) bool {
+	wa, wb := a, b
+	// Check if the slices have different lengths
+	if len(wa) != len(wb) {
+		return false
+	}
+
+	// Compare each element of the slices
+	for i := range wa {
+		if !f(wa[i], wb[i]) {
+			return false
+		}
+	}
+
+	// Slices are equal
+	return true
+}
+
+// EqualsByHash checks if two slices of elements are equal based on a given function.
+// The function f is used to compare elements of the slices.
+// The function returns true if the slices are equal, false otherwise.
+//
+// Parameters:
+// - a: the first slice
+// - b: the second slice
+// - f: the function used to compare elements of the slices
+//
+// Returns:
+// - bool: true if the slices are equal, false otherwise
+func EqualsByHash[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
 	wa, wb := a, b
 	// Check if the slices have different lengths
 	if len(wa) != len(wb) {

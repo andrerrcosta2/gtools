@@ -125,7 +125,7 @@ func DerefTransition(node *transitionNode) (parent PatternTrie, err error) {
 	// Remove the node from its parent
 	node.parent.RemoveChild(node.key)
 
-	// Set the parent and key of the node to its zero value
+	// ToSet the parent and key of the node to its zero value
 	node.children = nil
 	node.parent = nil
 	return
@@ -144,7 +144,7 @@ func DerefSymbol(node *symbolNode) (parent PatternTrie, err error) {
 	// Remove the node from its parent
 	node.parent.RemoveChild(node.key)
 
-	// Set the parent, symbol, root and key of the node to its zero value
+	// ToSet the parent, symbol, root and key of the node to its zero value
 	node.parent = nil
 	node.symbol = nil
 	node.key = ""

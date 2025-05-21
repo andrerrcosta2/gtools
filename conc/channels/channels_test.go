@@ -7,14 +7,14 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/contexts"
 	"github.com/andrerrcosta2/gtools/conc/contexts/cancelers"
 	"github.com/andrerrcosta2/gtools/core/durations"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
 func TestSignal(t *testing.T) {
 	// helper
-	tt := testingtools.AsyncLite(t, gtests.LogOnFailure)
+	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	flag := NewFlag()
 
 	main, exit := contexts.WithConditionalCancel(context.Background())

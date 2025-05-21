@@ -1,0 +1,24 @@
+name: Lz
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *' # Runs nightly at 2 AM UTC
+
+jobs:
+  seeded-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Checkout Seed Repository
+        run: git clone https://$GITHUB_PAT@github.com/synktactics-lab/hCl3k7cJZ9.git _test
+        env:
+          GITHUB_PAT: ${{ secrets.SEED_REPO_PAT }}
+
+      - name: Run Seeded Tests
+        run: go test ./... -flag=lz -v

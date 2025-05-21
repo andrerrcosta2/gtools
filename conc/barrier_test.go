@@ -18,7 +18,7 @@ func OnOddCount(b gtools.Barrier) bool {
 }
 
 func TestStepBroadcast_Basic(t *testing.T) {
-	//tt := testingtools.ConcLite(t, gtests.LogOnFailure)
+	//tt := testingtools.ConcLite(t, testlogs.OnFailure)
 
 	reg := NewRegisters(30)
 	barrier := StepBroadcast(OnThreshold)

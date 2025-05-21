@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/gtools"
+	"github.com/andrerrcosta2/gtools/core/sortables"
 )
 
 // NewAnyEntry creates a new AnyEntry struct with the given key and value.
@@ -19,8 +21,8 @@ import (
 func NewAnyEntry[K any, V any](key K, value V) *AnyEntry[K, V] {
 	// Create a new Entry struct with the given key and value.
 	return &AnyEntry[K, V]{
-		key:   key,   // Set the key of the Entry.
-		value: value, // Set the value of the Entry.
+		key:   key,   // ToSet the key of the Entry.
+		value: value, // ToSet the value of the Entry.
 	}
 }
 
@@ -53,8 +55,8 @@ func (e *AnyEntry[K, V]) String() string {
 func NewComparableEntry[K comparable, V any](key K, value V) *ComparableEntry[K, V] {
 	// Create a new ComparableEntry struct with the given key and value.
 	return &ComparableEntry[K, V]{
-		key:   key,   // Set the key of the entry.
-		value: value, // Set the value of the entry.
+		key:   key,   // ToSet the key of the entry.
+		value: value, // ToSet the value of the entry.
 	}
 }
 
@@ -223,6 +225,11 @@ func (e *EntrySet[K, V]) Values() []V {
 func (e *EntrySet[K, V]) Len() int {
 	// Return the length of the entries map.
 	return len(e.entries)
+}
+
+type EntrySetOf[K gtools.SortableOf, V any] struct {
+	set map[string]AnyEntry[K, V]
+	cmp sortables.Comparator[K]
 }
 
 // Map applies a given BiFunction to each key-value pair in a map and returns a new map.

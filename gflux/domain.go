@@ -9,6 +9,6 @@ import (
 
 type Obs[T any] obs.Obs[T]
 
-type Sbj[T any] obs.Sbj[T]
+type Subject[T any] obs.Subject[T]
 
 type Task tasks.Runnable

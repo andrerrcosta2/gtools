@@ -8,14 +8,82 @@ import (
 	"testing"
 )
 
+// TestConcurrentStackable_ConcStackable tests the methods:
+//   - ConcStackable() expecting it to stack, store, flatten and return the given error
+func TestConcurrentStackable_ConcStackable(t *testing.T) {
+	// Create with a nil error
+	cse := ConcStackable(nil)
+	if cse == nil {
+		t.Fatal("expected non-nil stack but found nil")
+	}
+	var ass *concStackErr
+	errors.As(cse, &ass)
+	// expect a nil error
+	if ass.err != nil {
+		t.Fatalf("expected nil error but found %v", cse.(*concStackErr).err)
+	}
+	// expect a stack length of 0
+	if ass.stk.Len() != 0 {
+		t.Fatalf("expected stack length of 0 but found %d", ass.stk.Len())
+	}
+
+	// Create with a non-nil error
+	baseErr := fmt.Errorf("base error")
+	cse = ConcStackable(baseErr)
+	if cse == nil {
+		t.Fatal("expected non-nil stack but found nil")
+	}
+	fmt.Printf("cse: %v\n", cse)
+	errors.As(cse, &ass)
+	// expect the base error
+	if !errors.Is(baseErr, ass.err) {
+		t.Fatalf("expected base error but found %v", cse.(*concStackErr).err)
+	}
+	// expect a stack length of 0
+	if ass.stk.Len() != 1 {
+		t.Fatalf("expected stack length of 1 but found %d: %v", ass.stk.Len(), ass.stk)
+	}
+}
+
+// TestConcurrentStackable_ConcStack tests the methods:
+//   - ConcStack() expecting it to stack, store, flatten and return the given error
+func TestConcurrentStackable_ConcStack(t *testing.T) {
+	// Create with a nil error
+	cse := ConcStack()
+	if cse == nil {
+		t.Fatal("expected non-nil stack but found nil")
+	}
+	var ass *concStackErr
+	errors.As(cse, &ass)
+	// expect a nil error
+	if ass.err != nil {
+		t.Fatalf("expected nil error but found %v", cse.(*concStackErr).err)
+	}
+	// expect a stack length of 0
+	if ass.stk.Len() != 0 {
+		t.Fatalf("expected stack length of 0 but found %d", len(ass.stk.stk))
+	}
+}
+
+// TestConcurrentStackableError_Empty tests the methods:
+// - IsEmpty()
+// - ConcStack()
+// - ConcStackable(nil)
+// And checks whether the stack is empty.
 func TestConcurrentStackableError_Empty(t *testing.T) {
 	cse := ConcStackable(nil)
-
+	var ass *concStackErr
+	errors.As(cse, &ass)
+	if !cse.IsEmpty() || len(ass.stk.stk) != 0 || ass.err != nil {
+		t.Fatalf("expected empty stack but found errors")
+	}
+	cse = ConcStack()
 	if !cse.IsEmpty() {
 		t.Fatalf("expected empty stack but found errors")
 	}
 }
 
+// TestConcurrentStackableError_Error tests the Error() method
 func TestConcurrentStackableError_Error(t *testing.T) {
 	baseErr := fmt.Errorf("base error")
 	cse := ConcStackable(baseErr)
@@ -26,6 +94,11 @@ func TestConcurrentStackableError_Error(t *testing.T) {
 	}
 }
 
+// TestConcurrentStackableError_Stack tests the methods:
+//   - Stack() expecting it stack the given error
+//   - Len() expecting it return the number of errors in the stack
+//   - Unwrap() expecting it return the first wrapped error
+//   - Trace() expecting it return a string with the stack trace
 func TestConcurrentStackableError_Stack(t *testing.T) {
 	baseErr := fmt.Errorf("base error")
 	secondErr := fmt.Errorf("second error")
@@ -37,12 +110,21 @@ func TestConcurrentStackableError_Stack(t *testing.T) {
 		t.Fatalf("expected stack length of 2 but got %d", got)
 	}
 
-	if cse.Unwrap() != secondErr {
+	if !errors.Is(secondErr, cse.Unwrap()) {
 		t.Fatalf("expected base error but got %v", cse.Unwrap())
 	}
 
 	if got := cse.Trace(); got == "" {
 		t.Fatal("expected non-empty trace")
+	}
+}
+
+func TestConcurrentStackagleError_Cause(t *testing.T) {
+	baseErr := fmt.Errorf("base error")
+	cse := ConcStackable(baseErr)
+
+	if got := cse.Cause(); !errors.Is(got, baseErr) {
+		t.Fatalf("expected base error but got %v", got)
 	}
 }
 

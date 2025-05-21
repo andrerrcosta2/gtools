@@ -4,7 +4,7 @@ package sortables
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/comparables"
+	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/domain/gtools"
@@ -14,7 +14,7 @@ import (
 // ComparatorOf returns a new Comparator instance for the given type K.
 // This comparator is used to compare and hash values of type K that implement the core.SortableOf interface.
 func ComparatorOf[K gtools.SortableOf]() *Comparator[K] {
-	// Return a new instance of Comparator with the given type K.
+	// Return a new instance of Typed with the given type K.
 	return &Comparator[K]{}
 }
 
@@ -39,78 +39,8 @@ func (s *Comparator[K]) Equals(a, b K) bool {
 	return a.Equal(b)
 }
 
-var _ comparables.KeyComparator[gtools.SortableOf, string] = (*Comparator[gtools.SortableOf])(nil)
-var _ comparables.Comparator[gtools.SortableOf] = (*Comparator[gtools.SortableOf])(nil)
-
-// Unique returns a unique string identifier for the given object.
-// If the object implements the domain.UniqueOf interface, its unique identifier is returned.
-// Otherwise, the object's memory address or its string representation is returned.
-// This method doesn't return any error and currently doesn't handle interfaces
-// as generic type, so its reliability is the best it can be guaranteed based on what
-// is delivered to it.
-// That means it has its own view of equality between objects which follows the order:
-//
-//  1. its own uniqueness implementation
-//  2. its natural comparability as a typed representation
-//  3. its memory address if it is a pointer
-//
-// If your context requires a different unique representation, don't use this method.
-func Unique[T any](sortable any) string {
-	switch s := sortable.(type) {
-	case gtools.UniqueOf:
-		// Return the unique identifier as a string
-		if s == nil {
-			return "<nil>"
-		}
-		return s.Unique()
-	case error:
-		if s == nil {
-			return "<nil>"
-		}
-		return s.Error()
-	case *T:
-		return fmt.Sprintf("0x%x", uintptr(unsafe.Pointer(s)))
-	case int:
-		return fmt.Sprintf("<int>%d", s)
-	case int8:
-		return fmt.Sprintf("<int8>%d", s)
-	case int16:
-		return fmt.Sprintf("<int16>%d", s)
-	case int32:
-		return fmt.Sprintf("<int32>%d", s)
-	case int64:
-		return fmt.Sprintf("<int64>%d", s)
-	case uint:
-		return fmt.Sprintf("<uint>%d", s)
-	case uint8:
-		return fmt.Sprintf("<uint8>%d", s)
-	case uint16:
-		return fmt.Sprintf("<uint16>%d", s)
-	case uint32:
-		return fmt.Sprintf("<uint32>%d", s)
-	case uint64:
-		return fmt.Sprintf("<uint64>%d", s)
-	case uintptr:
-		return fmt.Sprintf("<uintptr>%d", s)
-	case float32:
-		return fmt.Sprintf("<float32>%g", s)
-	case float64:
-		return fmt.Sprintf("<float64>%g", s)
-	case string:
-		return fmt.Sprintf("<string>%s", s)
-	case bool:
-		return fmt.Sprintf("<bool>%t", s)
-	case complex64:
-		return fmt.Sprintf("<complex64>%v", s)
-	case complex128:
-		return fmt.Sprintf("<complex128>%v", s)
-	default:
-		// I guess it still can be a pointer if an interface is passed
-		// as generic type, so it should be reflected to return the memory address
-		// Here it is returning its value
-		return fmt.Sprintf("<%T>%v", sortable, sortable)
-	}
-}
+var _ comparators.KeyTyped[gtools.SortableOf, string] = (*Comparator[gtools.SortableOf])(nil)
+var _ comparators.Typed[gtools.SortableOf] = (*Comparator[gtools.SortableOf])(nil)
 
 // Equality returns true if the two values are implemented equal, false otherwise.
 // It uses the Equal method of the ComparableOf interface to compare values.
@@ -208,10 +138,80 @@ func TryLess(x, y any) bool {
 	}
 
 	// If x and y are from the primitive Comparable types
-	if less, err := prim.Less(x, y); err == nil {
+	if less, err := prim.TryLess(x, y); err == nil {
 		return less
 	}
 
 	// Lost scope
 	return false
+}
+
+// Unique returns a unique string identifier for the given object.
+// If the object implements the domain.UniqueOf interface, its unique identifier is returned.
+// Otherwise, the object's memory address or its string representation is returned.
+// This method doesn't return any error and currently doesn't handle interfaces
+// as generic type, so its reliability is the best it can be guaranteed based on what
+// is delivered to it.
+// That means it has its own view of equality between objects which follows the order:
+//
+//  1. its own uniqueness implementation
+//  2. its natural comparability as a typed representation
+//  3. its memory address if it is a pointer
+//
+// If your context requires a different unique representation, don't use this method.
+func Unique[T any](sortable any) string {
+	switch s := sortable.(type) {
+	case gtools.UniqueOf:
+		// Return the unique identifier as a string
+		if s == nil {
+			return "<nil>"
+		}
+		return s.Unique()
+	case error:
+		if s == nil {
+			return "<nil>"
+		}
+		return s.Error()
+	case *T:
+		return fmt.Sprintf("0x%x", uintptr(unsafe.Pointer(s)))
+	case int:
+		return fmt.Sprintf("<int>%d", s)
+	case int8:
+		return fmt.Sprintf("<int8>%d", s)
+	case int16:
+		return fmt.Sprintf("<int16>%d", s)
+	case int32:
+		return fmt.Sprintf("<int32>%d", s)
+	case int64:
+		return fmt.Sprintf("<int64>%d", s)
+	case uint:
+		return fmt.Sprintf("<uint>%d", s)
+	case uint8:
+		return fmt.Sprintf("<uint8>%d", s)
+	case uint16:
+		return fmt.Sprintf("<uint16>%d", s)
+	case uint32:
+		return fmt.Sprintf("<uint32>%d", s)
+	case uint64:
+		return fmt.Sprintf("<uint64>%d", s)
+	case uintptr:
+		return fmt.Sprintf("<uintptr>%d", s)
+	case float32:
+		return fmt.Sprintf("<float32>%g", s)
+	case float64:
+		return fmt.Sprintf("<float64>%g", s)
+	case string:
+		return fmt.Sprintf("<string>%s", s)
+	case bool:
+		return fmt.Sprintf("<bool>%t", s)
+	case complex64:
+		return fmt.Sprintf("<complex64>%v", s)
+	case complex128:
+		return fmt.Sprintf("<complex128>%v", s)
+	default:
+		// I guess it still can be a pointer if an interface is passed
+		// as generic type, so it should be reflected to return the memory address
+		// Here it is returning its value
+		return fmt.Sprintf("<%T>%v", sortable, sortable)
+	}
 }

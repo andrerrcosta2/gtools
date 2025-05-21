@@ -5,6 +5,8 @@
 package assertlite
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"reflect"
@@ -43,6 +45,35 @@ func Panic(t HelperTesting, f func(), msgAndArgs ...any) {
 	f()
 }
 
+func Equal(t HelperTesting, a, b any, msgAndArgs ...any) {
+	t.Helper()
+	// Handle nil cases first
+	if a == nil || b == nil {
+		if a != b {
+			fail(t, "expected both values to be nil\n", msgAndArgs...)
+		}
+		return
+	}
+
+	// Check if both are byte slices
+	if ba, ok := a.([]byte); ok {
+		if bb, ok := b.([]byte); ok {
+			if !bytes.Equal(ba, bb) {
+				fail(t, fmt.Sprintf("expected values to be equal, but got different values: a = %v, b = %v\n", ba, bb), msgAndArgs...)
+			}
+			return
+		}
+		// Only fail if one is []byte but not the other
+		fail(t, fmt.Sprintf("expected values to be of the same type, but got: a = %T, b = %T\n", a, b), msgAndArgs...)
+	}
+
+	// If neither are []byte, use DeepEqual
+	if !reflect.DeepEqual(a, b) {
+		fail(t, fmt.Sprintf("expected values to be equal, but got different values: a = %v, b = %v\n", a, b), msgAndArgs...)
+	}
+
+}
+
 func NoError(t HelperTesting, err error, msgAndArgs ...any) {
 	t.Helper()
 	if err != nil {
@@ -78,5 +109,30 @@ func ArrayEquals[T comparable](t HelperTesting, a, b []T, msgAndArgs ...any) {
 		if wa[i] != wb[i] {
 			fail(t, fmt.Sprintf("expected slices to be equal, but got different elements at index %d: a = %v, b = %v\n", i, wa[i], wb[i]), msgAndArgs...)
 		}
+	}
+}
+
+func NotNil(t HelperTesting, value any, msgAndArgs ...any) {
+	t.Helper()
+	if value == nil {
+		fail(t, "expected value not to be nil\n", msgAndArgs...)
+	}
+	v := reflect.ValueOf(value)
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		if v.IsNil() {
+			fail(t, "expected value not to be nil\n", msgAndArgs...)
+		}
+	default:
+	}
+}
+
+func ErrorIs(t HelperTesting, err error, expected error, msgAndArgs ...any) {
+	t.Helper()
+	if err == nil {
+		fail(t, "expected error, but got nil\n", msgAndArgs...)
+	}
+	if !errors.Is(err, expected) {
+		fail(t, fmt.Sprintf("expected error to be '%v', but got '%v'\n", expected, err), msgAndArgs...)
 	}
 }

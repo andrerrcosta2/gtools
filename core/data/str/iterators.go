@@ -2,14 +2,12 @@
 
 package str
 
-type Loopable[T any] interface {
-	// Loop returns a read-only channel that yields values of type K.
-	//
-	// No parameters.
-	// Returns a receive-only channel of type K.
-	Loop() <-chan T
-}
-
+// MapIterator is the default iterator used to loop over maps
+//
+// Most of the implementations implements an "occasionally consistent" behaviour
+// which is standard for iterators in concurrent environments.
+// It is a common trade-off in concurrent data structures to balance performance.
+// simplicity, and correctness
 type MapIterator[T any, U any] interface {
 	// Next returns the next value from the iterator.
 	//

@@ -24,12 +24,11 @@ func BufferedSupplier[T any](capacity int) *BufferedChannelSupplier[T] {
 
 // BufferedChannelSupplier creates a supplier that uses a buffered channel
 type BufferedChannelSupplier[T any] struct {
-	mtx         sync.RWMutex
-	stack       []T
-	capacity    int
-	closed      atomic.Bool
-	forceClosed atomic.Bool
-	done        chan struct{}
+	mtx      sync.RWMutex
+	stack    []T
+	capacity int
+	closed   atomic.Bool
+	done     chan struct{}
 }
 
 // Supply sends the given values to the channel and then closes it.
@@ -37,7 +36,7 @@ type BufferedChannelSupplier[T any] struct {
 // The method returns the supplier itself to allow method chaining.
 func (s *BufferedChannelSupplier[T]) Supply(values ...T) error {
 	if s.closed.Load() {
-		return errors.New("supplier is closed...\n")
+		return errors.New("supplier is closed")
 	}
 
 	// Append values
@@ -61,7 +60,7 @@ func (s *BufferedChannelSupplier[T]) Close() error {
 		s.stack = nil
 		return nil
 	}
-	return errors.New("supplier is already closed...\n")
+	return errors.New("supplier is already closed")
 }
 
 // Stream returns a channel that can be used to receive values of type T.
@@ -121,7 +120,7 @@ type CancellableChannelSupplier[T any] struct {
 
 func (s *CancellableChannelSupplier[T]) Supply(values ...T) error {
 	if s.closed.Load() {
-		return errors.New("supplier is closed...\n")
+		return errors.New("supplier is closed")
 	}
 
 	// Context cancelled
@@ -150,7 +149,7 @@ func (s *CancellableChannelSupplier[T]) Close() error {
 		s.stack = nil
 		return nil
 	}
-	return errors.New("supplier is already closed...\n")
+	return errors.New("supplier is already closed")
 }
 
 // IsClosed returns true if the supplier is closed, false otherwise.

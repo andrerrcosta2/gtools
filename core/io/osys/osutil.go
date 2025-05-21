@@ -5,6 +5,7 @@ package osys
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/io"
 	"github.com/andrerrcosta2/gtools/core/io/fsys"
 	"io/fs"
@@ -60,7 +61,7 @@ func ReadFiles(paths []fsys.Path, maxConcurrency int) ([][]byte, error) {
 	var wg sync.WaitGroup
 
 	// Create a stackable error to collect any errors that occur
-	stack := gerrors.ConcurrentStackable(nil)
+	stack := gerrors.ConcStack()
 
 	// Initialize a slice to store the file contents
 	dataSlices := make([][]byte, len(paths))
@@ -74,18 +75,19 @@ func ReadFiles(paths []fsys.Path, maxConcurrency int) ([][]byte, error) {
 	// Iterate over the paths and start a goroutine for each one
 	for i, path := range paths {
 		go func(i int, path fsys.Path) {
-			// Defer the wait group done call to ensure it's called even if an error occurs
-			defer wg.Done()
-
 			// Acquire a semaphore slot
 			sem <- struct{}{}
-			defer func() { <-sem }()
+			defer func() {
+				<-sem
+				wg.Done()
+
+			}()
 
 			// Read the file at the specified path
 			data, err := ReadFile(path.Type, path.Path)
 			if err != nil {
 				// Stack the error if the file cannot be read
-				stack.Stack(fmt.Errorf("error reading file '%s': %v", path.Path, err))
+				stack.Stack(fmx.Errorf("error reading file '%s': %v", path.Path, err))
 				return
 			}
 

@@ -250,7 +250,7 @@ func (c *pipedBranchableCollector[B, O, C]) Errors() []error { return c.errors }
 // Pipe returns a Piped that collects all values from the given Stream,
 // applies the given flt to each value and collects the results into a slice.
 func (c *pipedBranchableCollector[B, O, C]) Pipe(pipe functions.Function[B, O]) Piped[B, O, C] {
-	// Set the flt to be applied to each collected value
+	// ToSet the flt to be applied to each collected value
 	c.pipe = pipe
 	// Return itself as a Piped
 	return c

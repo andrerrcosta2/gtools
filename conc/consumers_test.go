@@ -9,8 +9,8 @@ import (
 	"github.com/andrerrcosta2/gtools/conc/streams"
 	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
@@ -19,7 +19,7 @@ import (
 // This test also asserts its automatic close after all values have been consumed.
 func TestSemaphoredConsumer_FullConsume(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream with 10 values
 	stream := streams.HotCloseable(4, "a", "b", "c", "d", "e", "A", "B", "T", "D", "E")
@@ -60,7 +60,7 @@ func TestSemaphoredConsumer_ClosedStreamEarly(t *testing.T) {
 	}
 
 	// Block the main goroutine until all values have been consumed
-	err = SemaphoredConsumer[string](stream, semaph.Channel(3)).
+	_ = SemaphoredConsumer[string](stream, semaph.Channel(3)).
 		Consume(func(i int, s string) {
 			// fail the test on consume
 			t.Errorf("expected no values to be consumed, got %d\n", i)
@@ -72,7 +72,7 @@ func TestSemaphoredConsumer_ClosedStreamEarly(t *testing.T) {
 // It asserts that not all values are consumed.
 func TestSemaphoredConsumer_ClosedStreamOnTheFly(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(3, bigSupply...)
 
@@ -132,7 +132,7 @@ func TestSemaphoredConsumer_ClosedConsumer(t *testing.T) {
 	}
 
 	// Consume the values
-	err = consumer.Consume(func(i int, s string) {
+	_ = consumer.Consume(func(i int, s string) {
 		// Fail the on consume
 		t.Errorf("expected no values to be consumed, got %d\n", i)
 	})
@@ -143,7 +143,7 @@ func TestSemaphoredConsumer_ClosedConsumer(t *testing.T) {
 // a supplier.
 func TestSemaphoredConsumer_ClosedConsumerOnTheFly(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a supplier
 	stream := streams.HotCloseable(5, bigSupply...)
@@ -193,7 +193,7 @@ func TestSemaphoredConsumer_ClosedConsumerOnTheFly(t *testing.T) {
 // This test also asserts its automatic close after all values have been consumed.
 func TestCancellableConsumer_FullConsume(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(5, bigSupply...)
 
@@ -221,7 +221,7 @@ func TestCancellableConsumer_FullConsume(t *testing.T) {
 // It asserts that the consumer consumes no values from the supplier and that the supplier is closed.
 func TestCancellableConsumer_EarlyClosedStream(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
 	// Close the stream before consuming
@@ -248,7 +248,7 @@ func TestCancellableConsumer_EarlyClosedStream(t *testing.T) {
 // It asserts that the consumer consumes fewer values than the stream size and that the supplier is closed.
 func TestCancellableConsumer_OnTheFlyClosedStream(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
 
@@ -294,7 +294,7 @@ func TestCancellableConsumer_OnTheFlyClosedStream(t *testing.T) {
 // doesn't consume any values and returns an error.
 func TestCancellableConsumer_ClosedConsumer(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream
 	values := []string{"a", "b", "c", "d", "e", "A", "B", "T", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I",
@@ -332,7 +332,7 @@ func TestCancellableConsumer_ClosedConsumer(t *testing.T) {
 
 func TestCancellableConsumer_OnTheFlyClosedConsumer(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.AlwaysPrintLog)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
 
@@ -380,7 +380,7 @@ func TestCancellableConsumer_OnTheFlyClosedConsumer(t *testing.T) {
 // It creates a cancellable context and a cancellable consumer. It then consumes all values from the stream and asserts that no values are consumed if the consumer is closed on the fly.
 func TestCancellableConsumer_OnTheFlyCancelledConsumer(t *testing.T) {
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, mediumSupply...)
 

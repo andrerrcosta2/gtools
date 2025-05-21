@@ -7,6 +7,24 @@ import (
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
+// RemoveByIndex removes the element at the specified index from the slice.
+//
+// Parameters:
+// - arr: the input slice
+// - index: the index of the element to remove
+//
+// Returns:
+// - []T: the new slice with the element removed
+func RemoveByIndex[T any](arr []T, index int) []T {
+	// Check if the index is within the bounds of the slice
+	if index >= 0 && index < len(arr) {
+		// Use the append function to remove the element at the specified index
+		return append(arr[:index], arr[index+1:]...)
+	}
+	// Return the original slice if the index is out of bounds
+	return arr
+}
+
 // Reverse reverses the order of elements in a slice.
 //
 // Parameters:

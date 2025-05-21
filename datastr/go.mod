@@ -8,7 +8,7 @@ require (
 	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha.3
 	github.com/andrerrcosta2/gtools/core/seeders v0.0.2-alpha.3
 	github.com/andrerrcosta2/gtools/gflux/core v0.0.2-alpha.3
-	github.com/andrerrcosta2/gtools/gtests v0.0.2-alpha.3
+	github.com/andrerrcosta2/gtools/gtests/testingtools v0.0.0
 	github.com/andrerrcosta2/gtools/numbers v0.0.2-alpha.3
 	github.com/google/uuid v1.6.0
 )
@@ -19,6 +19,6 @@ replace (
 	github.com/andrerrcosta2/gtools/core/domain => ../core/domain
 	github.com/andrerrcosta2/gtools/core/seeders => ../core/seeders
 	github.com/andrerrcosta2/gtools/gflux/core => ../gflux/core
-	github.com/andrerrcosta2/gtools/gtests => ../gtests
+	github.com/andrerrcosta2/gtools/gtests/testingtools => ../gtests/testingtools
 	github.com/andrerrcosta2/gtools/numbers => ../numbers
 )

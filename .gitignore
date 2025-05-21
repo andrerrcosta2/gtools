@@ -19,3 +19,8 @@
 /v0.0.2-alpha.ps1
 /v0.0.2-alpha.2.ps1
 /v0.0.2-alpha.1.ps1
+/v0.0.2-alpha.3.ps1
+/_tests/
+/security/
+/gflux/aspect/
+/gflux/obs/sbj/channel.go

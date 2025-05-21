@@ -5,15 +5,15 @@ package arrays
 import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/internal/tests"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"reflect"
 	"testing"
 )
 
 func TestReverse(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Testing with primitives
 	arr := []int{1, 2, 3, 4, 5}
@@ -25,9 +25,9 @@ func TestReverse(t *testing.T) {
 
 	// Testing with Objects
 	arr2, cp := random.Struct[tests.Comparable](5).Duplicate()
-	Reverse(arr2)
+	Reverse[tests.Comparable](arr2.Values())
 	tt.StackLogf("Reverse() = %v\n", arr2)
-	if !IsReversed(arr2, cp) {
+	if !IsReversed(arr2.Values(), cp.Values()) {
 		tt.Errorf("Reverse() = %v, want %v", arr2, cp)
 	}
 
@@ -189,7 +189,7 @@ func div(acc, v int) int {
 
 func TestHigher(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
 		name     string
@@ -220,7 +220,7 @@ func TestHigher(t *testing.T) {
 
 func TestLower(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
 		name     string
@@ -251,7 +251,7 @@ func TestLower(t *testing.T) {
 
 func TestKadane(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
 		name     string
@@ -282,7 +282,7 @@ func TestKadane(t *testing.T) {
 
 func TestMajority(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
 		name     string

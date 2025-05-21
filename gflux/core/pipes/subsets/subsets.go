@@ -172,14 +172,14 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 //	op := make([]T, len(arr)-2)
 //	sen := sentinels.Double(0, 1)
 //
-//	for sen.Right.Less(len(arr)) {
-//		op, _ = Of(arr, sen.Left.Val(), sen.Right.Val())
-//		if filter(op, arr[sen.Left.Val()], arr[sen.Right.Val()]) {
-//			filtered = append(filtered, tuple.NewPair(arr[sen.Left.Val()], arr[sen.Right.Val()]))
-//			sen.Left.Next()
-//			sen.Right.Next()
+//	for sen.RightChild.TryLess(len(arr)) {
+//		op, _ = Of(arr, sen.LeftChild.Val(), sen.RightChild.Val())
+//		if filter(op, arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]) {
+//			filtered = append(filtered, tuple.NewPair(arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]))
+//			sen.LeftChild.Next()
+//			sen.RightChild.Next()
 //		} else {
-//			sen.Right.Next()
+//			sen.RightChild.Next()
 //		}
 //	}
 //	return filtered
@@ -190,14 +190,14 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 //	op := make([]T, len(arr)-2)
 //	sen := sentinels.Double(0, 1)
 //
-//	for sen.Right.Less(len(arr)) {
-//		op, _ = Of(arr, sen.Left.Val(), sen.Right.Val())
-//		if filter(op, arr[sen.Left.Val()], arr[sen.Right.Val()]) {
-//			filtered = append(filtered, tuple.NewPair(arr[sen.Left.Val()], arr[sen.Right.Val()]))
-//			sen.Left.Next()
-//			sen.Right.Next()
+//	for sen.RightChild.TryLess(len(arr)) {
+//		op, _ = Of(arr, sen.LeftChild.Val(), sen.RightChild.Val())
+//		if filter(op, arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]) {
+//			filtered = append(filtered, tuple.NewPair(arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]))
+//			sen.LeftChild.Next()
+//			sen.RightChild.Next()
 //		} else {
-//			sen.Right.Next()
+//			sen.RightChild.Next()
 //		}
 //	}
 //	return filtered
@@ -206,13 +206,13 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 //func Aggregator[T any](arr []T, filter func(left, right T) bool) []*tuple.Pair[T, T] {
 //	var filtered []*tuple.Pair[T, T]
 //	sen := sentinels.Double(0, 1)
-//	for sen.Right.Less(len(arr)) {
-//		if filter(arr[sen.Left.Val()], arr[sen.Right.Val()]) {
-//			filtered = append(filtered, tuple.NewPair(arr[sen.Left.Val()], arr[sen.Right.Val()]))
-//			sen.Left.Next()
-//			sen.Right.Next()
+//	for sen.RightChild.TryLess(len(arr)) {
+//		if filter(arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]) {
+//			filtered = append(filtered, tuple.NewPair(arr[sen.LeftChild.Val()], arr[sen.RightChild.Val()]))
+//			sen.LeftChild.Next()
+//			sen.RightChild.Next()
 //		} else {
-//			sen.Right.Next()
+//			sen.RightChild.Next()
 //		}
 //	}
 //	return filtered

@@ -26,7 +26,7 @@ type OfNodes[B any, N any] interface {
 	Nodes() []N
 }
 
-type OfUnsortedNodes[N nodes.Node[V], V any] OfNodes[OfUnsortedNodes[N, V], N]
+type OfUnsortedNodes[N nodes.Typed[V], V any] OfNodes[OfUnsortedNodes[N, V], N]
 
 type OfSerialized[B any, D any, S prim.Serializable] interface {
 	Of[B, D]

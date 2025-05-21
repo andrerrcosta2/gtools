@@ -1,6 +1,4 @@
-// Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
-
-package internal
+package typeutil
 
 const (
 	Alphabet     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"

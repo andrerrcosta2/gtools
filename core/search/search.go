@@ -3,5 +3,5 @@
 package search
 
 type Search[T any] interface {
-	Search([]T, T) int
+	Search([]T, T) (int, bool)
 }

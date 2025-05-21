@@ -6,15 +6,15 @@ import (
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
+	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"testing"
 )
 
-// TestSortableOfMap_PutAndGet tests the Put and Get methods of the SortableOfMap
+// TestSortableOfMap_PutAndGet tests the Put and Get methods of the sortableOfMap
 func TestSortableOfMap_PutAndGet(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
 
@@ -37,10 +37,10 @@ func TestSortableOfMap_PutAndGet(t *testing.T) {
 	tt.PrintLogStack()
 }
 
-// TestSortableOfMap_Delete tests the Delete method of the SortableOfMap
+// TestSortableOfMap_Delete tests the Delete method of the sortableOfMap
 func TestSortableOfMap_Delete(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
 
@@ -58,10 +58,10 @@ func TestSortableOfMap_Delete(t *testing.T) {
 	tt.PrintLogStack()
 }
 
-// TestSortableOfMap_Contains tests the Contains method of the SortableOfMap
+// TestSortableOfMap_Contains tests the Contains method of the sortableOfMap
 func TestSortableOfMap_Contains(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
 
@@ -80,10 +80,10 @@ func TestSortableOfMap_Contains(t *testing.T) {
 	tt.PrintLogStack()
 }
 
-// TestSortableOfMap_LenAndClear tests the Len and Clear methods of the SortableOfMap
+// TestSortableOfMap_LenAndClear tests the Len and Clear methods of the sortableOfMap
 func TestSortableOfMap_LenAndClear(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
 
@@ -110,10 +110,10 @@ func TestSortableOfMap_LenAndClear(t *testing.T) {
 	tt.PrintLogStack()
 }
 
-// TestSortableOfMap_Iterator tests the Iterator method of the SortableOfMap
+// TestSortableOfMap_Iterator tests the Iterator method of the sortableOfMap
 func TestSortableOfMap_Iterator(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
 

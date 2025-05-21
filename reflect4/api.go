@@ -4,7 +4,7 @@ package reflect4
 
 import (
 	"github.com/andrerrcosta2/gtools/reflect4/internal/handlers/data"
-	"github.com/andrerrcosta2/gtools/reflect4/read"
+	"github.com/andrerrcosta2/gtools/reflect4/opts/read"
 	"reflect"
 )
 
@@ -17,7 +17,7 @@ func CopyOf[T any](v T, deep bool) (T, error) {
 		return data.DeepCopy(v)
 	}
 
-	// Perform a shallow copy of the interf
+	// Perform a shallow copy of the interface
 	return data.ShallowCopy(v)
 }
 

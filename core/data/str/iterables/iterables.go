@@ -3,10 +3,12 @@
 package iterables
 
 import (
+	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"math/rand"
+	"sort"
 	"sync"
 )
 
@@ -24,8 +26,8 @@ type Slice[G any] []G
 // After returns a new slice with all elements after the given index.
 // It takes an integer i as an argument and returns a slice of type Slice[N].
 func (s *Slice[G]) After(i int) *Slice[G] {
-	a := (*s)[i:]
-	return &a
+	*s = (*s)[i:]
+	return s
 }
 
 // Append appends the given values to the end of the slice.
@@ -34,6 +36,27 @@ func (s *Slice[G]) After(i int) *Slice[G] {
 func (s *Slice[G]) Append(v ...G) *Slice[G] {
 	// Append the values to the slice
 	*s = append(*s, v...)
+	// Return the same slice
+	return s
+}
+
+func (s *Slice[G]) Async(fn func(i int, v G), maxParallels int) *Slice[G] {
+	// Create a Semaphore to limit the number of concurrent operations
+	smp := make(chan struct{}, maxParallels)
+
+	// Iterate over the slice and call the function for each element in a goroutine
+	for i, v := range *s {
+		// Call the function in a goroutine
+		go func(i int, v G) {
+			// Acquire the Semaphore
+			smp <- struct{}{}
+			// Call the function with the index and value
+			fn(i, v)
+			// Release the Semaphore
+			<-smp
+		}(i, v)
+	}
+
 	// Return the same slice
 	return s
 }
@@ -52,30 +75,29 @@ func (s *Slice[G]) At(i int) G {
 // Before returns a new slice with all elements before the given index.
 // It takes an integer i as an argument and returns a slice of type Slice[N].
 func (s *Slice[G]) Before(i int) *Slice[G] {
-	a := (*s)[:i]
-	return &a
+	*s = (*s)[:i]
+	return s
 }
 
 // Between returns a new slice with all elements between the given indices.
 // It takes two integers i and j as arguments and returns a slice of type Slice[N].
 func (s *Slice[G]) Between(i, j int) *Slice[G] {
-	a := (*s)[i:j]
-	return &a
+	*s = (*s)[i:j]
+	return s
 }
 
 // Duplicate returns two slices, one with the same elements as the original slice,
 // and the other with a copy of the original slice.
 // It takes no arguments and returns two slices of type Slice[N].
-func (s *Slice[G]) Duplicate() (Slice[G], Slice[G]) {
+func (s *Slice[G]) Duplicate() (*Slice[G], *Slice[G]) {
 	// Create a new slice with the same length as the original
-	work := *s
-	newSlice := make(Slice[G], len(work))
+	newSlice := make(Slice[G], s.Len())
 
 	// Copy the elements from the original slice to the new slice
-	copy(newSlice, work)
+	copy(newSlice, *s)
 
 	// Return the original slice and the new slice
-	return newSlice, work
+	return &newSlice, s
 }
 
 // Each calls the given function for each element in the slice, passing the value to the function.
@@ -111,7 +133,7 @@ func (s *Slice[G]) EachN(fn functions.BiConsumer[int, G]) *Slice[G] {
 // The elements order in the new slice is the same as in the original slice.
 func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
-	newSlice := make(Slice[G], 0, len(*s))
+	newSlice := make([]G, 0, s.Len())
 	// Iterate over the original slice
 	for _, v := range *s {
 		// Check if the current element satisfies the predicate
@@ -121,7 +143,7 @@ func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
 		}
 	}
 	// Return the new slice
-	return &newSlice
+	return &Slice[G]{}
 }
 
 // FilterN creates a new slice with all elements that pass the test implemented by the provided function.
@@ -141,6 +163,27 @@ func (s *Slice[G]) FilterN(fn functions.BiPredicate[int, G]) *Slice[G] {
 	}
 	// Return the new slice
 	return &newSlice
+}
+
+// First returns the first element of the slice and whether the value exists.
+func (s *Slice[G]) First() (first G, ok bool) {
+	if s.IsEmpty() {
+		return
+	}
+	return (*s)[0], true
+}
+
+// IsEmpty returns true if the slice is empty, false otherwise.
+func (s *Slice[G]) IsEmpty() bool {
+	return len(*s) == 0
+}
+
+// Last returns the last element of the slice and whether the value exists.
+func (s *Slice[G]) Last() (last G, ok bool) {
+	if s.IsEmpty() {
+		return
+	}
+	return (*s)[len(*s)-1], true
 }
 
 // Len returns the length of the slice.
@@ -219,6 +262,25 @@ func (s *Slice[G]) Rand() G {
 	return (*s)[randIndex]
 }
 
+// RemoveAt returns a new slice with the element at the given index removed.
+// It takes an integer i as an argument and returns a slice of type Slice[N].
+func (s *Slice[G]) RemoveAt(i int) *Slice[G] {
+	a := (*s)[:i]
+	*s = append(a, (*s)[i+1:]...)
+	return s
+}
+
+// Remove returns a new slice with the first element that satisfies the given predicate removed.
+// It takes a Predicate function as an argument and returns a slice of type Slice[N].
+func (s *Slice[G]) Remove(v G, compare functions.BiFunction[G, G, int]) (*Slice[G], bool) {
+	for i := 0; i < s.Len(); i++ {
+		if compare((*s)[i], v) == 0 {
+			return s.RemoveAt(i), true
+		}
+	}
+	return s, false
+}
+
 // Some returns a new slice with n random elements from the original slice.
 // It takes an integer n as an argument and returns a slice of type Slice[N].
 // If n is greater than the length of the original slice, it will return a slice with the same length as the original slice.
@@ -245,6 +307,30 @@ func (s *Slice[G]) Some(n int) *Slice[G] {
 	// Return the first n elements of the shuffled slice
 	result := copySlice[:n]
 	return &result
+}
+
+// Sort sorts the slice using the given less function.
+func (s *Slice[G]) Sort(less functions.BiPredicate[G, G]) *Slice[G] {
+	sort.SliceStable(*s, func(i, j int) bool {
+		return less((*s)[i], (*s)[j])
+	})
+	return s
+}
+
+// ToSet returns a new slice with all unique elements from the original slice.
+// It requires a comparators.KeyTyped[G, string] function as an argument.
+func (s *Slice[G]) ToSet(cmp comparators.KeyTyped[G, string]) *Slice[G] {
+	// Sort the slice using the given less function
+	values := make(map[string]bool)
+	set := make(Slice[G], 0, s.Len())
+	for _, v := range *s {
+		hash := cmp.Hash(v)
+		if !values[hash] {
+			values[hash] = true
+			set = append(set, v)
+		}
+	}
+	return &set
 }
 
 // Values returns the underlying slice of values.
@@ -297,6 +383,12 @@ func (m *Map[K, V]) Each(fn functions.BiConsumer[K, V]) *Map[K, V] {
 	return m
 }
 
+// IsEmpty checks if the map is empty.
+// It returns a boolean indicating if the map is empty.
+func (m *Map[K, V]) IsEmpty() bool {
+	return len(*m) == 0
+}
+
 // Len returns the number of key-value pairs in the map.
 // It returns the number of entries in the map.
 func (m *Map[K, V]) Len() int {
@@ -324,7 +416,7 @@ func (m *Map[K, V]) Operation(fn functions.BiConsumer[K, *Map[K, V]]) *Map[K, V]
 func (m *Map[K, V]) Parallel(fn functions.BiConsumer[K, V], maxParallels int) *Map[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
-	// Set the maximum number of goroutines to run concurrently
+	// ToSet the maximum number of goroutines to run concurrently
 	smp := make(chan struct{}, maxParallels)
 	// Increase the waiting group
 	wg.Add(m.Len())
@@ -455,6 +547,12 @@ func (m *SliceMap[K, V]) EachSlice(fn functions.BiConsumer[K, *[]V]) *SliceMap[K
 	return m
 }
 
+// IsEmpty checks if the map is empty.
+// It returns a boolean indicating if the map is empty.
+func (m *SliceMap[K, V]) IsEmpty() bool {
+	return len(*m) == 0
+}
+
 // Len returns the number of key-value pairs in the map.
 // It returns an integer representing the number of entries in the map.
 func (m *SliceMap[K, V]) Len() int {
@@ -495,7 +593,7 @@ func (m *SliceMap[K, V]) Operation(fn functions.BiConsumer[K, *SliceMap[K, V]]) 
 func (m *SliceMap[K, V]) Parallel(fn functions.BiConsumer[K, []V], maxParallels int) *SliceMap[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
-	// Set the maximum number of goroutines to run concurrently
+	// ToSet the maximum number of goroutines to run concurrently
 	smp := make(chan struct{}, maxParallels)
 	// Increase the waiting group
 	wg.Add(m.Len())

@@ -5,7 +5,6 @@ package tries
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
@@ -25,7 +24,7 @@ type E = str.Entry[K, []S]
 // It also tests if an invalid dictionary returns an error.
 func TestPatternTrie_Build(t *testing.T) {
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// building a valid newPatternTrie
 	trie, err := OfPatternsFrom(linearOpenSymbolsDictionary, false, 6, 12)
@@ -129,7 +128,7 @@ func TestPatternTrie_SearchConcurrently_BasicSearch(t *testing.T) {
 func TestPatternTrie_SearchConcurrently_PlaceholderSymbols(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// logger tools
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie, err := OfPatternsFrom(dictionaryWithPlaceholders, false, 12, 12)
 
@@ -168,7 +167,7 @@ func TestPatternTrie_SearchConcurrently_PlaceholderSymbols(t *testing.T) {
 // TestPatternTrie_DeleteConcurrently tests the deletion of symbols on a trie concurrently.
 func TestPatternTrie_DeleteConcurrently(t *testing.T) {
 	// logger tools
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create by a linear dictionary of 10 symbols
 	trie, err := OfPatternsFrom(linearOpenSymbolsDictionary, false, 2, 10)
@@ -218,7 +217,7 @@ func TestPatternTrie_DeleteConcurrently(t *testing.T) {
 func TestPatternTrie_EdgeCases_Build_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggersLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// build a valid trie
 	trie, err := OfPatternsFrom(edgeValidDictionary, false, 5, 10)
@@ -244,7 +243,7 @@ func TestPatternTrie_EdgeCases_Build_EdgeValidDictionary(t *testing.T) {
 func TestPatternTrie_EdgeCases_InsertConcurrently_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Insert_FullValidDictionary")
 
@@ -279,7 +278,7 @@ func TestPatternTrie_EdgeCases_InsertConcurrently_EdgeValidDictionary(t *testing
 func TestPatternTrie_EdgeCases_DeleteConcurrently_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
 	// helper
-	tt := testingtools.LoggableToolsLite(t, gtests.LogOnFailure)
+	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Delete_FullValidDictionary")
 

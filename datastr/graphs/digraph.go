@@ -41,7 +41,7 @@ var _ str.GraphOf[gtools.SortableOf, edges.SortableSingleTyped[gtools.SortableOf
 
 // DirectedGraphOf is a basic implementation of a directed graph using an adjacency list.
 type directedGraphOf[G gtools.SortableOf] struct {
-	adj *maps.SortableOfMap[G, []G]
+	adj str.Map[G, []G]
 }
 
 // AddNode adds a node to the graph.
