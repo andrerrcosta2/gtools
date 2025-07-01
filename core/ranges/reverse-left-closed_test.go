@@ -3,7 +3,7 @@
 package ranges
 
 import (
-	"github.com/andrerrcosta2/gtools/core/internal/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 	"testing"
 )
 
@@ -76,7 +76,7 @@ func TestReverseLeftClosedRange(t *testing.T) {
 					results = append(results, r.Current())
 				}
 			}
-			assertlite.ArrayEquals(t, results, tt.expected)
+			assertlite.EqualSlices(t, results, tt.expected)
 		})
 	}
 }

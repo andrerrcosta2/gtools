@@ -5,6 +5,9 @@ package random
 import (
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
 	"github.com/andrerrcosta2/gtools/core/domain/validators"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/cat"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/lite"
+	"github.com/andrerrcosta2/gtools/core/util/casters"
 	"reflect"
 )
 
@@ -13,16 +16,33 @@ func Validated[T any](v validators.Typed[T], q int) *iterables.Slice[T] {
 	if q <= 0 {
 		return iterables.OfSlice[T]()
 	}
-	var zero T
-	typx := reflect.TypeOf(zero)
+	t := reflect.TypeOf((*T)(nil)).Elem()
 	result := make(iterables.Slice[T], q)
-	for i := 0; i < q; i++ {
-		// That seems a little bit overcautious from golang compiler to me.
-		// Fortunately the optimizations of golang compiler reduces the overhead
-		// here close to zero.
-		if rnd, ok := randOf(typx).(T); ok {
-			result[i] = rnd
+	switch cat.CastMethod(t) {
+	case cat.Any:
+		for i := 0; i < q; i++ {
+			rdn := lite.RandAny()
+			result[i] = rdn.(T)
 		}
+		break
+	case cat.Injectable:
+		for i := 0; i < q; i++ {
+			var zero T
+			result[i] = zero
+		}
+		break
+	case cat.Reference:
+		for i := 0; i < q; i++ {
+			rdn := lite.RandOf(t)
+			result[i] = casters.UnsafeReferenceOf[T](rdn)
+		}
+		break
+	default:
+		for i := 0; i < q; i++ {
+			rdn := lite.RandOf(t)
+			result[i] = casters.UnsafeValueOf[T](rdn)
+		}
+		break
 	}
 	return &result
 }

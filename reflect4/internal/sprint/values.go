@@ -25,73 +25,57 @@ import (
 	"strings"
 )
 
-func Value(tab indent.Tab, value reflect.Value) (string, error) {
-	return vl(tab, value, tracker.Sprint())
+func Of(tab indent.Tab, value reflect.Value) (string, error) {
+	return sprintOf(tab, value, tracker.Sprint())
 }
 
-func vl(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
+func sprintOf(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
 	if !value.IsValid() {
 		return "invalid type: <invalid>", gerrors.NewError(gerrors.Input_err, reflect4.ErrInvalidValue)
 	}
 
 	if value.Kind() <= reflect.Complex128 || value.Kind() == reflect.String {
-		return pr(tab, value), nil
+		return sprintPrimitive(tab, value), nil
 	}
 
 	switch value.Kind() {
 	case reflect.Array:
-		return ar(tab, value, t)
+		return sprintArray(tab, value, t)
 	case reflect.Chan:
-		return ch(tab, value), nil
+		return sprintChan(tab, value), nil
 	case reflect.Func:
-		return fn(tab, value), nil
+		return sprintFunc(tab, value), nil
 	case reflect.Interface:
-		return in(tab, value, t)
+		return sprintInterface(tab, value, t)
 	case reflect.Map:
-		return mp(tab, value, t)
+		return sprintMap(tab, value, t)
 	case reflect.Ptr:
-		return pt(tab, value, t)
+		return sprintPointer(tab, value, t)
 	case reflect.Slice:
-		return sl(tab, value, t)
+		return sprintSlice(tab, value, t)
 	case reflect.Struct:
-		return st(tab, value, t)
+		return sprintStruct(tab, value, t)
 	case reflect.UnsafePointer:
-		return up(tab, value, t)
+		return sprintUnsafePointer(tab, value, t)
 	default:
 		return sprints.Errorf(tab, "invalid type: %s", value.Kind().String()), nil
 	}
 }
 
-// ar extracts the sprint from an array
-func ar(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
-		return cache, err
-	}
-
+// sprintArray extracts the sprint from an array
+func sprintArray(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
+	// Arrays aren't underlying pointers. So only its values can present cyclic references.
 	name, _ := arrays.Name(value.Type())
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
 
 	sb := strings.Builder{}
 	if value.Len() == 0 {
-		res := tab.Sprint(name + "[<empty>]")
-		err = t.Mark(value, res)
-		if err != nil {
-			return sprints.Errorf(tab, "%s", err), err
-		}
-		return res, nil
+		return tab.Sprint(name + "[<empty>]"), nil
 	}
 	sb.WriteString(tab.Sprint(name) + "[")
 
 	for i := 0; i < value.Len(); i++ {
 		elem := value.Index(i)
-		v, err := vl(tab.Inc(), elem, t)
+		v, err := sprintOf(tab.Inc(), elem, t)
 		if err != nil {
 			return "", err
 		}
@@ -99,87 +83,67 @@ func ar(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, 
 	}
 
 	sb.WriteString("\n" + tab.Sprint("]"))
-	res := sb.String()
-	err = t.Mark(value, res)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	return res, nil
+	return sb.String(), nil
 }
 
-// ch extracts the sprint from a channel
-func ch(tab indent.Tab, value reflect.Value) string {
+// sprintChan extracts the sprint from a channel
+func sprintChan(tab indent.Tab, value reflect.Value) string {
 	name, _ := chans.Name(value.Type())
 	if value.IsNil() {
 		return sprints.NilType(tab, name)
 	}
-	return name
+	return tab.Sprint(name)
 }
 
-// fd extracts the sprint from a field
-func fd(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
+// sprintField extracts the sprint from a field
+func sprintField(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
 	// CanInterface() means:
 	// - Calling .Interface() is safe (won't panic).
 	// - The value is exported.
 	// - If value is a pointer, calling .Interface() gives you that pointer wrapped inside interface{}.
 	// - If value is a non-pointer value, .Interface() gives you a copy of that value inside interface{}.
 	if value.CanInterface() || value.CanAddr() {
-		return vl(tab, value, t)
+		return sprintOf(tab, value, t)
 	}
 
 	// If neither CanInterface() nor CanAddr() is true, the value:
 	// - Is unexported (hence unsafe to use .Interface()).
 	// - Is not directly addressable.
 	// - We must use unsafe.Pointer and reflect.NewAt() to access it.
-	return vl(tab.Inc(), values.OfUnaddr(value).Elem(), t)
+	return sprintOf(tab.Inc(), values.OfUnaddr(value).Elem(), t)
 }
 
-func in(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
-		return cache, err
-	}
-
+func sprintInterface(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
+	// interfaces aren't underlying pointers
 	name, _ := interfaces.Name(value.Type())
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	val, err := vl(tab.Inc(), value.Elem(), t)
+	// so we forward the tracker to the recursive function
+	val, err := sprintOf(tab.Inc(), value.Elem(), t)
 	if err != nil {
 		return "", err
 	}
-	res := tab.Sprintf("%s(%s)", name, val)
-	err = t.Mark(value, res)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	return res, nil
+	return tab.Sprintf("%s{\n%s\n%s}", name, val, tab.String()), nil
 }
 
-// fn extracts the sprint from a function
-func fn(tab indent.Tab, value reflect.Value) string {
+// sprintFunc extracts the sprint from a function
+func sprintFunc(tab indent.Tab, value reflect.Value) string {
 	name, _ := funcs.Name(value.Type())
 	return tab.Sprint(name)
 }
 
-// mp extracts the sprint from a map
-func mp(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
+// sprintMap extracts the sprint from a map
+func sprintMap(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
 	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
 		return cache, err
 	}
 
-	name, _ := maps.Name(value.Type())
-	addr, err := pointers.Of(value)
+	addr, err := pointers.AddrOf(value)
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}
 	// The correct approach is to mark it as cycle early and replace it on the same level
-	// before the return. Because it isn't a cycle just because it will be printed
-	// again later.
+	// before the return.
+	// Because it isn't a cycle just because it'll be printed again later.
+	name, _ := maps.Name(value.Type())
 	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
@@ -206,26 +170,26 @@ func mp(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, 
 	}
 
 	// Sort the map keys alphabetically
-	var keys []string
+	var keys []reflect.Value
 	for _, key := range value.MapKeys() {
-		keys = append(keys, key.String())
+		keys = append(keys, key)
 	}
-	sort.Strings(keys)
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i].String() < keys[j].String()
+	})
 
 	// Start building the map representation
 	sb.WriteString(tab.Sprint(name) + "{")
 	for _, key := range keys {
 		// Get the value for each sorted key
-		val := value.MapIndex(reflect.ValueOf(key))
-
-		// Print the key-value pair
-		k, err := vl(tab.Inc(), reflect.ValueOf(key), t)
+		val := value.MapIndex(key)
+		k, err := sprintOf(tab.Inc(), key, t)
 		if err != nil {
 			return "", err
 		}
 		sb.WriteString("\n" + k)
 		sb.WriteString(": ")
-		v, err := vl(tab.Inc(), val, t)
+		v, err := sprintOf(tab.Inc(), val, t)
 		if err != nil {
 			return "", err
 		}
@@ -241,37 +205,34 @@ func mp(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, 
 	return res, nil
 }
 
-func pt(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
+func sprintPointer(tab indent.Tab, v reflect.Value, t *tracker.SprintTracker) (string, error) {
+	if cache, hasCache, err := handleCache(tab, v, t); hasCache {
 		return cache, err
 	}
 
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	name, _ := pointers.Name(value.Type())
+	addr := v.Pointer()
+	name, _ := pointers.Name(v.Type())
 	// The correct approach is to mark it as cycle early and replace it on the same level
 	// before the return. Because it isn't a cycle just because it will be printed
 	// again later.
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
+	err := t.Mark(v, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}
-	if value.IsNil() {
+	if v.IsNil() {
 		res := sprints.NilType(tab, name)
-		err = t.Mark(value, res)
+		err = t.Mark(v, res)
 		if err != nil {
 			return sprints.Errorf(tab, "%s", err), err
 		}
 		return res, nil
 	}
-	val, err := vl(tab, value.Elem(), t)
-	return "*" + strings.TrimSpace(val), err
+	val, err := sprintOf(tab, v.Elem(), t)
+	return tab.Sprintf("*%s", strings.TrimSpace(val)), err
 }
 
-// pr extracts a sprint from a primitive
-func pr(tab indent.Tab, s reflect.Value) string {
+// sprintPrimitive extracts a sprint from a primitive
+func sprintPrimitive(tab indent.Tab, s reflect.Value) string {
 	name, _ := primitives.Name(s.Type())
 	switch s.Kind() {
 	case reflect.Bool:
@@ -291,36 +252,33 @@ func pr(tab indent.Tab, s reflect.Value) string {
 	}
 }
 
-// sl extracts the sprint from a slice
-func sl(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
+// sprintSlice extracts the sprint from a slice
+func sprintSlice(tab indent.Tab, v reflect.Value, t *tracker.SprintTracker) (string, error) {
+	if cache, hasCache, err := handleCache(tab, v, t); hasCache {
 		return cache, err
 	}
 
-	name, _ := slices.Name(value.Type())
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
+	name, _ := slices.Name(v.Type())
+	addr := v.Pointer()
 	// The correct approach is to mark it as cycle early and replace it on the same level
 	// before the return. Because it isn't a cycle just because it will be printed
 	// again later.
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
+	err := t.Mark(v, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}
 	sb := strings.Builder{}
-	if value.IsNil() {
+	if v.IsNil() {
 		res := sprints.NilType(tab, name)
-		err = t.Mark(value, res)
+		err = t.Mark(v, res)
 		if err != nil {
 			return sprints.Errorf(tab, "%s", err), err
 		}
 		return res, nil
 	}
-	if value.Len() == 0 {
+	if v.Len() == 0 {
 		res := sprints.Closedobj(tab, name)
-		err = t.Mark(value, res)
+		err = t.Mark(v, res)
 		if err != nil {
 			return sprints.Errorf(tab, "%s", err), err
 		}
@@ -328,8 +286,8 @@ func sl(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, 
 	}
 	sb.WriteString(tab.Sprint(name + "["))
 
-	for i := 0; i < value.Len(); i++ {
-		elem, err := vl(tab.Inc(), value.Index(i), t)
+	for i := 0; i < v.Len(); i++ {
+		elem, err := sprintOf(tab.Inc(), v.Index(i), t)
 		if err != nil {
 			return "", err
 		}
@@ -338,82 +296,55 @@ func sl(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, 
 
 	sb.WriteString("\n" + tab.Sprint("]"))
 	res := sb.String()
-	err = t.Mark(value, res)
+	err = t.Mark(v, res)
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}
 	return res, nil
 }
 
-// st extracts the sprint from a struct
-func st(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
-		return cache, err
-	}
-
-	name, _ := structs.Name(value.Type())
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	// The correct approach is to mark it as cycle early and replace it on the same level
-	// before the return. Because it isn't a cycle just because it will be printed
-	// again later.
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	if value.NumField() == 0 {
-		res := sprints.BClosedobj(tab, name)
-		err = t.Mark(value, res)
-		if err != nil {
-			return sprints.Errorf(tab, "%s", err), err
-		}
-		return res, nil
+// sprintStruct extracts the sprint from a struct
+func sprintStruct(tab indent.Tab, v reflect.Value, t *tracker.SprintTracker) (string, error) {
+	// structs aren't underlying pointers.
+	name, _ := structs.Name(v.Type())
+	if v.NumField() == 0 {
+		return sprints.BClosedobj(tab, name), nil
 	}
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprint(fmx.SBold(name) + "{"))
 
-	if !value.CanAddr() {
-		value = values.OfUnaddr(value)
+	if !v.CanAddr() {
+		v = values.OfUnaddr(v)
 	}
 
-	for i := 0; i < value.NumField(); i++ {
-		v, err := fd(tab.Inc(), value.Field(i), t)
+	for i := 0; i < v.NumField(); i++ {
+		fv, err := sprintField(tab.Inc(), v.Field(i), t)
 		if err != nil {
 			return sprints.Errorf(tab, "%s", err), err
 		}
-		sb.WriteString(sprints.Ltfield(tab, value.Type().Field(i).Name, v) + ",")
+		sb.WriteString(sprints.Ltfield(tab, v.Type().Field(i).Name, fv) + ",")
 	}
 
 	sb.WriteString("\n" + tab.Sprint("}"))
-	res := sb.String()
-	err = t.Mark(value, res)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
-	return res, nil
+	return sb.String(), nil
 }
 
-func up(tab indent.Tab, value reflect.Value, t *tracker.SprintTracker) (string, error) {
-	if cache, hasCache, err := handleCache(tab, value, t); hasCache {
+func sprintUnsafePointer(tab indent.Tab, v reflect.Value, t *tracker.SprintTracker) (string, error) {
+	if cache, hasCache, err := handleCache(tab, v, t); hasCache {
 		return cache, err
 	}
 
-	name, _ := unsafes.Name(value.Type())
-	addr, err := pointers.Of(value)
-	if err != nil {
-		return sprints.Errorf(tab, "%s", err), err
-	}
+	name, _ := unsafes.Name(v.Type())
+	addr := v.Pointer()
 	// The correct approach is to mark it as cycle early and replace it on the same level
 	// before the return. Because it isn't a cycle just because it will be printed
 	// again later.
-	err = t.Mark(value, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
+	err := t.Mark(v, sprints.CyclicRef(indent.Zero(), name, sprints.Uintptrf(addr)))
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}
 	res := tab.Sprintf("%s<%s>", name, sprints.Uintptrf(addr))
-	err = t.Mark(value, res)
+	err = t.Mark(v, res)
 	if err != nil {
 		return sprints.Errorf(tab, "%s", err), err
 	}

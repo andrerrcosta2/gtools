@@ -45,13 +45,13 @@ func FieldInterfaceOf(v any) FieldInterface {
 	return FieldInterface{i: i[0], field: field}
 }
 
-func xint(v any) (i []reflect.Value, value reflect.Value) {
-	value = reflect.ValueOf(v)
-	for value.Kind() == reflect.Interface {
-		i = append(i, value.Elem())
-		value = i[len(i)-1]
+func IsNil(value reflect.Value) bool {
+	switch value.Kind() {
+	case reflect.Pointer, reflect.Map, reflect.Slice, reflect.Chan, reflect.Func:
+		return value.IsNil()
+	default:
+		return false
 	}
-	return
 }
 
 // OfUnaddr wraps reflect.NewAt() to create a new reflect.Value at an arbitrary memory address.
@@ -62,4 +62,13 @@ func OfUnaddr(value reflect.Value) reflect.Value {
 	ptr.Elem().Set(value)
 	// Return the addressable value
 	return ptr.Elem()
+}
+
+func xint(v any) (i []reflect.Value, value reflect.Value) {
+	value = reflect.ValueOf(v)
+	for value.Kind() == reflect.Interface {
+		i = append(i, value.Elem())
+		value = i[len(i)-1]
+	}
+	return
 }

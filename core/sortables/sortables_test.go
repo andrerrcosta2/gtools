@@ -5,8 +5,8 @@ package sortables
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/domain/gtools"
-	"github.com/andrerrcosta2/gtools/core/internal/testseed"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
 	"testing"
 	"unsafe"
 )

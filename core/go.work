@@ -4,6 +4,8 @@ use (
     ./domain
     ./data
     ./format
+    ./testlite
     ./seeders
+    ./util
 	.
 )

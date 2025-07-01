@@ -13,14 +13,18 @@ require (
 require (
 	github.com/andrerrcosta2/gtools/core/data v0.0.2-alpha.3 // indirect
 	github.com/andrerrcosta2/gtools/core/seeders v0.0.2-alpha.3 // indirect
+	github.com/andrerrcosta2/gtools/core/util v0.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 )
 
 replace (
+	github.com/andrerrcosta2/gtools/core => ../core
 	github.com/andrerrcosta2/gtools/core/data => ../core/data
 	github.com/andrerrcosta2/gtools/core/domain => ../core/domain
 	github.com/andrerrcosta2/gtools/core/format => ../core/format
 	github.com/andrerrcosta2/gtools/core/seeders => ../core/seeders
+	github.com/andrerrcosta2/gtools/core/testlite => ../core/testlite
+	github.com/andrerrcosta2/gtools/core/util => ../core/util
 	github.com/andrerrcosta2/gtools/gtests => ../gtests
 	github.com/andrerrcosta2/gtools/gtests/testingseeds => ../gtests/testingseeds
 	github.com/andrerrcosta2/gtools/gtests/testingtools => ../gtests/testingtools

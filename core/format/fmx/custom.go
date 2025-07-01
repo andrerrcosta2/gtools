@@ -232,6 +232,10 @@ func Printlnf(format string, s ...any) {
 	printer.Printf("\n"+format, s...)
 }
 
+func PrintObj(obj any) {
+	printer.Print(obj)
+}
+
 func Sprint(s ...any) string {
 	return printer.Sprint(s...)
 }

@@ -14,5 +14,5 @@ func Interface(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Interface {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotInterface.Error()), reflect4.ErrNotInterface
 	}
-	return in(tab, v, tracker.Sprint())
+	return sprintInterface(tab, v, tracker.Sprint())
 }

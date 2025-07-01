@@ -14,5 +14,5 @@ func Array(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Array {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotArray.Error()), reflect4.ErrNotArray
 	}
-	return ar(tab, v, tracker.Sprint())
+	return sprintArray(tab, v, tracker.Sprint())
 }

@@ -72,8 +72,9 @@ type FailureLoggableTesting interface {
 }
 
 type SkippableTesting interface {
+	HelperTesting
 	// Skip skips the test
-	Skip(message string)
+	Skip(args ...any)
 }
 
 type LoggableTRunner interface {

@@ -24,6 +24,22 @@ func Name(t reflect.Type) string {
 	return t.String()
 }
 
+// HasDepth returns true if the type has a depth and false if it is a direct value
+func HasDepth(t reflect.Type) bool {
+	for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
+		t = t.Elem()
+	}
+	return t.Kind() == reflect.Struct
+}
+
+// Unwrap unwraps all pointers and interfaces until it reaches a value
+func Unwrap(v reflect.Type) reflect.Type {
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	return v
+}
+
 func unwrapName(t reflect.Type) string {
 	ptr := strings.Builder{}
 	for t.Kind() == reflect.Ptr {

@@ -12,5 +12,5 @@ use (
 	./patterns
 	./reflect4
 	.
-	./gflux/core
+	gflux/core
 )

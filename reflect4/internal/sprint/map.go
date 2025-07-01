@@ -14,5 +14,5 @@ func Map(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Map {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotMap.Error()), reflect4.ErrNotMap
 	}
-	return mp(tab, v, tracker.Sprint())
+	return sprintMap(tab, v, tracker.Sprint())
 }

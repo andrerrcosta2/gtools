@@ -9,7 +9,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/interf"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/pointers"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs"
+	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
@@ -418,7 +418,7 @@ func TestValues_Primitives_EdgeCases(t *testing.T) {
 	})
 }
 
-// TestValues_Arrays tests the Values function with simple arrays
+// TestValues_Arrays tests the Between function with simple arrays
 func TestValues_Arrays(t *testing.T) {
 	zero := indent.Zero()
 
@@ -1198,8 +1198,8 @@ func TestValues_Pointers(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name:   "Equal Cyclic pointers",
-			a:      reflect.ValueOf(structs.CyclicSimpleNode(36, 38)),
-			b:      reflect.ValueOf(structs.CyclicSimpleNode(36, 38)),
+			a:      reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
+			b:      reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
 			diff:   "",
 			equals: true,
 			err:    nil,
@@ -1209,8 +1209,8 @@ func TestValues_Pointers(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name: "Cyclic pointers with different values",
-			a:    reflect.ValueOf(structs.CyclicSimpleNode(36, 38)),
-			b:    reflect.ValueOf(structs.CyclicSimpleNode(38, 36)),
+			a:    reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
+			b:    reflect.ValueOf(models.CyclicSimpleNode(38, 36)),
 			diff: differs.Chain(zero, differs.Pointers(zero), differs.StructFields(zero, "Next"),
 				differs.Pointers(zero), differs.StructFields(zero, "Value"), differs.InterfaceImpl(zero),
 				differs.Values(zero, sprints.Typed("int", 38), sprints.Typed("int", 36))),
@@ -1222,8 +1222,8 @@ func TestValues_Pointers(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name: "Cyclic linked list with different values",
-			a:    reflect.ValueOf(structs.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
-			b:    reflect.ValueOf(structs.CyclicLinkedList("innerA", "innerB", "innerC", "innerE")),
+			a:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
+			b:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerE")),
 			diff: differs.Message(differs.Chain(zero, differs.Pointers(zero), differs.StructFields(zero, "Head"),
 				differs.Pointers(zero), differs.StructFields(zero, "Left"),
 				differs.Pointers(zero), differs.StructFields(zero, "Value"),
@@ -1520,10 +1520,10 @@ func TestValues_Structs(t *testing.T) {
 	})
 
 	// Edge cases
-	t.Run("Structs with nested structs", func(t *testing.T) {
+	t.Run("StructsPtr with nested structs", func(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name: "Structs with nested structs",
+			name: "StructsPtr with nested structs",
 			a:    reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{25}}),
 			b:    reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{30}}),
 			diff: differs.Chain(zero, differs.StructFields(zero, "Info"),
@@ -1533,10 +1533,10 @@ func TestValues_Structs(t *testing.T) {
 			err:    nil,
 		})
 	})
-	t.Run("Structs with slices", func(t *testing.T) {
+	t.Run("StructsPtr with slices", func(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name: "Structs with slices",
+			name: "StructsPtr with slices",
 			a:    reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 3}}),
 			b:    reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 4}}),
 			diff: differs.Chain(zero, differs.StructFields(zero, "Numbers"), differs.SliceValues(zero, 2),
@@ -1545,10 +1545,10 @@ func TestValues_Structs(t *testing.T) {
 			err:    nil,
 		})
 	})
-	t.Run("Structs with unexported fields", func(t *testing.T) {
+	t.Run("StructsPtr with unexported fields", func(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name: "Structs with unexported fields",
+			name: "StructsPtr with unexported fields",
 			a:    reflect.ValueOf(struct{ name string }{"Alice"}),
 			b:    reflect.ValueOf(struct{ name string }{"Bob"}),
 			diff: differs.Message(differs.Append(zero, differs.StructFields(zero, "name"),
@@ -1557,12 +1557,12 @@ func TestValues_Structs(t *testing.T) {
 			err:    nil,
 		})
 	})
-	t.Run("Structs with cyclic references", func(t *testing.T) {
+	t.Run("StructsPtr with cyclic references", func(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:   "Structs with cyclic references",
-			a:      reflect.ValueOf(structs.CyclicSimpleNode(42, 43)),
-			b:      reflect.ValueOf(structs.CyclicSimpleNode(42, 43)),
+			name:   "StructsPtr with cyclic references",
+			a:      reflect.ValueOf(models.CyclicSimpleNode(42, 43)),
+			b:      reflect.ValueOf(models.CyclicSimpleNode(42, 43)),
 			diff:   differs.Empty(zero),
 			equals: true,
 			err:    nil,
@@ -1600,10 +1600,10 @@ func TestValues_UnsafePointers(t *testing.T) {
 		tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name: "Different unsafe.Pointers",
-			a:    reflect.ValueOf(pointers.Unsafe(structs.ZeroOneDataInst)),
-			b:    reflect.ValueOf(pointers.Unsafe(structs.ZeroSimpleInst)),
-			diff: zero.Smarkf(differs.UnsafePointersAddr(zero, sprints.UnsafeAddrf(pointers.Unsafe(structs.ZeroOneDataInst)),
-				sprints.UnsafeAddrf(pointers.Unsafe(structs.ZeroSimpleInst)))),
+			a:    reflect.ValueOf(pointers.Unsafe(models.OneDataZeroInst)),
+			b:    reflect.ValueOf(pointers.Unsafe(models.SimpleZeroInst)),
+			diff: zero.Smarkf(differs.UnsafePointersAddr(zero, sprints.UnsafeAddrf(pointers.Unsafe(models.OneDataZeroInst)),
+				sprints.UnsafeAddrf(pointers.Unsafe(models.SimpleZeroInst)))),
 			equals: false,
 			err:    nil,
 		})

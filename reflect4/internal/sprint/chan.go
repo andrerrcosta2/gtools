@@ -13,5 +13,5 @@ func Chan(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Chan {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotChan.Error()), reflect4.ErrNotChan
 	}
-	return ch(tab, v), nil
+	return sprintChan(tab, v), nil
 }

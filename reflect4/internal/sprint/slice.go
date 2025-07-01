@@ -14,5 +14,5 @@ func Slice(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Slice {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotSlice.Error()), reflect4.ErrNotSlice
 	}
-	return sl(tab, v, tracker.Sprint())
+	return sprintSlice(tab, v, tracker.Sprint())
 }

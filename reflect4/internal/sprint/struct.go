@@ -17,7 +17,7 @@ func Struct(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Struct {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotStruct.Error()), reflect4.ErrNotStruct
 	}
-	return st(tab, v, tracker.Sprint())
+	return sprintStruct(tab, v, tracker.Sprint())
 }
 
 // Fields returns a formatted sprint of the given struct fields

@@ -17,7 +17,7 @@ func Struct(tab indent.Tab, a, b reflect.Value) (diff string, isDiff bool, err e
 	if b.Kind() != reflect.Struct {
 		return differs.TypesMismatch(tab, b.Kind().String(), reflect.Struct.String()), true, nil
 	}
-	differ := st(tab, a, b, tracker.Diff())
+	differ := differStructs(tab, a, b, tracker.Diff())
 	message := differs.Append(tab, differs.StructFields(tab, a.Type().Field(0).Name), differ.Message)
 	return differs.Message(message, tab.Sprint(differ.Diff)), differ.Equals, differ.Err
 }

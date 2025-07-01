@@ -5,7 +5,7 @@
 package gstrings
 
 import (
-	"github.com/andrerrcosta2/gtools/core/internal/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 	"testing"
 )
 
@@ -38,10 +38,10 @@ func TestStructAndValueNodes(t *testing.T) {
 
 	// Ensure duplicate nodes are rejected
 	err = root.AddStructChild("Child1")
-	assertlite.ErrorIs(t, err, NE)
+	assertlite.IsErrorOf(t, err, NE)
 
 	err = root.AddValueChild("Value1")
-	assertlite.ErrorIs(t, err, NE)
+	assertlite.IsErrorOf(t, err, NE)
 }
 
 func TestTreeStringOutput(t *testing.T) {
@@ -67,5 +67,5 @@ func TestTreeStringOutput(t *testing.T) {
   Value1: Data1
 }
 `
-	assertlite.Equal(t, expected, tb.String())
+	assertlite.Equals(t, expected, tb.String())
 }

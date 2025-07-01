@@ -10,5 +10,5 @@ import (
 
 // Diff returns the difference between two values.
 func Diff(tab indent.Tab, a, b interface{}) (string, bool, error) {
-	return differ.Values(tab, reflect.ValueOf(a), reflect.ValueOf(b))
+	return differ.Between(tab, reflect.ValueOf(a), reflect.ValueOf(b))
 }

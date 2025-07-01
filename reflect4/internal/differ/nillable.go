@@ -83,7 +83,7 @@ func nullables(a, b reflect.Value) (msg string, nils, equals bool) {
 	return "", false, false
 }
 
-func invalids(a, b reflect.Value) (msg string, invalids, equals bool) {
+func handleInvalidValues(a, b reflect.Value) (msg string, invalids, equals bool) {
 	if !a.IsValid() || !b.IsValid() {
 		if !a.IsValid() && !b.IsValid() {
 			return differs.BothInvalid(indent.Zero()), true, true

@@ -2,9 +2,13 @@
 
 package unwrap
 
-import "reflect"
+import (
+	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
+	"reflect"
+)
 
-func FromInterfaces(value any) reflect.Value {
+func FromInterfacesToValue(value any) reflect.Value {
 	v := reflect.ValueOf(value)
 	for v.Kind() == reflect.Interface {
 		v = v.Elem()
@@ -12,7 +16,7 @@ func FromInterfaces(value any) reflect.Value {
 	return v
 }
 
-func FromPointers(value any) reflect.Value {
+func FromPointersToValue(value any) reflect.Value {
 	v := reflect.ValueOf(value)
 	for v.Kind() == reflect.Ptr {
 		v = v.Elem()
@@ -21,9 +25,9 @@ func FromPointers(value any) reflect.Value {
 }
 
 func ToValue(value any) reflect.Value {
-	v := reflect.ValueOf(value)
-	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
-		v = v.Elem()
-	}
-	return v
+	return values.Unwrap(reflect.ValueOf(value))
+}
+
+func ToTypeValue(value any) reflect.Type {
+	return types.Unwrap(reflect.TypeOf(value))
 }

@@ -5,10 +5,58 @@ package tracker
 import (
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/pointers"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 	"reflect"
 )
+
+// Reference creates a new reference tracker.
+func Reference() *RefTracker {
+	return &RefTracker{pointers: make(map[uintptr]*ref)}
+}
+
+type ref struct {
+	Value reflect.Value
+	Key   reflect.Value
+}
+type RefTracker struct {
+	pointers map[uintptr]*ref
+}
+
+func (t *RefTracker) Get(v reflect.Value) (reflect.Value, bool, error) {
+	addr, err := pointers.AddrOf(v)
+	if err != nil {
+		// If it isn't a stable pointer, it can't produce cyclic references directly
+		return values.Empty, false, err
+	}
+	str := v.String()
+	fmx.Printf("[get]: <%d>%s\n", addr, str)
+	sprint, ok := t.pointers[addr]
+	if ok {
+		cstr := sprint.Value.String()
+		ckey := sprint.Key.String()
+		fmx.Printf("[get] returning: %s%s\n", ckey, cstr)
+		return sprint.Value, true, nil
+	}
+	return values.Empty, false, nil
+}
+
+func (t *RefTracker) Mark(inst, cache reflect.Value) (reflect.Value, error) {
+	addr, err := pointers.AddrOf(inst)
+	if err != nil {
+		// If it isn't a stable pointer, it can't produce cyclic references directly
+		// so it shouldn't shortcut its object traversal.
+		return values.Empty, err
+	}
+	str := inst.String()
+	fmx.Printf("[mark] inst: <%d>%s\n", addr, str)
+	cstr := cache.String()
+	fmx.Printf("[mark] cache: %s\n", cstr)
+	t.pointers[addr] = &ref{Value: cache, Key: inst}
+	return cache, nil
+}
 
 func Sprint() *SprintTracker {
 	return &SprintTracker{
@@ -24,7 +72,7 @@ type SprintTracker struct {
 
 // Get checks if an instance has already been visited
 func (t *SprintTracker) Get(inst reflect.Value) (string, bool, error) {
-	addr, err := pointers.Of(inst)
+	addr, err := pointers.AddrOf(inst)
 	if err != nil {
 		return sprints.Errorf(indent.Zero(), "%s", err), true, err
 	}
@@ -40,7 +88,7 @@ func (t *SprintTracker) Get(inst reflect.Value) (string, bool, error) {
 
 // Mark marks an instance as visited and stores its sprint for further use
 func (t *SprintTracker) Mark(inst reflect.Value, sprint string) error {
-	addr, err := pointers.Of(inst)
+	addr, err := pointers.AddrOf(inst)
 	if err != nil {
 		return err
 	}
@@ -68,11 +116,11 @@ type DiffTracker struct {
 // Get checks if the pair (a, b) has already been compared
 func (t *DiffTracker) Get(a, b reflect.Value) (diff differs.Difference, ok bool) {
 	var rec, exp string
-	addrA, err := pointers.Of(a)
+	addrA, err := pointers.AddrOf(a)
 	if err != nil {
 		rec = sprints.Errorf(indent.Zero(), "%s", err)
 	}
-	addrB, err := pointers.Of(b)
+	addrB, err := pointers.AddrOf(b)
 	if err != nil {
 		exp = sprints.Errorf(indent.Zero(), "%s", err)
 	}
@@ -147,11 +195,11 @@ func (t *DiffTracker) hasPair(a, b uintptr) (differs.Difference, bool) {
 // Mark marks the pair (a, b) as compared and stores the result
 func (t *DiffTracker) Mark(a, b reflect.Value, result differs.Difference) differs.Difference {
 	var rec, exp string
-	addrA, err := pointers.Of(a)
+	addrA, err := pointers.AddrOf(a)
 	if err != nil {
 		rec = sprints.Errorf(indent.Zero(), "%s", err)
 	}
-	addrB, err := pointers.Of(b)
+	addrB, err := pointers.AddrOf(b)
 	if err != nil {
 		exp = sprints.Errorf(indent.Zero(), "%s", err)
 	}

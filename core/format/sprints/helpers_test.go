@@ -5,7 +5,7 @@ package sprints
 import (
 	"errors"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
-	"github.com/andrerrcosta2/gtools/core/internal/differlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/differlite"
 	"testing"
 )
 

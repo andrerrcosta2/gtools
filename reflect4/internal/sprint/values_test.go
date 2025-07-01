@@ -9,7 +9,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/pointers"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs"
+	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
@@ -45,7 +45,7 @@ func TestValue_BasicTypes(t *testing.T) {
 			expected: sprints.TypedString("hello"),
 		},
 
-		// Structs
+		// StructsPtr
 		{
 			name: "Test struct{ Name string, Age  }",
 			input: reflect.ValueOf(struct {
@@ -162,11 +162,11 @@ func TestValue_BasicTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result, err := Value(zero, tc.input)
+			result, err := Of(zero, tc.input)
 			if err != nil {
 				if !strings.Contains(err.Error(), tc.expected) {
-					tt.StackErrorf("Value() error = %v, Expected %v", err, tc.expected)
-					tt.Errorf("Value() error = %v, Expected %v", err, tc.expected)
+					tt.StackErrorf("Of() error = %v, Expected %v", err, tc.expected)
+					tt.Errorf("Of() error = %v, Expected %v", err, tc.expected)
 				}
 			}
 			compareMessages(tt, result, tc.expected)
@@ -182,7 +182,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 		input    reflect.Value
 		expected string
 	}{
-		// Nested Structs
+		// Nested StructsPtr
 		{
 			name: "Test nested struct",
 			input: reflect.ValueOf(struct {
@@ -264,7 +264,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// Arrays of Structs
+		// Arrays of StructsPtr
 		{
 			name: "Test array of structs",
 			input: reflect.ValueOf([2]struct {
@@ -292,7 +292,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// Pointers to Structs
+		// Pointers to StructsPtr
 		{
 			name: "Test pointer to struct",
 			input: reflect.ValueOf(func() *struct {
@@ -316,7 +316,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			)),
 		},
 
-		// Nil Map in a Struct
+		// Nil Map sprintInterface a Struct
 		{
 			name: "Test struct with nil map",
 			input: reflect.ValueOf(struct {
@@ -334,7 +334,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// Empty Map in a Slicef
+		// Empty Map sprintInterface a Slicef
 		{
 			name: "Test slice with empty map",
 			input: reflect.ValueOf([]map[string]int{
@@ -350,11 +350,11 @@ func TestValue_ComplexTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result, err := Value(zero, tc.input)
+			result, err := Of(zero, tc.input)
 			if err != nil {
 				if !strings.Contains(err.Error(), tc.expected) {
-					tt.StackErrorf("Value() error = %v, Expected %v", err, tc.expected)
-					tt.Errorf("Value() error = %v, Expected %v", err, tc.expected)
+					tt.StackErrorf("Of() error = %v, Expected %v", err, tc.expected)
+					tt.Errorf("Of() error = %v, Expected %v", err, tc.expected)
 				}
 			}
 			compareMessages(tt, result, tc.expected)
@@ -384,7 +384,7 @@ func TestValue_EdgeTypes(t *testing.T) {
 			name:  "Test Self Referenced Next",
 			input: reflect.ValueOf(_testdata.SelfReferencedNode),
 			expected: "*" + sprints.BClosedobj(zero, "_testdata.Node",
-				sprints.Field(zero, "Value", sprints.Typed("int", 1)),
+				sprints.Field(zero, "Of", sprints.Typed("int", 1)),
 				sprints.Field(zero, "Next", sprints.Ptr(zero, sprints.CyclicRef(zero, "_testdata.Node",
 					sprints.Addr(_testdata.SelfReferencedNode)))),
 			),
@@ -419,8 +419,8 @@ func TestValue_EdgeTypes(t *testing.T) {
 		},
 		{
 			name:     "Test unsafe pointer",
-			input:    reflect.ValueOf(pointers.Unsafe(structs.ZeroSimpleInst)),
-			expected: zero.Sprintf("unsafe.Pointer<%s>", sprints.Addr(structs.ZeroSimpleInst)),
+			input:    reflect.ValueOf(pointers.Unsafe(models.SimpleZeroInst)),
+			expected: zero.Sprintf("unsafe.Pointer<%s>", sprints.Addr(models.SimpleZeroInst)),
 		},
 	}
 
@@ -428,11 +428,11 @@ func TestValue_EdgeTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLitetm(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result, err := Value(zero, tc.input)
+			result, err := Of(zero, tc.input)
 			if err != nil {
 				if !strings.Contains(err.Error(), tc.expected) {
-					tt.StackErrorf("Value() error = %v, Expected %v", err, tc.expected)
-					tt.Errorf("Value() error = %v, Expected %v", err, tc.expected)
+					tt.StackErrorf("Of() error = %v, Expected %v", err, tc.expected)
+					tt.Errorf("Of() error = %v, Expected %v", err, tc.expected)
 				}
 			}
 			compareMessages(tt, result, tc.expected)
@@ -444,14 +444,14 @@ func TestValue_EdgeTypes(t *testing.T) {
 func buildExpectedTree(base indent.Tab, depth int) string {
 	if depth == 0 {
 		return sprints.NestedBClosedobj(base, "_testdata.Tree",
-			sprints.Field(base.Inc(), "Value", sprints.Typed("int", 0)),
+			sprints.Field(base.Inc(), "Of", sprints.Typed("int", 0)),
 			sprints.Field(base.Inc(), "Left", sprints.Ptr(base, sprints.NilType(base, "_testdata.Tree"))),
 			sprints.Field(base.Inc(), "Right", sprints.Ptr(base, sprints.NilType(base, "_testdata.Tree"))),
 		)
 	}
 
 	return sprints.NestedBClosedobj(base, "_testdata.Tree",
-		sprints.Field(base.Inc(), "Value", sprints.Typed("int", depth)),
+		sprints.Field(base.Inc(), "Of", sprints.Typed("int", depth)),
 		sprints.Field(base.Inc(), "Left", sprints.Ptr(base, buildExpectedTree(base.Inc(), depth-1))),
 		sprints.Field(base.Inc(), "Right", sprints.Ptr(base, sprints.CyclicRef(indent.Zero(), "_testdata.Tree", "0x00000000"))),
 	)
@@ -469,12 +469,12 @@ func compareMessages(tt gtests.Loggable, result, expected string) bool {
 
 	// Compare the modified result and expected strings
 	if result != expected {
-		tt.Error(gtests.ErrorMsg("Different messages", result, expected))
-		tt.StackError(gtests.ErrorMsg("Different messages", result, expected))
+		tt.Error(gtests.ErrorDiff("Different messages", result, expected))
+		tt.StackError(gtests.ErrorDiff("Different messages", result, expected))
 		tt.StackLog(differs.Quick(result, expected))
 		return false
 	} else {
-		tt.StackSuccessf(gtests.ErrorMsg("Equal messages", result, expected))
+		tt.StackSuccessf(gtests.ErrorDiff("Equal messages", result, expected))
 	}
 	return true
 }

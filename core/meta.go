@@ -6,4 +6,5 @@ import (
 	_ "github.com/andrerrcosta2/gtools/core/data"
 	_ "github.com/andrerrcosta2/gtools/core/domain"
 	_ "github.com/andrerrcosta2/gtools/core/seeders"
+	_ "github.com/andrerrcosta2/gtools/core/util"
 )

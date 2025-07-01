@@ -15,5 +15,5 @@ func Pointer(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Ptr {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotPointer.Error()), reflect4.ErrNotPointer
 	}
-	return pt(tab, v, tracker.Sprint())
+	return sprintPointer(tab, v, tracker.Sprint())
 }

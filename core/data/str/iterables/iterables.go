@@ -130,7 +130,7 @@ func (s *Slice[G]) EachN(fn functions.BiConsumer[int, G]) *Slice[G] {
 // Filter creates a new slice with all elements that pass the test implemented by the provided function.
 // It takes a predicate function `fn` as an argument. The predicate function takes a value of type `N` and returns a boolean.
 // The function returns a new slice with all elements from the original slice that satisfy the predicate function.
-// The elements order in the new slice is the same as in the original slice.
+// The element order in the new slice is the same as in the original slice.
 func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
 	newSlice := make([]G, 0, s.Len())
@@ -149,7 +149,7 @@ func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
 // FilterN creates a new slice with all elements that pass the test implemented by the provided function.
 // It takes a BiPredicate function `fn` as an argument. The BiPredicate function takes two parameters: the index of the element and the element value.
 // It returns a new slice with all elements from the original slice that satisfy the predicate function.
-// The elements order in the new slice is the same as in the original slice.
+// The element order in the new slice is the same as in the original slice.
 func (s *Slice[G]) FilterN(fn functions.BiPredicate[int, G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
 	newSlice := make(Slice[G], 0, len(*s))
@@ -193,7 +193,7 @@ func (s *Slice[G]) Len() int {
 
 // Map applies the given function to each element in the slice and returns a new slice with the results.
 // It takes a single argument of type Function[N, N] and returns a pointer to a Slice[N].
-// The function is called for each element in the slice and the result is appended to the new slice.
+// The function is called for each element in the slice, and the result is appended to the new slice.
 // The order of the elements in the new slice is the same as the order of the elements in the original slice.
 func (s *Slice[G]) Map(fn functions.Function[G, G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
@@ -207,11 +207,12 @@ func (s *Slice[G]) Map(fn functions.Function[G, G]) *Slice[G] {
 	return &newSlice
 }
 
-// Operation calls the given function for each element in the slice, passing the index and a pointer to the slice itself to the function.
+// Operation calls the given function for each element in the slice, passing the index and a pointer to the slice
+// itself to the function.
 // It returns the same slice after all operations have finished.
 func (s *Slice[G]) Operation(fn functions.BiConsumer[int, *Slice[G]]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
-	for i, _ := range *s {
+	for i := range *s {
 		// Call the function with the current index and a pointer to the slice
 		fn(i, s)
 	}
@@ -283,7 +284,8 @@ func (s *Slice[G]) Remove(v G, compare functions.BiFunction[G, G, int]) (*Slice[
 
 // Some returns a new slice with n random elements from the original slice.
 // It takes an integer n as an argument and returns a slice of type Slice[N].
-// If n is greater than the length of the original slice, it will return a slice with the same length as the original slice.
+// If 'n' is greater than the length of the original slice,
+// it'll return a slice with the same length as the original slice.
 func (s *Slice[G]) Some(n int) *Slice[G] {
 	// Check if the requested length is greater than the original slice
 	if n > s.Len() {
@@ -334,7 +336,7 @@ func (s *Slice[G]) ToSet(cmp comparators.KeyTyped[G, string]) *Slice[G] {
 }
 
 // Values returns the underlying slice of values.
-// It returns a slice of type []N.
+// It returns a slice of a type []N.
 func (s *Slice[G]) Values() []G {
 	return *s
 }
@@ -401,7 +403,7 @@ func (m *Map[K, V]) Len() int {
 // It returns a pointer to the map.
 func (m *Map[K, V]) Operation(fn functions.BiConsumer[K, *Map[K, V]]) *Map[K, V] {
 	// Iterate over the map and call the function for each key
-	for k, _ := range *m {
+	for k := range *m {
 		// Pass the map itself to the function
 		fn(k, m)
 	}
@@ -458,7 +460,7 @@ func (m *Map[K, V]) Remove(k K) *Map[K, V] {
 	return m
 }
 
-// Values returns a slice of all values in the map.
+// Values return a slice of all values in the map.
 // It iterates over the map and appends each value to the slice.
 // The length of the returned slice is equal to the number of entries in the map.
 func (m *Map[K, V]) Values() []V {
@@ -486,13 +488,13 @@ func OfSliceMap[K comparable, V any](values ...str.Entry[K, []V]) *SliceMap[K, V
 
 type SliceMap[K comparable, V any] map[K][]V
 
-// Append appends a value to the slice of values associated with the given key in the map.
-// If the key is not present in the map, it creates a new slice with the given value.
+// Append add a value to the slice of values associated with the given key in the map.
+// If the key isn't present in the map, it creates a new slice with the given value.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) Append(k K, v V) *SliceMap[K, V] {
 	// Get the slice of values associated with the given key
 	slice, ok := (*m)[k]
-	// If the key is not present in the map, create a new slice with the given value
+	// If the key isn't present in the map, create a new slice with the given value
 	if !ok {
 		(*m)[k] = []V{v}
 	} else {
@@ -504,8 +506,8 @@ func (m *SliceMap[K, V]) Append(k K, v V) *SliceMap[K, V] {
 }
 
 // At returns the slice of values associated with the given key in the map.
-// It returns a slice of type []V where V is the type of the values in the map.
-// If the key is not present in the map, it returns nil.
+// It returns a slice of a type []V where V is the type of the values in the map.
+// If the key isn't present in the map, it returns nil.
 func (m *SliceMap[K, V]) At(k K) []V {
 	return (*m)[k]
 }
@@ -519,7 +521,7 @@ func (m *SliceMap[K, V]) Contains(k K) bool {
 }
 
 // Each calls the given function for each key-value pair in the map.
-// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type []V.
+// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of a type []V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) Each(fn functions.BiConsumer[K, *V]) *SliceMap[K, V] {
@@ -534,7 +536,7 @@ func (m *SliceMap[K, V]) Each(fn functions.BiConsumer[K, *V]) *SliceMap[K, V] {
 }
 
 // EachSlice calls the given function for each key-value pair in the map.
-// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type []V.
+// It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of a type []V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) EachSlice(fn functions.BiConsumer[K, *[]V]) *SliceMap[K, V] {
@@ -577,12 +579,13 @@ func (m *SliceMap[K, V]) MapEach(fn functions.BiFunction[K, *V, V]) *SliceMap[K,
 	return m
 }
 
-// Operation calls the given function for each key in the map, passing the key and a pointer to the map itself to the function.
+// Operation calls the given function for each key in the map, passing the key and a pointer to the map itself to
+// the function.
 // It iterates over the map and calls the function for each key.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) Operation(fn functions.BiConsumer[K, *SliceMap[K, V]]) *SliceMap[K, V] {
 	// Iterate over the map and call the function for each key
-	for k, _ := range *m {
+	for k := range *m {
 		// Pass a pointer to the map itself to the function
 		fn(k, m)
 	}
@@ -617,7 +620,7 @@ func (m *SliceMap[K, V]) Parallel(fn functions.BiConsumer[K, []V], maxParallels 
 }
 
 // Put adds a new key-value pair to the map.
-// It takes a single argument of type N for the key and a single argument of type []V for the value.
+// It takes a single argument of type N for the key and a single argument of a type []V for the value.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) Put(k K, v []V) *SliceMap[K, V] {
 	// Append the new key-value pair to the map
@@ -626,11 +629,11 @@ func (m *SliceMap[K, V]) Put(k K, v []V) *SliceMap[K, V] {
 	return m
 }
 
-// PutIfAbsent adds a new key-value pair to the map if the key is not present.
-// It takes a single argument of type N for the key and a single argument of type []V for the value.
+// PutIfAbsent adds a new key-value pair to the map if the key isn't present.
+// It takes a single argument of type N for the key and a single argument of a type []V for the value.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) PutIfAbsent(k K, v []V) *SliceMap[K, V] {
-	// Check if the key is not present in the map
+	// Check if the key isn't present in the map
 	if _, ok := (*m)[k]; !ok {
 		// Append the new key-value pair to the map
 		// Append the new key-value pair to the map
@@ -641,7 +644,7 @@ func (m *SliceMap[K, V]) PutIfAbsent(k K, v []V) *SliceMap[K, V] {
 }
 
 // PutOrAppend adds a new value to the slice of values associated with the given key in the map.
-// If the key is not present in the map, it creates a new slice with the given value.
+// If the key isn't present in the map, it creates a new slice with the given value.
 // It takes a single argument of type N for the key and a single argument of type V for the value.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) PutOrAppend(k K, v V) *SliceMap[K, V] {
@@ -650,7 +653,7 @@ func (m *SliceMap[K, V]) PutOrAppend(k K, v V) *SliceMap[K, V] {
 		// If the key is present, append the value to the existing slice
 		m.Append(k, v)
 	} else {
-		// If the key is not present, add the new key-value pair to the map
+		// If the key isn't present, add the new key-value pair to the map
 		m.Put(k, []V{v})
 	}
 	// Return a pointer to the map
@@ -658,7 +661,7 @@ func (m *SliceMap[K, V]) PutOrAppend(k K, v V) *SliceMap[K, V] {
 }
 
 // Remove removes the key-value pair associated with the given key from the map.
-// If the key is not present in the map, it does nothing.
+// If the key isn't present in the map, it does nothing.
 // It takes a single argument of type N for the key.
 // It returns a pointer to the map.
 func (m *SliceMap[K, V]) Remove(k K) *SliceMap[K, V] {
@@ -666,8 +669,8 @@ func (m *SliceMap[K, V]) Remove(k K) *SliceMap[K, V] {
 	return m
 }
 
-// Values returns a slice of all the values in the map.
-// It returns a slice of type []V where V is the type of the values in the map.
+// Values return a slice of all the values in the map.
+// It returns a slice of a type []V where V is the type of the values in the map.
 func (m *SliceMap[K, V]) Values() []V {
 	// Create a slice to store all the values in the map
 	result := make([]V, 0, len(*m))

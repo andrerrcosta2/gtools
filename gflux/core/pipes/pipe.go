@@ -127,6 +127,23 @@ func ReduceRight[T any, R any](arr []T, init R, f functions.BiFunction[T, R, R])
 	return result
 }
 
+// Reject calls a supplier until it returns a value that is not in the rejection list,
+// It'll run forever if the supplier always returns a value in the rejection list
+func Reject[T any](supplier functions.Supplier[T], equals func(a, b T) bool, rejections ...T) (output T) {
+	var accept bool
+	for !accept {
+		output = supplier()
+		accept = true
+		for _, v := range rejections {
+			if equals(v, output) {
+				accept = false
+				break
+			}
+		}
+	}
+	return output
+}
+
 // SemEach calls a consumer for each element in arr using goroutines.
 // It uses a semaphore to limit the number of concurrent operations
 func SemEach[T any](arr []T, f functions.Consumer[T], maxConcurrency int) {
@@ -162,4 +179,13 @@ func StringsMap[I any](arr []I, join string, f functions.Function[I, string]) st
 	}
 
 	return sb.String()
+}
+
+// SupplyN calls a supplier n times and returns the results in a slice
+func SupplyN[T any](supplier functions.Supplier[T], n int) []T {
+	output := make([]T, n)
+	for i := 0; i < n; i++ {
+		output[i] = supplier()
+	}
+	return output
 }

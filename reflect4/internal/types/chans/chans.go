@@ -7,6 +7,14 @@ import (
 	"reflect"
 )
 
+// Addr returns the address of the channel
+func Addr(t reflect.Value) (uintptr, error) {
+	if t.Kind() != reflect.Chan {
+		return 0, reflect4.ErrNotChan
+	}
+	return t.Pointer(), nil
+}
+
 // Name returns the name of the channel
 func Name(t reflect.Type) (string, error) {
 	if t.Kind() != reflect.Chan {

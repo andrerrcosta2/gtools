@@ -17,5 +17,5 @@ func SprintPrimitive(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() > reflect.Complex128 && v.Kind() != reflect.String {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotPrimitive.Error()), reflect4.ErrNotPrimitive
 	}
-	return pr(tab, v), nil
+	return sprintPrimitive(tab, v), nil
 }

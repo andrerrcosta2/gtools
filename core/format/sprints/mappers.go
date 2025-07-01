@@ -9,8 +9,17 @@ import (
 	"strings"
 )
 
-// Slicef formats a slice values to a string using the output of function f
-// for each element.
+// Slicef formats the elements of a slice into a single string by applying
+// the function `f` to each element. Elements are joined with ", ".
+//
+// Example:
+//
+//	nums := []int{1, 2, 3}
+//	res := Slicef(nums, func(i int, t indent.Tab) string {
+//	    return strconv.Itoa(i)
+//	}, indent.None)
+//
+//	// Output: "1, 2, 3"
 func Slicef[I any](arr []I, f func(i I, t indent.Tab) string, t indent.Tab) string {
 	if len(arr) == 0 {
 		return ""
@@ -27,8 +36,20 @@ func Slicef[I any](arr []I, f func(i I, t indent.Tab) string, t indent.Tab) stri
 	return sb.String()
 }
 
-// AnySlicef formats a slice of any type values to a string using the output of function f
-// for each element.
+// AnySlicef safely formats a slice of any type (`any`) into a string using the
+// function `f`. It handles nils and unexpected types gracefully.
+//
+// If arr is nil → returns "<nil>"
+// If arr is not of type S → returns "<unexpected type: %T>"
+//
+// Example:
+//
+//	var data any = []string{"a", "b", "c"}
+//	res := AnySlicef[[]string, string](data, func(s string, t indent.Tab) string {
+//	    return "'" + s + "'"
+//	}, indent.None)
+//
+//	// Output: "'a', 'b', 'c'"
 func AnySlicef[S ~[]T, T any](arr any, f func(i T, t indent.Tab) string, t indent.Tab) string {
 	if arr == nil {
 		return "<nil>"
@@ -42,6 +63,16 @@ func AnySlicef[S ~[]T, T any](arr any, f func(i T, t indent.Tab) string, t inden
 	return Slicef(a, f, t)
 }
 
+// SliceNf generates a comma-separated string by calling the function `f`
+// exactly `n` times — once for each index from 0 to n-1.
+//
+// Example:
+//
+//	res := SliceNf(3, func(i int, t indent.Tab) string {
+//	    return "Item" + strconv.Itoa(i)
+//	}, indent.None)
+//
+//	// Output: "Item0, Item1, Item2"
 func SliceNf(n int, f func(i int, t indent.Tab) string, t indent.Tab) string {
 	sb := strings.Builder{}
 

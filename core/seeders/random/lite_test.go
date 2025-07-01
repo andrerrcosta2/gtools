@@ -1,18 +1,26 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
+//go:build tt
+
 // TODO: These tests lacks coverage
 package random
 
 import (
 	"github.com/andrerrcosta2/gtools/core/domain/data"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/tests/assertlite"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/tests/testseed"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
 	"strings"
 	"testing"
 	"time"
 	"unicode"
 )
 
+// TestOf tests the random generation of values.
+//
+// This test must assert that after each call:
+//   - All returned slices contain the number of elements passed as argument.
+//   - All returned slices contain only the types passed as generic argument.
 func TestOf(t *testing.T) {
 	t.Run("Of primitives", func(t *testing.T) {
 		integers := Of[int](10)
@@ -51,8 +59,8 @@ func TestOf(t *testing.T) {
 		assertlite.True(t, bytes.Len() == 10, "Expected 10 bytes, got %d", bytes.Len())
 		runes := Of[rune](10)
 		assertlite.True(t, runes.Len() == 10, "Expected 10 runes, got %d", runes.Len())
-		strings := Of[string](10)
-		assertlite.True(t, strings.Len() == 10, "Expected 10 strings, got %d", strings.Len())
+		ss := Of[string](10)
+		assertlite.True(t, ss.Len() == 10, "Expected 10 ss, got %d", ss.Len())
 	})
 
 	t.Run("Of complex structures", func(t *testing.T) {
@@ -92,11 +100,28 @@ func TestOf(t *testing.T) {
 
 func TestOf_EdgeCases(t *testing.T) {
 	t.Run("Of interface", func(t *testing.T) {
-		oneMethods := Of[testseed.InterfaceOneMethod](10)
-		assertlite.AllTrue(t, oneMethods.Values(), func(o testseed.InterfaceOneMethod) bool {
+		om := Of[testseed.InterfaceOneMethod](10)
+		assertlite.AreTrue(t, om.Values(), func(o testseed.InterfaceOneMethod) bool {
 			return o == nil
 		},
-			"Expected All values to be nil, got %v", oneMethods)
+			"Expected All values to be nil, got %v", om)
+
+		a := Of[any](10)
+		assertlite.True(t, a.Len() == 10, "Expected 10 any, got %d", a.Len())
+		a.Each(fmx.PrintObj)
+		assertlite.AreNotNil(t, a.Values())
+	})
+
+	t.Run("Of Struct", func(t *testing.T) {
+		ns := Of[testseed.NestedStruct](10)
+		assertlite.True(t, ns.Len() == 10, "Expected 10 NestedStruct, got %d", ns.Len())
+		assertlite.AreNotNil(t, ns.Values())
+		assertlite.NoNilFields(t, true, ns.Values())
+
+		cc := Of[testseed.ComplexUnsafeCastableBase](10)
+		assertlite.True(t, cc.Len() == 10, "Expected 10 ComplexUnsafeCastableBase, got %d", cc.Len())
+		assertlite.AreNotNil(t, cc.Values())
+		assertlite.NoNilFields(t, true, cc.Values())
 	})
 }
 
@@ -109,7 +134,7 @@ func TestInt(t *testing.T) {
 	t.Run("Int: With size specified", func(t *testing.T) {
 		integers := Int(100, 10, 200)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int) bool {
 			return i >= 10 && i <= 200
 		},
 			"Expected All values to be between 10 and 200, got %v", integers)
@@ -118,7 +143,7 @@ func TestInt(t *testing.T) {
 	t.Run("Int: With size specified out of range", func(t *testing.T) {
 		integers := Int(100, 10, 5)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int) bool {
 			return i <= 10 && i >= 5
 		},
 			"Expected All values to be between 10 and 5, got %v", integers)
@@ -127,7 +152,7 @@ func TestInt(t *testing.T) {
 	t.Run("Int: With only min specified", func(t *testing.T) {
 		integers := Int(100, 5000000)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int) bool {
 			return i >= 5000000
 		},
 			"Expected All values to be above 5000000, got %v", integers)
@@ -142,14 +167,14 @@ func TestInt8(t *testing.T) {
 	t.Run("Int8: With size specified", func(t *testing.T) {
 		integers := Int8(100, 10, 100)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int8) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int8) bool {
 			return i >= 10 && i <= 100
 		}, "Expected All values to be between 10 and 200, got %v", integers)
 	})
 	t.Run("Int8: With size specified out of range", func(t *testing.T) {
 		integers := Int8(100, 10, 5)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int8) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int8) bool {
 			return i <= 10 && i >= 5
 		},
 			"Expected All values to be between 10 and 5, got %v", integers)
@@ -158,7 +183,7 @@ func TestInt8(t *testing.T) {
 	t.Run("Int8: With only min specified", func(t *testing.T) {
 		integers := Int8(100, 127)
 		assertlite.True(t, integers.Len() == 100, "Expected 100 ints, got %d", integers.Len())
-		assertlite.AllTrue(t, integers.Values(), func(i int8) bool {
+		assertlite.AreTrue(t, integers.Values(), func(i int8) bool {
 			return i == 127
 		},
 			"Expected All values to be 127, got %v", integers)
@@ -251,27 +276,27 @@ func TestComplex128(t *testing.T) {
 
 func TestStringMethods(t *testing.T) {
 	t.Run("String: No size specified", func(t *testing.T) {
-		strings := String(100)
-		assertlite.True(t, strings.Len() == 100, "Expected 100 strings, got %d", strings.Len())
+		ss := String(100)
+		assertlite.True(t, ss.Len() == 100, "Expected 100 ss, got %d", ss.Len())
 	})
 
 	t.Run("Alphanumeric: No size specified", func(t *testing.T) {
-		strings := Alphanumeric(100)
-		assertlite.True(t, strings.Len() == 100, "Expected 100 strings, got %d", strings.Len())
-		assertlite.AllTrue(t, strings.Values(), func(s string) bool {
+		ss := Alphanumeric(100)
+		assertlite.True(t, ss.Len() == 100, "Expected 100 ss, got %d", ss.Len())
+		assertlite.AreTrue(t, ss.Values(), func(s string) bool {
 			for _, r := range s {
 				if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
 					return false
 				}
 			}
 			return len(s) >= MinStringSizeDefaults && len(s) <= MaxStringSizeDefaults
-		}, "Expected All values to be between %d and %d, got %v", MinStringSizeDefaults, MaxStringSizeDefaults, strings)
+		}, "Expected All values to be between %d and %d, got %v", MinStringSizeDefaults, MaxStringSizeDefaults, ss)
 	})
 
 	t.Run("Alphanumeric: With size specified", func(t *testing.T) {
-		strings := Alphanumeric(100, 100, 200)
-		assertlite.True(t, strings.Len() == 100, "Expected 100 strings, got %d", strings.Len())
-		assertlite.AllTrue(t, strings.Values(), func(s string) bool {
+		ss := Alphanumeric(100, 100, 200)
+		assertlite.True(t, ss.Len() == 100, "Expected 100 ss, got %d", ss.Len())
+		assertlite.AreTrue(t, ss.Values(), func(s string) bool {
 			for _, r := range s {
 				if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
 					return false
@@ -297,7 +322,14 @@ func TestStringMethods(t *testing.T) {
 			return true
 		}
 		// Assert all
-		assertlite.AllTrue(t, stringsOf.Values(), valid)
+		assertlite.AreTrue(t, stringsOf.Values(), valid)
+	})
+
+	t.Run("StringOf: random amount, custom charset", func(t *testing.T) {
+		ss := StringOf(Int(1, 1, 10).At(0), "1234567890", 8, 9).Values()
+		assertlite.AreTrue(t, ss, func(s string) bool {
+			return len(s) >= 8 && len(s) <= 9
+		})
 	})
 }
 
@@ -310,7 +342,7 @@ func TestTimestamp(t *testing.T) {
 	t.Run("Timestamp: With interval specified", func(t *testing.T) {
 		timestamps := Timestamp(10000, time.Now(), time.Now().Add(time.Hour))
 		assertlite.True(t, timestamps.Len() == 10000, "Expected 100 timestamps, got %d", timestamps.Len())
-		assertlite.AllTrue(t, timestamps.Values(), func(t time.Time) bool {
+		assertlite.AreTrue(t, timestamps.Values(), func(t time.Time) bool {
 			return t.Before(time.Now().Add(time.Hour))
 		},
 			"Expected All timestamps to be before %v, got %v", time.Now().Add(time.Hour), timestamps)
@@ -335,7 +367,7 @@ func TestBytes(t *testing.T) {
 		bytes := Bytes(100, 2, 5)
 		assertlite.True(t, bytes.Len() == 100, "Expected 100 bytes, got %d", bytes.Len())
 		//fmt.Printf("%v\n", bytes)
-		assertlite.AllTrue(t, bytes.Values(), func(b []byte) bool {
+		assertlite.AreTrue(t, bytes.Values(), func(b []byte) bool {
 			return len(b) >= 2 && len(b) <= 5
 		},
 			"Expected All bytes to have between 2 and 5 length, got %v", bytes)
@@ -358,7 +390,7 @@ func TestUniqueByteSlices(t *testing.T) {
 		// Ensure the error isn't tagged as IMPOSSIBLE_CONSTRAINT
 		assertlite.NotTypeOf[data.Taggable[string]](t, err)
 
-		// If there was no error, assert the length is the same as "q'
+		// If there was no error, assert the length is the same as "q"
 		if err == nil {
 			assertlite.True(t, bytes.Len() == 10000, "Expected 10000 uuids, got %d", bytes.Len())
 		}
@@ -367,7 +399,7 @@ func TestUniqueByteSlices(t *testing.T) {
 		repeated := make(map[string]int)
 		index := 0
 		// Assert no repeated byte slices
-		assertlite.AllTrue(t, bytes.Values(), func(b []byte) bool {
+		assertlite.AreTrue(t, bytes.Values(), func(b []byte) bool {
 			if len(b) < 2 || len(b) > 12 {
 				t.Errorf("Expected length between 2 and 12, got %d on index %d", len(b), index)
 			}

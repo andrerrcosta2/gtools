@@ -3,6 +3,7 @@
 package reflect4
 
 import (
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/handlers/data"
 	"github.com/andrerrcosta2/gtools/reflect4/opts/read"
 	"reflect"
@@ -11,17 +12,25 @@ import (
 // CopyOf creates a copy of a given value T.
 // If `deep` is true, it performs a deep copy
 // Otherwise, it performs a shallow copy.
-func CopyOf[T any](v T, deep bool) (T, error) {
+func CopyOf[T any](t T, deep bool) (cp T, err error) {
+	var val reflect.Value
+	var ok bool
 	if deep {
-		// Perform a deep copy of the interf
-		return data.DeepCopy(v)
+		val, err = data.DeepCopy(reflect.ValueOf(t))
+	} else {
+		val, err = data.ShallowCopy(reflect.ValueOf(t))
 	}
-
-	// Perform a shallow copy of the interface
-	return data.ShallowCopy(v)
+	if err != nil {
+		return
+	}
+	cp, ok = val.Interface().(T)
+	if !ok {
+		return cp, fmx.Errorf("unable to cast value to %T", t)
+	}
+	return
 }
 
-func DeepEqual(a, b interface{}, opts ...read.Opt) (bool, []string) {
+func DeepEqual(a, b any, opts ...read.Opt) (bool, []string) {
 	var opt read.Opt
 	for _, o := range opts {
 		opt |= o
