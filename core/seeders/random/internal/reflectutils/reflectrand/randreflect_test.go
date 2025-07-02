@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package randreflect
+package reflectrand
 
 import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
@@ -130,7 +130,7 @@ func TestCmpKind(t *testing.T) {
 	}
 }
 
-// TestCmpType tests the CmpType function generation of random reflect.Type.
+// TestCmpType tests the Cmp function generation of random reflect.Type.
 //
 // This test must assert:
 //   - No type is invalid
@@ -140,7 +140,7 @@ func TestCmpType(t *testing.T) {
 	buckets := len(reflectutils.CmpKinds)
 
 	for i := 0; i < Distributions; i++ {
-		tt := CmpType()
+		tt := Cmp()
 		assertlite.True(t, tt.Kind() != reflect.Invalid)
 		counts[tt.Kind()]++
 	}

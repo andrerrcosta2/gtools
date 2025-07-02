@@ -4,8 +4,10 @@ package lite
 
 import (
 	"fmt"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/randreflect"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 	"github.com/google/uuid"
 	"math/rand"
@@ -13,12 +15,12 @@ import (
 	"time"
 	"unicode"
 	"unicode/utf8"
-	"unsafe"
 )
 
 // RandAny generates a random value of any type except structs.
 func RandAny() any {
-	switch randreflect.Kind() {
+	kind := RandGiven(reflectutils.InterfaceKinds)
+	switch kind {
 	case reflect.Bool:
 		return prng.Bool()
 	case reflect.Int:
@@ -50,74 +52,119 @@ func RandAny() any {
 	case reflect.Complex128:
 		return prng.Complex128()
 	case reflect.Array:
-		// Generate a random value of the array element type
-		typx := randreflect.Type()
-		// Create a new array of the same type
-		size := prng.Int(1, 10)
-		arr := reflect.New(reflect.ArrayOf(size, typx)).Elem()
-		for i := 0; i < size; i++ {
-			val := randreflect.ValueOf(typx)
-			arr.Index(i).Set(val)
-		}
-		return arr.Interface()
+		return RandArray()
 	case reflect.Chan:
-		et := randreflect.Type()
-		size := prng.Int(1, 10)
-
-		// We can randomize directions, but we can only instantiate
-		// "Bothdir" channels
-		// The types will make a switch return a mess
-		ch := reflect.MakeChan(reflect.ChanOf(reflect.BothDir, et), size)
-
-		go func() {
-			for i := 0; i < size; i++ {
-				val := randreflect.ValueOf(et)
-				ch.Send(val)
-			}
-			ch.Close()
-		}()
-
-		return ch.Interface()
-
+		return RandChan()
+	case reflect.Func:
+		return RandFunc()
 	case reflect.Map:
-		kt := randreflect.CmpType()
-		vt := randreflect.Type()
-		size := prng.Int(1, 10)
-		// Create an empty map
-		mapValue := reflect.MakeMap(reflect.MapOf(kt, vt))
-		// Generate a random key
-		// Generate a random key
-		for i := 0; i < size; i++ {
-			key := randreflect.ValueOf(kt)
-			// Generate a random value
-			value := randreflect.ValueOf(vt)
-			// Add the key-value pair to the map
-			mapValue.SetMapIndex(key, value)
-		}
-		return mapValue.Interface()
-
+		return RandMap()
 	case reflect.Ptr:
-		value := randreflect.AnyValue()
-		ptr := reflect.New(value.Type())
-		ptr.Elem().Set(value)
-		return ptr.Interface()
+		return RandPointer()
 	case reflect.Slice:
-		et := randreflect.Type()
-		size := prng.Int(1, 10)
-		arr := reflect.MakeSlice(reflect.SliceOf(et), size, size)
-		for i := 0; i < size; i++ {
-			val := randreflect.ValueOf(et)
-			arr.Index(i).Set(val)
-		}
-		return arr.Interface()
-
+		return RandSlice()
 	case reflect.String:
 		// TODO: This method lacks constraints control. Finish validation library
 		// TODO: Add its interface to the core package
 		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
 	default:
+		// Unreachable
+		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
 		return nil
 	}
+}
+
+// RandArray generates a random array of a random type
+func RandArray() any {
+	return reflectrand.ArrayOf(reflectrand.Array()).Interface()
+}
+
+// RandArrayOf generates a random array of the given type
+func RandArrayOf(t reflect.Type) any {
+	return reflectrand.ArrayOf(t).Interface()
+}
+
+// RandChan generates a random channel of a random type
+func RandChan() any {
+	return reflectrand.ChanOf(reflectrand.Chan()).Interface()
+}
+
+// RandChanOf generates a random channel from a given type
+func RandChanOf(t reflect.Type) any {
+	return reflectrand.ChanOf(t).Interface()
+}
+
+// RandCmp generates a random value of a random comparable type
+func RandCmp() any {
+	kind := reflectrand.CmpKind()
+	reflectrand.Cmp()
+	switch kind {
+	case reflect.Bool:
+		return prng.Bool()
+	case reflect.Int:
+		return prng.Int()
+	case reflect.Int8:
+		return prng.Int8()
+	case reflect.Int16:
+		return prng.Int16()
+	case reflect.Int32:
+		return prng.Int32()
+	case reflect.Int64:
+		return prng.Int64()
+	case reflect.Uint, reflect.Uintptr:
+		return prng.Uint()
+	case reflect.Uint8:
+		return prng.Uint8()
+	case reflect.Uint16:
+		return prng.Uint16()
+	case reflect.Uint32:
+		return prng.Uint32()
+	case reflect.Uint64:
+		return prng.Uint64()
+	case reflect.String:
+		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
+	case reflect.Float32:
+		return prng.Float32()
+	case reflect.Float64:
+		return prng.Float64()
+	case reflect.Complex64:
+		return prng.Complex64()
+	case reflect.Complex128:
+		return prng.Complex128()
+	case reflect.Array:
+		return RandArrayOf(reflectrand.CmpArray())
+	case reflect.Ptr:
+		return RandPointer()
+	default:
+		// Unreachable
+		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
+		return nil
+	}
+}
+
+// RandFunc generates a random function
+func RandFunc() any {
+	return reflectrand.FuncOf(reflectrand.Func()).Interface()
+}
+
+// RandFuncOf generates a random function from a given type
+func RandFuncOf(t reflect.Type) any {
+	return reflectrand.FuncOf(t).Interface()
+}
+
+// RandGiven returns a random value from a given slice
+func RandGiven[S ~[]E, E any](s S) E {
+	return s[prng.Int(0, len(s)-1)]
+}
+
+// RandMap generates a random map from random types
+func RandMap() any {
+	return reflectrand.MapOf(reflectrand.Map()).Interface()
+}
+
+// RandMapOf generates a random map from a given type
+func RandMapOf(t reflect.Type) any {
+	return reflectrand.MapOf(t).Interface()
 }
 
 // RandOf generates a single random value
@@ -158,55 +205,17 @@ func RandOf(t reflect.Type) any {
 	case reflect.Complex128:
 		return prng.Complex128()
 	case reflect.Array:
-		length := t.Len()
-		elemType := t.Elem()
-		arr := reflect.New(reflect.ArrayOf(length, elemType)).Elem()
-		for i := 0; i < length; i++ {
-			val := reflect.ValueOf(RandOf(elemType))
-			arr.Index(i).Set(val)
-		}
-		return arr.Interface()
+		return RandArrayOf(t)
 	case reflect.Chan:
-		//fmt.Printf(">> Creating channel of type: %v\n", t)
-		size := prng.Int(1, 10)
-		ch := reflect.MakeChan(t, size)
-		elemType := t.Elem()
-		// Generate random values and send them to the channel
-		go func() {
-			for i := 0; i < size; i++ {
-				val := reflect.ValueOf(RandOf(elemType))
-				ch.Send(val)
-			}
-			ch.Close()
-		}()
-		return ch.Interface()
+		return RandChanOf(t)
+	case reflect.Func:
+		return RandFuncOf(t)
 	case reflect.Map:
-		// Create an empty map
-		mapValue := reflect.MakeMap(t)
-		size := prng.Int(1, 10)
-		for i := 0; i < size; i++ {
-			key := RandOf(t.Key())
-			// Generate a random value
-			value := RandOf(t.Elem())
-			// Add the key-value pair to the map
-			mapValue.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(value))
-		}
-		return mapValue.Interface()
-
+		return RandMapOf(t)
 	case reflect.Ptr:
-		elemType := t.Elem()
-		value := RandOf(elemType)
-		ptr := reflect.New(elemType)
-		ptr.Elem().Set(reflect.ValueOf(value))
-		return ptr.Interface()
+		return RandPointerOf(t)
 	case reflect.Slice:
-		size := prng.Int(1, 10)
-		slice := reflect.MakeSlice(t, size, size)
-		for i := 0; i < size; i++ {
-			elem := reflect.ValueOf(RandOf(t.Elem()))
-			slice.Index(i).Set(elem)
-		}
-		return slice.Interface()
+		return RandSliceOf(t)
 	case reflect.Struct:
 		return RandStructOf(t)
 	case reflect.Interface:
@@ -224,43 +233,14 @@ func RandOf(t reflect.Type) any {
 	}
 }
 
-func RandCmp() any {
-	switch randreflect.CmpKind() {
-	case reflect.Bool:
-		return prng.Bool()
-	case reflect.Int:
-		return prng.Int()
-	case reflect.Int8:
-		return prng.Int8()
-	case reflect.Int16:
-		return prng.Int16()
-	case reflect.Int32:
-		return prng.Int32()
-	case reflect.Int64:
-		return prng.Int64()
-	case reflect.Uint, reflect.Uintptr:
-		return prng.Uint()
-	case reflect.Uint8:
-		return prng.Uint8()
-	case reflect.Uint16:
-		return prng.Uint16()
-	case reflect.Uint32:
-		return prng.Uint32()
-	case reflect.Uint64:
-		return prng.Uint64()
-	case reflect.String:
-		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
-	case reflect.Float32:
-		return prng.Float32()
-	case reflect.Float64:
-		return prng.Float64()
-	case reflect.Chan:
-		return reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.TypeOf(prng.Int())), 0).Interface()
-	case reflect.Ptr:
-		return reflect.New(reflect.TypeOf(RandAny())).Interface()
-	default:
-		return nil
-	}
+// RandPointer generates a random pointer to a random value from a random type
+func RandPointer() any {
+	return reflectrand.PointerOf(reflectrand.Pointer()).Interface()
+}
+
+// RandPointerOf generates a random pointer to a random value of the given type
+func RandPointerOf(t reflect.Type) any {
+	return reflectrand.PointerOf(t).Interface()
 }
 
 // RandRune generates a random Unicode rune that is valid and graphic.
@@ -276,6 +256,16 @@ func RandRune() rune {
 	}
 }
 
+// RandSlice generates a random slice of random value from a random type
+func RandSlice() any {
+	return reflectrand.SliceOf(reflectrand.Slice()).Interface()
+}
+
+// RandSliceOf generates a random slice of random value from a given type
+func RandSliceOf(t reflect.Type) any {
+	return reflectrand.SliceOf(t).Interface()
+}
+
 func RandString(length int, charset string) string {
 	b := make([]byte, length)
 	for i := range b {
@@ -287,32 +277,7 @@ func RandString(length int, charset string) string {
 // RandStructOf generates a new instance of the given struct type with random values for its fields.
 // It uses reflection to dynamically create an instance and set the fields.
 func RandStructOf(t reflect.Type) any {
-	// Create a new instance of the struct
-	v := reflect.New(t).Elem()
-
-	if !v.CanAddr() {
-		ptr := reflect.New(v.Type())
-		ptr.Elem().Set(v)
-		v = ptr.Elem()
-	}
-
-	// Iterate through each field of the struct
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldType := field.Type()
-
-		if !field.CanSet() {
-			addr := reflect.NewAt(fieldType, unsafe.Pointer(field.UnsafeAddr())).Elem()
-			addr.Set(randreflect.ValueOf(fieldType))
-			continue
-		}
-
-		// Generate a random value for the field using RandOf
-		field.Set(randreflect.ValueOf(fieldType))
-	}
-
-	// Return the newly created struct instance with populated fields
-	return v.Interface()
+	return reflectrand.StructOf(t).Interface()
 }
 
 func RandTimestamp(from time.Time, diff time.Duration) time.Time {

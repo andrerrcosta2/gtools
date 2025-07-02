@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-package randreflect
+package reflectrand
 
 import (
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
@@ -173,7 +173,7 @@ func ChanOf(t reflect.Type) reflect.Value {
 
 // CmpArray generates a random comparable array type
 func CmpArray() reflect.Type {
-	return reflect.ArrayOf(prng.Int(0, 10), CmpType())
+	return reflect.ArrayOf(prng.Int(0, 10), Cmp())
 }
 
 // CmpKind returns a comparable random reflect.Kind
@@ -182,8 +182,8 @@ func CmpKind() reflect.Kind {
 		len(reflectutils.CmpKinds)-1)]
 }
 
-// CmpType returns a comparable random reflect.Type
-func CmpType() reflect.Type {
+// Cmp returns a comparable random reflect.Type
+func Cmp() reflect.Type {
 	kind := CmpKind()
 	switch kind {
 	case reflect.Bool:
@@ -226,7 +226,7 @@ func CmpType() reflect.Type {
 		return Pointer()
 	default:
 		// Unreachable
-		panic(fmx.Sprintf("CmpType: Invalid kind '%v'", kind))
+		panic(fmx.Sprintf("Cmp: Invalid kind '%v'", kind))
 		return InvalidType()
 	}
 }
@@ -346,7 +346,7 @@ func Kind() reflect.Kind {
 
 // Map generates a random type of map
 func Map() reflect.Type {
-	return reflect.MapOf(CmpType(), Type())
+	return reflect.MapOf(Cmp(), Type())
 }
 
 // MapOf generates a random map by the given type

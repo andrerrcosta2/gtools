@@ -9,7 +9,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/cat"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/lite"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/randreflect"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
 	"github.com/andrerrcosta2/gtools/core/util/casters"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 	"math/big"
@@ -100,7 +100,21 @@ func Any(q int) *iterables.Slice[any] {
 	return &result
 }
 
-// Bool returns a slice of length q with random boolean values.
+// Array returns an iterables.Slice of length 'q' with random array values.
+// It returns empty if 'q' is negative or zero.
+func Array[A ~[]E, E any](q int) *iterables.Slice[A] {
+	if q <= 0 {
+		return iterables.OfSlice[A]()
+	}
+	result := make(iterables.Slice[A], q)
+	t := reflect.TypeOf((*A)(nil)).Elem()
+	for i := 0; i < q; i++ {
+		result.Append(lite.RandArrayOf(t))
+	}
+	return &result
+}
+
+// Bool returns an iterables.Slice of length q with random boolean values.
 // It returns empty if q is negative.
 func Bool(q int) *iterables.Slice[bool] {
 	if q <= 0 {
@@ -286,7 +300,7 @@ func Kind(q int) *iterables.Slice[reflect.Kind] {
 
 	result := make(iterables.Slice[reflect.Kind], q)
 	for i := 0; i < q; i++ {
-		result[i] = randreflect.Kind()
+		result[i] = reflectrand.Kind()
 	}
 	return &result
 }
@@ -328,6 +342,8 @@ func Of[T any](q int) *iterables.Slice[T] {
 	return &result
 }
 
+// Reflect generates an iterables.Slice of 'q' reflect.Value from the given reflect.Type.
+// It returns empty if 'q' is less than one.
 func Reflect(t reflect.Type, q int) *iterables.Slice[reflect.Value] {
 	if q <= 0 {
 		return iterables.OfSlice[reflect.Value]()
@@ -335,7 +351,7 @@ func Reflect(t reflect.Type, q int) *iterables.Slice[reflect.Value] {
 
 	result := make(iterables.Slice[reflect.Value], q)
 	for i := 0; i < q; i++ {
-		result[i] = reflect.ValueOf(lite.RandOf(t))
+		result[i] = reflectrand.ValueOf(t)
 	}
 	return &result
 }
