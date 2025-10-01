@@ -2,24 +2,26 @@
 
 package iterators
 
-// DefaultIterator is a simple iterator implementation for a slice of elements
-type DefaultIterator[T any] struct {
+import "github.com/andrerrcosta2/gtools/core/data"
+
+// Default creates a new default implementation of data.Iterator[T] for a given slice
+func Default[T any](elements []T) data.Iterator[T] {
+	return &defaultIter[T]{elements: elements, index: 0}
+}
+
+// defaultIter is a simple iterator implementation for a slice of elements
+type defaultIter[T any] struct {
 	elements []T
 	index    int
 }
 
-// Default creates a new DefaultIterator for the given slice
-func Default[T any](elements []T) *DefaultIterator[T] {
-	return &DefaultIterator[T]{elements: elements, index: 0}
-}
-
 // HasNext checks if there are more elements in the iterator
-func (it *DefaultIterator[T]) HasNext() bool {
+func (it *defaultIter[T]) HasNext() bool {
 	return it.index < len(it.elements)
 }
 
 // Next returns the next element in the iterator
-func (it *DefaultIterator[T]) Next() T {
+func (it *defaultIter[T]) Next() T {
 	if !it.HasNext() {
 		var zeroValue T
 		return zeroValue // Return the zero value if there are no more elements
@@ -28,3 +30,5 @@ func (it *DefaultIterator[T]) Next() T {
 	it.index++
 	return element
 }
+
+var _ data.Iterator[any] = (*defaultIter[any])(nil)

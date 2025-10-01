@@ -25,7 +25,7 @@ func Xor(min, max, k int) [][]int {
 		}
 		subsets = append(subsets, currentSubset)
 
-		// Calculate the next combination using bitwise operations
+		// Calculate the next combination using bitwise ops
 		c := subset & -subset
 		r := subset + c
 		subset = (((r ^ subset) >> 2) / c) | r
@@ -49,7 +49,7 @@ func Permute(arr []int) [][]int {
 	var permute func([]int, int)
 	permute = func(arr []int, i int) {
 		if i == len(arr) {
-			// Make a copy of the array and append it to result
+			// Make a clone of the array and append it to result
 			perm := make([]int, len(arr))
 			copy(perm, arr)
 			result = append(result, perm)

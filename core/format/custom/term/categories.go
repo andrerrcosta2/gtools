@@ -12,7 +12,7 @@ const (
 )
 
 func (c Category) Style(s ...any) string {
-	return Sprint(c, s)
+	return Sprint(c, s...)
 }
 
 func (c Category) Stylef(format string, args ...any) string {

@@ -2,7 +2,11 @@
 
 package indent
 
-import "strings"
+import (
+	"fmt"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
+	"strings"
+)
 
 // Hard enforces a minimum indentation level for each line in the input string.
 //
@@ -31,7 +35,7 @@ import "strings"
 //	func main() {
 //	    fmt.Println("Hello, World!")
 //	}
-func Hard(tab Tab, s string) string {
+func Hard[I Indentor](indentor I, s string) string {
 	// Split the input string into lines
 	lines := strings.Split(s, "\n")
 
@@ -44,7 +48,7 @@ func Hard(tab Tab, s string) string {
 		})
 
 		// Add the required indentation to the line
-		result.WriteString(tab.Sprint(line))
+		result.WriteString(indentor.Sprint(line))
 
 		// Add a newline character unless it's the last line
 		if i < len(lines)-1 {
@@ -79,7 +83,7 @@ func Hard(tab Tab, s string) string {
 //	func main() {
 //		fmt.Println("Hello, World!")
 //	}
-func Soft(tab Tab, s string) string {
+func Soft[I Indentor](indentor I, s string) string {
 	// Split the input string into lines
 	lines := strings.Split(s, "\n")
 
@@ -89,7 +93,7 @@ func Soft(tab Tab, s string) string {
 		if line == "" || line == "\n" || line == "\r" || line == "\t" {
 			result.WriteString(line)
 		} else {
-			result.WriteString(tab.Sprint(line))
+			result.WriteString(indentor.Sprint(line))
 		}
 
 		// Add a newline character unless it's the last line
@@ -101,8 +105,16 @@ func Soft(tab Tab, s string) string {
 	return result.String()
 }
 
-func Smark(tab Tab, s ...any) string {
-	ss := tab.Sprint(s...)
+func Smarklt(s ...any) string {
+	sb := strings.Builder{}
+	for _, v := range s {
+		sb.WriteString(stringutil.ReplaceLast(fmt.Sprint(v), "\t", "└── "))
+	}
+	return sb.String()
+}
+
+func Smark[I Indentor](indentor I, s ...any) string {
+	ss := indentor.Sprint(s...)
 	lines := strings.Split(ss, "\n")
 	for i, line := range lines {
 		lines[i] = Smarkln(line)
@@ -110,8 +122,8 @@ func Smark(tab Tab, s ...any) string {
 	return strings.Join(lines, "\n")
 }
 
-func Smarkf(tab Tab, format string, args ...any) string {
-	s := tab.Sprintf(format, args...)
+func Smarkf[I Indentor](indentor I, format string, args ...any) string {
+	s := indentor.Sprintf(format, args...)
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
 		lines[i] = Smarkln(line)

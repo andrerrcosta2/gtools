@@ -28,12 +28,12 @@ type Tree[V any] interface {
 //
 // Binary Trees are suitable For :
 //   - Searching, sorting, and range queries
-//   - Efficient insertion and deletion operations
+//   - Efficient insertion and deletion ops
 //   - Implementing priority queues (via heaps)
 //   - Efficiently maintaining sorted data.
 //
 // In average, binary trees maintains a balance factor of O(log n) in best case for all
-// operations andO(n) in worst case.
+// ops andO(n) in worst case.
 type BinaryTree[V any] interface {
 	Tree[V]
 	Insert(value V)        // Insert a value
@@ -50,7 +50,7 @@ type BinaryTree[V any] interface {
 
 // BranchTree represents a multi-branch tree (e.g., k-ary tree or B-tree), where each node
 // can have multiple children. This structure is particularly useful for managing large
-// datasets efficiently, as it minimizes height, I/O operations and supports bulk operations.
+// datasets efficiently, as it minimizes height, I/O ops and supports bulk ops.
 //
 // Branch Trees are suitable For :
 //   - Managing large datasets
@@ -82,7 +82,7 @@ type BranchTree[V any, B any, C any] interface {
 //   - Applications that requires frequent insertions and deletions (e.g., symbol
 //     tables, ordered maps).
 //
-// In average, colored trees maintain a performance of O(log n) for all its operations.
+// In average, colored trees maintain a performance of O(log n) for all its ops.
 type ColoredTree[V any, C ~uint8] interface {
 	BinaryTree[V]
 	ColorOf(v V) (color C, exists bool) // Retrieve node's color
@@ -98,7 +98,7 @@ type ColoredTree[V any, C ~uint8] interface {
 //   - Implementing autocomplete engines.
 //
 // In average, IOTries maintain a performance of O(key_length) for insertion and deletion
-// operations, and O(L+M) for search operations.
+// ops, and O(L+M) for search ops.
 type IOTrie[K comparable, I any, O any] interface {
 	Tree[O]
 	// Insert a key-value pair into the Trie.
@@ -126,7 +126,7 @@ type IOTrie[K comparable, I any, O any] interface {
 //   - Associative containers like maps and sets.
 //   - Real-time systems requiring predictable performance.
 //
-// In average, red-black trees maintain a performance of O(log n) for all its operations.
+// In average, red-black trees maintain a performance of O(log n) for all its ops.
 type RedBlackTree[V any] interface {
 	ColoredTree[V, nodes.RBColor]
 }
@@ -140,7 +140,7 @@ type RedBlackTree[V any] interface {
 //   - IP routing tables
 //   - Dictionary implementations
 //
-// In average, 'tries' maintain a performance of O(key_length) for all its operations.
+// In average, 'tries' maintain a performance of O(key_length) for all its ops.
 type Trie[K comparable, V any] interface {
 	Tree[V]
 	// Insert a key-value pair into the Trie.

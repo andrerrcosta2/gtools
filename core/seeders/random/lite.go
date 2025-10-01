@@ -5,13 +5,17 @@ package random
 import (
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/ints"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/uints"
 	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/cat"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/lite"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
 	"github.com/andrerrcosta2/gtools/core/util/casters"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
+	"math"
 	"math/big"
 	"reflect"
 	"time"
@@ -59,7 +63,7 @@ func Alphabet(q int, minMax ...int) *iterables.Slice[string] {
 
 // Alphanumeric returns a slice of length q with random alphanumeric strings between min and max length.
 // If min or max aren't provided, it defaults to a minimum length of 1 and a maximum length
-// equal to the maximum length of a string.
+// compare to the maximum length of a string.
 // It returns empty if q is negative.
 func Alphanumeric(q int, minMax ...int) *iterables.Slice[string] {
 	if q <= 0 {
@@ -95,21 +99,26 @@ func Any(q int) *iterables.Slice[any] {
 	}
 	result := make(iterables.Slice[any], q)
 	for i := 0; i < q; i++ {
-		result.Append(lite.RandAny())
+		result[i] = lite.RandAny()
 	}
 	return &result
 }
 
-// Array returns an iterables.Slice of length 'q' with random array values.
+// ArrayOf returns an iterables.Slice of length 'q' with random array values.
 // It returns empty if 'q' is negative or zero.
-func Array[A ~[]E, E any](q int) *iterables.Slice[A] {
+func ArrayOf[T any](q int) *iterables.Slice[T] {
 	if q <= 0 {
-		return iterables.OfSlice[A]()
+		return iterables.OfSlice[T]()
 	}
-	result := make(iterables.Slice[A], q)
-	t := reflect.TypeOf((*A)(nil)).Elem()
+	var zero T
+	t := reflect.TypeOf(zero)
+	if t.Kind() != reflect.Array {
+		panic(fmx.Sprintf("random:ArrayOf[%T] expected an array, got "+
+			"a %v: '%s'", zero, t.Kind(), t.String()))
+	}
+	result := make(iterables.Slice[T], q)
 	for i := 0; i < q; i++ {
-		result.Append(lite.RandArrayOf(t))
+		result[i] = lite.RandArrayOf(t).(T)
 	}
 	return &result
 }
@@ -163,7 +172,7 @@ func Comparable(q int) *iterables.Slice[any] {
 	}
 	result := make(iterables.Slice[any], q)
 	for i := 0; i < q; i++ {
-		result.Append(lite.RandCmp())
+		result[i] = lite.RandCmp()
 	}
 	return &result
 }
@@ -173,8 +182,29 @@ func Complex64(q int, realMinMaxImagMinMax ...float32) *iterables.Slice[complex6
 		return iterables.OfSlice[complex64]()
 	}
 	result := make(iterables.Slice[complex64], q)
+	minMax := realMinMaxImagMinMax
+	var rm, rM, im, iM float32
+	switch len(realMinMaxImagMinMax) {
+	case 0:
+		rm, rM, im, iM = -math.MaxFloat32, math.MaxFloat32, -math.MaxFloat32, math.MaxFloat32
+	case 1:
+		rm, rM, im, iM = minMax[0], math.MaxFloat32, -math.MaxFloat32, math.MaxFloat32
+	case 2:
+		rm, rM, im, iM = minMax[0], minMax[1], -math.MaxFloat32, math.MaxFloat32
+	case 3:
+		rm, rM, im, iM = minMax[0], minMax[1], minMax[2], math.MaxFloat32
+	default:
+		rm, rM, im, iM = minMax[0], minMax[1], minMax[2], minMax[3]
+	}
+
+	if rm > rM {
+		rm, rM = rM, rm
+	}
+	if im > iM {
+		im, iM = iM, im
+	}
 	for i := range result {
-		result[i] = prng.Complex64(realMinMaxImagMinMax...)
+		result[i] = prng.Complex64(rm, rM, im, iM)
 	}
 	return &result
 }
@@ -185,8 +215,29 @@ func Complex128(q int, realMinMaxImagMinMax ...float64) *iterables.Slice[complex
 	}
 	result := make(iterables.Slice[complex128], q)
 
+	minMax := realMinMaxImagMinMax
+	var rm, rM, im, iM float64
+	switch len(realMinMaxImagMinMax) {
+	case 0:
+		rm, rM, im, iM = -math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64
+	case 1:
+		rm, rM, im, iM = minMax[0], math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64
+	case 2:
+		rm, rM, im, iM = minMax[0], minMax[1], -math.MaxFloat64, math.MaxFloat64
+	case 3:
+		rm, rM, im, iM = minMax[0], minMax[1], minMax[2], math.MaxFloat64
+	default:
+		rm, rM, im, iM = minMax[0], minMax[1], minMax[2], minMax[3]
+	}
+	if rm > rM {
+		rm, rM = rM, rm
+	}
+	if im > iM {
+		im, iM = iM, im
+	}
+
 	for i := range result {
-		result[i] = prng.Complex128(realMinMaxImagMinMax...)
+		result[i] = prng.Complex128(rm, rM, im, iM)
 	}
 	return &result
 }
@@ -195,7 +246,7 @@ func Complex128(q int, realMinMaxImagMinMax ...float64) *iterables.Slice[complex
 // If min or max are not provided, it defaults to the minimum and maximum float32 values.
 //   - For ranges near the maximum float32 value (MaxFloat32), the precision of float32
 //     may cause a loss of variation in generated values. This is due to the inherent
-//     limitations of the 23-bit mantissa in the IEEE 754 representation of float32,
+//     limitations of the 23-bitwise mantissa in the IEEE 754 representation of float32,
 //     where the distance between representable values grows with magnitude.
 //
 // Returns an empty slice if q is negative or zero.
@@ -203,17 +254,33 @@ func Float32(q int, minMax ...float32) *iterables.Slice[float32] {
 	if q <= 0 {
 		return iterables.OfSlice[float32]()
 	}
+	var m, M float32
+	switch len(minMax) {
+	case 0:
+		m, M = -math.MaxFloat32, math.MaxFloat32
+	case 1:
+		m, M = minMax[0], math.MaxFloat32
+	default:
+		m, M = minMax[0], minMax[1]
+	}
 	result := make(iterables.Slice[float32], q)
-
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Float32(minMax...)
+		result[i] = prng.Float32(m, M)
 	}
 	return &result
 }
 
 // Float64 generates a slice of length q with random float64 values between min and max.
 // If min or max are not provided, it defaults to the minimum and maximum float64 values.
-//   - Float64 offers significantly higher precision compared to Float32, with a 52-bit
+//   - Float64 offers significantly higher precision compared to Float32, with a 52-bitwise
 //     mantissa in the IEEE 754 representation. This allows for finer variation in
 //     values even for large ranges near MaxFloat64.
 //
@@ -222,10 +289,27 @@ func Float64(q int, minMax ...float64) *iterables.Slice[float64] {
 	if q <= 0 {
 		return iterables.OfSlice[float64]()
 	}
-	result := make(iterables.Slice[float64], q)
 
+	var m, M float64
+	switch len(minMax) {
+	case 0:
+		m, M = -math.MaxFloat64, math.MaxFloat64
+	case 1:
+		m, M = minMax[0], math.MaxFloat64
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	result := make(iterables.Slice[float64], q)
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Float64(minMax...)
+		result[i] = prng.Float64(m, M)
 	}
 	return &result
 }
@@ -238,8 +322,27 @@ func Int(q int, minMax ...int) *iterables.Slice[int] {
 		return iterables.OfSlice[int]()
 	}
 	result := make(iterables.Slice[int], q)
+
+	var m, M int
+	switch len(minMax) {
+	case 0:
+		m, M = ints.Min, ints.Max
+	case 1:
+		m, M = minMax[0], ints.Max
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Int(minMax...)
+		result[i] = prng.Int(m, M)
 	}
 	return &result
 }
@@ -252,8 +355,27 @@ func Int8(q int, minMax ...int8) *iterables.Slice[int8] {
 		return iterables.OfSlice[int8]()
 	}
 	result := make(iterables.Slice[int8], q)
+
+	var m, M int8
+	switch len(minMax) {
+	case 0:
+		m, M = ints.Min8, ints.Max8
+	case 1:
+		m, M = minMax[0], ints.Max8
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Int8(minMax...)
+		result[i] = prng.Int8(m, M)
 	}
 	return &result
 }
@@ -263,8 +385,27 @@ func Int16(q int, minMax ...int16) *iterables.Slice[int16] {
 		return iterables.OfSlice[int16]()
 	}
 	result := make(iterables.Slice[int16], q)
+
+	var m, M int16
+	switch len(minMax) {
+	case 0:
+		m, M = ints.Min16, ints.Max16
+	case 1:
+		m, M = minMax[0], ints.Max16
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Int16(minMax...)
+		result[i] = prng.Int16(m, M)
 	}
 	return &result
 }
@@ -274,8 +415,27 @@ func Int32(q int, minMax ...int32) *iterables.Slice[int32] {
 		return iterables.OfSlice[int32]()
 	}
 	result := make(iterables.Slice[int32], q)
+
+	var m, M int32
+	switch len(minMax) {
+	case 0:
+		m, M = ints.Min32, ints.Max32
+	case 1:
+		m, M = minMax[0], ints.Max32
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Int32(minMax...)
+		result[i] = prng.Int32(m, M)
 	}
 	return &result
 }
@@ -285,8 +445,27 @@ func Int64(q int, minMax ...int64) *iterables.Slice[int64] {
 		return iterables.OfSlice[int64]()
 	}
 	result := make(iterables.Slice[int64], q)
+
+	var m, M int64
+	switch len(minMax) {
+	case 0:
+		m, M = ints.Min64, ints.Max64
+	case 1:
+		m, M = minMax[0], ints.Max64
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = m
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Int64(minMax...)
+		result[i] = prng.Int64(m, M)
 	}
 	return &result
 }
@@ -395,7 +574,7 @@ func SingleOf[T any]() (single T) {
 // String returns a slice of length q with random strings of length between min and max.
 // Each string is composed of random runes.
 // If min or max are not provided, it defaults to a minimum length of 1 and a maximum length
-// equal to the maximum length of a string.
+// compare to the maximum length of a string.
 // It returns empty if q is negative.
 func String(q int, minMax ...int) *iterables.Slice[string] {
 	if q <= 0 {
@@ -423,7 +602,7 @@ func String(q int, minMax ...int) *iterables.Slice[string] {
 // StringOf returns a slice of length q with random strings of length between min and max.
 // Each string is composed of characters randomly chosen from the charset.
 // If min or max are not provided, it defaults to a minimum length of 1 and a maximum length
-// equal to the maximum length of a string.
+// compare to the maximum length of a string.
 // It returns empty if q is negative.
 func StringOf(q int, charset string, minMax ...int) *iterables.Slice[string] {
 	if q <= 0 {
@@ -443,7 +622,7 @@ func StringOf(q int, charset string, minMax ...int) *iterables.Slice[string] {
 
 	if len(charset) == 0 {
 		for i := 0; i < q; i++ {
-			result = append(result, "")
+			result[i] = ""
 		}
 		return &result
 	}
@@ -479,7 +658,7 @@ func Struct[T any](q int) *iterables.Slice[T] {
 	}
 
 	for i := 0; i < q; i++ {
-		// Again, a little bit overcautious to me.
+		// Again, a little bitwise overcautious to me.
 		// But the output of this is an interface{}, so golang compiler has no
 		// idea the type generated returns a T.
 		// It might be worth duplicating the structOf function
@@ -518,8 +697,26 @@ func Uint(q int, minMax ...uint) *iterables.Slice[uint] {
 	}
 	result := make(iterables.Slice[uint], q)
 
+	var m, M uint
+	switch len(minMax) {
+	case 0:
+		m, M = 0, uints.Max
+	case 1:
+		m, M = minMax[0], uints.Max
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = prng.Uint(m, M)
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
+
 	for i := range result {
-		result[i] = prng.Uint(minMax...)
+		result[i] = prng.Uint(m, M)
 	}
 	return &result
 }
@@ -531,8 +728,25 @@ func Uint8(q int, minMax ...uint8) *iterables.Slice[uint8] {
 		return iterables.OfSlice[uint8]()
 	}
 	result := make(iterables.Slice[uint8], q)
+	var m, M uint8
+	switch len(minMax) {
+	case 0:
+		m, M = 0, uints.Max8
+	case 1:
+		m, M = minMax[0], uints.Max8
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = prng.Uint8(m, M)
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Uint8(minMax...)
+		result[i] = prng.Uint8(m, M)
 	}
 	return &result
 }
@@ -544,8 +758,25 @@ func Uint16(q int, minMax ...uint16) *iterables.Slice[uint16] {
 		return iterables.OfSlice[uint16]()
 	}
 	result := make(iterables.Slice[uint16], q)
+	var m, M uint16
+	switch len(minMax) {
+	case 0:
+		m, M = 0, uints.Max16
+	case 1:
+		m, M = minMax[0], uints.Max16
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = prng.Uint16(m, M)
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Uint16(minMax...)
+		result[i] = prng.Uint16(m, M)
 	}
 	return &result
 }
@@ -557,8 +788,25 @@ func Uint32(q int, minMax ...uint32) *iterables.Slice[uint32] {
 		return iterables.OfSlice[uint32]()
 	}
 	result := make(iterables.Slice[uint32], q)
+	var m, M uint32
+	switch len(minMax) {
+	case 0:
+		m, M = 0, uints.Max32
+	case 1:
+		m, M = minMax[0], uints.Max32
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = prng.Uint32(m, M)
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Uint32(minMax...)
+		result[i] = prng.Uint32(m, M)
 	}
 	return &result
 }
@@ -570,9 +818,25 @@ func Uint64(q int, minMax ...uint64) *iterables.Slice[uint64] {
 		return iterables.OfSlice[uint64]()
 	}
 	result := make(iterables.Slice[uint64], q)
-
+	var m, M uint64
+	switch len(minMax) {
+	case 0:
+		m, M = 0, uints.Max64
+	case 1:
+		m, M = minMax[0], uints.Max64
+	default:
+		m, M = minMax[0], minMax[1]
+	}
+	if m == M {
+		for i := range result {
+			result[i] = prng.Uint64(m, M)
+		}
+	}
+	if m > M {
+		m, M = M, m
+	}
 	for i := range result {
-		result[i] = prng.Uint64(minMax...)
+		result[i] = prng.Uint64(m, M)
 	}
 	return &result
 }

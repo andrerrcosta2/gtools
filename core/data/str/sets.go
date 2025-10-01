@@ -5,7 +5,7 @@ package str
 type Set[T any] interface {
 	Add(value T)            // Add adds an element to the set.
 	Clear()                 // Clear removes all elements from the set.
-	Equals(set Set[T]) bool // Equals checks if the set is equal to another set.
+	Equals(set Set[T]) bool // Equals checks if the set is compare to another set.
 	Has(value T) bool       // Has checks if the set contains an element.
 	IsEmpty() bool          // IsEmpty checks if the set is empty.
 	Len() int               // Len returns the number of elements in the set.

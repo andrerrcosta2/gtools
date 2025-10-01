@@ -21,7 +21,7 @@ func init() {
 // security in terms of entropy. It still very easily predictable.
 func Clock() uint64 {
 	nanos := uint64(time.Now().UnixNano())
-	// Update the global counter with a simple XOR-shift operation
+	// Update the global counter with a simple XOR-shift op
 	// to avoid stuttering seeds
 	gc ^= gc << 13
 	gc ^= gc >> 7

@@ -11,34 +11,6 @@ import (
 	"strings"
 )
 
-func Blueln(s ...any) {
-	printer.Print(term.Blue.Style(printer.Sprintln(s...)))
-}
-
-func Blue(s ...any) {
-	printer.Print(term.Blue.Style(printer.Sprintln(s...)))
-}
-
-func Bluef(format string, args ...any) {
-	printer.Print(term.Blue.Stylef(format, args...))
-}
-
-func Bluefc(format string, args ...any) {
-	Call(term.Blue.Stylef(format, args...))
-}
-
-func SBlue(s ...any) string {
-	return term.Blue.Style(printer.Sprint(s...))
-}
-
-func SBluef(format string, args ...any) string {
-	return term.Blue.Stylef(format, args...)
-}
-
-func SBlueln(s ...any) string {
-	return printer.Sprintln(term.Blue.Style(printer.Sprintln(s...)))
-}
-
 func Bold(s ...any) {
 	printer.Print(term.Bold.Style(printer.Sprint(s...)))
 }
@@ -156,34 +128,6 @@ func Errorf(format string, args ...any) error {
 	return errors.New(printer.Sprintf(format, args...))
 }
 
-func Green(s ...any) {
-	printer.Print(term.Green.Style(printer.Sprint(s...)))
-}
-
-func Greenf(format string, args ...any) {
-	printer.Print(term.Green.Stylef(format, args...))
-}
-
-func Greenfc(format string, args ...any) {
-	Call(term.Green.Stylef(format, args...))
-}
-
-func Greenln(s ...any) {
-	printer.Print(term.Green.Style(printer.Sprintln(s...)))
-}
-
-func SGreen(s ...any) string {
-	return term.Green.Style(printer.Sprint(s...))
-}
-
-func SGreenf(format string, args ...any) string {
-	return term.Green.Stylef(format, args...)
-}
-
-func SGreenln(s ...any) string {
-	return printer.Sprint(term.Green.Style(printer.Sprintln(s...)))
-}
-
 func Italic(s ...any) {
 	printer.Print(term.Italic.Style(printer.Sprint(s...)))
 }
@@ -210,6 +154,14 @@ func SItalicf(format string, args ...any) string {
 
 func SItalicln(s ...any) string {
 	return printer.Sprint(term.Italic.Style(printer.Sprintln(s...)))
+}
+
+func Obj(o any) {
+	printer.Printf("%+v\n", o)
+}
+
+func Sobj(o any) string {
+	return printer.Sprintf("%+v\n", o)
 }
 
 func Print(s ...any) {
@@ -250,34 +202,6 @@ func Sprintln(s ...any) string {
 
 func CPrintln(s ...any) {
 	Call(printer.Sprintln(s...))
-}
-
-func Red(s ...any) {
-	printer.Print(term.Red.Style(printer.Sprint(s...)))
-}
-
-func Redf(format string, args ...any) {
-	printer.Print(term.Red.Stylef(format, args...))
-}
-
-func Redfc(format string, args ...any) {
-	Call(term.Red.Stylef(format, args...))
-}
-
-func Redln(s ...any) {
-	printer.Print(term.Red.Style(printer.Sprintln(s...)))
-}
-
-func SRed(s ...any) string {
-	return term.Red.Style(s...)
-}
-
-func SRedf(format string, args ...any) string {
-	return term.Red.Stylef(format, args...)
-}
-
-func SRedln(s ...any) string {
-	return term.Red.Styleln(s...)
 }
 
 func Spaced(s ...any) {

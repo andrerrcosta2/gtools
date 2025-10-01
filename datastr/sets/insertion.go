@@ -89,7 +89,7 @@ func (s *insertion[T, H]) Remove(t T) {
 	s.list.Remove(t)
 }
 
-func (s *insertion[T, H]) Sprint(tab indent.Tab) string {
+func (s *insertion[T, H]) Sprint(tab indent.Indentor) string {
 	return tab.Sprint(sprints.TypedSlice(tab, s.list.ToSlice(), "ConcInsertion"))
 }
 
@@ -189,7 +189,7 @@ func (s *concIns[T, H]) Remove(t T) {
 	s.list.Remove(t)
 }
 
-func (s *concIns[T, H]) Sprint(tab indent.Tab) string {
+func (s *concIns[T, H]) Sprint(tab indent.Indentor) string {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
 	return tab.Sprint(sprints.TypedSlice(tab, s.list.ToSlice(), "ConcInsertion"))

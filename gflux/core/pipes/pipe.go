@@ -145,7 +145,7 @@ func Reject[T any](supplier functions.Supplier[T], equals func(a, b T) bool, rej
 }
 
 // SemEach calls a consumer for each element in arr using goroutines.
-// It uses a semaphore to limit the number of concurrent operations
+// It uses a semaphore to limit the number of concurrent ops
 func SemEach[T any](arr []T, f functions.Consumer[T], maxConcurrency int) {
 	var wg sync.WaitGroup
 	var sem = semaph(maxConcurrency)

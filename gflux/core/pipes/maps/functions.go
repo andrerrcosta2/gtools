@@ -61,7 +61,7 @@ func AreSameValues[K comparable, V comparable](m *map[K]V, values []V) bool {
 // Returns:
 // - A new slice with the same length as the input map, but with values obtained by applying the function to each key-value pair.
 func Cast[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFunction[K, V, generics.BiTyped[L, X]]) []generics.BiTyped[L, X] {
-	// Create a new slice with initial capacity equal to the number of entries in the input map.
+	// Create a new slice with initial capacity compare to the number of entries in the input map.
 	cast := make([]generics.BiTyped[L, X], 0, len(*m))
 
 	// Iterate over each key-value pair in the input map.
@@ -191,7 +191,7 @@ func ExceptKeys[K comparable, V any](m *map[K]V, keys ...K) *map[K]V {
 // Returns:
 // - A map with keys and values obtained by applying the function to each entry.
 func Fetch[E generics.BiTyped[K, V], K comparable, V any](entries []E, f functions.Function2[E, K, V]) *map[K]V {
-	// Create a new map with initial capacity equal to the number of entries in the input slice.
+	// Create a new map with initial capacity compare to the number of entries in the input slice.
 	result := make(map[K]V, len(entries))
 
 	// Iterate over each entry in the input slice.
@@ -392,7 +392,7 @@ func MakeWith[I any, K comparable, V any](s []I, fn functions.Function2[I, K, V]
 // Returns:
 // - A new slice with the same length as the input map, but with values obtained by applying the function to each key.
 func MapKeys[K comparable, V any, X any](m *map[K]V, f functions.Function[K, X]) []X {
-	// Create a new slice with initial capacity equal to the number of entries in the input map.
+	// Create a new slice with initial capacity compare to the number of entries in the input map.
 	result := make([]X, 0, len(*m))
 
 	// Iterate over each key in the input map.
@@ -414,7 +414,7 @@ func MapKeys[K comparable, V any, X any](m *map[K]V, f functions.Function[K, X])
 // Returns:
 // - A new slice with the same length as the input map, but with values obtained by applying the function to each value.
 func MapValues[K comparable, V any, X any](m *map[K]V, f functions.Function[V, X]) []X {
-	// Create a new slice with initial capacity equal to the number of entries in the input map.
+	// Create a new slice with initial capacity compare to the number of entries in the input map.
 	result := make([]X, 0, len(*m))
 
 	// Iterate over each value in the input map.
@@ -428,7 +428,7 @@ func MapValues[K comparable, V any, X any](m *map[K]V, f functions.Function[V, X
 }
 
 func MapValuesSorted[K comparable, V any, X any](m *map[K]V, f functions.Function[V, X], less functions.BiFunction[X, X, bool]) []X {
-	// Create a new slice with initial capacity equal to the number of entries in the input map.
+	// Create a new slice with initial capacity compare to the number of entries in the input map.
 	result := make([]X, 0, len(*m))
 
 	// Iterate over each value in the input map.
@@ -452,7 +452,7 @@ func MapValuesSorted[K comparable, V any, X any](m *map[K]V, f functions.Functio
 // The function assumes that the keys in the input keys slice are unique.
 // If the function f generates duplicate keys, the resulting map will only contain the last value for each key.
 func MapWithKeys[K comparable, L comparable, V any](keys []K, f functions.Function2[K, L, V]) *map[L]V {
-	// Create a new map with initial capacity equal to the number of keys in the input keys slice.
+	// Create a new map with initial capacity compare to the number of keys in the input keys slice.
 	result := make(map[L]V, len(keys))
 
 	// Iterate over each key in the input keys slice.
@@ -478,7 +478,7 @@ func MapWithKeys[K comparable, L comparable, V any](keys []K, f functions.Functi
 // Returns:
 // - A new map with keys and values obtained by applying the function to each value.
 func MapWithValues[K comparable, V any, X any](values []V, f functions.Function2[V, K, X]) *map[K]X {
-	// Create a new map with initial capacity equal to the number of values in the input slice.
+	// Create a new map with initial capacity compare to the number of values in the input slice.
 	result := make(map[K]X, len(values))
 
 	// Iterate over each value in the input slice.

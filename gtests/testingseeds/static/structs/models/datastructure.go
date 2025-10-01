@@ -73,20 +73,30 @@ type BinaryNode struct {
 	Value any
 }
 
-func (n BinaryNode) Sprint(tab indent.Tab) string {
+func (n *BinaryNode) Sprint(tab indent.Indentor, visited map[*BinaryNode]bool) string {
+	if n == nil {
+		return "<nil>"
+	}
+	if visited[n] {
+		return fmx.Sprintf("...<cycle detected at %p>...", n)
+	}
+	visited[n] = true
+
 	var left, right = "<nil>", "<nil>"
 	if n.Left != nil {
-		left = fmx.Sprintf("*BinaryNode{%v%s}", n.Left.Sprint(tab.Inc()), tab.String())
+		left = n.Left.Sprint(tab.Inc(), visited)
 	}
 	if n.Right != nil {
-		right = fmx.Sprintf("*BinaryNode{%v%s}", n.Right.Sprint(tab.Inc()), tab.String())
+		right = n.Right.Sprint(tab.Inc(), visited)
 	}
+
 	return fmx.Sprintf("\n%sValue: %v,\n%sLeft: %s,\n%sRight: %s\n",
 		tab.String(), n.Value, tab.String(), left, tab.String(), right)
 }
 
-func (n BinaryNode) String() string {
-	return "BinaryNode{" + n.Sprint(indent.Tab(1))
+func (n *BinaryNode) String() string {
+	visited := make(map[*BinaryNode]bool)
+	return "BinaryNode{" + n.Sprint(indent.Tab(1), visited) + "}"
 }
 
 func LinkedListAsRandValue() LinkedList {
@@ -294,6 +304,22 @@ type SimpleNode struct {
 	Value any
 }
 
-func (n SimpleNode) String() string {
-	return fmt.Sprintf("SimpleNode{\n\tValue: %v,\n\tNext: %v\n}", n.Value, n.Next)
+func (n *SimpleNode) String() string {
+	visited := make(map[*SimpleNode]bool)
+	return n.stringHelper(visited)
+}
+
+func (n *SimpleNode) stringHelper(visited map[*SimpleNode]bool) string {
+	if n == nil {
+		return "<nil>"
+	}
+
+	if visited[n] {
+		return "[cyclic reference]"
+	}
+
+	visited[n] = true
+	nextStr := n.Next.stringHelper(visited)
+
+	return fmt.Sprintf("SimpleNode{\n\tValue: %v,\n\tNext: %s\n}", n.Value, nextStr)
 }

@@ -31,7 +31,7 @@ func (c Categories) Values() CatValues {
 	return CatValues{}
 }
 
-func (s CatRefs) All() *iterables.Slice[any] { return iterables.OfSlice[any](referencesSet()) }
+func (s CatRefs) All() *iterables.Slice[any] { return iterables.OfSlice[any](referencesSet()...) }
 
 func (s CatRefs) Access() *iterables.Slice[any] {
 	return iterables.OfSlice[any](accessRefs()...)

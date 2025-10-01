@@ -38,7 +38,7 @@ const (
 )
 
 func (c Bg) Style(s ...any) string {
-	return Sprint(c, s)
+	return Sprint(c, s...)
 }
 
 func (c Bg) Stylef(format string, args ...any) string {

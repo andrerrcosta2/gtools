@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-// Addr returns the address of the slice
+// Addr returns the backing array pointer address of the slice
 func Addr(t reflect.Value) (uintptr, error) {
 	if t.Kind() != reflect.Slice {
 		return 0, reflect4.ErrNotSlice

@@ -6,6 +6,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
 	"github.com/andrerrcosta2/gtools/core/format"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"strconv"
 	"strings"
 	"unsafe"
@@ -13,7 +14,7 @@ import (
 
 const addrSentence = "0x%d"
 
-func Array[A ~[]T, T any](tab indent.Tab, size int, typx T, data A) string {
+func Array[A ~[]T, T any](tab indent.Indentor, size int, typx T, data A) string {
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprintf(arraySentence, size, typx))
 	for _, value := range data {
@@ -25,13 +26,13 @@ func Array[A ~[]T, T any](tab indent.Tab, size int, typx T, data A) string {
 
 const arraySentence = "[%d]%v{"
 
-func Bool[B ~bool](tab indent.Tab, data B) string {
+func Bool[B ~bool](tab indent.Indentor, data B) string {
 	return tab.Sprintf(boolSentence, data)
 }
 
 const boolSentence = "%t"
 
-func Byte[B ~byte](tab indent.Tab, s B) string {
+func Byte[B ~byte](tab indent.Indentor, s B) string {
 	return tab.Sprintf(byteSentence, s)
 }
 
@@ -39,44 +40,44 @@ const byteSentence = "%d"
 
 const closedBracket = "}"
 
-func Complex[C nums.Complex](tab indent.Tab, data C) string {
+func Complex[C nums.Complex](tab indent.Indentor, data C) string {
 	return tab.Sprintf(complexSentence, data)
 }
 
 const complexSentence = "%g"
 const digitSentence = "%d"
 
-func Float[T nums.Float](tab indent.Tab, data T) string {
+func Float[T nums.Float](tab indent.Indentor, data T) string {
 	return tab.Sprintf(floatSentence, data)
 }
 
 const floatSentence = "%g"
 
-func Int[I ~int](tab indent.Tab, s I) string {
+func Int[I ~int](tab indent.Indentor, s I) string {
 	return tab.Sprintf(strconv.Itoa(int(s)))
 }
 
-func Int8[I ~int8](tab indent.Tab, s I) string {
+func Int8[I ~int8](tab indent.Indentor, s I) string {
 	return tab.Sprintf(strconv.Itoa(int(s)))
 }
 
-func Int16[I ~int16](tab indent.Tab, s I) string {
+func Int16[I ~int16](tab indent.Indentor, s I) string {
 	return tab.Sprintf(strconv.Itoa(int(s)))
 }
 
-func Int32[I ~int32](tab indent.Tab, s I) string {
+func Int32[I ~int32](tab indent.Indentor, s I) string {
 	return tab.Sprintf(strconv.Itoa(int(s)))
 }
 
-func Int64[I ~int64](tab indent.Tab, s I) string {
+func Int64[I ~int64](tab indent.Indentor, s I) string {
 	return tab.Sprintf(strconv.Itoa(int(s)))
 }
 
-func Invalid(tab indent.Tab) string {
+func Invalid(tab indent.Indentor) string {
 	return tab.Sprint("<invalid>")
 }
 
-func Map[M ~map[K]V, K comparable, V any](tab indent.Tab, m M, keyValue ...string) string {
+func Map[M ~map[K]V, K comparable, V any](tab indent.Indentor, m M, keyValue ...string) string {
 	sb := strings.Builder{}
 	if len(keyValue) > 0 {
 		k, v := keyValue[0], keyValue[1]
@@ -97,17 +98,17 @@ const unknownMapSentence = "map[%T]%T{"
 const mapSentence = "map[%s]%s{}"
 const mapFieldSentence = "%v: %v,"
 
-func Nil(tab indent.Tab) string {
+func Nil(tab indent.Indentor) string {
 	return tab.Sprint("<nil>")
 }
 
 const objectSentence = "%s{"
 
-func Ptr(tab indent.Tab, s string) string {
+func Ptr(tab indent.Indentor, s string) string {
 	return tab.Sprint("*" + FieldVal(s))
 }
 
-func TypedSlice[S ~[]T, T any](tab indent.Tab, s S, typx ...string) string {
+func TypedSlice[S ~[]T, T any](tab indent.Indentor, s S, typx ...string) string {
 	var zero T
 	sb := strings.Builder{}
 	if len(typx) > 0 {
@@ -139,7 +140,7 @@ func String(s string) string {
 
 const stringSentence = "%q"
 
-func Struct(tab indent.Tab, n string, fields ...Tuple[string, string]) string {
+func Struct(tab indent.Indentor, n string, fields ...Tuple[string, string]) string {
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprintf(objectSentence, n))
 	for _, field := range fields {
@@ -151,32 +152,32 @@ func Struct(tab indent.Tab, n string, fields ...Tuple[string, string]) string {
 
 const structFieldSentence = "%v %v,"
 
-func Uint[I ~uint](tab indent.Tab, s I) string {
+func Uint[I ~uint](tab indent.Indentor, s I) string {
 	return tab.Sprint(strconv.Itoa(int(s)))
 }
 
-func Uint8[I ~uint8](tab indent.Tab, s I) string {
+func Uint8[I ~uint8](tab indent.Indentor, s I) string {
 	return tab.Sprint(strconv.Itoa(int(s)))
 }
 
-func Uint16[I ~uint16](tab indent.Tab, s I) string {
+func Uint16[I ~uint16](tab indent.Indentor, s I) string {
 	return tab.Sprint(strconv.Itoa(int(s)))
 }
 
-func Uint32[I ~uint32](tab indent.Tab, s I) string {
+func Uint32[I ~uint32](tab indent.Indentor, s I) string {
 	return tab.Sprint(strconv.Itoa(int(s)))
 }
 
-func Uint64[I ~uint64](tab indent.Tab, s I) string {
+func Uint64[I ~uint64](tab indent.Indentor, s I) string {
 	return tab.Sprint(strconv.Itoa(int(s)))
 }
 
-func Uintptr(tab indent.Tab, s uintptr) string {
+func Uintptr(tab indent.Indentor, s uintptr) string {
 	return tab.Sprintf(addrSentence, s)
 }
 
-func UnsafePointer(tab indent.Tab, s unsafe.Pointer) string {
-	return tab.Sprintf(addrSentence, uintptr(s))
+func UnsafePointer(tab indent.Indentor, s unsafe.Pointer) string {
+	return tab.String() + "unsafe.Pointer(" + fmx.Sprintf(addrSentence, uintptr(s)) + ")"
 }
 
-const valueSentence = "%v,"
+const valueSentence = "%v"

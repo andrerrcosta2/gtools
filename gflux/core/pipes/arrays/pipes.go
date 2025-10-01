@@ -33,8 +33,8 @@ func RemoveByIndex[T any](arr []T, index int) []T {
 // Returns:
 // - The reversed slice.
 func Reverse[T any](arr []T) []T {
-	// Use two pointers, one starting from the beginning and the other from the end.
-	// Swap the elements at these pointers until they meet in the middle.
+	// Use two ptrs, one starting from the beginning and the other from the end.
+	// Swap the elements at these ptrs until they meet in the middle.
 	for i, j := 0, len(arr)-1; i < j; i, j = i+1, j-1 {
 		arr[i], arr[j] = arr[j], arr[i]
 	}
@@ -138,7 +138,7 @@ func First[T any](arr []T) T {
 func LastIndexOf[T comparable](arr []T, val T) int {
 	// Iterate over the slice in reverse order
 	for i := len(arr) - 1; i >= 0; i-- {
-		// Check if the current element is equal to the target value
+		// Check if the current element is compare to the target value
 		if arr[i] == val {
 			// If it is, return the index
 			return i

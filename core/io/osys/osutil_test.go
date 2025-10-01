@@ -29,7 +29,7 @@ func TestReadFiles_Success(t *testing.T) {
 		paths[i] = fsys.Path{Type: fsys.Relative, Path: file}
 	}
 
-	// Mock OS operations
+	// Mock OS ops
 	readOsFile = mckReadOsFiles
 	defer func() {
 		readOsFile = os.ReadFile
@@ -62,7 +62,7 @@ func TestReadFiles_Error(t *testing.T) {
 		{Type: fsys.Relative, Path: "./nonexistent/file2.txt"},
 	}
 
-	// Mock OS operations
+	// Mock OS ops
 	readOsFile = mckReadOsFiles
 	defer func() {
 		readOsFile = os.ReadFile
@@ -97,7 +97,7 @@ func TestReadFiles_Concurrency(t *testing.T) {
 		t.Fatal("not enough test files for concurrency test")
 	}
 
-	// Mock OS operations
+	// Mock OS ops
 	readOsFile = mckReadOsFiles
 	defer func() {
 		readOsFile = os.ReadFile

@@ -20,7 +20,7 @@ func Binary[T any, S ~[]T](comparator comparators.Typed[T]) Sorter[T, S] {
 // Average case: O(n^2)) due to the insertion process.
 //
 // Space Complexity: O(1) due to no additional data structures used.
-// Stability: Stable - Preserves the relative order of equal elements.
+// Stability: Stable - Preserves the relative order of compare elements.
 type binarySorter[T any, S ~[]T] struct {
 	comparator comparators.Typed[T]
 }

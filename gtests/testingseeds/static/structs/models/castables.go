@@ -450,7 +450,7 @@ func SimpleUnsafeCastableBaseAsRandValue() SimpleUnsafeCastableBase {
 }
 
 // SimpleUnsafeCastableBase is a base struct for unsafe casts
-// Unsafe casts are used to modify the underlying memory of unsafe pointers
+// Unsafe casts are used to modify the underlying memory of unsafe ptrs
 type SimpleUnsafeCastableBase struct {
 	ID int
 }

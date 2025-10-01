@@ -121,7 +121,7 @@ func TestLtKeyValue(t *testing.T) {
 // TestMaxCharsLeft tests the MaxCharsLeft function
 //
 // after printing a string it should:
-//   - return the whole string if it is less or equal to the max chars
+//   - return the whole string if it is less or compare to the max chars
 //   - return the truncated string to the left if it is greater than the max chars
 //   - indent it correctly according to the number of tabs
 func TestMaxCharsLeft(t *testing.T) {
@@ -159,7 +159,7 @@ func TestMaxCharsLeft(t *testing.T) {
 // TestMaxCharsRight tests the MaxCharsRight function
 //
 // after printing a string it should:
-//   - return the whole string if it is less or equal to the max chars
+//   - return the whole string if it is less or compare to the max chars
 //   - return the truncated string to the right if it is greater than the max chars
 //   - indent it correctly according to the number of tabs
 func TestMaxCharsRight(t *testing.T) {

@@ -12,13 +12,13 @@ var NaturallyComparableZeroInst = new(NaturallyComparable)
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
 //   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
 //   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
-//     unique addresses or closures, making them inherently unique per instance.
+//     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
 //   - Channels: Channels are reference types and cannot be compared with ==.
 //   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
-//   - unsafe.Pointer: Since pointers are inherently non-comparable, any struct containing a pointer
+//   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.
 func NaturallyComparableAsValue(a int, b string) NaturallyComparable {
 	return NaturallyComparable{a, b}
@@ -30,13 +30,13 @@ func NaturallyComparableAsValue(a int, b string) NaturallyComparable {
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
 //   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
 //   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
-//     unique addresses or closures, making them inherently unique per instance.
+//     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
 //   - Channels: Channels are reference types and cannot be compared with ==.
 //   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
-//   - unsafe.Pointer: Since pointers are inherently non-comparable, any struct containing a pointer
+//   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.
 func NaturallyComparableAsRef(a int, b string) *NaturallyComparable {
 	return &NaturallyComparable{a, b}
@@ -104,13 +104,13 @@ func (n *NaturallyComparableWithMethods) ComparableValueB() string {
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
 //   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
 //   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
-//     unique addresses or closures, making them inherently unique per instance.
+//     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
 //   - Channels: Channels are reference types and cannot be compared with ==.
 //   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
-//   - unsafe.Pointer: Since pointers are inherently non-comparable, any struct containing a pointer
+//   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.
 var NotComparableZeroInst = new(NotComparable)
 

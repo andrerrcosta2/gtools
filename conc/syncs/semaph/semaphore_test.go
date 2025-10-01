@@ -185,13 +185,13 @@ func TestReadWriteSemaphore_MultipleReaders(t *testing.T) {
 		go func(id int) {
 			defer wg.Done()
 
-			// Start the read operation
+			// Start the read op
 			rw.StartR()
 
-			// Simulate the read operation
+			// Simulate the read op
 			time.Sleep(100 * time.Millisecond)
 
-			// End the read operation
+			// End the read op
 			rw.EndR()
 		}(i)
 	}
@@ -226,13 +226,13 @@ func TestReadWriteSemaphore_WriterBlocksUntilReadersDone(t *testing.T) {
 		go func(id int) {
 			defer wg.Done()
 
-			// Start the read operation
+			// Start the read op
 			rw.StartR()
 
-			// Simulate the read operation
+			// Simulate the read op
 			time.Sleep(200 * time.Millisecond)
 
-			// End the read operation
+			// End the read op
 			rw.EndR()
 		}(i)
 	}
@@ -244,10 +244,10 @@ func TestReadWriteSemaphore_WriterBlocksUntilReadersDone(t *testing.T) {
 		// Ensure readers start first
 		time.Sleep(50 * time.Millisecond)
 
-		// Start the write operation
+		// Start the write op
 		rw.StartW()
 
-		// End the write operation
+		// End the write op
 		rw.EndW()
 	}()
 
@@ -280,13 +280,13 @@ func TestReadWriteSemaphore_ReaderBlocksDuringWrite(t *testing.T) {
 	go func() {
 		defer wg.Done()
 
-		// Start the write operation
+		// Start the write op
 		rw.StartW()
 
-		// Simulate the write operation
+		// Simulate the write op
 		time.Sleep(200 * time.Millisecond)
 
-		// End the write operation
+		// End the write op
 		rw.EndW()
 	}()
 
@@ -297,10 +297,10 @@ func TestReadWriteSemaphore_ReaderBlocksDuringWrite(t *testing.T) {
 		// Ensure the writer starts first
 		time.Sleep(50 * time.Millisecond)
 
-		// Start the read operation
+		// Start the read op
 		rw.StartR()
 
-		// End the read operation
+		// End the read op
 		rw.EndR()
 	}()
 
@@ -331,11 +331,11 @@ func TestReadWriteSemaphore_OnlyOneWriter(t *testing.T) {
 	// Start the first writer in a separate goroutine
 	go func() {
 		defer wg.Done()
-		// Start the write operation
+		// Start the write op
 		rw.StartW()
-		// Simulate the write operation
+		// Simulate the write op
 		time.Sleep(200 * time.Millisecond)
-		// End the write operation
+		// End the write op
 		rw.EndW()
 	}()
 
@@ -344,9 +344,9 @@ func TestReadWriteSemaphore_OnlyOneWriter(t *testing.T) {
 		defer wg.Done()
 		// Ensure the first writer starts first
 		time.Sleep(50 * time.Millisecond)
-		// Start the write operation
+		// Start the write op
 		rw.StartW()
-		// End the write operation
+		// End the write op
 		rw.EndW()
 	}()
 

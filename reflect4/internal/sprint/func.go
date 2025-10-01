@@ -13,5 +13,5 @@ func Func(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Func {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotFunc.Error()), reflect4.ErrNotFunc
 	}
-	return sprintFunc(tab, v), nil
+	return defaultFunc(tab, v), nil
 }

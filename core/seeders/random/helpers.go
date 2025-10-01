@@ -81,7 +81,7 @@ func xrngf64(minMax ...float64) (min, max float64) {
 	switch len(minMax) {
 	case 0:
 		// No m or M provided, use default range
-		// float64 is a 64-bit IEEE 754 floating-point number.
+		// float64 is a 64-bitwise IEEE 754 floating-point number.
 		// Its range is symmetric, meaning the negative and positive sides
 		// of the range have the same magnitude
 		min, max = -math.MaxFloat64, math.MaxFloat64

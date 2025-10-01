@@ -6,8 +6,19 @@ import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/mod"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng/inc"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng/mult"
-	"math"
 )
+
+func Float32(s1, s2 uint64) (uint64, uint64) {
+	ss1 := (mult.Uint64*s1 + inc.Uint64) & mod.Uint64
+	ss2 := (mult.Uint64*s2 + inc.Uint64) & mod.Uint64
+	return ss1, ss2
+}
+
+func Float64(s1, s2 uint64) (uint64, uint64) {
+	ss1 := (mult.Uint64*s1 + inc.Uint64) & mod.Uint64
+	ss2 := (mult.Uint64*s2 + inc.Uint64) & mod.Uint64
+	return ss1, ss2
+}
 
 func Int(seed uint64) uint64 { return (mult.Int64*seed + inc.Int64) & mod.Uint64 }
 
@@ -45,60 +56,4 @@ func Uint32(seed uint64) uint64 {
 
 func Uint64(seed uint64) uint64 {
 	return (mult.Uint64*seed + inc.Uint64) & mod.Uint64
-}
-
-func Float32(s1, s2 uint64) (is float64, fs uint64) {
-	ls1 := (mult.Uint64*s1 + inc.Uint64) & 0xFFFFFFFFFFFFFFFF
-	fs = (mult.Uint64*s2 + inc.Uint64) & 0xFFFFFFFFFFFFFFFF
-
-	if ls1 == math.MaxUint64 {
-		return 0.0, fs
-	}
-
-	// Scale ls into the float64 range
-	//fmt.Printf("ls1: %d\n", ls1)
-	ss1 := float64(ls1) * (math.MaxFloat64 / math.MaxUint64)
-	//fmt.Printf("ss1: %f\n", float64(ls1)*(math.MaxFloat64/math.MaxUint64))
-
-	// Calculate overflow parameters
-	s1to := math.MaxFloat64 - ss1  // Remaining space to overflow
-	s1or := math.MaxFloat64 / s1to // Scaling ratio to simulate overflow
-	// this value may require adjustment. in theory s1or
-	// may be lower than this constant
-	s1ov := 95384372348.0 / s1or // Simulated overflow value
-
-	// Extract fractional overflow
-	s1fo := s1ov - math.Floor(s1ov)
-
-	// Calculate the final adjusted value
-	is = ss1 * s1fo
-
-	return
-}
-
-func Float64(s1, s2 uint64) (is float64, fs uint64) {
-	ls1 := (mult.Uint64*s1 + inc.Uint64) & 0xFFFFFFFFFFFFFFFF
-	fs = (mult.Uint64*s2 + inc.Uint64) & 0xFFFFFFFFFFFFFFFF
-
-	if ls1 == math.MaxUint64 {
-		return 0.0, fs
-	}
-
-	// Scale ls into the float64 range
-	ss1 := float64(ls1) * (math.MaxFloat64 / math.MaxUint64)
-
-	// Calculate overflow parameters
-	s1to := math.MaxFloat64 - ss1  // Remaining space to overflow
-	s1or := math.MaxFloat64 / s1to // Scaling ratio to simulate overflow
-	// this value may require adjustment. in theory s1or
-	// may be lower than this constant
-	s1ov := 95384372348.0 / s1or // Simulated overflow value
-
-	// Extract fractional overflow
-	s1fo := s1ov - math.Floor(s1ov)
-
-	// Calculate the final adjusted value
-	is = ss1 * s1fo
-
-	return
 }

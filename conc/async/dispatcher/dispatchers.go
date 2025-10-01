@@ -28,7 +28,7 @@ type (
 		Dispatch(item T) error       // Dispatch sends an item to be handled.
 		Close()                      // Close gracefully stops the dispatcher.
 		IsClosed() bool              // IsClosed checks whether the dispatcher is closed.
-		Listen(listener Listener[T]) // Sets a listener to react to dispatch operations
+		Listen(listener Listener[T]) // Sets a listener to react to dispatch ops
 		QueueSize() int
 	}
 

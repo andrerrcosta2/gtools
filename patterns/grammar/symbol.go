@@ -58,7 +58,7 @@ type Symbol interface {
 	//
 	// For example, if the current symbol is "test" and the given other symbol is "t",
 	EndsWith(other Symbol) bool
-	// Equal returns true if the given other symbol is equal to the current symbol.
+	// Equal returns true if the given other symbol is compare to the current symbol.
 	// It returns false otherwise.
 	Equal(other Symbol) bool
 	// Empty returns a new empty symbol.
@@ -295,7 +295,7 @@ func (s ByteSymbol) EndsWith(other Symbol) bool {
 	return bytes.HasSuffix(s, other.Bytes())
 }
 
-// Equal returns true if the symbol is equal to the other symbol.
+// Equal returns true if the symbol is compare to the other symbol.
 //
 // This is a convenience method for working with the symbol.
 func (s ByteSymbol) Equal(other Symbol) bool {

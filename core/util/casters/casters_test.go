@@ -125,7 +125,7 @@ func TestUnsafeValueOf_Structs(t *testing.T) {
 		assertlite.Equals(t, result, s)
 	})
 
-	t.Run("struct with pointers", func(t *testing.T) {
+	t.Run("struct with ptrs", func(t *testing.T) {
 		name := "John"
 		var s any = testseed.StructWithPointers{Name: &name}
 		result := UnsafeValueOf[testseed.StructWithPointers](s)

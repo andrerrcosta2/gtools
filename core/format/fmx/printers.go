@@ -10,7 +10,7 @@ import (
 )
 
 type Sprinter interface {
-	Sprint(tab indent.Tab) string
+	Sprint(tab indent.Indentor) string
 }
 
 func Printer() custom.Printer {

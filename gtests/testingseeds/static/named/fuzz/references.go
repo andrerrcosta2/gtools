@@ -10,7 +10,7 @@ import (
 
 func referencesSet() []any {
 	return slices.Concat(primitiveRefs(), primitiveSliceRefs(),
-		channelRefs(), mapRefs())
+		channelRefs(), mapRefs(), primitiveStructRefs())
 }
 
 func primitiveRefs() []any {

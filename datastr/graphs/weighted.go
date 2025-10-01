@@ -71,7 +71,7 @@ func (g *weightedSortableDigraphOf[G, W]) HasEdge(from, to G) bool {
 	if neighbors, ok := g.adj.Get(from); ok {
 		it := neighbors.Iterator()
 		for key, _, ok := it.Next(); ok; key, _, ok = it.Next() {
-			// Check if 'key' is equal to 'to'
+			// Check if 'key' is compare to 'to'
 			if key.Equal(to) {
 				// If 'to' is a neighbor of 'from', return true
 				return true

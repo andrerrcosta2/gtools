@@ -17,11 +17,11 @@ import (
 // TestAccessField Tests if the method is able to access a field from a struct
 //
 //		If the field is exported, it should:
-//		- Be able to Interface
+//		- Be able to interfaces
 //		- Be able to set if the field is addressable
 //	 Non exported fields shouldn't be able to interface nor set.
 func TestAccessField(t *testing.T) {
-	tt := testingtools.LoggersLitetm(t, testlogs.OnErrors, themes.Color)
+	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
 	t.Run("should interface but not set exported unaddressable field", func(t *testing.T) {
 		ef := models.ExportedFieldsAsValue(1, "")
@@ -89,7 +89,7 @@ func TestAccessField(t *testing.T) {
 	})
 
 	t.Run("should not interface nor set unexported reference field", func(t *testing.T) {
-		u := models.UnexportedFieldsAsRef(1, "addr")
+		u := models.UnexportedFieldsAsRef(1, "address")
 
 		err := AccessFieldByName(reflect.ValueOf(u).Elem(), "addressable", func(field reflect.Value) {
 			assertlite.Panic(t, func() {
@@ -106,22 +106,22 @@ func TestAccessField(t *testing.T) {
 				t.Fail()
 			})
 		})
-		assertlite.Equals(t, *u.Addressable(), "addr")
+		assertlite.Equals(t, *u.Addressable(), "address")
 		assertlite.NoError(t, err)
 	})
 }
 
 func TestAccessFields(t *testing.T) {
-	tt := testingtools.LoggersLitetm(t, testlogs.OnErrors, themes.Color)
+	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
 	t.Run("value: exported addressable/unaddressable fields", func(t *testing.T) {
-		x := models.ExportedFieldsAsValue(1, "addr")
+		x := models.ExportedFieldsAsValue(1, "address")
 		err := AccessFields(reflect.ValueOf(x), func(name string, field reflect.Value) {
 			if name == "Addressable" {
 				assertlite.NoPanic(t, func() {
 					// should interface
 					value := field.Elem().Interface()
-					assertlite.Equals(t, value, "addr")
+					assertlite.Equals(t, value, "address")
 
 					// should set
 					field.Elem().Set(reflect.ValueOf("new"))
@@ -147,13 +147,13 @@ func TestAccessFields(t *testing.T) {
 	})
 
 	t.Run("reference: exported addressable/unaddressable fields", func(t *testing.T) {
-		x := models.ExportedFieldsAsRef(1, "addr")
+		x := models.ExportedFieldsAsRef(1, "address")
 		err := AccessFields(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) {
 			if name == "Addressable" {
 				assertlite.NoPanic(t, func() {
 					// should interface
 					value := field.Elem().Interface()
-					assertlite.Equals(t, value, "addr")
+					assertlite.Equals(t, value, "address")
 
 					// should set
 					field.Elem().Set(reflect.ValueOf("new"))
@@ -175,7 +175,7 @@ func TestAccessFields(t *testing.T) {
 	})
 
 	t.Run("value: unexported addressable/unaddressable fields", func(t *testing.T) {
-		x := models.UnexportedFieldsAsValue(1, "addr")
+		x := models.UnexportedFieldsAsValue(1, "address")
 		err := AccessFields(reflect.ValueOf(x), func(name string, field reflect.Value) {
 			if name == "addressable" {
 				assertlite.Panic(t, func() {
@@ -207,13 +207,13 @@ func TestAccessFields(t *testing.T) {
 				})
 			}
 		})
-		assertlite.Equals(t, *x.Addressable(), "addr")
+		assertlite.Equals(t, *x.Addressable(), "address")
 		assertlite.Equals(t, x.Unaddressable(), 1)
 		assertlite.NoError(t, err)
 	})
 
 	t.Run("reference: unexported addressable/unaddressable fields", func(t *testing.T) {
-		x := models.UnexportedFieldsAsRef(1, "addr")
+		x := models.UnexportedFieldsAsRef(1, "address")
 		err := AccessFields(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) {
 			if name == "addressable" {
 				assertlite.Panic(t, func() {
@@ -245,7 +245,7 @@ func TestAccessFields(t *testing.T) {
 				})
 			}
 		})
-		assertlite.Equals(t, *x.Addressable(), "addr")
+		assertlite.Equals(t, *x.Addressable(), "address")
 		assertlite.Equals(t, x.Unaddressable(), 1)
 		assertlite.NoError(t, err)
 	})
@@ -387,7 +387,7 @@ func TestNoNilFields(t *testing.T) {
 		nf, err := NoNilFields(rv)
 		assertlite.NoError(t, err)
 		assertlite.True(t, len(nf) == rv.NumField(), "expected nil fields map "+
-			"to have len equals to '%d' but got '%d'", rv.NumField(), len(nf))
+			"to have len compare to '%d' but got '%d'", rv.NumField(), len(nf))
 		assertlite.NoNilFields(t, true, value)
 	})
 
@@ -396,7 +396,7 @@ func TestNoNilFields(t *testing.T) {
 		nf, err := NoNilFields(reflect.ValueOf(value))
 		assertlite.NoError(t, err)
 		assertlite.True(t, len(nf) == 0, "expected nil fields map "+
-			"to have len equals to '0' but got '%d'", len(nf))
+			"to have len compare to '0' but got '%d'", len(nf))
 		assertlite.AllFieldsAreNil(t, true, value)
 	})
 }
@@ -479,7 +479,7 @@ func TestUnsafeGetAllFields(t *testing.T) {
 // TestUnsafeRideFields Tests if the method is able to ride over all fields from a struct using
 // the unsafe package
 //
-//   - All fields (exported/unexported) should be accessible as unsafe pointers.
+//   - All fields (exported/unexported) should be accessible as unsafe ptrs.
 //func TestUnsafeRideFields(t *testing.T) {
 //	values := gtests.Structs.Fuzz().Categories().Values()
 //	refs := gtests.Structs.Fuzz().Categories().Refs()

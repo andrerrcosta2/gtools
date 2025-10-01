@@ -104,7 +104,7 @@ func (n *Node[V]) String() string {
 	return n.Sprint(indent.Zero())
 }
 
-func (n *Node[V]) Sprint(tab indent.Tab) string {
+func (n *Node[V]) Sprint(tab indent.Indentor) string {
 	var parent = "*redblack.Node<nil>"
 	var left = "*redblack.Node<nil>"
 	var right = "*redblack.Node<nil>"
@@ -156,7 +156,7 @@ func colorOf[V any](n *Node[V]) nodes.RBColor {
 }
 
 // DeleteNode deletes a node from the tree. The deletion is one of the
-// most complex operations on red black trees because it involves not only removing a
+// most complex ops on red black trees because it involves not only removing a
 // node but also ensuring that the tree maintains its properties after the removal.
 //
 // the deletion must be done in three main steps
@@ -170,7 +170,7 @@ func colorOf[V any](n *Node[V]) nodes.RBColor {
 //     value, then delete the successor:
 //  3. fix up the red-black properties:
 //     - after removing the node, the tree may violate Red-Black properties.
-//     to avoid that we must perform "fixup" operations (rotations and recoloring)
+//     to avoid that we must perform "fixup" ops (rotations and recoloring)
 //     to restore the properties.
 func DeleteNode[V any](root, target *Node[V]) *Node[V] {
 	if target == nil {
@@ -327,7 +327,7 @@ func Floor[V any](from *Node[V], value V, compare functions.BiFunction[V, V, int
 
 	for from != nil {
 		cmp := compare(value, from.Value())
-		if cmp == 0 { // equals
+		if cmp == 0 { // compare
 			return from.Value(), true
 		} else if cmp > 0 {
 			floor = from.Value()
@@ -529,13 +529,13 @@ func rotateLeft[V any](root, x *Node[V]) *Node[V] {
 	// top is the right child of x, which will take x's place
 	top := x.right
 
-	// Update child pointers
+	// Update child ptrs
 	x.right = top.left
 	if x.right != nil {
 		x.right.parent = x
 	}
 
-	// Update parent pointers
+	// Update parent ptrs
 	top.parent = x.parent
 	if x.parent == nil {
 		root = top // top becomes the new root
@@ -564,13 +564,13 @@ func rotateRight[V any](root, x *Node[V]) *Node[V] {
 	// top is the left child of x, which will take x's place
 	top := x.left
 
-	// Update child pointers
+	// Update child ptrs
 	x.left = top.right
 	if x.left != nil {
 		x.left.parent = x
 	}
 
-	// Update parent pointers
+	// Update parent ptrs
 	top.parent = x.parent
 	if x.parent == nil {
 		root = top // top becomes the new root

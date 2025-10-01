@@ -64,7 +64,7 @@ func (g *undirectGraphOf[G]) AddNode(node G) {
 //
 // The function first checks if both 'from' and 'to' nodes exist in the graph.
 // If either of the nodes is not present, the function returns without performing
-// any further operations.
+// any further ops.
 //
 // If both nodes exist, the function retrieves the neighbors of 'from' and 'to'
 // from the adjacency list.
@@ -103,7 +103,7 @@ func (g *undirectGraphOf[G]) HasEdge(from, to G) bool {
 	if neighbors, ok := g.adj.Get(from); ok {
 		// Iterate over the neighbors
 		for _, neighbor := range neighbors {
-			// Check if 'neighbor' is equal to 'to'
+			// Check if 'neighbor' is compare to 'to'
 			if neighbor.Equal(to) {
 				// If 'to' is a neighbor of 'from', return true
 				return true
@@ -197,7 +197,7 @@ func (g *undirectGraph[G]) AddNode(node G) {
 //
 // The function first checks if both 'from' and 'to' nodes exist in the graph.
 // If either of the nodes is not present, the function returns without performing
-// any further operations.
+// any further ops.
 //
 // If both nodes exist, the function retrieves the neighbors of 'from' and 'to'
 // from the adjacency list.
@@ -237,7 +237,7 @@ func (g *undirectGraph[G]) HasEdge(from, to G) bool {
 	if neighbors, ok := g.adj[from]; ok {
 		// Iterate over the neighbors
 		for _, neighbor := range neighbors {
-			// Check if 'neighbor' is equal to 'to'
+			// Check if 'neighbor' is compare to 'to'
 			if neighbor == to {
 				// If 'to' is a neighbor of 'from', return true
 				return true

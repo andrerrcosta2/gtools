@@ -29,8 +29,8 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
 				return g
 			},
 			expected: false,
@@ -40,10 +40,10 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C")) // Edge B-C
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C")) // Edge C-C
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A")) // Edge C-A
 				return g
 			},
@@ -54,11 +54,11 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("D"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C")) // Edge B-C
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C")) // Edge C-C
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("D")) // Edge C-D
 				g.AddEdge(tests.NewSortableNode("D"), tests.NewSortableNode("A")) // Edge D-A
 				return g
@@ -70,11 +70,11 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("D"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C")) // Edge B-C
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C")) // Edge C-C
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("D")) // Edge C-D
 				g.AddEdge(tests.NewSortableNode("D"), tests.NewSortableNode("A")) // Edge D-A
 				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Diagonal A-C
@@ -97,9 +97,9 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
 				// Next C is disconnected
 				return g
 			},
@@ -110,11 +110,11 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := UndirectedOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("D"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B")) // Edge A-B
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C")) // Edge B-C
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C")) // Edge A-C
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C")) // Edge C-C
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A")) // Edge C-A (Cycle)
 				g.AddEdge(tests.NewSortableNode("D"), tests.NewSortableNode("D")) // Self-loop on D
 				return g
@@ -153,10 +153,10 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := DigraphOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"))
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"))
 				return g
 			},
 			expected: false,
@@ -166,11 +166,11 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := DigraphOf[N]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A")) // Creates a cycle: A -> B -> C -> A
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A")) // Creates a cycle: A -> C -> C -> A
 				return g
 			},
 			expected: true,
@@ -191,8 +191,8 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 				g := DigraphOf[N]()
 				// First component (no cycle)
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
 
 				// Second component (with a cycle)
 				g.AddNode(tests.NewSortableNode("C"))
@@ -212,8 +212,8 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 
 				// First component
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
 
 				// Second component
 				g.AddNode(tests.NewSortableNode("C"))
@@ -228,11 +228,11 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			setup: func() str.GraphOf[N, E] {
 				g := DigraphOf[N]()
 				// Adding nodes
-				tests.NewSortableNodes("A", "B", "C", "D", "E", "F").Each(g.AddNode)
+				tests.NewSortableNodes("A", "C", "C", "D", "E", "F").Each(g.AddNode)
 
 				// Adding edges (with a cycle)
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"))
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("D"))
 				g.AddEdge(tests.NewSortableNode("D"), tests.NewSortableNode("E"))
 				g.AddEdge(tests.NewSortableNode("E"), tests.NewSortableNode("F"))
@@ -284,11 +284,11 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 			setup: func() str.WOrderedGraphOf[N, W, E] {
 				g := WeightedSortableDigraphOf[N, W]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
+				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("C"))
 				g.AddNode(tests.NewSortableNode("D"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"), 1) // Edge A-B
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"), 1) // Edge B-C
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1) // Edge A-C
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"), 1) // Edge C-C
 				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("D"), 1) // Edge C-D
 				g.AddEdge(tests.NewSortableNode("D"), tests.NewSortableNode("A"), 1) // Edge D-A
 				return g
@@ -300,10 +300,10 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 			setup: func() str.WOrderedGraphOf[N, W, E] {
 				g := WeightedSortableDigraphOf[N, W]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"), 1)
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"), 1)
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1)
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"), 1)
 				return g
 			},
 			expected: false,
@@ -313,11 +313,11 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 			setup: func() str.WOrderedGraphOf[N, W, E] {
 				g := WeightedSortableDigraphOf[N, W]()
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
 				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"), 1)
-				g.AddEdge(tests.NewSortableNode("B"), tests.NewSortableNode("C"), 1)
-				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A"), 1) // Creates a cycle: A -> B -> C -> A
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1)
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"), 1)
+				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("A"), 1) // Creates a cycle: A -> C -> C -> A
 				return g
 			},
 			expected: true,
@@ -339,8 +339,8 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 
 				// First component (no cycle)
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"), 1)
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1)
 
 				// Second component (with a cycle)
 				g.AddNode(tests.NewSortableNode("C"))
@@ -360,8 +360,8 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 
 				// First component
 				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("B"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("B"), 1)
+				g.AddNode(tests.NewSortableNode("C"))
+				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1)
 
 				// Second component
 				g.AddNode(tests.NewSortableNode("C"))

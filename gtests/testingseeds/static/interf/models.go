@@ -2,6 +2,8 @@
 
 package interf
 
+import "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
+
 type Simple interface {
 	Simple() int
 }
@@ -14,13 +16,35 @@ type Seeder[T any] interface {
 	Seed() []T
 }
 
+func OneDataAsRef(s string) OneMethod {
+	return models.OneDataAsRef(s)
+}
+
 type OneMethod interface {
 	String() string
+}
+
+func TwoDataAsTwoMethodsRef(s string, i int) TwoMethods {
+	return models.TwoDataAsRef(s, i)
+}
+
+func ThreeDataAsTwoMethodsRef(s string, i int, f float64) TwoMethods {
+	return models.ThreeDataAsRef(s, i, f)
 }
 
 type TwoMethods interface {
 	String() string
 	Int() int
+}
+
+func ThreeDataAsThreeMethodsRef(s string, i int, f float64) ThreeMethods {
+	return models.ThreeDataAsRef(s, i, f)
+}
+
+type ThreeMethods interface {
+	String() string
+	Int() int
+	Float() float64
 }
 
 type Stringer interface {
@@ -78,4 +102,12 @@ type WithNotComparableField[T any] interface {
 
 type TypeCastable interface {
 	Type() string
+}
+
+func FloatTypeCastable(id int, v float64) TypeCastable {
+	return models.SimpleUnsafeCastableFloatAsRef(id, v)
+}
+
+func BoolTypeCastable(id int, v bool) TypeCastable {
+	return models.SimpleUnsafeCastableBoolAsRef(id, v)
 }

@@ -10,7 +10,7 @@ import (
 
 func valuesSet() []any {
 	return slices.Concat(primitiveValues(), primitiveSliceValues(),
-		channelValues(), mapValues())
+		channelValues(), mapValues(), primitiveStructRefs())
 }
 
 func primitiveValues() []any {

@@ -315,46 +315,46 @@ func TestOrdered_Delete(t *testing.T) {
 
 }
 
-// TestOrdered_Equals tests the equals method of an ordered set
+// TestOrdered_Equals tests the compare method of an ordered set
 //
 // after calling 'Equals()' the set should:
 //   - return true when the sets have the same address
 //   - return true when the sets contain the same set (order-agnostic)
 //   - return false when the sets do not contain the same set
 func TestOrdered_Equals(t *testing.T) {
-	// Test 1: equal addresses
-	t.Run("equal addresses", func(t *testing.T) {
+	// Test 1: compare address
+	t.Run("compare address", func(t *testing.T) {
 		set1 := Ordered[int](1, 2, 3, 5, 6, 7)
 		set2 := set1
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 
-	// Test 2: equal set
-	t.Run("equal set", func(t *testing.T) {
+	// Test 2: compare set
+	t.Run("compare set", func(t *testing.T) {
 		set1 := Ordered[int](1, 2, 3, 5, 6, 7)
 		set2 := Ordered[int](1, 2, 3, 5, 6, 7)
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 
-	// Test 3: not equal set
-	t.Run("not equal set", func(t *testing.T) {
+	// Test 3: not compare set
+	t.Run("not compare set", func(t *testing.T) {
 		set1 := Ordered[int](1, 2, 3, 5, 6, 7)
 		set2 := Ordered[int](1, 2, 3, 5, 6, 8)
 		if set1.Equals(set2) {
-			t.Errorf("Expected sets to be not equal, but they are")
+			t.Errorf("Expected sets to be not compare, but they are")
 		}
 	})
 
-	// Test 4: equal set, different order
-	t.Run("equal set, different order", func(t *testing.T) {
+	// Test 4: compare set, different order
+	t.Run("compare set, different order", func(t *testing.T) {
 		set1 := Ordered[int](1, 2, 3, 5, 6, 7)
 		set2 := Ordered[int](3, 5, 6, 7, 1, 2)
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 }
@@ -457,7 +457,7 @@ func TestOrdered_IsEmpty(t *testing.T) {
 //
 // after calling 'Len()' the set should:
 //   - return the correct number of elements
-//   - contain the underlying map equal its length
+//   - contain the underlying map compare its length
 func TestOrdered_Len(t *testing.T) {
 	// Test 1: empty set
 	t.Run("empty set", func(t *testing.T) {
@@ -1015,46 +1015,46 @@ func TestConcOrdered_Delete(t *testing.T) {
 
 }
 
-// TestConcOrdered_Equals tests the equals method of an ordered set
+// TestConcOrdered_Equals tests the compare method of an ordered set
 //
 // after calling 'Equals()' the set should:
 //   - return true when the sets have the same address
 //   - return true when the sets contain the same set (order-agnostic)
 //   - return false when the sets do not contain the same set
 func TestConcOrdered_Equals(t *testing.T) {
-	// Test 1: equal addresses
-	t.Run("equal addresses", func(t *testing.T) {
+	// Test 1: compare address
+	t.Run("compare address", func(t *testing.T) {
 		set1 := ConcOrdered[int](1, 2, 3, 5, 6, 7)
 		set2 := set1
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 
-	// Test 2: equal set
-	t.Run("equal set", func(t *testing.T) {
+	// Test 2: compare set
+	t.Run("compare set", func(t *testing.T) {
 		set1 := ConcOrdered[int](1, 2, 3, 5, 6, 7)
 		set2 := ConcOrdered[int](1, 2, 3, 5, 6, 7)
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 
-	// Test 3: not equal set
-	t.Run("not equal set", func(t *testing.T) {
+	// Test 3: not compare set
+	t.Run("not compare set", func(t *testing.T) {
 		set1 := ConcOrdered[int](1, 2, 3, 5, 6, 7)
 		set2 := ConcOrdered[int](1, 2, 3, 5, 6, 8)
 		if set1.Equals(set2) {
-			t.Errorf("Expected sets to be not equal, but they are")
+			t.Errorf("Expected sets to be not compare, but they are")
 		}
 	})
 
-	// Test 4: equal set, different order
-	t.Run("equal set, different order", func(t *testing.T) {
+	// Test 4: compare set, different order
+	t.Run("compare set, different order", func(t *testing.T) {
 		set1 := ConcOrdered[int](1, 2, 3, 5, 6, 7)
 		set2 := ConcOrdered[int](3, 5, 6, 7, 1, 2)
 		if !set1.Equals(set2) {
-			t.Errorf("Expected sets to be equal, but they are not")
+			t.Errorf("Expected sets to be compare, but they are not")
 		}
 	})
 }
@@ -1234,7 +1234,7 @@ func TestConcOrdered_IsEmpty(t *testing.T) {
 //
 // after calling 'Len()' the set should:
 //   - return the correct number of elements
-//   - contain the underlying map equal its length
+//   - contain the underlying map compare its length
 func TestConcOrdered_Len(t *testing.T) {
 	// Test 1: empty set
 	t.Run("empty set", func(t *testing.T) {

@@ -86,7 +86,7 @@ func interfaceRefs() []any {
 	}
 }
 
-func pointerToInterfaceRefs() []interface{} {
+func pointerToInterfaceRefs() []any {
 	var i1 = random.SingleOf[[4]*interf.Closer]()
 	var i2 = random.SingleOf[[4]*interf.CloserReader]()
 	var i3 = random.SingleOf[[4]*interf.CloserReaderWriter]()

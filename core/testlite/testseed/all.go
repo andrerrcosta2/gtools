@@ -4,9 +4,10 @@ package testseed
 
 func ZeroValues() []any {
 	return []any{
+		Account{}, Address{},
 		ComparableValue{}, ComplexUnsafeCastableBase{},
 		ComplexUnsafeCastableOf{}, ComplexUnsafeCastableA{},
-		ComplexUnsafeCastableB{}, NestedStruct{},
+		ComplexUnsafeCastableB{}, NestedStruct{}, Profile{},
 		SortableValue{}, SortableRef{}, StructCloserError{},
 		StructCloserReaderError{}, StructCloserReaderSuccess{},
 		StructCloserReaderWriterError{}, StructEmpty{},
@@ -23,9 +24,10 @@ func ZeroValues() []any {
 
 func ZeroRef() []any {
 	return []any{
+		&Account{}, &Address{},
 		&ComparableValue{}, &ComplexUnsafeCastableBase{},
 		&ComplexUnsafeCastableOf{}, &ComplexUnsafeCastableA{},
-		&ComplexUnsafeCastableB{}, &NestedStruct{},
+		&ComplexUnsafeCastableB{}, &NestedStruct{}, &Profile{},
 		&SortableValue{}, &SortableRef{}, &StructCloserError{},
 		&StructCloserReaderError{}, &StructCloserReaderSuccess{},
 		&StructCloserReaderWriterError{}, &StructEmpty{},

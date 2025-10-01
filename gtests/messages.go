@@ -18,9 +18,9 @@ import (
 func ErrorDiff(msg, rec, exp string) string {
 	return fmx.Sprint(msg, " {") +
 		"\n" + fmx.Sprint("received:", "\n") +
-		"'" + indent.Soft(1, stringMsg(rec)) + "'" +
+		"'" + indent.Soft(indent.Tab(1), stringMsg(rec)) + "'" +
 		"\n" + fmx.Sprint("expected:", "\n") +
-		"'" + indent.Soft(1, stringMsg(exp)) + "'" + fmx.Sprint("\n", "}")
+		"'" + indent.Soft(indent.Tab(1), stringMsg(exp)) + "'" + fmx.Sprint("\n", "}")
 }
 
 // ErrorMismatchValues reports a mismatch between received and expected values:

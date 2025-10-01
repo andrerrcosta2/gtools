@@ -55,16 +55,16 @@ func TestTreeStringOutput(t *testing.T) {
 	child.AddValueChild("SubValue")
 
 	value, _ := root.GetValueChild("Value1")
-	value.SetValue("Data1")
+	value.SetValue("Name")
 
 	subValue, _ := child.GetValueChild("SubValue")
-	subValue.SetValue("Data2")
+	subValue.SetValue("Age")
 
 	expected := `Root {
   Child1 {
-    SubValue: Data2
+    SubValue: Age
   }
-  Value1: Data1
+  Value1: Name
 }
 `
 	assertlite.Equals(t, expected, tb.String())

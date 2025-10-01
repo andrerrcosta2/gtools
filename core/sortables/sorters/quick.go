@@ -23,7 +23,7 @@ func Quick[T any, S ~[]T](comparator comparators.Typed[T]) Sorter[T, S] {
 // quickSorter is a divide-and-conquer sorting algorithm that works by partitioning the array
 // into smaller sub-arrays and then sorting those sub-arrays.
 //
-// Best case: O(n log(n)) when the pivot divides the array into roughly equal parts.
+// Best case: O(n log(n)) when the pivot divides the array into roughly compare parts.
 // Worst case: O(n^2) when the pivot divides the array into roughly unequal parts.
 // Average case: O(n log(n)) with good pivot selection.
 //

@@ -2,6 +2,8 @@
 
 package supplier
 
+import "github.com/andrerrcosta2/gtools/core/data/str/iterables"
+
 type (
 	Pack      struct{}
 	CatRefs   struct{}
@@ -16,66 +18,66 @@ func (p Pack) Values() CatValues {
 	return CatValues{}
 }
 
-func (c CatRefs) All() []any {
-	return referencesSet()
+func (c CatRefs) All() *iterables.Slice[any] {
+	return iterables.OfSlice(referencesSet()...)
 }
 
-func (c CatRefs) Primitives() []any {
-	return primitiveRefs()
+func (c CatRefs) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveRefs()...)
 }
 
-func (c CatRefs) Interfaces() []any {
-	return interfaceRefs()
+func (c CatRefs) Interfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(interfaceRefs()...)
 }
 
-func (c CatRefs) Structs() []any {
-	return structRefs()
+func (c CatRefs) Structs() *iterables.Slice[any] {
+	return iterables.OfSlice(structRefs()...)
 }
 
-func (c CatRefs) ChannelsOfPrimitives() []any {
-	return chanOfPrimitiveRefs()
+func (c CatRefs) ChannelsOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(chanOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) MapOfPrimitives() []any {
-	return mapOfPrimitiveRefs()
+func (c CatRefs) MapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(mapOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) SliceOfPrimitives() []any {
-	return sliceOfPrimitiveRefs()
+func (c CatRefs) SliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(sliceOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) Edges() []any {
-	return edgeRefs()
+func (c CatRefs) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeRefs()...)
 }
 
-func (c CatValues) All() []any {
-	return valuesSet()
+func (c CatValues) All() *iterables.Slice[any] {
+	return iterables.OfSlice(valuesSet()...)
 }
 
-func (c CatValues) Primitives() []any {
-	return primitiveValues()
+func (c CatValues) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveValues()...)
 }
 
-func (c CatValues) Interfaces() []any {
-	return interfaceValues()
+func (c CatValues) Interfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(interfaceValues()...)
 }
 
-func (c CatValues) Structs() []any {
-	return structValues()
+func (c CatValues) Structs() *iterables.Slice[any] {
+	return iterables.OfSlice(structValues()...)
 }
 
-func (c CatValues) ChannelsOfPrimitives() []any {
-	return chanOfPrimitiveValues()
+func (c CatValues) ChannelsOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(chanOfPrimitiveValues()...)
 }
 
-func (c CatValues) MapOfPrimitives() []any {
-	return mapOfPrimitiveValues()
+func (c CatValues) MapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(mapOfPrimitiveValues()...)
 }
 
-func (c CatValues) SliceOfPrimitives() []any {
-	return sliceOfPrimitiveValues()
+func (c CatValues) SliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(sliceOfPrimitiveValues()...)
 }
 
-func (c CatValues) Edges() []any {
-	return edgeValues()
+func (c CatValues) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeValues()...)
 }

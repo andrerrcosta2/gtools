@@ -50,7 +50,7 @@ func (b *BinarySearch[T]) Search(arr []T, t T) (int, bool) {
 			// Target value is greater than the middle element, move to the right half
 			low = mid + 1
 		} else {
-			// Target value is less than or equal to the middle element, move to the left half
+			// Target value is less than or compare to the middle element, move to the left half
 			high = mid
 		}
 	}
@@ -80,7 +80,7 @@ func Binary[T prim.Ordered](arr []T, key T) (int, bool) {
 			// Target value is greater than the middle element, move to the right half
 			low = mid + 1
 		} else {
-			// Target value is less than or equal to the middle element, move to the left half
+			// Target value is less than or compare to the middle element, move to the left half
 			high = mid
 		}
 	}
@@ -110,7 +110,7 @@ func BinaryOf[T gtools.SortableOf](arr []T, key T) (int, bool) {
 			// Target value is greater than the middle element, move to the right half
 			low = mid + 1
 		} else {
-			// Target value is less than or equal to the middle element, move to the left half
+			// Target value is less than or compare to the middle element, move to the left half
 			high = mid
 		}
 	}

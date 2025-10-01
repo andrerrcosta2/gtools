@@ -14,31 +14,36 @@ import (
 // LoggersLite creates a new gtests.Loggable from a gtests.FailureLoggableTesting instance.
 // It prints the log stack to the console based on the logger strategy.
 // The returned instance of LoggableTesting is thread-safe.
-func LoggersLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy) gtests.Loggable {
+func LoggersLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy, theme ...themes.Theme) gtests.Loggable {
 	testing.Helper()
-	tt := &levelLoggableLite[T]{
+	if len(theme) == 0 {
+		return newLevelLoggableLite(testing, loggerLevel)
+	}
+	return newTmLevelLoggableLite(testing, loggerLevel, theme[0])
+}
+
+func newLevelLoggableLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy) *levelLoggableLite[T] {
+	tools := &levelLoggableLite[T]{
 		FailureLoggableTesting: testing,
 		loggerLevel:            loggerLevel,
 		logger:                 logs.TimerStack(),
 		errors:                 0,
 	}
-
 	// Automatically defer PrintLogStack to ensure logs are printed on failure or skip
 	testing.Cleanup(func() {
-		if shouldLog(tt, tt.loggerLevel) {
-			tt.Helper()
+		if shouldLog(tools, tools.loggerLevel) {
+			tools.Helper()
 
 			// Check if the test has already failed
-			if tt.Failed() {
-				tt.Errorf("[Error] Test failed. %d errors were found.: check the logs for details...", tt.errors)
+			if tools.Failed() {
+				tools.Errorf("[Error] Test failed. %d errors were found.: check the logs for details...", tools.errors)
 			}
 
 			// Print logs
-			tt.logger.Logt(tt.FailureLoggableTesting)
+			tools.logger.Logt(tools.FailureLoggableTesting)
 		}
 	})
-
-	return tt
+	return tools
 }
 
 type levelLoggableLite[T gtests.FailureLoggableTesting] struct {
@@ -153,10 +158,10 @@ func (t *levelLoggableLite[T]) PrintLogStack() {
 var _ gtests.FailureLoggableTesting = (*levelLoggableLite[gtests.FailureLoggableTesting])(nil)
 var _ gtests.Loggable = (*levelLoggableLite[gtests.FailureLoggableTesting])(nil)
 
-// LoggersLitetm creates a new gtests.Loggable from a gtests.FailureLoggableTesting instance.
+// newTmLevelLoggableLite creates a new gtests.Loggable from a gtests.FailureLoggableTesting instance.
 // It prints the log stack to the console based on the logger strategy.
 // The returned instance of LoggableTesting is thread-safe.
-func LoggersLitetm[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy, theme themes.Theme) gtests.Loggable {
+func newTmLevelLoggableLite[T gtests.FailureLoggableTesting](testing T, loggerLevel gtests.LoggerStrategy, theme themes.Theme) *tmLevelLoggableLite[T] {
 	testing.Helper()
 	tt := &tmLevelLoggableLite[T]{
 		FailureLoggableTesting: testing,

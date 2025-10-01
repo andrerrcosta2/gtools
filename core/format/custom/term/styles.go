@@ -40,7 +40,7 @@ const (
 )
 
 func (c Styles) Style(s ...any) string {
-	return Sprint(c, s)
+	return Sprint(c, s...)
 }
 
 func (c Styles) Stylef(format string, args ...any) string {

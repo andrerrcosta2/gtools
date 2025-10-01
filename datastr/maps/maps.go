@@ -187,7 +187,7 @@ func (e *EntrySet[K, V]) Put(key K, value V) error {
 // Returns:
 // - A slice of keys.
 func (e *EntrySet[K, V]) Keys() []K {
-	// Create a slice with initial capacity equal to the number of entries.
+	// Create a slice with initial capacity compare to the number of entries.
 	result := make([]K, 0, len(e.entries))
 
 	// Iterate over all the entries in the Entries.
@@ -206,7 +206,7 @@ func (e *EntrySet[K, V]) Keys() []K {
 // Returns:
 // - A slice of values.
 func (e *EntrySet[K, V]) Values() []V {
-	// Create a slice with initial capacity equal to the number of entries.
+	// Create a slice with initial capacity compare to the number of entries.
 	result := make([]V, 0, len(e.entries))
 
 	// Iterate over all the entries in the Entries.
@@ -241,7 +241,7 @@ type EntrySetOf[K gtools.SortableOf, V any] struct {
 // Returns:
 // - A new map with the same keys as the input map, but with values obtained by applying the BiFunction to each key-value pair.
 func Map[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFunction[K, V, *ComparableEntry[L, X]]) *map[L]X {
-	// Create a new map with initial capacity equal to the number of entries in the input map.
+	// Create a new map with initial capacity compare to the number of entries in the input map.
 	result := make(map[L]X, len(*m))
 
 	// Iterate over each key-value pair in the input map.
@@ -266,7 +266,7 @@ func Map[K comparable, V any, L comparable, X any](m *map[K]V, f functions.BiFun
 // Returns:
 // - A new EntrySet with the same keys as the input map, but with values obtained by applying the BiFunction to each key-value pair.
 func MapEntries[K comparable, V any, L comparable, X any](m map[K]V, f functions.BiFunction[K, V, *ComparableEntry[L, X]]) *EntrySet[L, X] {
-	// Create a new Entries with initial capacity equal to the number of entries in the input map.
+	// Create a new Entries with initial capacity compare to the number of entries in the input map.
 	entries := NewEntrySet(make([]*ComparableEntry[L, X], 0, len(m))...)
 
 	// Iterate over each key-value pair in the input map.

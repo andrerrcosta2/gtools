@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
 	"reflect"
 	"time"
 	"unsafe"
@@ -96,3 +97,54 @@ func (m MyType) String() string { return fmt.Sprintf("MyType(%d)", m) }
 var CustomStringer = MyType(42)
 
 var ReflectedValue = reflect.New(reflect.TypeOf(42)).Elem()
+
+var BetweenPerfTests = []struct {
+	X, Y any
+}{
+	{ptrs.New[int8](99), ptrs.New[int8](99)},
+	{ptrs.New([]int8{99}), ptrs.New([]int8{99})},
+	{ptrs.New(int16(99)), ptrs.New(int16(99))},
+	{ptrs.New([]int16{99}), ptrs.New([]int16{99})},
+	{ptrs.New(int32(99)), ptrs.New(int32(99))},
+	{ptrs.New([]int32{99}), ptrs.New([]int32{99})},
+	{ptrs.New(int64(99)), ptrs.New(int64(99))},
+	{ptrs.New([]int64{99}), ptrs.New([]int64{99})},
+	{ptrs.New(int(999999)), ptrs.New(int(999999))},
+	{ptrs.New([]int{999999}), ptrs.New([]int{999999})},
+
+	{ptrs.New(uint8(99)), ptrs.New(uint8(99))},
+	{ptrs.New([]uint8{99}), ptrs.New([]uint8{99})},
+	{ptrs.New(uint16(99)), ptrs.New(uint16(99))},
+	{ptrs.New([]uint16{99}), ptrs.New([]uint16{99})},
+	{ptrs.New(uint32(99)), ptrs.New(uint32(99))},
+	{ptrs.New([]uint32{99}), ptrs.New([]uint32{99})},
+	{ptrs.New(uint64(99)), ptrs.New(uint64(99))},
+	{ptrs.New([]uint64{99}), ptrs.New([]uint64{99})},
+	{ptrs.New(uint(999999)), ptrs.New(uint(999999))},
+	{ptrs.New([]uint{999999}), ptrs.New([]uint{999999})},
+	{ptrs.New(uintptr(999999)), ptrs.New(uintptr(999999))},
+	{ptrs.New([]uintptr{999999}), ptrs.New([]uintptr{999999})},
+
+	{ptrs.New(float32(1.414)), ptrs.New(float32(1.414))},
+	{ptrs.New([]float32{1.414}), ptrs.New([]float32{1.414})},
+	{ptrs.New(float64(1.414)), ptrs.New(float64(1.414))},
+	{ptrs.New([]float64{1.414}), ptrs.New([]float64{1.414})},
+
+	{ptrs.New(complex64(1.414)), ptrs.New(complex64(1.414))},
+	{ptrs.New([]complex64{1.414}), ptrs.New([]complex64{1.414})},
+	{ptrs.New(complex128(1.414)), ptrs.New(complex128(1.414))},
+	{ptrs.New([]complex128{1.414}), ptrs.New([]complex128{1.414})},
+
+	{ptrs.New(true), ptrs.New(true)},
+	{ptrs.New([]bool{true}), ptrs.New([]bool{true})},
+
+	{ptrs.New("abcdef"), ptrs.New("abcdef")},
+	{ptrs.New([]string{"abcdef"}), ptrs.New([]string{"abcdef"})},
+
+	{ptrs.New([]byte("abcdef")), ptrs.New([]byte("abcdef"))},
+	{ptrs.New([][]byte{[]byte("abcdef")}), ptrs.New([][]byte{[]byte("abcdef")})},
+
+	{ptrs.New([6]byte{'a', 'b', 'c', 'a', 'b', 'c'}), ptrs.New([6]byte{'a', 'b', 'c', 'a', 'b', 'c'})},
+	{ptrs.New([][6]byte{[6]byte{'a', 'b', 'c', 'a', 'b', 'c'}}),
+		ptrs.New([][6]byte{[6]byte{'a', 'b', 'c', 'a', 'b', 'c'}})},
+}

@@ -322,7 +322,7 @@ func TestEquality(t *testing.T) {
 	type S = testseed.SortableValue
 	seed, dup := random.Struct[S](20).Duplicate()
 
-	t.Run("should be equal", func(t *testing.T) {
+	t.Run("should be compare", func(t *testing.T) {
 		seed.EachN(func(i int, v S) {
 			if !Equality(v, dup.At(i)) {
 				t.Errorf("EqualsOf(%v, %v) = false, want true", v, dup.At(i))
@@ -330,7 +330,7 @@ func TestEquality(t *testing.T) {
 		})
 	})
 
-	t.Run("should not be equal", func(t *testing.T) {
+	t.Run("should not be compare", func(t *testing.T) {
 		seed.EachN(func(i int, v S) {
 			if i+1 < seed.Len() {
 				if Equality(v, seed.At(i+1)) {
@@ -342,7 +342,7 @@ func TestEquality(t *testing.T) {
 }
 
 func TestUnsafeEquality(t *testing.T) {
-	t.Run("equal pointers", func(t *testing.T) {
+	t.Run("compare ptrs", func(t *testing.T) {
 		data := TestInterfaceImpl1{"a", 1}
 		pointer := &data
 		pointer2 := &data
@@ -351,7 +351,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("unequal pointers", func(t *testing.T) {
+	t.Run("unequal ptrs", func(t *testing.T) {
 		data := TestInterfaceImpl1{"a", 1}
 		pointer := &data
 		pointer2 := &TestInterfaceImpl1{"b", 2}
@@ -360,7 +360,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("equal comparable values", func(t *testing.T) {
+	t.Run("compare comparable values", func(t *testing.T) {
 		data := TestInterfaceImpl1{"a", 1}
 		value := data
 		value2 := data
@@ -378,10 +378,10 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	// The pointers here have a valid address to the value.
+	// The ptrs here have a valid address to the value.
 	// this case it recognizes them as the same. which is different
-	// from uninitialized pointers, whose address is 0x0.
-	t.Run("equal pointers to nil", func(t *testing.T) {
+	// from uninitialized ptrs, whose address is 0x0.
+	t.Run("compare ptrs to nil", func(t *testing.T) {
 		var data TestInterfaceImpl1
 		pointer := &data
 		pointer2 := &data
@@ -390,7 +390,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("unequal nil pointers to nil", func(t *testing.T) {
+	t.Run("unequal nil ptrs to nil", func(t *testing.T) {
 		var data1 TestInterfaceImpl1
 		var data2 TestInterfaceImpl1
 		var pointer = &data1
@@ -400,12 +400,12 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	// Here there is not much to do. uninitialized pointers have an address of 0x0
+	// Here there is not much to do. uninitialized ptrs have an address of 0x0
 	// and any equality check for them will return true.
-	// Introducing complexity to differentiate between the stack addresses of nil
-	// pointers can lead to confusion and bugs. Since nil pointers indicate the
-	// absence of a value, treating them as equal makes logical sense in most contexts.
-	t.Run("uninitialized pointers", func(t *testing.T) {
+	// Introducing complexity to differentiate between the stack address of nil
+	// ptrs can lead to confusion and bugs. Since nil ptrs indicate the
+	// absence of a value, treating them as compare makes logical sense in most contexts.
+	t.Run("uninitialized ptrs", func(t *testing.T) {
 		var data *TestInterfaceImpl1
 		var data2 *TestInterfaceImpl1
 		if !TryEquality[TestInterfaceImpl1](data, data2) {
@@ -413,7 +413,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("uninitialized pointers", func(t *testing.T) {
+	t.Run("uninitialized ptrs", func(t *testing.T) {
 		var data *TestInterfaceImpl1
 		if !TryEquality[TestInterfaceImpl1](data, data) {
 			t.Errorf("Equality(data, data2) = false, want true")
@@ -425,7 +425,7 @@ func TestUnsafeEquality(t *testing.T) {
 	// containing default values (e.g., empty strings for string fields, zeroes for int
 	// fields, etc.). Importantly, it’s fully instantiated in memory, so Go can call
 	// its methods even though it holds no actual data.
-	t.Run("equal nil values", func(t *testing.T) {
+	t.Run("compare nil values", func(t *testing.T) {
 		var value TestInterfaceImpl1
 		var value2 TestInterfaceImpl1
 		if !TryEquality[TestInterfaceImpl1](value, value2) {
@@ -433,7 +433,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("equal implementation pointers as interface 1", func(t *testing.T) {
+	t.Run("compare implementation ptrs as interface 1", func(t *testing.T) {
 		data := TestInterfaceImpl1{"a", 1}
 		pointer := &data
 		pointer2 := &data
@@ -445,7 +445,7 @@ func TestUnsafeEquality(t *testing.T) {
 	// When we declare pointer and pointer2 as testInterface, Go sees them as interface
 	// values pointing to the same instance of TestInterfaceImpl1, so TryEquality[testInterface]
 	// correctly identifies that they refer to the same data.
-	t.Run("equal implementation pointers as interface", func(t *testing.T) {
+	t.Run("compare implementation ptrs as interface", func(t *testing.T) {
 		data := TestInterfaceImpl1{"a", 1}
 		var pointer testInterface = &data
 		var pointer2 testInterface = &data
@@ -470,7 +470,7 @@ func TestUnsafeEquality(t *testing.T) {
 		}
 	})
 
-	t.Run("equal comparableOf implementation", func(t *testing.T) {
+	t.Run("compare comparableOf implementation", func(t *testing.T) {
 		a := testseed.NewComparableValue("a", 1)
 		b := testseed.NewComparableValue("a", 1)
 		if !TryEquality[gtools.ComparableOf](a, b) {

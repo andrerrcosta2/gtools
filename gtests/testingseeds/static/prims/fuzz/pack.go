@@ -2,14 +2,16 @@
 
 package fuzz
 
+import "github.com/andrerrcosta2/gtools/core/data/str/iterables"
+
 type (
 	Pack struct{}
 )
 
-func (c Pack) Refs() []any {
-	return referencesSet()
+func (c Pack) Refs() *iterables.Slice[any] {
+	return iterables.OfSlice(referencesSet()...)
 }
 
-func (c Pack) Values() []any {
-	return valuesSet()
+func (c Pack) Values() *iterables.Slice[any] {
+	return iterables.OfSlice(valuesSet()...)
 }

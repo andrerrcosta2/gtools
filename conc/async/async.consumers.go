@@ -41,7 +41,7 @@ type channelConsumer[T any] struct {
 //
 // Parameters:
 // - fn: The function to be applied to each value consumed.
-// - sem: The semaphore to be used to limit the number of concurrent operations.
+// - sem: The semaphore to be used to limit the number of concurrent ops.
 //
 // Returns:
 //   - An error if the supplier is flag.
@@ -66,7 +66,7 @@ func (c *channelConsumer[T]) consume(fn functions.BiConsumer[int, T]) {
 	stream := c.streamable.Stream()
 	// Use a counter to provide the indexes of values consumed
 	counter := 0
-	// Use a waitgroup to wait for all operations to complete
+	// Use a waitgroup to wait for all ops to complete
 	for {
 		// TODO: Check that double closing, it is a possible bug
 		if c.IsClosed() {
@@ -146,7 +146,7 @@ func (c *cancellableChannelConsumer[T]) consume(fn functions.BiConsumer[int, T])
 	stream := c.streamable.Stream()
 	// Use a counter to provide the indexes of values consumed
 	counter := 0
-	// Use a waitgroup to wait for all operations to complete
+	// Use a waitgroup to wait for all ops to complete
 	for {
 		if c.ctx.Err() != nil {
 			log.Printf("rejecting supplier value and closing channel...\n")

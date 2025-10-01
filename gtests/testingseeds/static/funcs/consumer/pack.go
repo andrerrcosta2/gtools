@@ -2,6 +2,8 @@
 
 package consumer
 
+import "github.com/andrerrcosta2/gtools/core/data/str/iterables"
+
 type (
 	Pack      struct{}
 	CatRefs   struct{}
@@ -16,114 +18,114 @@ func (p Pack) Values() CatValues {
 	return CatValues{}
 }
 
-func (c CatRefs) All() []any {
-	return referencesSet()
+func (c CatRefs) All() *iterables.Slice[any] {
+	return iterables.OfSlice(referencesSet()...)
 }
 
-func (c CatRefs) Primitives() []any {
-	return primitiveRefs()
+func (c CatRefs) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveRefs()...)
 }
 
-func (c CatRefs) VariadicPrimitive() []any {
-	return variadicPrimitiveRefs()
+func (c CatRefs) VariadicPrimitive() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicPrimitiveRefs()...)
 }
 
-func (c CatRefs) Interfaces() []any {
-	return interfaceRefs()
+func (c CatRefs) Interfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(interfaceRefs()...)
 }
 
-func (c CatRefs) VariadicInterfaces() []any {
-	return variadicInterfaceRefs()
+func (c CatRefs) VariadicInterfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicInterfaceRefs()...)
 }
 
-func (c CatRefs) Structs() []any {
-	return structRefs()
+func (c CatRefs) Structs() *iterables.Slice[any] {
+	return iterables.OfSlice(structRefs()...)
 }
 
-func (c CatRefs) VariadicStructs() []any {
-	return variadicStructRefs()
+func (c CatRefs) VariadicStructs() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicStructRefs()...)
 }
 
-func (c CatRefs) ChannelOfPrimitives() []any {
-	return channelOfPrimitiveRefs()
+func (c CatRefs) ChannelOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(channelOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) VariadicChannelOfPrimitives() []any {
-	return variadicChannelOfPrimitiveRefs()
+func (c CatRefs) VariadicChannelOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicChannelOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) MapOfPrimitives() []any {
-	return mapOfPrimitiveRefs()
+func (c CatRefs) MapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(mapOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) VariadicMapOfPrimitives() []any {
-	return variadicMapOfPrimitiveRefs()
+func (c CatRefs) VariadicMapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicMapOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) SliceOfPrimitives() []any {
-	return sliceOfPrimitiveRefs()
+func (c CatRefs) SliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(sliceOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) VariadicSliceOfPrimitives() []any {
-	return variadicSliceOfPrimitiveRefs()
+func (c CatRefs) VariadicSliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicSliceOfPrimitiveRefs()...)
 }
 
-func (c CatRefs) Edges() []any {
-	return edgeRefs()
+func (c CatRefs) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeRefs()...)
 }
 
-func (c CatValues) All() []any {
-	return valuesSet()
+func (c CatValues) All() *iterables.Slice[any] {
+	return iterables.OfSlice(valuesSet()...)
 }
 
-func (c CatValues) Primitives() []any {
-	return primitiveValues()
+func (c CatValues) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveValues()...)
 }
 
-func (c CatValues) VariadicPrimitives() []any {
-	return variadicPrimitiveValues()
+func (c CatValues) VariadicPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicPrimitiveValues()...)
 }
 
-func (c CatValues) Interfaces() []any {
-	return interfaceValues()
+func (c CatValues) Interfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(interfaceValues()...)
 }
 
-func (c CatValues) VariadicInterfaces() []any {
-	return variadicInterfaceValues()
+func (c CatValues) VariadicInterfaces() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicInterfaceValues()...)
 }
 
-func (c CatValues) Structs() []any {
-	return structValues()
+func (c CatValues) Structs() *iterables.Slice[any] {
+	return iterables.OfSlice(structValues()...)
 }
 
-func (c CatValues) VariadicStructs() []any {
-	return variadicStructValues()
+func (c CatValues) VariadicStructs() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicStructValues()...)
 }
 
-func (c CatValues) ChannelOfPrimitives() []any {
-	return chanOfPrimitiveValues()
+func (c CatValues) ChannelOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(chanOfPrimitiveValues()...)
 }
 
-func (c CatValues) VariadicChannelOfPrimitives() []any {
-	return variadicChanOfPrimitiveValues()
+func (c CatValues) VariadicChannelOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicChanOfPrimitiveValues()...)
 }
 
-func (c CatValues) MapOfPrimitives() []any {
-	return mapOfPrimitiveValues()
+func (c CatValues) MapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(mapOfPrimitiveValues()...)
 }
 
-func (c CatValues) VariadicMapOfPrimitives() []any {
-	return variadicMapOfPrimitiveValues()
+func (c CatValues) VariadicMapOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicMapOfPrimitiveValues()...)
 }
 
-func (c CatValues) SliceOfPrimitives() []any {
-	return sliceOfPrimitiveValues()
+func (c CatValues) SliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(sliceOfPrimitiveValues()...)
 }
 
-func (c CatValues) VariadicSliceOfPrimitives() []any {
-	return variadicSliceOfPrimitiveValues()
+func (c CatValues) VariadicSliceOfPrimitives() *iterables.Slice[any] {
+	return iterables.OfSlice(variadicSliceOfPrimitiveValues()...)
 }
 
-func (c CatValues) Edges() []any {
-	return edgeValues()
+func (c CatValues) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeValues()...)
 }

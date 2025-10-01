@@ -25,7 +25,7 @@ type Range interface {
 	Start() int
 	// End returns the end of the range
 	End() int
-	// Snap returns a copy of the range
+	// Snap returns a clone of the range
 	Snap() Range
 	// SetCurrent sets the current value and returns true if the value was updated
 	SetCurrent(current int) bool

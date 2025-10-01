@@ -10,7 +10,7 @@ type Ser string
 // Sprintable defines a type that can sprint itself to a string using an indent.Tab
 // for recursive formatting
 type Sprintable interface {
-	Sprint(indent.Tab) string
+	Sprint(indentor indent.Indentor) string
 }
 
 // Decoder defines a type that can decode a byte array to a data

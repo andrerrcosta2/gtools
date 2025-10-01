@@ -209,7 +209,7 @@ func TestHashLinked_HardClear(t *testing.T) {
 	}
 
 	if cast.head() == cast.tail() {
-		t.Errorf("Expected *doubleLinked.head() to not be equal to *doubleLinked.tail(), but received %t",
+		t.Errorf("Expected *doubleLinked.head() to not be compare to *doubleLinked.tail(), but received %t",
 			cast.head() == cast.tail())
 	}
 
@@ -817,7 +817,7 @@ func TestConcHashLinked_HardClear(t *testing.T) {
 	}
 
 	if cast.head() == cast.tail() {
-		t.Errorf("Expected *doubleLinked.head() to not be equal to *doubleLinked.tail(), but received %t",
+		t.Errorf("Expected *doubleLinked.head() to not be compare to *doubleLinked.tail(), but received %t",
 			cast.head() == cast.tail())
 	}
 

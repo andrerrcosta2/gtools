@@ -15,24 +15,10 @@ func Name(t reflect.Type) string {
 	if t.Kind() == reflect.Ptr {
 		return unwrapName(t)
 	}
-	if t.Name() != "" {
-		if pkgPath := t.PkgPath(); pkgPath != "" {
-			return pkgPath + "." + t.Name()
-		}
-		return t.Name()
-	}
-	return t.String()
+	return ValidValueName(t)
 }
 
-// HasDepth returns true if the type has a depth and false if it is a direct value
-func HasDepth(t reflect.Type) bool {
-	for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
-		t = t.Elem()
-	}
-	return t.Kind() == reflect.Struct
-}
-
-// Unwrap unwraps all pointers and interfaces until it reaches a value
+// Unwrap unwraps all ptrs and interfaces until it reaches a value
 func Unwrap(v reflect.Type) reflect.Type {
 	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
 		v = v.Elem()
@@ -57,4 +43,14 @@ func unwrapName(t reflect.Type) string {
 		return ptr.String() + t.Name()
 	}
 	return ptr.String() + t.String()
+}
+
+func ValidValueName(t reflect.Type) string {
+	if t.Name() != "" {
+		if pkgPath := t.PkgPath(); pkgPath != "" {
+			return pkgPath + "." + t.Name()
+		}
+		return t.Name()
+	}
+	return t.String()
 }

@@ -3,7 +3,7 @@
 // Package opt: this package is a wrapper around the Option struct for some convenience methods.
 //
 // 1. These methods don't handle "zero-values".
-// 2. It doesn't perform Thread-Safe operations.
+// 2. It doesn't perform Thread-Safe ops.
 // 3. This is useful in avoiding nil pointer panics.
 package opt
 
@@ -58,7 +58,7 @@ func isDeepReflectedNullable[T any](value *T) bool {
 		return true
 	}
 
-	// Use reflection to check for nil slices, maps, or pointers
+	// Use reflection to check for nil slices, maps, or ptrs
 	val := reflect.ValueOf(value).Elem()
 	return (val.Kind() == reflect.Slice || val.Kind() == reflect.Map || val.Kind() == reflect.Ptr) && val.IsNil()
 }

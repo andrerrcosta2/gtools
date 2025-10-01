@@ -207,7 +207,7 @@ func TestInsSet_Delete(t *testing.T) {
 
 // TestInsSet_Equals tests the equality check between two sets.
 //
-// this method should state that two sets are equal:
+// this method should state that two sets are compare:
 //   - if they have the same number of elements on the same order and value
 //   - if they have the same memory address
 func TestInsSet_Equals(t *testing.T) {
@@ -217,7 +217,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB := setA
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	// Test 2: Both empty, different memory address
@@ -225,7 +225,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = Insertion[int, int](cmp)
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 3: One empty, other nil
@@ -233,7 +233,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = nil
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 4: Different number of elements
@@ -241,7 +241,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = Insertion[int, int](cmp, 1, 2, 3, 5, 6, 7, 8)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 5: Different elements
@@ -249,7 +249,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = Insertion[int, int](cmp, 1, 2, 3, 5, 6, 8)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 6: Same elements, different order
@@ -257,7 +257,7 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = Insertion[int, int](cmp, 5, 6, 7, 1, 2, 3)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 7: Same elements, same order
@@ -265,13 +265,13 @@ func TestInsSet_Equals(t *testing.T) {
 	setB = Insertion[int, int](cmp, 1, 2, 3, 5, 6, 7)
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	// Test 8: Same set after removing element of one of them
 	setB.Remove(1)
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 }
 
@@ -302,7 +302,7 @@ func TestInsSet_Get(t *testing.T) {
 			t.Errorf("Expected set to contain %d, but it does not", v)
 		}
 		if got != v {
-			t.Errorf("Expected retrieved value to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value to be compare inserted '%d' but "+
 				"got '%d'", v, got)
 		}
 
@@ -475,7 +475,7 @@ func TestIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to contain element '%d' at idx 0, but it does not", v)
 		}
 		if e != v {
-			t.Errorf("Expected retrieved value at idx 0 to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value at idx 0 to be compare inserted '%d' but "+
 				"got '%d'", v, e)
 		}
 		set.Remove(v)
@@ -494,7 +494,7 @@ func TestIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to not contain element '%d' at idx 0, but it retrieved '%t", v, ok)
 		}
 		if !generics.IsZero(e) {
-			t.Errorf("Expected retrieved value at idx 0 to be equal zero but got '%d'", e)
+			t.Errorf("Expected retrieved value at idx 0 to be compare zero but got '%d'", e)
 		}
 		// expect to retrieve idx -1 for removed element
 		idx = set.IndexOf(v)
@@ -523,7 +523,7 @@ func TestIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to contain element '%d' at idx 0, but it does not", v)
 		}
 		if e != v {
-			t.Errorf("Expected retrieved value at idx 0 to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value at idx 0 to be compare inserted '%d' but "+
 				"got '%d'", v, e)
 		}
 		set.Remove(v)
@@ -542,7 +542,7 @@ func TestIns_Remove(t *testing.T) {
 					v, i)
 			}
 			if e != v {
-				t.Errorf("Expected retrieved value to be equal inserted '%d' but "+
+				t.Errorf("Expected retrieved value to be compare inserted '%d' but "+
 					"got '%d'", v, e)
 			}
 
@@ -780,7 +780,7 @@ func TestConcIns_Delete(t *testing.T) {
 
 // TestConcIns_Equals tests the Equals method
 //
-// this method should state that two sets are equal:
+// this method should state that two sets are compare:
 //   - if they have the same number of elements on the same order and value
 //   - if they have the same memory address
 func TestConcIns_Equals(t *testing.T) {
@@ -790,7 +790,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB := setA
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	// Test 2: Both empty, different memory address
@@ -798,7 +798,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = ConcInsertion[int, int](cmp)
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 3: One empty, other nil
@@ -806,7 +806,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = nil
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 4: Different number of elements
@@ -814,7 +814,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = ConcInsertion[int, int](cmp, 1, 2, 3, 5, 6, 7, 8)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 5: Different elements
@@ -822,7 +822,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = ConcInsertion[int, int](cmp, 1, 2, 3, 5, 6, 8)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 
 	// Test 6: Same elements, different order
@@ -830,7 +830,7 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = ConcInsertion[int, int](cmp, 5, 6, 7, 1, 2, 3)
 
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	// Test 7: Same elements, same order
@@ -838,13 +838,13 @@ func TestConcIns_Equals(t *testing.T) {
 	setB = ConcInsertion[int, int](cmp, 1, 2, 3, 5, 6, 7)
 
 	if !setA.Equals(setB) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	// Test 8: Same maps after removing elements
 	setB.Remove(1)
 	if setA.Equals(setB) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 }
 
@@ -875,7 +875,7 @@ func TestConcIns_Get(t *testing.T) {
 			t.Errorf("Expected set to contain %d, but it does not", v)
 		}
 		if got != v {
-			t.Errorf("Expected retrieved value to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value to be compare inserted '%d' but "+
 				"got '%d'", v, got)
 		}
 
@@ -1048,7 +1048,7 @@ func TestConcIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to contain element '%d' at idx 0, but it does not", v)
 		}
 		if e != v {
-			t.Errorf("Expected retrieved value at idx 0 to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value at idx 0 to be compare inserted '%d' but "+
 				"got '%d'", v, e)
 		}
 		set.Remove(v)
@@ -1067,7 +1067,7 @@ func TestConcIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to not contain element '%d' at idx 0, but it retrieved '%t", v, ok)
 		}
 		if !generics.IsZero(e) {
-			t.Errorf("Expected retrieved value at idx 0 to be equal zero but got '%d'", e)
+			t.Errorf("Expected retrieved value at idx 0 to be compare zero but got '%d'", e)
 		}
 		// expect to retrieve idx -1 for removed element
 		idx = set.IndexOf(v)
@@ -1096,7 +1096,7 @@ func TestConcIns_Remove(t *testing.T) {
 			t.Errorf("Expected set to contain element '%d' at idx 0, but it does not", v)
 		}
 		if e != v {
-			t.Errorf("Expected retrieved value at idx 0 to be equal inserted '%d' but "+
+			t.Errorf("Expected retrieved value at idx 0 to be compare inserted '%d' but "+
 				"got '%d'", v, e)
 		}
 		set.Remove(v)
@@ -1115,7 +1115,7 @@ func TestConcIns_Remove(t *testing.T) {
 					v, i)
 			}
 			if e != v {
-				t.Errorf("Expected retrieved value to be equal inserted '%d' but "+
+				t.Errorf("Expected retrieved value to be compare inserted '%d' but "+
 					"got '%d'", v, e)
 			}
 

@@ -153,7 +153,7 @@ func pointerToStructValues() []interface{} {
 	a6 := random.SingleOf[[4]*models.String]()
 	a7 := random.SingleOf[[4]*models.Channel[any]]()
 	a8 := random.SingleOf[[4]*models.Slice[any]]()
-	a9 := random.SingleOf[[4]*models.Map[any, any]]()
+	a9 := random.SingleOf[[4]*models.Map[string, any]]()
 	a10 := random.SingleOf[[4]*models.Function[any]]()
 	a11 := random.SingleOf[[4]*models.Simple]()
 	a12 := random.SingleOf[[4]*models.Public]()

@@ -115,7 +115,7 @@ func ReadFiles(paths []fsys.Path, maxConcurrency int) ([][]byte, error) {
 // ReadPartial reads a partial content of a file.
 //
 // It takes a file path, a start position, and an end position as input, and returns the content of the file
-// within the specified range. If an error occurs during the read operation, it returns an error.
+// within the specified range. If an error occurs during the read op, it returns an error.
 func ReadPartial(mode fsys.PathType, path string, start int64, end int64) ([]byte, error) {
 	// Build the full file path based on the provided mode and path
 	fp, err := fsys.BuildPath(mode, path)
@@ -141,7 +141,7 @@ func ReadPartial(mode fsys.PathType, path string, start int64, end int64) ([]byt
 
 	// Seek to the start position of the range
 	if _, err := file.Seek(start, 0); err != nil {
-		// Return an error if the seek operation fails
+		// Return an error if the seek op fails
 		return nil, fmt.Errorf("error seeking to start position (%d): %v", start, err)
 	}
 
@@ -151,7 +151,7 @@ func ReadPartial(mode fsys.PathType, path string, start int64, end int64) ([]byt
 	// Read the data from the file
 	n, err := file.Read(data)
 	if err != nil {
-		// Return an error if the read operation fails
+		// Return an error if the read op fails
 		return nil, fmt.Errorf("error reading file: %v", err)
 	}
 
@@ -162,8 +162,8 @@ func ReadPartial(mode fsys.PathType, path string, start int64, end int64) ([]byt
 	return data, nil
 }
 
-// MkdirAll creates a directory with the given package name and operation.
-// It joins the operation path with the package name, replacing any '/' with the OS-specific path separator.
+// MkdirAll creates a directory with the given package name and op.
+// It joins the op path with the package name, replacing any '/' with the OS-specific path separator.
 // The directory is created with permissions to read, write, and execute for all users.
 //
 // Args:

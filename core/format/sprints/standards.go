@@ -50,19 +50,19 @@ func BClosedObjError(tab indent.Tab, name string, fields ...string) string {
 	return fmx.SRed(BClosedobj(tab, name, fields...))
 }
 
-func CyclicRef(tab indent.Tab, typx string, addr string) string {
-	return tab.Sprintf("%s{ <cyclic-ref|%s> }", typx, addr)
+func CyclicRef(tab indent.Tab, typ string, addr string) string {
+	return tab.Sprintf("%s{ <cyclic-ref|%s> }", typ, addr)
 }
 
-func ClosedArray(tab indent.Tab, typx string, size int, fields ...string) string {
+func ClosedArray(tab indent.Tab, typ string, size int, fields ...string) string {
 	if len(fields) == 0 {
-		return tab.Sprint("[" + strconv.Itoa(size) + "]" + typx + "[<empty>]")
+		return tab.Sprint("[" + strconv.Itoa(size) + "]" + typ + "[<empty>]")
 	}
 
 	sb := strings.Builder{}
-	sb.Grow(len(typx) + len(fields)*10)
+	sb.Grow(len(typ) + len(fields)*10)
 
-	sb.WriteString("[" + strconv.Itoa(size) + "]" + typx + "[")
+	sb.WriteString("[" + strconv.Itoa(size) + "]" + typ + "[")
 
 	for _, field := range fields {
 		sb.WriteString("\n" + tab.Indentf(1, "%s,", field)) // tab.Inc().Sprint(field) + ",")
@@ -95,11 +95,11 @@ func ClosedMap(tab indent.Tab, key string, value string, fields ...string) strin
 		return tab.Sprint("map[" + key + "]" + value + " {}")
 	}
 
-	typx := "map[" + key + "]" + value
+	typ := "map[" + key + "]" + value
 	sb := strings.Builder{}
-	sb.Grow(len(typx) + len(fields)*10)
+	sb.Grow(len(typ) + len(fields)*10)
 
-	sb.WriteString(tab.Sprint(typx + "{"))
+	sb.WriteString(tab.Sprint(typ + "{"))
 
 	for _, field := range fields {
 		sb.WriteString("\n" + tab.Indentf(1, "%s,", field))
@@ -127,13 +127,13 @@ func Closedobj(tab indent.Tab, name string, fields ...string) string {
 	return sb.String()
 }
 
-func ClosedSlice(tab indent.Tab, typx string, fields ...string) string {
+func ClosedSlice(tab indent.Tab, typ string, fields ...string) string {
 	if len(fields) == 0 {
-		return tab.Sprint("[]" + typx + "[<empty>]")
+		return tab.Sprint("[]" + typ + "[<empty>]")
 	}
 	sb := strings.Builder{}
-	sb.Grow(len(typx) + len(fields)*10)
-	sb.WriteString("[]" + typx + "[")
+	sb.Grow(len(typ) + len(fields)*10)
+	sb.WriteString("[]" + typ + "[")
 	for _, field := range fields {
 		sb.WriteString("\n" + tab.Indentf(1, "%s,", field))
 	}
@@ -143,6 +143,10 @@ func ClosedSlice(tab indent.Tab, typx string, fields ...string) string {
 
 func Digit[T nums.Integer](data T) string {
 	return fmx.Sprintf("%d", data)
+}
+
+func EmptyIterable(tab indent.Tab, typ string) string {
+	return tab.Sprint(typ + "[<empty>]")
 }
 
 func Errorf(tab indent.Tab, format string, args ...interface{}) string {
@@ -158,6 +162,10 @@ func Field(tab indent.Tab, key, value string) string {
 func Fieldf(tab indent.Tab, key string, format string, args ...any) string {
 	value := fmx.Sprintf(format, args...)
 	return tab.Sprint(key) + ": " + FieldVal(value)
+}
+
+func Interface(tab indent.Tab, typ, elem string) string {
+	return tab.Sprintf("%s{\n%s\n%s}", typ, elem, tab.String())
 }
 
 func Lclose(name string) string {
@@ -208,6 +216,18 @@ func FieldValf(format string, args ...any) string {
 	return FieldVal(fmx.Sprintf(format, args...))
 }
 
+func MapEntry(tab indent.Tab, key, value string) string {
+	return tab.String() + key + ": " + value + ","
+}
+
+func NilPointer(tab indent.Tab) string {
+	return tab.Sprint("<nil>")
+}
+
+func NilType(tab indent.Tab, typ string) string {
+	return tab.Sprint(typ + "<nil>")
+}
+
 func Openobj(tab indent.Tab, name string, fields ...string) string {
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprint(fmx.SBold(name)))
@@ -221,6 +241,10 @@ func OptField(tab indent.Tab, field, value string) string {
 		return tab.Sprint(value)
 	}
 	return tab.Sprint(field + ": " + FieldVal(value))
+}
+
+func PointerElem(tab indent.Tab, elem string) string {
+	return tab.String() + "*" + elem
 }
 
 func Quoted(s string) string {
@@ -253,10 +277,6 @@ func Tfieldf(tab indent.Tab, key string, format string, args ...any) string {
 	return "\t" + tab.Sprint(key) + ": " + FieldVal(value)
 }
 
-func NilType(tab indent.Tab, typx string) string {
-	return tab.Sprint(typx + "<nil>")
-}
-
 func TypedString(s string) string {
 	if s == "" {
 		return "<string>(empty)"
@@ -264,8 +284,8 @@ func TypedString(s string) string {
 	return fmx.Sprintf("<string>%q", s)
 }
 
-func Typed(typx string, value any) string {
-	return fmx.Sprintf("<%s>%v", typx, Valuef(value))
+func Typed(typ string, value any) string {
+	return fmx.Sprintf("<%s>%v", typ, Valuef(value))
 }
 
 func TypedBool(value bool) string {
@@ -284,12 +304,12 @@ func TypedComplex128(value complex128) string {
 	return fmx.Sprintf("<complex128>%v", value)
 }
 
-func TypeValue(tab indent.Tab, typx, value string) string {
-	return tab.Sprint(typx + " " + value)
+func TypeValue(tab indent.Tab, typ, value string) string {
+	return tab.Sprint(typ + " " + value)
 }
 
-func TypedDigit[T nums.Integer](typx string, data T) string {
-	return fmx.Sprintf("<%s>%d", typx, data)
+func TypedDigit[T nums.Integer](typ string, data T) string {
+	return fmx.Sprintf("<%s>%d", typ, data)
 }
 
 func TypedFloat32(value float32) string {
@@ -300,8 +320,8 @@ func TypedFloat64(value float32) string {
 	return fmx.Sprintf("<float64>%f", value)
 }
 
-func TypedRoundFloat[T nums.Float](typx string, data T) string {
-	return fmx.Sprintf("<%s>%g", typx, data)
+func TypedRoundFloat[T nums.Float](typ string, data T) string {
+	return fmx.Sprintf("<%s>%g", typ, data)
 }
 
 // StripANSI removes ANSI escape codes (like \x1b[1m) from a string
@@ -345,9 +365,9 @@ func toStringSlice(fields ...any) []string {
 }
 
 func Uintptrf(value uintptr) string {
-	return fmx.Sprintf("0x%d", value)
+	return fmx.Sprintf("0x%x", value)
 }
 
 func UnsafeAddrf(value unsafe.Pointer) string {
-	return fmx.Sprintf("%p", value)
+	return fmx.Sprintf("<unsafe.Pointer>0x%x\"", uintptr(value))
 }

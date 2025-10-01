@@ -15,6 +15,7 @@ import (
 	"time"
 	"unicode"
 	"unicode/utf8"
+	"unsafe"
 )
 
 // RandAny generates a random value of any type except structs.
@@ -24,33 +25,35 @@ func RandAny() any {
 	case reflect.Bool:
 		return prng.Bool()
 	case reflect.Int:
-		return prng.Int()
+		return prng.Int(-1, 1)
 	case reflect.Int8:
-		return prng.Int8()
+		return prng.Int8(-1, 1)
 	case reflect.Int16:
-		return prng.Int16()
+		return prng.Int16(-1, 1)
 	case reflect.Int32:
-		return prng.Int32()
+		return prng.Int32(-1, 1)
 	case reflect.Int64:
-		return prng.Int64()
-	case reflect.Uint, reflect.Uintptr:
-		return prng.Uint()
+		return prng.Int64(-1, 1)
+	case reflect.Uint:
+		return prng.Uint(0, 1)
+	case reflect.Uintptr:
+		return uintptr(prng.Uint(0, 1))
 	case reflect.Uint8:
-		return prng.Uint8()
+		return prng.Uint8(0, 1)
 	case reflect.Uint16:
-		return prng.Uint16()
+		return prng.Uint16(0, 1)
 	case reflect.Uint32:
-		return prng.Uint32()
+		return prng.Uint32(0, 1)
 	case reflect.Uint64:
-		return prng.Uint64()
+		return prng.Uint64(0, 1)
 	case reflect.Float32:
-		return prng.Float32()
+		return prng.Float32(-1, 1)
 	case reflect.Float64:
-		return prng.Float64()
+		return prng.Float64(-1, 1)
 	case reflect.Complex64:
-		return prng.Complex64()
+		return prng.Complex64(-1, 1, -1, 1)
 	case reflect.Complex128:
-		return prng.Complex128()
+		return prng.Complex128(-1, 1, -1, 1)
 	case reflect.Array:
 		return RandArray()
 	case reflect.Chan:
@@ -67,6 +70,8 @@ func RandAny() any {
 		// TODO: This method lacks constraints control. Finish validation library
 		// TODO: Add its interface to the core package
 		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
+	case reflect.UnsafePointer:
+		return RandUnsafePointer()
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
@@ -97,44 +102,47 @@ func RandChanOf(t reflect.Type) any {
 // RandCmp generates a random value of a random comparable type
 func RandCmp() any {
 	kind := reflectrand.CmpKind()
-	reflectrand.Cmp()
 	switch kind {
 	case reflect.Bool:
 		return prng.Bool()
 	case reflect.Int:
-		return prng.Int()
+		return prng.Int(-1, 1)
 	case reflect.Int8:
-		return prng.Int8()
+		return prng.Int8(-1, 1)
 	case reflect.Int16:
-		return prng.Int16()
+		return prng.Int16(-1, 1)
 	case reflect.Int32:
-		return prng.Int32()
+		return prng.Int32(-1, 1)
 	case reflect.Int64:
-		return prng.Int64()
-	case reflect.Uint, reflect.Uintptr:
-		return prng.Uint()
+		return prng.Int64(-1, 1)
+	case reflect.Uint:
+		return prng.Uint(0, 1)
+	case reflect.Uintptr:
+		return uintptr(prng.Uint(0, 1))
 	case reflect.Uint8:
-		return prng.Uint8()
+		return prng.Uint8(0, 1)
 	case reflect.Uint16:
-		return prng.Uint16()
+		return prng.Uint16(0, 1)
 	case reflect.Uint32:
-		return prng.Uint32()
+		return prng.Uint32(0, 1)
 	case reflect.Uint64:
-		return prng.Uint64()
+		return prng.Uint64(0, 1)
 	case reflect.String:
 		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
 	case reflect.Float32:
-		return prng.Float32()
+		return prng.Float32(-1, 1)
 	case reflect.Float64:
-		return prng.Float64()
+		return prng.Float64(-1, 1)
 	case reflect.Complex64:
-		return prng.Complex64()
+		return prng.Complex64(-1, 1, -1, 1)
 	case reflect.Complex128:
-		return prng.Complex128()
+		return prng.Complex128(-1, 1, -1, 1)
 	case reflect.Array:
 		return RandArrayOf(reflectrand.CmpArray())
 	case reflect.Ptr:
 		return RandPointer()
+	case reflect.UnsafePointer:
+		return RandUnsafePointer()
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
@@ -177,33 +185,33 @@ func RandOf(t reflect.Type) any {
 	case reflect.Bool:
 		return prng.Bool()
 	case reflect.Int:
-		return prng.Int()
+		return prng.Int(-1, 1)
 	case reflect.Int8:
-		return prng.Int8()
+		return prng.Int8(-1, 1)
 	case reflect.Int16:
-		return prng.Int16()
+		return prng.Int16(-1, 1)
 	case reflect.Int32:
-		return prng.Int32()
+		return prng.Int32(-1, 1)
 	case reflect.Int64:
-		return prng.Int64()
+		return prng.Int64(-1, 1)
 	case reflect.Uint, reflect.Uintptr:
-		return prng.Uint()
+		return prng.Uint(0, 1)
 	case reflect.Uint8:
-		return prng.Uint8()
+		return prng.Uint8(0, 1)
 	case reflect.Uint16:
-		return prng.Uint16()
+		return prng.Uint16(0, 1)
 	case reflect.Uint32:
-		return prng.Uint32()
+		return prng.Uint32(0, 1)
 	case reflect.Uint64:
-		return prng.Uint64()
+		return prng.Uint64(0, 1)
 	case reflect.Float32:
-		return prng.Float32()
+		return prng.Float32(-1, 1)
 	case reflect.Float64:
-		return prng.Float64()
+		return prng.Float64(-1, 1)
 	case reflect.Complex64:
-		return prng.Complex64()
+		return prng.Complex64(-1, 1, -1, 1)
 	case reflect.Complex128:
-		return prng.Complex128()
+		return prng.Complex128(-1, 1, -1, 1)
 	case reflect.Array:
 		return RandArrayOf(t)
 	case reflect.Chan:
@@ -217,7 +225,7 @@ func RandOf(t reflect.Type) any {
 	case reflect.Slice:
 		return RandSliceOf(t)
 	case reflect.Struct:
-		return RandStructOf(t)
+		return RandStructOf(t, 3)
 	case reflect.Interface:
 		if t.NumMethod() == 0 {
 			return RandAny()
@@ -228,6 +236,8 @@ func RandOf(t reflect.Type) any {
 		// TODO: This method lacks constraints control. Finish validation library
 		// TODO: Add its interface to the core package
 		return RandString(prng.Int(1, 50), charsets.AlphaNumeric)
+	case reflect.UnsafePointer:
+		return RandUnsafePointer()
 	default:
 		panic(fmt.Sprintf("gtools:random: nil or invalid type: '%T' passed to be randomized", t))
 	}
@@ -276,13 +286,17 @@ func RandString(length int, charset string) string {
 
 // RandStructOf generates a new instance of the given struct type with random values for its fields.
 // It uses reflection to dynamically create an instance and set the fields.
-func RandStructOf(t reflect.Type) any {
-	return reflectrand.StructOf(t).Interface()
+func RandStructOf(t reflect.Type, maxDepth int) any {
+	return reflectrand.StructOf(t, maxDepth).Interface()
 }
 
 func RandTimestamp(from time.Time, diff time.Duration) time.Time {
 	randomDuration := time.Duration(rand.Int63n(int64(diff)))
 	return from.Add(randomDuration)
+}
+
+func RandUnsafePointer() unsafe.Pointer {
+	return unsafe.Pointer(nil)
 }
 
 func RandUuid() string {

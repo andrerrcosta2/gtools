@@ -9,7 +9,10 @@ import (
 	"strings"
 )
 
-// Message returns a formatted standard diff message
+// Message sprints as:
+//
+//	'<msg>
+//	 <diff>'
 func Message(msg, diff string) string {
 	if diff == "" {
 		return clean(msg)
@@ -17,32 +20,27 @@ func Message(msg, diff string) string {
 	return clean(printer.Sprintf("%s\n%s", msg, diff))
 }
 
-func Append(tab indent.Tab, whole, msg string) string {
-	out := tab.Smarkf("%s\n%s", whole, tab.Indent(1, msg))
-	return out
+// Append sprints as:
+//
+//	'<whole>
+//	 <msg>'
+func Append(tab indent.Indentor, whole, msg string) string {
+	return tab.Sprintf("%s\n%s", whole, msg)
 }
 
-func BothNils(tab indent.Tab, kind, typxA, typxB string) string {
-	return tab.Sprintf(BothNilsFmt, kind, recExp(tab, printer.Sprintf("%s<nil>", typxA), printer.Sprintf("%s<nil>", typxB)))
-}
-
-const BothNilsFmt = "Both %s are nil:%s"
-
-func BothInvalid(tab indent.Tab) string {
+func BothInvalid(tab indent.Indentor) string {
 	return tab.Sprintf(BothInvalidFmt)
 }
 
 const BothInvalidFmt = "Both values are invalid"
 
-func Chain(tab indent.Tab, msg ...string) string {
+func Chain(msg ...string) string {
 	var cb strings.Builder
 	for i, m := range msg {
 		if m == "" {
 			continue
 		}
-		ind := tab.Indent(i, m)
-		cb.WriteString(tab.Smarkf("%s", ind))
-
+		cb.WriteString(m)
 		if i < len(msg)-1 {
 			cb.WriteString("\n")
 		}
@@ -50,7 +48,7 @@ func Chain(tab indent.Tab, msg ...string) string {
 	return cb.String()
 }
 
-func ChainMessage(tab indent.Tab, diff string, msg ...string) string {
+func ChainMessage(tab indent.Indentor, diff string, msg ...string) string {
 	if len(msg) == 0 {
 		return tab.Sprint(diff)
 	}
@@ -60,12 +58,12 @@ func ChainMessage(tab indent.Tab, diff string, msg ...string) string {
 		if i > 0 {
 			cb.WriteString("\n")
 		}
-		cb.WriteString(ct.Smarkf(m))
+		cb.WriteString(ct.Sprint(m))
 	}
 	return Message(cb.String(), tab.Indent(len(msg), diff))
 }
 
-func Diff(tab indent.Tab, a, b string) string {
+func Diff(tab indent.Indentor, a, b string) string {
 	t := tab.String()
 	diff := t + "(Received...):\n" +
 		tab.Indent(1, a) + "\n" +
@@ -76,116 +74,242 @@ func Diff(tab indent.Tab, a, b string) string {
 	return diff
 }
 
-func ArrayLenMismatch(tab indent.Tab, a, b int) string {
-	return tab.Smarkf(ArrayLenMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
+// ArrayLenMismatch sprint as:
+//
+//	'array lengths mismatch
+//	 → Received: %s
+//	 → Expected: %s'
+func ArrayLenMismatch(tab indent.Indentor, a, b int) string {
+	return tab.Sprintf(ArrayLenMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
 }
 
 const ArrayLenMismatchFmt = "array lengths mismatch:%s"
 
 // ArrayElem returns a formatted standard diff message for an array with different
 // element values at a specific index
-func ArrayElem(tab indent.Tab, idx int) string {
+func ArrayElem(tab indent.Indentor, idx int) string {
 	return tab.Sprintf(ArrayElemFmt, idx)
 }
 
 const ArrayElemFmt = "array elements mismatch at index '%d':"
 
-func ArrayTypesMismatch(tab indent.Tab, a, b string) string {
+// ArrayTypesMismatch sprint as:
+//
+//	'array types mismatch
+//	 → Received: %s
+//	 → Expected: %s'
+func ArrayTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(ArrayTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const ArrayTypesMismatchFmt = "array types mismatch:%s"
 
-func ChanTypesMismatch(tab indent.Tab, a, b string) string {
-	return tab.Sprintf(ChanTypesMismatchFmt, recExp(tab, a, b))
+// ChanAddressMismatch sprint as:
+//
+//	'chan addresses mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func ChanAddressMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(ChanAddressMismatchFmt, recExp(tab, a, b))
 }
 
-const ChanTypesMismatchFmt = "chan types mismatch:%s"
+const ChanAddressMismatchFmt = "chan addresses mismatch:%s>"
 
-func ChanDirMismatch(tab indent.Tab, a, b string) string {
-	return tab.Sprintf(ChanDirMismatchFmt, recExp(tab, a, b))
-}
-
-const ChanDirMismatchFmt = "chan direction mismatch:%s"
-
-func ChanBufSizeMismatch(tab indent.Tab, a, b int) string {
+// ChanBufSizeMismatch sprint as:
+//
+//	'chan buffer sizes mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func ChanBufSizeMismatch(tab indent.Indentor, a, b int) string {
 	return tab.Sprintf(ChanBufSizeMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
 }
 
 const ChanBufSizeMismatchFmt = "chan buffer sizes mismatch:%s"
 
-func Empty(tab indent.Tab) string {
+// ChanDirMismatch sprint as:
+//
+//	'chan direction mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func ChanDirMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(ChanDirMismatchFmt, recExp(tab, a, b))
+}
+
+const ChanDirMismatchFmt = "chan direction mismatch:%s"
+
+// ChanElemTypesMismatch sprint as:
+//
+//	'chan element types mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func ChanElemTypesMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(ChanElemTypesMismatchFmt, recExp(tab, a, b))
+}
+
+const ChanElemTypesMismatchFmt = "chan element types mismatch:%s"
+
+// ChanTypesMismatch sprint as:
+//
+//	'chan types mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func ChanTypesMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(ChanTypesMismatchFmt, recExp(tab, a, b))
+}
+
+const ChanTypesMismatchFmt = "chan types mismatch:%s"
+
+// Empty sprints en indented empty string
+func Empty(tab indent.Indentor) string {
 	return tab.Sprint(EmptyFmt)
 }
 
 const EmptyFmt = ""
 
-func EqualsCyclicRef(tab indent.Tab, typx string, addr uintptr) string {
+// EqualsCyclicRef sprints as:
+//
+// %s<cyclic-reference|%s>
+func EqualsCyclicRef(tab indent.Indentor, typx string, addr uintptr) string {
 	return tab.Sprint(EqualsCyclicRefFmt, typx, sprints.Uintptrf(addr))
 }
 
 const EqualsCyclicRefFmt = "%s<cyclic-reference|%s>"
 
-func FuncSignMismatch(tab indent.Tab, a, b string) string {
+// FuncAddressMismatch sprint as:
+//
+//	'func addresses mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func FuncAddressMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(FuncAddressMismatchFmt, recExp(tab, a, b))
+}
+
+const FuncAddressMismatchFmt = "func addresses mismatch:%s"
+
+// FuncSignMismatch sprint as:
+//
+//	'func mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func FuncSignMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(FuncSignMismatchFmt, recExp(tab, a, b))
 }
 
 const FuncSignMismatchFmt = "func mismatch:%s"
 
-func FuncTypesMismatch(tab indent.Tab, a, b string) string {
+// FuncTypesMismatch sprint as:
+//
+//	'func types mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func FuncTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(FuncTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const FuncTypesMismatchFmt = "func types mismatch:%s"
 
-func InterfaceTypesMismatch(tab indent.Tab, a, b string) string {
+// GenericAddrMismatch sprint as:
+//
+//	'%s addresses mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func GenericAddrMismatch(tab indent.Indentor, typ, a, b string) string {
+	return tab.Sprintf(GenericAddrMismatchFmt, typ, recExp(tab, a, b))
+}
+
+const GenericAddrMismatchFmt = "%s addresses mismatch:%s"
+
+// InterfaceTypesMismatch sprint as:
+//
+//	'interface types mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func InterfaceTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(InterfaceTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const InterfaceTypesMismatchFmt = "interface types mismatch:%s"
 
-func InterfaceImpl(tab indent.Tab) string {
+// InterfaceImpl sprint as:
+//
+//	'implementations are different:'
+func InterfaceImpl(tab indent.Indentor) string {
 	return tab.Sprint(InterfaceImplFmt)
 }
 
 const InterfaceImplFmt = "implementations are different:"
 
-func InvalidExpected(tab indent.Tab, a string) string {
-	return tab.Sprintf(InvalidExpectedFmt, recExp(indent.Zero(), a, sprints.Invalid(indent.Zero())))
+// InvalidExpected
+//
+//	'expected value is invalid:
+//	 → Received: %s
+//	 → Expected: %s'
+func InvalidExpected(tab indent.Indentor, a string) string {
+	return tab.Sprintf(InvalidExpectedFmt, recExp(tab, a,
+		sprints.Invalid(indent.Zero())))
 }
 
-const InvalidExpectedFmt = "Expected value is invalid:%s"
+const InvalidExpectedFmt = "expected value is invalid:%s"
 
-func InvalidReceived(tab indent.Tab, b string) string {
-	return tab.Sprintf(InvalidReceivedFmt, recExp(indent.Zero(), sprints.Invalid(indent.Zero()), b))
+// InvalidReceived
+//
+//	'received value is invalid:
+//	 → Received: %s
+//	 → Expected: %s'
+func InvalidReceived(tab indent.Indentor, b string) string {
+	return tab.Sprintf(InvalidReceivedFmt, recExp(tab, sprints.Invalid(indent.Zero()), b))
 }
 
-const InvalidReceivedFmt = "Received value is invalid:%s"
+const InvalidReceivedFmt = "received value is invalid:%s"
 
-func MapTypesMismatch(tab indent.Tab, a, b string) string {
+// MapTypesMismatch
+//
+//	'map types mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func MapTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(MapTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const MapTypesMismatchFmt = "map types mismatch:%s"
 
-func MapLenMismatch(tab indent.Tab, a, b int) string {
+// MapLenMismatch
+//
+//	'map lengths mismatch:
+//	 → Received: %s
+//	 → Expected: %s'
+func MapLenMismatch(tab indent.Indentor, a, b int) string {
 	return tab.Sprintf(MapLenMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
 }
 
 const MapLenMismatchFmt = "map lengths mismatch:%s"
 
-func MapKeys(tab indent.Tab) string {
+// MapKeys
+//
+//	'map keys mismatch:'
+func MapKeys(tab indent.Indentor) string {
 	return tab.Sprint(MapKeysFmt)
 }
 
 const MapKeysFmt = "map keys mismatch:"
 
+// MapKeysDiff
+//
+//	(received...)
+//		missing keys:%v
+//		extra keys:%v
+//	(...)
+//
+//	(expected...)
+//		missing keys:%v
+//		extra keys:%v
+//	(...)
 func MapKeysDiff(tab indent.Tab, missingKeysA, extraKeysA, missingKeysB, extraKeysB []string) string {
 	t := tab.String()
-	result := t + "(Received...):\n"
+	result := t + "(received...):\n"
 
 	if len(missingKeysA) > 0 {
-		result += tab.Indent(1, "missing keys", strings.Join(missingKeysA, ", "), "\n")
+		result += tab.Indent(1, "missing keys:", strings.Join(missingKeysA, ", "), "\n")
 	}
 
 	if len(extraKeysA) > 0 {
@@ -193,7 +317,7 @@ func MapKeysDiff(tab indent.Tab, missingKeysA, extraKeysA, missingKeysB, extraKe
 	}
 
 	result += t + "(...)\n\n" +
-		t + "(Expected...):\n"
+		t + "(expected...):\n"
 
 	if len(missingKeysB) > 0 {
 		result += tab.Indent(1, "missing keys:", strings.Join(missingKeysB, ", "), "\n")
@@ -207,120 +331,192 @@ func MapKeysDiff(tab indent.Tab, missingKeysA, extraKeysA, missingKeysB, extraKe
 	return result
 }
 
-func MapValue(tab indent.Tab, key string) string {
+// MapValue sprints as:
+//
+//	map values are different for key '%s':
+func MapValue(tab indent.Indentor, key string) string {
 	return tab.Sprintf(MapValueFmt, key)
 }
 
 const MapValueFmt = "map values are different for key '%s':"
 
-func MissingField(tab indent.Tab, value string) string {
+// MissingField sprints as:
+//
+//	Field '%s' is missing
+func MissingField(tab indent.Indentor, value string) string {
 	return tab.Sprintf(MissingFieldFmt, value)
 }
 
-const MissingFieldFmt = "Field '%s' is missing"
+const MissingFieldFmt = "field '%s' is missing"
 
-func NilChan(tab indent.Tab, id string) string {
-	return tab.Sprintf(NilChanFmt, id)
+// NilChanDirMismatch sprints as:
+//
+//	'both channels are nil but their directions mismatch:
+//	  → Received: %s
+//	  → Expected: %s'
+func NilChanDirMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(NilChanDirectionMismatchFmt, recExp(tab, a, b))
 }
 
-const NilChanFmt = "The %s channel is nil"
+const NilChanDirectionMismatchFmt = "both channels are nil but their directions mismatch:%s"
 
-func NilFunc(tab indent.Tab, id string) string {
-	return tab.Sprintf(NilFuncFmt, id)
+// NilChanTypesMismatch sprints as:
+//
+//	'both channels are nil but their types mismatch:
+//	  → Received: %s
+//	  → Expected: %s'
+func NilChanTypesMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(NilChanTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const NilFuncFmt = "The %s function is nil"
+const NilChanTypesMismatchFmt = "both channels are nil but their types mismatch:%s"
 
-func NilInterface(tab indent.Tab, id string) string {
+// NilExpected sprint as:
+//
+//		'The expected '%s' is nil:
+//	   → Received: %s
+//		  → Expected: %s'
+func NilExpected(tab indent.Indentor, kind, typ string) string {
+	return tab.Sprintf(NilExpectedFmt, kind, recExp(tab, typ, "<nil>"))
+}
+
+const NilExpectedFmt = "The expected '%s' is nil:%s"
+
+// NilFuncTypesMismatch sprint as:
+//
+//		'both functions are nil but their types mismatch:
+//	   → Received: %s
+//		  → Expected: %s'
+func NilFuncTypesMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(NilFuncTypesMismatchFmt, recExp(tab, a, b))
+}
+
+const NilFuncTypesMismatchFmt = "both functions are nil but their types mismatch:%s"
+
+// NilFuncSignMismatch sprint as:
+//
+//		'both functions are nil but their signatures mismatch:
+//	   → Received: %s
+//		  → Expected: %s'
+func NilFuncSignMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(NilFuncSignMismatchFmt, recExp(tab, a, b))
+}
+
+const NilFuncSignMismatchFmt = "both functions are nil but their signatures mismatch:%s"
+
+// NilInterface sprint as:
+//
+//	The %s interface is nil
+func NilInterface(tab indent.Indentor, id string) string {
 	return tab.Sprintf(NilInterfaceFmt, id)
 }
 
 const NilInterfaceFmt = "The %s interface is nil"
 
-func NilMap(tab indent.Tab, id string) string {
-	return tab.Sprintf(NilMapFmt, id)
+// NilPointersSignMismatch sprints as:
+//
+//		'both pointers are nil but their signatures mismatch:
+//	   → Received: %s
+//		  → Expected: %s'
+func NilPointersSignMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(NilPointersSignMismatchFmt, recExp(tab, a, b))
 }
 
-const NilMapFmt = "The %s map is nil"
+const NilPointersSignMismatchFmt = "both pointers are nil but their signatures mismatch:%s"
 
-func NilPointer(tab indent.Tab, id string) string {
-	return tab.Sprintf(NilPointerFmt, id)
+// NilReceived sprints as:
+//
+//	'The received '%s' is nil:
+//	   → Received: %s
+//	   → Expected: %s'
+func NilReceived(tab indent.Indentor, kind, typ string) string {
+	return tab.Sprintf(NilReceivedFmt, kind, recExp(tab, typ, "<nil>"))
 }
 
-const NilPointerFmt = "The %s pointer is nil"
+const NilReceivedFmt = "The received '%s' is nil:%s"
 
-func NilSlice(tab indent.Tab, id string) string {
-	return tab.Sprintf(NilSliceFmt, id)
+// NilTypesMismatch sprints as:
+//
+//	'both %s are nil but their types mismatch:
+//	   → Received: %s
+//	   → Expected: %s'
+func NilTypesMismatch(tab indent.Indentor, kind, a, b string) string {
+	return tab.Sprintf(NilTypesMismatchFmt, kind, recExp(tab, a, b))
 }
 
-const NilSliceFmt = "The %s slice is nil"
+const NilTypesMismatchFmt = "both %s are nil but their types mismatch:%s"
 
-func NilReceived(tab indent.Tab, typx, expected string) string {
-	return tab.Sprintf(NilReceivedFmt, typx, recExp(tab, printer.Sprintf("%s<nil>", typx), expected))
-}
-
-const NilReceivedFmt = "The '%s' received is nil:%s"
-
-func NilExpected(tab indent.Tab, typx, received string) string {
-	return tab.Sprintf(NilExpectedFmt, typx, recExp(tab, received, printer.Sprintf("%s<nil>", typx)))
-}
-
-const NilExpectedFmt = "The '%s' expected is nil:%s"
-
-func Pointers(tab indent.Tab) string {
+// PointerValues sprint as:
+//
+//	'pointer values are different'
+func PointerValues(tab indent.Indentor) string {
 	return tab.Sprint(PointerValueFmt)
 }
 
-const PointerValueFmt = "pointer values are different:"
+const PointerValueFmt = "pointer values are different"
 
-func Space(tab indent.Tab, amount int) string {
+func PointersAddrMismatch(tab indent.Indentor, a, b string) string {
+	return tab.Sprintf(PointersAddrMismatchFmt, recExp(tab, a, b))
+}
+
+const PointersAddrMismatchFmt = "pointer addresses mismatch:%s"
+
+func Space(tab indent.Indentor, amount int) string {
 	return tab.Sprint(strings.Repeat("␣", amount))
 }
 
-func SliceCapMismatch(tab indent.Tab, a, b int) string {
+func SliceCapMismatch(tab indent.Indentor, a, b int) string {
 	return tab.Sprintf(SliceCapMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
 }
 
 const SliceCapMismatchFmt = "slice capacities mismatch:%s"
 
-func SliceLenMismatch(tab indent.Tab, a, b int) string {
+func SliceLenMismatch(tab indent.Indentor, a, b int) string {
 	return tab.Sprintf(SliceLenMismatchFmt, recExp(tab, sprints.Digit(a), sprints.Digit(b)))
 }
 
 const SliceLenMismatchFmt = "slice lengths mismatch:%s"
 
-func SliceTypesMismatch(tab indent.Tab, a, b string) string {
+func SliceTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(SliceTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const SliceTypesMismatchFmt = "slice types mismatch:%s"
 
-func SliceValues(tab indent.Tab, idx int) string {
+func SliceValues(tab indent.Indentor, idx int) string {
 	return tab.Sprintf(SliceValuesFmt, idx)
 }
 
 const SliceValuesFmt = "slice values differ at index %d:"
 
-func Strings(tab indent.Tab, idx int) string {
+func Strings(tab indent.Indentor, idx int) string {
 	return tab.Sprintf(StringsFmt, idx)
 }
 
 const StringsFmt = "strings differ at index %d:"
 
-func StructTypesMismatch(tab indent.Tab, a, b string) string {
+// StructTypesMismatch sprint as:
+//
+//	'struct types mismatch:
+//	   → Received: %s
+//	   → Expected: %s'
+func StructTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(StructTypesMismatchFmt, recExp(tab, a, b))
 }
 
 const StructTypesMismatchFmt = "struct types mismatch:%s"
 
-func StructFields(tab indent.Tab, field string) string {
+// StructFields sprint as:
+//
+//	'struct field '%s' mismatch:
+func StructFields(tab indent.Indentor, field string) string {
 	return tab.Sprintf(StructFieldsFmt, field)
 }
 
 const StructFieldsFmt = "struct field '%s' mismatch:"
 
 // TypesMismatch returns a types mismatch Message
-func TypesMismatch(tab indent.Tab, a, b string) string {
+func TypesMismatch(tab indent.Indentor, a, b string) string {
 	a = "<" + a + ">"
 	b = "<" + b + ">"
 	return tab.Sprintf(TypesMismatchFmt, recExp(tab, a, b))
@@ -328,19 +524,28 @@ func TypesMismatch(tab indent.Tab, a, b string) string {
 
 const TypesMismatchFmt = "types mismatch:%s"
 
-func UnsafePointers(tab indent.Tab) string {
+func UnsafePointers(tab indent.Indentor) string {
 	return tab.Sprint(UnsafePointersFmt)
 }
 
-const UnsafePointersFmt = "unsafe pointers values are different:"
+const UnsafePointersFmt = "unsafe ptrs values are different:"
 
-func UnsafePointersAddr(tab indent.Tab, a, b string) string {
+// UnsafePointersAddr sprints as:
+//
+// unsafe pointer addresses mismatch:
+//
+//	→ Received: %s
+//	→ Expected: %s'
+func UnsafePointersAddr(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(UnsafePointersAddrFmt, recExp(tab, a, b))
 }
 
-const UnsafePointersAddrFmt = "unsafe pointers addresses mismatch:%s"
+const UnsafePointersAddrFmt = "unsafe pointer addresses mismatch:%s"
 
-func Values(tab indent.Tab, a, b string) string {
+// Values sprint as:
+//
+//	values mismatch:%s
+func Values(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(ValuesFmt, recExp(tab, a, b))
 }
 
@@ -350,7 +555,11 @@ func clean(s string) string {
 	return strings.TrimRight(s, "\t\n ")
 }
 
-func recExp(tab indent.Tab, rec, exp string) string {
+// recExp sprints as:
+//
+//	 "→ Received: %s"
+//		"→ Expected: %s"
+func recExp(tab indent.Indentor, rec, exp string) string {
 	received := tab.Inc().Sprintf("→ Received: %s", rec)
 	expected := tab.Inc().Sprintf("→ Expected: %s", exp)
 

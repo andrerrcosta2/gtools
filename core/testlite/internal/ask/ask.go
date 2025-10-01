@@ -40,7 +40,7 @@ func AreEqualMaps[M ~map[K]V, K comparable, V any](a, b M) bool {
 	return true
 }
 
-// AreSameInstances returns true if both arguments are pointers to the same instance.
+// AreSameInstances returns true if both arguments are ptrs to the same instance.
 // For values, it'll always return false
 func AreSameInstances(a, b any) (bool, [2]uintptr, error) {
 	ta := reflect.TypeOf(a)

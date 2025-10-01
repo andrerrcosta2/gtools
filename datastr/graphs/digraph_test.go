@@ -201,7 +201,7 @@ func TestDirectedGraph_AddEdgeNodesNotExist(t *testing.T) {
 	g := DigraphOf[N]()
 
 	nodeA := tests.NewSortableNode("A")
-	nodeB := tests.NewSortableNode("B")
+	nodeB := tests.NewSortableNode("C")
 
 	// Add only one node
 	g.AddNode(nodeA)
@@ -211,7 +211,7 @@ func TestDirectedGraph_AddEdgeNodesNotExist(t *testing.T) {
 
 	// Assert that the edge was not added
 	if g.HasEdge(nodeA, nodeB) {
-		tt.Errorf("Edge from A to B should not be present")
+		tt.Errorf("Edge from A to C should not be present")
 	}
 
 	tt.PrintLogStack()

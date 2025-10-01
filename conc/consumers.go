@@ -14,9 +14,9 @@ import (
 )
 
 // SemaphoredConsumer returns a new domain.CloseableConsumer that consumes values from the provided supplier and applies the given function to each value.
-// The returned consumer uses the provided semaphore to limit the number of concurrent operations.
+// The returned consumer uses the provided semaphore to limit the number of concurrent ops.
 //
-// It's a blocking function that waits for all operations to complete before returning.
+// It's a blocking function that waits for all ops to complete before returning.
 func SemaphoredConsumer[T any](streamable gtools.CloseableStreamable[T], semaphore gtools.Semaphore) gtools.CloseableConsumer[T] {
 	// Create a new channelConsumer with the provided supplier and semaphore
 	return &channelConsumer[T]{streamable: streamable, semaphore: semaphore, flag: channels.NewFlag()}
@@ -33,8 +33,8 @@ type channelConsumer[T any] struct {
 
 // Consume consumes values synchronously blocking the main thread until all values have been consumed.
 // The consumer applies the given function to each value as it is received.
-// The consumer uses the provided semaphore to limit the number of concurrent operations.
-// The consumer waits for all operations to complete before returning.
+// The consumer uses the provided semaphore to limit the number of concurrent ops.
+// The consumer waits for all ops to complete before returning.
 func (c *channelConsumer[T]) Consume(fn functions.BiConsumer[int, T]) error {
 	if c.IsClosed() {
 		return consumers.ClosedConsumer
@@ -131,7 +131,7 @@ func (c *cancellableCloseableConsumer[T]) Consume(fn functions.BiConsumer[int, T
 }
 
 // consume consumes values from the channel using the provided function.
-// It uses a waitgroup to wait for all operations to complete.
+// It uses a waitgroup to wait for all ops to complete.
 // It's thread-safe and can be used concurrently.
 func (c *cancellableCloseableConsumer[T]) consume(fn functions.BiConsumer[int, T]) {
 	// Capture the stream once outside the loop
@@ -142,7 +142,7 @@ func (c *cancellableCloseableConsumer[T]) consume(fn functions.BiConsumer[int, T
 		if c.ctx.Err() != nil {
 			// If the consumer is force-closed, reject the supplier value and close the channel
 			log.Printf("rejecting supplier value and closing channel...\n")
-			// SetWaitingPoint for all operations to complete
+			// SetWaitingPoint for all ops to complete
 			c.wait.Wait()
 			// Return immediately
 			return

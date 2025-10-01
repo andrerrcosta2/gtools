@@ -2,7 +2,10 @@
 
 package values
 
-import "reflect"
+import (
+	"reflect"
+	"unicode"
+)
 
 func CanNil(value reflect.Value) bool {
 	switch value.Kind() {
@@ -11,4 +14,14 @@ func CanNil(value reflect.Value) bool {
 	default:
 		return false
 	}
+}
+
+func IsExportedField(v reflect.Value, idx int) bool {
+	field := v.Type().Field(idx)
+	return unicode.IsUpper(rune(field.Name[0]))
+}
+
+func IsUnexportedField(v reflect.Value, idx int) bool {
+	field := v.Type().Field(idx)
+	return unicode.IsLower(rune(field.Name[0]))
 }

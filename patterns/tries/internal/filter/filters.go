@@ -21,7 +21,7 @@ func Insertion(pattern string, symbol grammar.Symbol) error {
 		return errs.RootSymbolOnPath(symbol)
 	}
 
-	// Reject patterns equals Placeholder symbol
+	// Reject patterns compare Placeholder symbol
 	if symbols.String(pattern).Equal(def.Placeholder) {
 		return errs.PlaceholderSymbol
 	}

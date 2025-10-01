@@ -182,8 +182,8 @@ func TestUnmarshalInto(t *testing.T) {
 		}
 	})
 
-	// Test case 6: Unmarshalling into a slice of struct pointers
-	t.Run("unmarshal into slice of struct pointers", func(t *testing.T) {
+	// Test case 6: Unmarshalling into a slice of struct ptrs
+	t.Run("unmarshal into slice of struct ptrs", func(t *testing.T) {
 		type MyStruct struct {
 			Name string `json:"name"`
 			Age  int    `json:"age"`

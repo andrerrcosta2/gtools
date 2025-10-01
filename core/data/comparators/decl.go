@@ -16,7 +16,7 @@ type KeyTyped[K any, O prim.Ordered] interface {
 	Hash(key K) O
 }
 
-// Functional represents equals using 0, less than using -1 and greater than using 1
+// Functional represents compare using 0, less than using -1 and greater than using 1
 type Functional[A any] func(a, b A) int
 
 func (f Functional[A]) Equals(a, b A) bool {

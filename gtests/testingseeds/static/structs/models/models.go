@@ -46,40 +46,6 @@ func (f *Function[T]) Call() {
 	f.fn()
 }
 
-var OneDataZeroInst = new(OneData)
-
-func OneDataAsRef(name string) *OneData {
-	return &OneData{
-		Name: name,
-	}
-}
-
-func OneDataAsValue(name string) OneData {
-	return OneData{
-		Name: name,
-	}
-}
-
-func OneDataAsRandRef() *OneData {
-	return &OneData{
-		Name: random.SingleOf[string](),
-	}
-}
-
-func OneDataAsRandValue() OneData {
-	return OneData{
-		Name: random.SingleOf[string](),
-	}
-}
-
-type OneData struct {
-	Name string
-}
-
-func (o *OneData) String() string {
-	return o.Name
-}
-
 var PublicZeroInst = new(Public)
 
 func PublicAsRef() *Public {

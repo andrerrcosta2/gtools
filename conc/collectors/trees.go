@@ -49,8 +49,8 @@ func Branchable[B data.Branchable[B], C ~[][]B]() Collector[B, C] {
 }
 
 // This collector organizes any data that implements data.Branchable into an unsorted matrix.
-// The branch must be naturally comparable. Relying on pointers as keys is unsafe, as this collector
-// dereferences pointers before comparing them, which may lead to incorrect collections.
+// The branch must be naturally comparable. Relying on ptrs as keys is unsafe, as this collector
+// dereferences ptrs before comparing them, which may lead to incorrect collections.
 //
 // Due to the current philosophy of golang, this collector, while working with interfaces,
 // doesn't prevent processing of nil stream data inside the collector without a reflection overhead.
@@ -407,7 +407,7 @@ func (c *branchFlattenerCollector[B, O, C]) flat(hash string, b B) {
 				c.out[idx] = c.flt(c.out[flat.First()], b)
 			} else {
 				// If intermediate bch weren't out they must be scheduled.
-				// that happens because bch are accessed by its memory addresses
+				// that happens because bch are accessed by its memory address
 				// not by channel access, so we may be facing a race condition when we
 				// are doing an early processing.
 				//c.runner.Append(chain, ops...) The runner is dead. Maybe not.

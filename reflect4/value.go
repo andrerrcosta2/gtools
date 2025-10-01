@@ -13,7 +13,7 @@ func UnwrapInterfaces(v reflect.Value) reflect.Value {
 	return v
 }
 
-// UnwrapPointers unwraps all pointers from a value
+// UnwrapPointers unwraps all ptrs from a value
 // until the result kind is not a pointer
 func UnwrapPointers(v reflect.Value) reflect.Value {
 	for v.Kind() == reflect.Ptr {
@@ -22,7 +22,7 @@ func UnwrapPointers(v reflect.Value) reflect.Value {
 	return v
 }
 
-// UnwrapIntoValue unwraps all pointers and interfaces
+// UnwrapIntoValue unwraps all ptrs and interfaces
 // until it reaches a value
 func UnwrapIntoValue(v reflect.Value) reflect.Value {
 	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {

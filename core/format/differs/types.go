@@ -20,12 +20,9 @@ func DiffError(message string, err error) Difference {
 	}
 }
 
-func Equals(message, received, expected string) Difference {
+func Equals() Difference {
 	return Difference{
-		Message:  message,
-		Received: received,
-		Expected: expected,
-		Equals:   true,
+		Equals: true,
 	}
 }
 
@@ -34,6 +31,6 @@ type Difference struct {
 	Diff     string
 	Received string
 	Expected string
-	Equals   bool
 	Err      error
+	Equals   bool
 }

@@ -3,7 +3,9 @@
 package values
 
 import (
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"reflect"
+	"unsafe"
 )
 
 var Empty = reflect.Value{}
@@ -47,21 +49,51 @@ func FieldInterfaceOf(v any) FieldInterface {
 
 func IsNil(value reflect.Value) bool {
 	switch value.Kind() {
-	case reflect.Pointer, reflect.Map, reflect.Slice, reflect.Chan, reflect.Func:
+	case reflect.Pointer, reflect.Map, reflect.Slice, reflect.Chan, reflect.Func, reflect.Interface, reflect.UnsafePointer:
 		return value.IsNil()
 	default:
 		return false
 	}
 }
 
-// OfUnaddr wraps reflect.NewAt() to create a new reflect.Value at an arbitrary memory address.
-func OfUnaddr(value reflect.Value) reflect.Value {
+// OfUnaddr forces a refkect.Value addressability. It returns an error if the value
+// is invalid, or if the value was obtained from an unexported field.
+func OfUnaddr(value reflect.Value) (reflect.Value, error) {
+	if !value.IsValid() {
+		return Empty, fmx.Errorf("value is invalid")
+	}
+	if !value.CanInterface() {
+		return Empty, fmx.Errorf("cannot interface unexported value of type '%v'", value.Type())
+	}
+	ptr := reflect.New(value.Type())
+	ptr.Elem().Set(value)
+	return ptr.Elem(), nil
+}
+
+// UnsafeOfUnaddr makes a reflect.Value addressable without safety checks.
+// ⚠️ It will panic if 'value' is invalid or obtained from an unexported field.
+// Use only when you are sure the input is safe to clone.
+func UnsafeOfUnaddr(value reflect.Value) reflect.Value {
 	// Create a new pointer to the value's type
 	ptr := reflect.New(value.Type())
 	// Copy the original value into the pointer
 	ptr.Elem().Set(value)
 	// Return the addressable value
 	return ptr.Elem()
+}
+
+// UnsafeSet force-set a target value using the unsafe package
+func UnsafeSet(target, value reflect.Value) error {
+	if target.Kind() != value.Kind() {
+		return fmx.Errorf("mismatched kinds between target '%s' and value '%s'",
+			target.Kind(), value.Kind())
+	}
+	if !target.CanAddr() {
+		target = UnsafeOfUnaddr(target)
+	}
+	reflect.NewAt(target.Type(), unsafe.Pointer(target.UnsafeAddr())).
+		Elem().Set(value)
+	return nil
 }
 
 func xint(v any) (i []reflect.Value, value reflect.Value) {

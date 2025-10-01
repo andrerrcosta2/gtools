@@ -4,7 +4,7 @@ package mod
 
 const (
 	// ^uint(0) can be 0xFFFFFFFFFFFFFFFF or 0xFFFFFFFF. After shifting it by 63 bits
-	// only the most significant bit remains.
+	// only the most significant bitwise remains.
 	intSize = 32 << (^uint(0) >> 63) // This multiplication can be 32 or 64.
 
 	Uint            = 1<<intSize - 1

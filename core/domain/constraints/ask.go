@@ -10,7 +10,9 @@ import (
 // IsComparable checks if the provided values are from a
 // naturally comparable type
 //
-//	(e.g.): x == z
+// example:
+//
+//	x == z
 func IsComparable(values ...any) bool {
 	if prim.IsComparable(values) {
 		return true
@@ -30,7 +32,7 @@ func IsZeroOf[T any](value any) bool {
 		return is
 	}
 
-	// Can't compare as primitives, pointers don't matter
+	// Can't compare as primitives, ptrs don't matter
 	// since it can be nil
 	v := reflect.ValueOf(value)
 	switch v.Kind() {

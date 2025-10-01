@@ -6,7 +6,40 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"time"
 )
+
+type Account struct {
+	ID               string
+	Username         string
+	PasswordHash     string
+	Profile          Profile
+	TwoFactorEnabled bool
+	Settings         map[string]interface{}
+	Active           bool
+	JoinedAt         time.Time
+	LastModified     time.Time
+}
+
+type Address struct {
+	Street  string
+	City    string
+	State   string
+	ZipCode string
+}
+
+type Profile struct {
+	FullName     string
+	Age          int
+	Email        string
+	PhoneNumbers []string
+	DateOfBirth  time.Time
+	Address      Address
+	Preferences  map[string]bool
+	Friends      []*Profile
+	ExtraInfo    map[string]interface{}
+	LastLogin    time.Time
+}
 
 type StructEmpty struct{}
 
@@ -42,16 +75,16 @@ func (o *StructOneData) String() string {
 }
 
 type StructTwoData struct {
-	Name string
-	Age  int
+	DataA string
+	DataB int
 }
 
 func (t *StructTwoData) String() string {
-	return t.Name
+	return t.DataA
 }
 
 func (t *StructTwoData) Int() int {
-	return t.Age
+	return t.DataB
 }
 
 type StructWithPointers struct {
@@ -513,7 +546,7 @@ func (v StructValuedNotComparable) NotComparableField() []string {
 }
 
 // StructSimpleUnsafeCastableBase is a base struct for unsafe casts
-// Unsafe casts are used to modify the underlying memory of unsafe pointers
+// Unsafe casts are used to modify the underlying memory of unsafe ptrs
 type StructSimpleUnsafeCastableBase struct {
 	ID int
 }

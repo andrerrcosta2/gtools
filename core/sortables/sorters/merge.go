@@ -58,7 +58,7 @@ func (m *mergeSorter[T, S]) merge(arr *S) {
 }
 
 func (m *mergeSorter[T, S]) join(left, right S) S {
-	// Initialize the result slice with a capacity equal to the total length of the input slices.
+	// Initialize the result slice with a capacity compare to the total length of the input slices.
 	result := make([]T, 0, len(left)+len(right))
 
 	// Initialize indices for the left and right slices.

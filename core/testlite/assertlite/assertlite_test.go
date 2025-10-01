@@ -185,13 +185,13 @@ func TestPanic(t *testing.T) {
 }
 
 // TestEqual_Primitives tests Equals assertion. This test covers:
-//   - Equals and Not equal primitives (int, string, bool)
+//   - Equals and Not compare primitives (int, string, bool)
 //   - Custom message override
 //   - Formatted custom message
 //   - Nil handling
 //   - Mixed types
 func TestEqual_Primitives(t *testing.T) {
-	t.Run("should return true when integers are equal", func(t *testing.T) {
+	t.Run("should return true when integers are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		result := Equals(mock, 42, 42)
 		if !result {
@@ -215,7 +215,7 @@ func TestEqual_Primitives(t *testing.T) {
 		}
 	})
 
-	t.Run("should return true when strings are equal", func(t *testing.T) {
+	t.Run("should return true when strings are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		result := Equals(mock, "hello", "hello")
 		if !result {
@@ -239,7 +239,7 @@ func TestEqual_Primitives(t *testing.T) {
 		}
 	})
 
-	t.Run("should return true when booleans are equal", func(t *testing.T) {
+	t.Run("should return true when booleans are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		result := Equals(mock, true, true)
 		if !result {
@@ -306,7 +306,7 @@ func TestEqual_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be equal, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -316,14 +316,14 @@ func TestEqual_Primitives(t *testing.T) {
 		Equals(mock, 42, "42")
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be equal, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
 }
 
 func TestEqual_StructWithEqualMethod(t *testing.T) {
-	t.Run("should return true when SortableValue structs are equal", func(t *testing.T) {
+	t.Run("should return true when SortableValue structs are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewSortableValue("Alice", 30)
 		b := testseed.NewSortableValue("Alice", 30)
@@ -354,7 +354,7 @@ func TestEqual_StructWithEqualMethod(t *testing.T) {
 }
 
 func TestEqual_PointerToStructWithEqualMethod(t *testing.T) {
-	t.Run("should return true when *SortableRef pointers are equal", func(t *testing.T) {
+	t.Run("should return true when *SortableRef ptrs are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewSortableRef("Alice", 30)
 		b := testseed.NewSortableRef("Alice", 30)
@@ -367,7 +367,7 @@ func TestEqual_PointerToStructWithEqualMethod(t *testing.T) {
 		}
 	})
 
-	t.Run("should return false when *SortableRef pointers differ", func(t *testing.T) {
+	t.Run("should return false when *SortableRef ptrs differ", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewSortableRef("Alice", 30)
 		b := testseed.NewSortableRef("Bob", 30)
@@ -403,7 +403,7 @@ func TestEqual_PointerAndValue(t *testing.T) {
 }
 
 func TestEqual_ComparableValue(t *testing.T) {
-	t.Run("should return true when ComparableValue structs are equal", func(t *testing.T) {
+	t.Run("should return true when ComparableValue structs are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewComparableValue("Alice", 30)
 		b := testseed.NewComparableValue("Alice", 30)
@@ -434,7 +434,7 @@ func TestEqual_ComparableValue(t *testing.T) {
 }
 
 func TestEqual_ComparableRef(t *testing.T) {
-	t.Run("should return true when *ComparableRef pointers are equal", func(t *testing.T) {
+	t.Run("should return true when *ComparableRef ptrs are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewComparableRef("Alice", 30)
 		b := testseed.NewComparableRef("Alice", 30)
@@ -447,7 +447,7 @@ func TestEqual_ComparableRef(t *testing.T) {
 		}
 	})
 
-	t.Run("should return false when *ComparableRef pointers differ", func(t *testing.T) {
+	t.Run("should return false when *ComparableRef ptrs differ", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := testseed.NewComparableRef("Alice", 30)
 		b := testseed.NewComparableRef("Bob", 30)
@@ -545,7 +545,7 @@ func TestEqual_InterfaceAndConcrete(t *testing.T) {
 }
 
 func TestEqual_NilInterfaceNil(t *testing.T) {
-	t.Run("should return true when nil interface equals nil", func(t *testing.T) {
+	t.Run("should return true when nil interface compare nil", func(t *testing.T) {
 		mock := &mockTesting{}
 		var a testseed.InterfaceStringer = nil
 		var b testseed.InterfaceStringer = nil
@@ -572,7 +572,7 @@ func TestEqual_InterfaceNilVsNonNil(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be equal, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -824,7 +824,7 @@ func TestIsTypeOf_Primitives(t *testing.T) {
 func TestIsTypeOf_Structs(t *testing.T) {
 	t.Run("should return true when struct value matches", func(t *testing.T) {
 		mock := &mockTesting{}
-		var v any = testseed.StructTwoData{Name: "Alice", Age: 30}
+		var v any = testseed.StructTwoData{DataA: "Alice", DataB: 30}
 		result := IsTypeOf[testseed.StructTwoData](mock, v)
 		if !result {
 			t.FailNow()
@@ -836,7 +836,7 @@ func TestIsTypeOf_Structs(t *testing.T) {
 
 	t.Run("should return false when struct value does not match", func(t *testing.T) {
 		mock := &mockTesting{}
-		var v any = testseed.StructTwoData{Name: "Alice", Age: 30}
+		var v any = testseed.StructTwoData{DataA: "Alice", DataB: 30}
 		result := IsTypeOf[testseed.StructOneData](mock, v)
 		if result {
 			t.FailNow()
@@ -851,7 +851,7 @@ func TestIsTypeOf_Structs(t *testing.T) {
 
 	t.Run("should return true when struct pointer matches", func(t *testing.T) {
 		mock := &mockTesting{}
-		var v any = &testseed.StructTwoData{Name: "Alice", Age: 30}
+		var v any = &testseed.StructTwoData{DataA: "Alice", DataB: 30}
 		result := IsTypeOf[*testseed.StructTwoData](mock, v)
 		if !result {
 			t.FailNow()
@@ -1051,7 +1051,7 @@ func TestIsTypeOf_Interfaces(t *testing.T) {
 }
 
 func TestArrayEquals_Primitives(t *testing.T) {
-	t.Run("should return true when slices are equal", func(t *testing.T) {
+	t.Run("should return true when slices are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := []int{1, 2, 3}
 		b := []int{1, 2, 3}
@@ -1074,7 +1074,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be equal, but got different lengths") {
+		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different lengths") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1089,7 +1089,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be equal, but got different values at") {
+		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different values at") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1139,7 +1139,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 }
 
 func TestArrayEquals_StructSlices_Comparable(t *testing.T) {
-	t.Run("should return true when struct slices are equal", func(t *testing.T) {
+	t.Run("should return true when struct slices are compare", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := []testseed.StructOneData{
 			{Name: "Alice"},
@@ -1168,7 +1168,7 @@ func TestArrayEquals_StructSlices_Comparable(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be equal, but got different values at") {
+		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different values at") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1202,7 +1202,7 @@ func TestArrayEquals_StructSlices_Comparable(t *testing.T) {
 }
 
 func TestArrayEquals_PointerStructs(t *testing.T) {
-	t.Run("should return true when slices of pointers have equal values", func(t *testing.T) {
+	t.Run("should return true when slices of ptrs have compare values", func(t *testing.T) {
 		mock := &mockTesting{}
 		a := []*testseed.StructOneData{
 			{Name: "Alice"},
@@ -1222,7 +1222,7 @@ func TestArrayEquals_PointerStructs(t *testing.T) {
 		}
 	})
 
-	t.Run("should return false if pointers values differ", func(t *testing.T) {
+	t.Run("should return false if ptrs values differ", func(t *testing.T) {
 		mock := &mockTesting{}
 
 		val1 := testseed.StructOneData{Name: "Alice"}

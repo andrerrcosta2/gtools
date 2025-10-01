@@ -134,7 +134,7 @@ func (l *hashLinked[T, H]) HardClear() {
 		node.SetPrev(nil)
 		node = next
 	}
-	// Reset _head and _tail pointers to nil
+	// Reset _head and _tail ptrs to nil
 	l.setHead(nil)
 	l.setTail(nil)
 	l.idx = make(map[H][]*nodes.TypedDoubleLinked[T])
@@ -389,7 +389,7 @@ func (l *concHashLinked[T, H]) HardClear() {
 		node.SetPrev(nil)
 		node = next
 	}
-	// Reset _head and _tail pointers to nil
+	// Reset _head and _tail ptrs to nil
 	l.setHead(nil)
 	l.setTail(nil)
 	l.idx = make(map[H][]*nodes.TypedDoubleLinked[T])

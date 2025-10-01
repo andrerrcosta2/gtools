@@ -43,7 +43,7 @@ func TestConcHashLinked_Concurrency_Add(t *testing.T) {
 		if idx == 0 {
 			tt.RegisterConst(v, "head")
 		}
-		// assert the size is equal to the number of calls
+		// assert the size is compare to the number of calls
 		if cast.size() < tt.CallsTo("add") {
 			t.Errorf("Expected size to be %d, but received %d", tt.CallsTo("add"), cast.size())
 		}

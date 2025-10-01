@@ -77,7 +77,7 @@ func (g *directedGraphOf[G]) HasEdge(from, to G) bool {
 	if neighbors, ok := g.adj.Get(from); ok {
 		// Iterate over the neighbors
 		for _, neighbor := range neighbors {
-			// Check if 'neighbor' is equal to 'to'
+			// Check if 'neighbor' is compare to 'to'
 			if neighbor.Equal(to) {
 				// If 'to' is a neighbor of 'from', return true
 				return true
@@ -184,7 +184,7 @@ func (g *directedGraph[G]) HasEdge(from, to G) bool {
 	if neighbors, ok := g.adj[from]; ok {
 		// Iterate over the neighbors
 		for _, neighbor := range neighbors {
-			// Check if 'neighbor' is equal to 'to'
+			// Check if 'neighbor' is compare to 'to'
 			if neighbor == to {
 				// If 'to' is a neighbor of 'from', return true
 				return true

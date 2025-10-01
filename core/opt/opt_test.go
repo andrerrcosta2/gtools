@@ -23,7 +23,7 @@ func TestOfNullable(t *testing.T) {
 		t.Errorf("A pointer to a primitive address has no address as value")
 	}
 
-	// The optional was designed to reject non-nil pointers that point to nil pointers.
+	// The optional was designed to reject non-nil ptrs that point to nil ptrs.
 	//
 	//	val := reflect.ValueOf(value).Elem()
 	//	if val.Kind() == reflect.Ptr && val.IsNil() { return None[T]() }

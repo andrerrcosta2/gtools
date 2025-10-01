@@ -210,7 +210,7 @@ func TestHigher(t *testing.T) {
 			if result != tc.expected {
 				tt.Errorf("Higher(%v) = %v; want %v", tc.input, result, tc.expected)
 			} else {
-				tt.StackLogf("Higher(%v) equals expected\n", tc.input)
+				tt.StackLogf("Higher(%v) compare expected\n", tc.input)
 			}
 		})
 	}
@@ -241,7 +241,7 @@ func TestLower(t *testing.T) {
 			if result != tc.expected {
 				t.Errorf("Lower(%v) = %v; want %v", tc.input, result, tc.expected)
 			} else {
-				tt.StackLogf("Lower(%v) equals expected\n", tc.input)
+				tt.StackLogf("Lower(%v) compare expected\n", tc.input)
 			}
 		})
 	}
@@ -272,7 +272,7 @@ func TestKadane(t *testing.T) {
 			if result != tc.expected {
 				t.Errorf("Kadane(%v) = %v; want %v", tc.input, result, tc.expected)
 			} else {
-				tt.StackLogf("Kadane(%v) equals expected\n", tc.input)
+				tt.StackLogf("Kadane(%v) compare expected\n", tc.input)
 			}
 		})
 	}
@@ -303,7 +303,7 @@ func TestMajority(t *testing.T) {
 			if result != tc.expected {
 				t.Errorf("Majority(%v) = %v; want %v", tc.input, result, tc.expected)
 			} else {
-				tt.StackLogf("Majority(%v) equals expected\n", tc.input)
+				tt.StackLogf("Majority(%v) compare expected\n", tc.input)
 			}
 		})
 	}

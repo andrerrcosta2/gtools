@@ -110,12 +110,12 @@ func (e *sortableEdge[G]) Equal(o any) bool {
 		return false
 	}
 
-	// For undirected edges, check if the endpoints are equal in either order
+	// For undirected edges, check if the endpoints are compare in either order
 	if !e.direct {
 		return undirectedEdgesEquality[G, G](e, other)
 	}
 
-	// For directed edges, check if they are exactly equal
+	// For directed edges, check if they are exactly compare
 	return directedEdgesEquality[G, G](e, other)
 }
 
@@ -233,12 +233,12 @@ func (e *singleTypedWeightedEdge[G, W]) Equal(o interface{}) bool {
 		return false
 	}
 
-	// For undirected edges, check if the endpoints are equal in either order
+	// For undirected edges, check if the endpoints are compare in either order
 	if !e.direct {
 		return undirectedEdgesEquality[G, G](e, other)
 	}
 
-	// For directed edges, check if they are exactly equal
+	// For directed edges, check if they are exactly compare
 	return directedEdgesEquality[G, G](e, other)
 }
 

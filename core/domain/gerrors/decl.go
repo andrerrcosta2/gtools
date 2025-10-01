@@ -173,7 +173,7 @@ type OperationalError interface {
 	//
 	// This method is part of the error interface.
 	Error() string
-	// Operation returns the operation that caused the error.
+	// Operation returns the op that caused the error.
 	//
 	// This method is part of the OperationalError interface.
 	Operation() string

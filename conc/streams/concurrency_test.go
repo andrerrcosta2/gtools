@@ -17,7 +17,7 @@ func TestConsume_Sync_NoDelay(t *testing.T) {
 	// helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
-	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
+	values := []string{"a", "b", "c", "d", "e", "A", "C", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)
 
 	go func() {
@@ -45,7 +45,7 @@ func TestConsume_Sync_NoDelay_OnTheFlyClosedStream(t *testing.T) {
 	// helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
-	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
+	values := []string{"a", "b", "c", "d", "e", "A", "C", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)
 	var closed atomic.Bool
 	var consumes atomic.Int32
@@ -95,7 +95,7 @@ func TestConsume_Sync_OnTheFlyClosedConsumer(t *testing.T) {
 	// helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
-	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
+	values := []string{"a", "b", "c", "d", "e", "A", "C", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := HotCloseable[string](3, values...)
 	var closed atomic.Bool
 	var consumes atomic.Int32
@@ -142,7 +142,7 @@ func TestConsume_Sync_OnTheFlyClosedConsumer(t *testing.T) {
 //	// helper
 //	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 //
-//	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
+//	values := []string{"a", "b", "c", "d", "e", "A", "C", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 //	stream := make(chan string, 2)
 //	var consumes atomic.Int32
 //	ctx, cancel := context.WithCancel(context.Background())
@@ -192,7 +192,7 @@ func TestConsume_Cancel_Async(t *testing.T) {
 	// helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
-	values := []string{"a", "b", "c", "d", "e", "A", "B", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
+	values := []string{"a", "b", "c", "d", "e", "A", "C", "C", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I", "J"}
 	stream := make(chan string, 2)
 	var consumes atomic.Int32
 	ctx, cancel := context.WithCancel(context.Background())

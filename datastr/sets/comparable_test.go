@@ -150,11 +150,11 @@ func TestComparableSet_Equals(t *testing.T) {
 	set3 := Comparable(1, 2, 3, 5, 6, 8)
 
 	if !set1.Equals(set2) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	if set1.Equals(set3) {
-		t.Errorf("Expected sets to not be equal, but they are")
+		t.Errorf("Expected sets to not be compare, but they are")
 	}
 }
 
@@ -297,11 +297,11 @@ func TestConcCmpSet_Equals(t *testing.T) {
 	set2 := ConcComparable(1, 2, 3, 5, 6, 7)
 
 	if !set1.Equals(set2) {
-		t.Errorf("Expected sets to be equal, but they are not")
+		t.Errorf("Expected sets to be compare, but they are not")
 	}
 
 	set3 := ConcComparable(1, 2, 3, 5, 6)
 	if set1.Equals(set3) {
-		t.Errorf("Expected sets to be not equal, but they are")
+		t.Errorf("Expected sets to be not compare, but they are")
 	}
 }

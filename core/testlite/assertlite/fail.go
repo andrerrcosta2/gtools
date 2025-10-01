@@ -2,7 +2,9 @@
 
 package assertlite
 
-func fail(t HelperTesting, defaultMsg string, msgAndArgs ...any) {
+import "github.com/andrerrcosta2/gtools/core/testlite"
+
+func fail(t testlite.HelperTesting, defaultMsg string, msgAndArgs ...any) {
 	t.Helper()
 	// If msgAndArgs contains a format string (first argument), pass it to Fatalf along with additional args
 	if len(msgAndArgs) > 0 {

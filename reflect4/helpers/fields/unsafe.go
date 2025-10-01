@@ -19,7 +19,7 @@ func UnsafeEach(target any, fn functions.BiConsumer[string, any]) error {
 		return fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
 	if !v.CanAddr() {
-		v = values.OfUnaddr(v)
+		v = values.UnsafeOfUnaddr(v)
 	}
 	for i := 0; i < v.NumField(); i++ {
 		fn(v.Type().Field(i).Name, unsafe.Pointer(v.Field(i).UnsafeAddr()))
@@ -40,7 +40,7 @@ func UnsafeSet(target any, name string, value any) error {
 // UnsafeGet returns the value of a struct field by name
 // It returns an error if the target is not a struct or the field is not found
 //
-// to avoid GC issues, the returned value is a copy of the original value
+// to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGet(target any, name string) (value any, err error) {
 	err = values.UnsafeFieldAccess(reflect.ValueOf(target), name, func(field reflect.Value, ptr unsafe.Pointer) {
 		// Use a read-only pointer to avoid GC issues.
@@ -53,7 +53,7 @@ func UnsafeGet(target any, name string) (value any, err error) {
 // UnsafeGetAll returns all unexported fields of a struct
 // It returns an error if the target is not a struct
 //
-// to avoid GC issues, the returned value is a copy of the original value
+// to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGetAll(target any) (map[string]any, error) {
 	out := make(map[string]any)
 	m, err := values.UnsafeGetAllFields(reflect.ValueOf(target))

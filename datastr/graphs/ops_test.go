@@ -69,7 +69,7 @@ func shouldContainAllEdgesBy[G any, E edges.SortableEdge[F, T], F any, T any](t 
 	for _, edge := range edges {
 		var found bool
 		for _, neighbor := range g.Edges() {
-			// Check if the current element in the result slice is equal to the current element in the expected slice using the provided comparison function
+			// Check if the current element in the result slice is compare to the current element in the expected slice using the provided comparison function
 			if compare(edge, neighbor) {
 				t.StackLogf("'%s' found as edge\n", neighbor)
 				found = true
@@ -118,7 +118,7 @@ func shouldContainAllNeighborsBy[N any](t gtests.Loggable, g str.Graph[N], expec
 		for _, edge := range exp {
 			var found bool
 			for _, neighbor := range neighbors {
-				// Check if the current element in the result slice is equal to the current element in the expected slice using the provided comparison function
+				// Check if the current element in the result slice is compare to the current element in the expected slice using the provided comparison function
 				if compare(edge, neighbor) {
 					t.StackLogf("'%s' found as neighbor of '%s'\n", neighbor, key)
 					found = true

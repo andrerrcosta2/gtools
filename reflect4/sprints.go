@@ -92,7 +92,7 @@ func st(tab indent.Tab, value reflect.Value) string {
 }
 
 func sl(tab indent.Tab, value reflect.Value) string {
-	// Check if the slice is nil
+	// check if the slice is nil
 	if value.IsNil() {
 		return sprints.NilType(tab, value.Type().String())
 	}

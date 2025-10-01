@@ -15,29 +15,6 @@ type emptyInterface struct {
 	word unsafe.Pointer
 }
 
-// Type casts the provided value to the type T and returns it.
-// It just feels stupid to have a caster package and don't have
-// its most basic use cases.
-func Type[T any](value any) (cast T, ok bool) {
-	cast, ok = value.(T)
-	return
-}
-
-// Types casts the provided values to the type G and returns a slice of type G.
-// The second return value allMatches is true if all values were successfully cast
-// to type G, and false otherwise.
-func Types[G any](values ...any) (result []G, allMatches bool) {
-	allMatches = true
-	for _, value := range values {
-		if castValue, ok := Type[G](value); ok {
-			result = append(result, castValue)
-		} else {
-			allMatches = false
-		}
-	}
-	return
-}
-
 // Assert casts the provided values to the type G and returns a slice of type G.
 // Panics if any value is not of type G.
 func Assert[G any](values ...any) []G {
@@ -52,25 +29,18 @@ func Assert[G any](values ...any) []G {
 	return result
 }
 
-// Primitive casts the provided value to the type T and returns it.
-// T must be a primitive type.
-// If the value is not of type G, an error is returned.
-func Primitive[T prim.Any](value any) (T, error) {
-	return prim.ToPrimitive[T](value)
+// Bytes casts the provided value to a byte slice and returns it.
+// It returns an error if the value is not of a type that can be cast to a byte slice.
+func Bytes(value any) ([]byte, error) {
+	// Use the ToBytes function from the bins package to cast the value to a byte slice.
+	// This function will return an error if the value is not of a type that can be cast to a byte slice.
+	return bins.ToBytes(value)
 }
 
-// PrimitiveOrdered casts the provided value to the type T and returns it.
-// T must be a primitive ordered type.
-// If the value is not of type G, an error is returned.
-func PrimitiveOrdered[T prim.Ordered](value any) (T, error) {
-	return prim.ToOrdered[T](value)
-}
-
-// PrimitiveComparable casts the provided value to the type T and returns it.
-// T must be a primitive comparable type.
-// If the value is not of type G, an error is returned.
-func PrimitiveComparable[T prim.Comparable](value any) (T, error) {
-	return prim.ToComparable[T](value)
+// Map is just a functional style of casting
+// it receives a value of F and casts to T
+func Map[F any, T any](value F) T {
+	return any(value).(T)
 }
 
 // NaturalComparable casts the provided values to the type T as value.
@@ -97,16 +67,50 @@ func Numeric[T nums.Any](value any) (T, error) {
 	return nums.ToNumeric[T](value)
 }
 
-// Bytes casts the provided value to a byte slice and returns it.
-// It returns an error if the value is not of a type that can be cast to a byte slice.
-func Bytes(value any) ([]byte, error) {
-	// Use the ToBytes function from the bins package to cast the value to a byte slice.
-	// This function will return an error if the value is not of a type that can be cast to a byte slice.
-	return bins.ToBytes(value)
+// Primitive casts the provided value to the type T and returns it.
+// T must be a primitive type.
+// If the value is not of type G, an error is returned.
+func Primitive[T prim.Any](value any) (T, error) {
+	return prim.ToPrimitive[T](value)
+}
+
+// PrimitiveOrdered casts the provided value to the type T and returns it.
+// T must be a primitive ordered type.
+// If the value is not of type G, an error is returned.
+func PrimitiveOrdered[T prim.Ordered](value any) (T, error) {
+	return prim.ToOrdered[T](value)
+}
+
+// PrimitiveComparable casts the provided value to the type T and returns it.
+// T must be a primitive comparable type.
+// If the value is not of type G, an error is returned.
+func PrimitiveComparable[T prim.Comparable](value any) (T, error) {
+	return prim.ToComparable[T](value)
+}
+
+// Type casts the provided value to the type T and returns it.
+func Type[T any](value any) (cast T, ok bool) {
+	cast, ok = value.(T)
+	return
+}
+
+// Types casts the provided values to the type G and returns a slice of type G.
+// The second return value allMatches is true if all values were successfully cast
+// to type G, and false otherwise.
+func Types[G any](values ...any) (result []G, allMatches bool) {
+	allMatches = true
+	for _, value := range values {
+		if castValue, ok := Type[G](value); ok {
+			result = append(result, castValue)
+		} else {
+			allMatches = false
+		}
+	}
+	return
 }
 
 // UnsafeValueOf casts the provided value to the type T - for reference-like variables use UnsafeReferenceOf -
-// using unsafe operations and return it.
+// using unsafe ops and return it.
 // It works only with interface{} types since it forcibly strips the type descriptor.
 //
 // Important considerations:
@@ -126,8 +130,8 @@ func UnsafeValueOf[T any](value any) T {
 	return *(*T)(ei.word)
 }
 
-// UnsafeReferenceOf casts the provided reference-like value - pointers and golang natural pointers - to the type T
-// using unsafe operations and returns it.
+// UnsafeReferenceOf casts the provided reference-like value - ptrs and golang natural ptrs - to the type T
+// using unsafe ops and returns it.
 // It works only with interface{} types since it forcibly strips the type descriptor.
 //
 // Important considerations:

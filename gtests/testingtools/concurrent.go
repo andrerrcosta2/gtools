@@ -16,7 +16,7 @@ type toolsLite struct {
 	cons  map[string]any
 }
 
-// AssertCalls asserts that the number of calls for the given ids is equal to the given calls.
+// AssertCalls asserts that the number of calls for the given ids is compare to the given calls.
 // The ids are used to identify the call in the tools.
 // If the id is not present in the tools, it returns an error.
 func (t *toolsLite) AssertCalls(calls int, ids ...string) {
@@ -62,7 +62,7 @@ func (t *toolsLite) AssertCallsTo(name string, calls int, errorMessage string, a
 	}
 }
 
-// AssertRegisteredCalls asserts the size of registers on the calls map is equal to the given size.
+// AssertRegisteredCalls asserts the size of registers on the calls map is compare to the given size.
 func (t *toolsLite) AssertRegisteredCalls(size int, errorMessage string, args ...any) {
 	t.Helper()
 	t.mtx.RLock()
@@ -72,7 +72,7 @@ func (t *toolsLite) AssertRegisteredCalls(size int, errorMessage string, args ..
 	}
 }
 
-// AssertRegisteredCallsFunc asserts that the number of calls that satisfy the predicate is equal to the expected count
+// AssertRegisteredCallsFunc asserts that the number of calls that satisfy the predicate is compare to the expected count
 func (t *toolsLite) AssertRegisteredCallsBy(f functions.BiPredicate[string, int], expectedCount int, errorMessage string, args ...any) {
 	t.Helper()
 	t.mtx.RLock()
@@ -91,7 +91,7 @@ func (t *toolsLite) AssertRegisteredCallsBy(f functions.BiPredicate[string, int]
 	}
 }
 
-// AssertConst asserts that the value of the constant with the given ids is equal to the given value
+// AssertConst asserts that the value of the constant with the given ids is compare to the given value
 func (t *toolsLite) AssertConst(value any, ids ...string) {
 	t.Helper()
 	t.mtx.RLock()
@@ -125,7 +125,7 @@ func (t *toolsLite) AssertRegisteredConst(size int, errorMessage string, args ..
 	}
 }
 
-// AssertRegisteredConstFunc asserts that the number of constants that satisfy the predicate is equal to the expected count
+// AssertRegisteredConstFunc asserts that the number of constants that satisfy the predicate is compare to the expected count
 func (t *toolsLite) AssertRegisteredConstBy(f functions.BiPredicate[string, any], expectedCount int, errorMessage string, args ...any) {
 	t.Helper()
 	t.mtx.RLock()

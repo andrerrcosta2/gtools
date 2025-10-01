@@ -2,6 +2,8 @@
 
 package fuzz
 
+import "github.com/andrerrcosta2/gtools/core/data/str/iterables"
+
 type (
 	Pack      struct{}
 	CatRefs   struct{}
@@ -16,50 +18,50 @@ func (p Pack) Values() CatValues {
 	return CatValues{}
 }
 
-func (c CatRefs) All() []any {
-	return referencesSet()
+func (c CatRefs) All() *iterables.Slice[any] {
+	return iterables.OfSlice(referencesSet()...)
 }
 
-func (c CatRefs) Primitives() []any {
-	return primitiveRefs()
+func (c CatRefs) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveRefs()...)
 }
 
-func (c CatRefs) PrimitiveWithPtrKeys() []any {
-	return primitiveWithPtrKeyRefs()
+func (c CatRefs) PrimitiveWithPtrKeys() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrKeyRefs()...)
 }
 
-func (c CatRefs) PrimitiveWithPtrValues() []any {
-	return primitiveWithPtrValueRefs()
+func (c CatRefs) PrimitiveWithPtrValues() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrValueRefs()...)
 }
 
-func (c CatRefs) PrimitiveWithPtrKeysAndValues() []any {
-	return primitiveWithPtrKeyAndValueRefs()
+func (c CatRefs) PrimitiveWithPtrKeysAndValues() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrKeyAndValueRefs()...)
 }
 
-func (c CatRefs) Edges() []any {
-	return edgeRefs()
+func (c CatRefs) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeRefs()...)
 }
 
-func (c CatValues) All() []any {
-	return valuesSet()
+func (c CatValues) All() *iterables.Slice[any] {
+	return iterables.OfSlice(valuesSet()...)
 }
 
-func (c CatValues) Primitives() []any {
-	return primitiveValues()
+func (c CatValues) Primitives() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveValues()...)
 }
 
-func (c CatValues) PrimitiveWithPtrKeys() []any {
-	return primitiveWithPtrKeyValues()
+func (c CatValues) PrimitiveWithPtrKeys() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrKeyValues()...)
 }
 
-func (c CatValues) PrimitiveWithPtrValues() []any {
-	return primitiveWithPtrValueValues()
+func (c CatValues) PrimitiveWithPtrValues() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrValueValues()...)
 }
 
-func (c CatValues) PrimitiveWithPtrKeysAndValues() []any {
-	return primitiveWithPtrKeyAndValueValues()
+func (c CatValues) PrimitiveWithPtrKeysAndValues() *iterables.Slice[any] {
+	return iterables.OfSlice(primitiveWithPtrKeyAndValueValues()...)
 }
 
-func (c CatValues) Edges() []any {
-	return edgeValues()
+func (c CatValues) Edges() *iterables.Slice[any] {
+	return iterables.OfSlice(edgeValues()...)
 }

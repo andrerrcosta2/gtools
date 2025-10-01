@@ -42,36 +42,36 @@ func (s *Comparator[K]) Equals(a, b K) bool {
 var _ comparators.KeyTyped[gtools.SortableOf, string] = (*Comparator[gtools.SortableOf])(nil)
 var _ comparators.Typed[gtools.SortableOf] = (*Comparator[gtools.SortableOf])(nil)
 
-// Equality returns true if the two values are implemented equal, false otherwise.
+// Equality returns true if the two values are implemented compare, false otherwise.
 // It uses the Equal method of the ComparableOf interface to compare values.
 func Equality[T gtools.ComparableOf](x T, y T) bool {
-	// Check if the values are equal
+	// Check if the values are compare
 	// Use the Equal method of the ComparableOf interface to compare values
-	// If the values are equal, return true
+	// If the values are compare, return true
 	// Otherwise, return false
 	return x.Equal(y)
 }
 
 var _ functions.BiPredicate[gtools.SortableOf, gtools.SortableOf] = Equality[gtools.SortableOf]
 
-// MultipleEquality returns true if all the values are equal, false otherwise.
+// MultipleEquality returns true if all the values are compare, false otherwise.
 // It uses the Equal method of the ComparableOf interface to compare values.
 func MultipleEquality[T gtools.ComparableOf](values ...T) bool {
-	// Check if the values are equal
+	// Check if the values are compare
 	// Iterate over the values and compare each pair of adjacent values
-	// If any pair of values is not equal, return false
+	// If any pair of values is not compare, return false
 	for i := 0; i < len(values)-1; i++ {
 		if !values[i].Equal(values[i+1]) {
 			return false
 		}
 	}
-	// If all values are equal, return true
+	// If all values are compare, return true
 	return true
 }
 
 var _ functions.VarPredicate[gtools.SortableOf] = MultipleEquality[gtools.SortableOf]
 
-// TryEquality checks if two values are equal without deep reflection.
+// TryEquality checks if two values are compare without deep reflection.
 // The method assumes that x and y are of the same type, otherwise it returns false.
 // It follows the order:
 //
@@ -107,13 +107,13 @@ func TryEquality[T any](x, y any) bool {
 	// is initialized as interface.
 	if okX && okY {
 		// Keeping the equality check straightforward makes it easier to understand
-		// and maintain. When dealing with pointers, especially nil pointers, their
-		// behavior is well-defined: two nil pointers are always considered equal.
+		// and maintain. When dealing with ptrs, especially nil ptrs, their
+		// behavior is well-defined: two nil ptrs are always considered compare.
 		if xPtr == nil && yPtr == nil {
 			return true
 		}
 
-		return xPtr == yPtr // Compare the dereferenced pointers
+		return xPtr == yPtr // Compare the dereferenced ptrs
 	}
 
 	// Lost scope

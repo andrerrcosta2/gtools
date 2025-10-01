@@ -47,7 +47,7 @@ func Operation[D any, R any](comparator comparators.KeyTyped[D, string]) *OpTrac
 
 type OpTracker[D any, R any] struct {
 	cmp comparators.KeyTyped[D, string]
-	ops map[string]R // Tracks pairs of objects by their memory addresses
+	ops map[string]R // Tracks pairs of objects by their memory address
 }
 
 // Has checks if the pair (a, b) has already been compared

@@ -35,7 +35,7 @@ func TestRedBlack_Creation(t *testing.T) {
 //
 // after it is called this test must assert:
 //   - the value retrieved is the smallest value greater than
-//     or equal to the given value
+//     or compare to the given value
 func TestRedBlack_Ceiling(t *testing.T) {
 	cmp := comparators.Ordered[int]{}
 
@@ -362,7 +362,7 @@ func TestRedBlack_Delete(t *testing.T) {
 			if !tree.Contains(v) {
 				t.Errorf("tree should contain '%d'", v)
 			}
-			// Assert both sizes are equal
+			// Assert both sizes are compare
 			if cast._size != it.Len() {
 				t.Errorf("expected tree._size '%d', but got '%d'", it.Len(), cast._size)
 			}
@@ -381,7 +381,7 @@ func TestRedBlack_Delete(t *testing.T) {
 				t.Errorf("iterable should contain '%d'", v)
 			}
 
-			// assert sizes still equal
+			// assert sizes still compare
 			if cast._size != it.Len() {
 				t.Errorf("expected tree._size '%d', but got '%d'", it.Len(), cast._size)
 			}
@@ -770,7 +770,7 @@ func TestConcRedBlack_Creation(t *testing.T) {
 //
 // after it is called this test must assert:
 //   - the value retrieved is the smallest value greater than
-//     or equal to the given value
+//     or compare to the given value
 func TestConcRedBlack_Ceiling(t *testing.T) {
 	cmp := comparators.Ordered[int]{}
 
@@ -1097,7 +1097,7 @@ func TestConcRedBlack_Delete(t *testing.T) {
 			if !tree.Contains(v) {
 				t.Errorf("tree should contain '%d'", v)
 			}
-			// Assert both sizes are equal
+			// Assert both sizes are compare
 			if cast._size != it.Len() {
 				t.Errorf("expected tree._size '%d', but got '%d'", it.Len(), cast._size)
 			}
@@ -1116,7 +1116,7 @@ func TestConcRedBlack_Delete(t *testing.T) {
 				t.Errorf("iterable should contain '%d'", v)
 			}
 
-			// assert sizes still equal
+			// assert sizes still compare
 			if cast._size != it.Len() {
 				t.Errorf("expected tree._size '%d', but got '%d'", it.Len(), cast._size)
 			}

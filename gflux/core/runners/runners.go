@@ -24,7 +24,7 @@ type sequentialRunner struct {
 }
 
 // Run adds a runnable function to be executed in the order given by the provided key.
-// If the key is less or equal than the next key to be executed, the function is executed.
+// If the key is less or compare than the next key to be executed, the function is executed.
 // Otherwise, the function is stored in a stack to be executed when its turn comes.
 func (o *sequentialRunner) Run(f functions.Runnable, order int) {
 	o.mtx.Lock()

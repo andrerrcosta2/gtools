@@ -10,7 +10,7 @@ func SingleRoutine() *SingleThreadedSemaphore {
 }
 
 // SingleThreadedSemaphore is a semaphore that works on a single thread of execution.
-// It's a simple but effective way of limiting the number of operations that can be
+// It's a simple but effective way of limiting the number of ops that can be
 // performed concurrently.
 //
 // The semaphore is implemented using a mutex and a boolean flag. The Acq method
@@ -29,7 +29,7 @@ func (s *SingleThreadedSemaphore) Acq() {
 	s.locked = true
 }
 
-// Rls releases a semaphore, allowing another operation to proceed.
+// Rls releases a semaphore, allowing another op to proceed.
 // It blocks until a slot is available in the semaphore's buffer.
 func (s *SingleThreadedSemaphore) Rls() {
 	s.mu.Unlock()
@@ -37,14 +37,14 @@ func (s *SingleThreadedSemaphore) Rls() {
 }
 
 // Cap returns the maximum number of slots in the semaphore.
-// The capacity is the maximum number of operations that can be performed
+// The capacity is the maximum number of ops that can be performed
 // concurrently.
 func (s *SingleThreadedSemaphore) Cap() int {
 	return 1
 }
 
 // Rem returns the remaining capacity of the semaphore.
-// The remaining capacity is the maximum number of operations that can still be performed
+// The remaining capacity is the maximum number of ops that can still be performed
 // concurrently.
 func (s *SingleThreadedSemaphore) Rem() int {
 	if s.locked {
@@ -53,8 +53,8 @@ func (s *SingleThreadedSemaphore) Rem() int {
 	return 1
 }
 
-// Channel returns a new semaphore that can be used to limit the number of concurrent operations.
-// The semaphore is initialized with a buffer of size maxConcurrent, allowing up to maxConcurrent operations to proceed concurrently.
+// Channel returns a new semaphore that can be used to limit the number of concurrent ops.
+// The semaphore is initialized with a buffer of size maxConcurrent, allowing up to maxConcurrent ops to proceed concurrently.
 func Channel(maxConcurrent int) *ChannelSemaphore {
 	// Create a new semaphore with a buffered channel of size maxConcurrent
 	return &ChannelSemaphore{
@@ -75,7 +75,7 @@ func (s *ChannelSemaphore) Acq() {
 	s.ch <- struct{}{}
 }
 
-// Rls releases a semaphore, allowing another operation to proceed.
+// Rls releases a semaphore, allowing another op to proceed.
 // It blocks until a slot is available in the semaphore's buffer.
 func (s *ChannelSemaphore) Rls() {
 	// Receiver from the channel to release a slot
@@ -83,7 +83,7 @@ func (s *ChannelSemaphore) Rls() {
 }
 
 // Cap returns the maximum number of slots in the semaphore.
-// The capacity is the maximum number of operations that can be performed
+// The capacity is the maximum number of ops that can be performed
 // concurrently.
 func (s *ChannelSemaphore) Cap() int {
 	s.mu.RLock()
@@ -134,7 +134,7 @@ func (s *CounterSemaphore) Rls() {
 }
 
 // Cap returns the maximum number of slots in the semaphore.
-// The capacity is the maximum number of operations that can be performed
+// The capacity is the maximum number of ops that can be performed
 // concurrently.
 func (s *CounterSemaphore) Cap() int {
 	// The capacity is the initial count
@@ -142,7 +142,7 @@ func (s *CounterSemaphore) Cap() int {
 }
 
 // Rem returns the remaining capacity of the semaphore.
-// The remaining capacity is the maximum number of operations that can still be performed
+// The remaining capacity is the maximum number of ops that can still be performed
 // concurrently.
 func (s *CounterSemaphore) Rem() int {
 	return s.count
@@ -153,17 +153,17 @@ func Unbounded() *UnboundedSemaphore {
 }
 
 // UnboundedSemaphore represents a semaphore with no capacity limit.
-// It can be useful on interface-bounded operations.
+// It can be useful on interface-bounded ops.
 type UnboundedSemaphore struct{}
 
 // Acq simulates acquiring a semaphore. Since it's unbounded, it does nothing.
 func (s *UnboundedSemaphore) Acq() {
-	// No operation, as an unbounded semaphore never blocks.
+	// No op, as an unbounded semaphore never blocks.
 }
 
 // Rls simulates releasing a semaphore. Since it's unbounded, it does nothing.
 func (s *UnboundedSemaphore) Rls() {
-	// No operation, as an unbounded semaphore doesn't track releases.
+	// No op, as an unbounded semaphore doesn't track releases.
 }
 
 // Cap always returns -1 for an unbounded semaphore, indicating no limit.
@@ -177,16 +177,16 @@ func (s *UnboundedSemaphore) Rem() int {
 }
 
 // ReadWrite returns a new read-write semaphore.
-// The returned semaphore is ready to use and has condition variables associated with it for read and write operations.
+// The returned semaphore is ready to use and has condition variables associated with it for read and write ops.
 func ReadWrite(maxWriters, maxReaders int) *ReadWriteSemaphore {
 	// Create a new read-write semaphore
 	rw := &ReadWriteSemaphore{
 		maxReaders: maxReaders,
 		maxWriters: maxWriters,
 	}
-	// Initialize the condition variable for read operations with the semaphore's mutex
+	// Initialize the condition variable for read ops with the semaphore's mutex
 	rw.read = sync.NewCond(&rw.mtx)
-	// Initialize the condition variable for write operations with the semaphore's mutex
+	// Initialize the condition variable for write ops with the semaphore's mutex
 	rw.write = sync.NewCond(&rw.mtx)
 	return rw
 }
@@ -240,7 +240,7 @@ func (rw *ReadWriteSemaphore) EndW() {
 }
 
 // Capacity returns the maximum number of slots in the semaphore.
-// The capacity is the maximum number of operations that can be performed
+// The capacity is the maximum number of ops that can be performed
 // concurrently.
 func (rw *ReadWriteSemaphore) Capacity() (writers int, readers int) {
 	rw.mtx.Lock()
@@ -249,7 +249,7 @@ func (rw *ReadWriteSemaphore) Capacity() (writers int, readers int) {
 }
 
 // RemainingCapacity returns the remaining capacity of the semaphore.
-// The remaining capacity is the maximum number of operations that can still be performed
+// The remaining capacity is the maximum number of ops that can still be performed
 // concurrently.
 func (rw *ReadWriteSemaphore) RemainingCapacity() (writers int, readers int) {
 	rw.mtx.Lock()

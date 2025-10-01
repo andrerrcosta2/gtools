@@ -141,13 +141,13 @@ func (c *condCanceledCtx) String() string {
 var _ ConditionallyCanceled = (*condCanceledCtx)(nil)
 
 // Synchronized creates a new synchronized context that can be used to wait for
-// operations to be done and to add delays to the context.
+// ops to be done and to add delays to the context.
 func Synchronized(parent context.Context) (ctx SynchronizableContext, cancel cancelers.Conditional) {
 	return synchronized(parent)
 }
 
 // synchronized creates a new synchronized context that can be used to wait for
-// operations to be done and to add delays to the context.
+// ops to be done and to add delays to the context.
 func synchronized(parent context.Context) (*synchronizedContext, cancelers.Conditional) {
 	if parent == nil {
 		panic("cannot create context from nil parent")
@@ -237,4 +237,4 @@ func (c *synchronizedContext) String() string {
 var _ ConditionallyCanceled = (*synchronizedContext)(nil)
 var _ context.Context = (*synchronizedContext)(nil)
 
-// New creates a new context that can be used to wait for operations to be
+// New creates a new context that can be used to wait for ops to be

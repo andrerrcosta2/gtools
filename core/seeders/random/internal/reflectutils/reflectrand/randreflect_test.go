@@ -43,7 +43,7 @@ func TestAnyValue(t *testing.T) {
 //   - no interface is generated
 func TestAnyInterfaceValue(t *testing.T) {
 	for i := 0; i < Distributions; i++ {
-		value := anyInterfaceValue()
+		value := anyInterfaceValue(reflectutils.TrackerOf(3))
 
 		// Assert that the generated value is not nil
 		if reflectutils.IsNullable(value.Type()) {
@@ -528,13 +528,24 @@ func TestStringOf(t *testing.T) {
 func TestStructOf(t *testing.T) {
 	for _, zero := range testseed.ZeroValues() {
 		tt := reflect.TypeOf(zero)
-		assertlite.True(t, tt.Kind() == reflect.Struct, "expected seed to be a struct, but "+
-			"got '%s' for '%T'", tt.Kind(), zero)
-		rand := StructOf(tt)
+		assertlite.True(t, tt.Kind() == reflect.Struct,
+			"expected seed to be a struct, but got '%s' for '%T'", tt.Kind(), zero)
+		rand := StructOf(tt, 3)
 		assertlite.True(t, rand.IsValid(), "invalid random struct")
-		assertlite.True(t, rand.Kind() == reflect.Struct, "expected random struct, but got '%s'", rand.Kind())
+		assertlite.True(t, rand.Kind() == reflect.Struct,
+			"expected random struct, but got '%s'", rand.Kind())
 		assertlite.NoNilNonInterfaceFields(t, true, rand.Interface())
 	}
+}
+
+func TestStructOf_EdgeCase(t *testing.T) {
+	tt := reflect.TypeOf(testseed.Account{})
+	assertlite.True(t, tt.Kind() == reflect.Struct, "expected seed to be a struct, but "+
+		"got '%s' for '%T'", tt.Kind(), testseed.Account{})
+	rand := StructOf(tt, 3)
+	assertlite.True(t, rand.IsValid(), "invalid random struct")
+	assertlite.True(t, rand.Kind() == reflect.Struct, "expected random struct, but got '%s'", rand.Kind())
+	assertlite.NoNilNonInterfaceFields(t, true, rand.Interface())
 }
 
 // TestType tests the Type function generation of random reflect.Type.

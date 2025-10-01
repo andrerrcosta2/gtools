@@ -13,12 +13,12 @@ import (
 // a correct pattern. As it seems a little expensive to sacrifice performance for a simple nil checking inside loops
 // that does necessarily require reflection (approximately 21x slower) in such performance critical component,
 // the only logical pattern is a nil checking by the caller.
-// The reason behind it is simple: interface implementations are not necessarily pointers
+// The reason behind it is simple: interface implementations are not necessarily ptrs
 // and variables of named types hold zero values. That means components that uses
 // generics of interfaces cannot compare its values to nil.
 //
-// These components may perform better using pointers as map keys instead custom hashes, since most of them
-// hashes its addresses. However, I need to study it a little more to check possible trade-offs over different types.
+// These components may perform better using ptrs as map keys instead custom hashes, since most of them
+// hashes its address. However, I need to study it a little more to check possible trade-offs over different types.
 func CreateRowIntoBranchableMatrixIfAbsent[B data.Branchable[B], O any](b B, mtx *sync.RWMutex, branches *map[string][]O, rows *map[string][]string) (string, error) {
 	var path []data.Branchable[B]
 

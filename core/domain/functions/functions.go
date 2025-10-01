@@ -34,6 +34,8 @@ type AsyncPredicate[T any] func() <-chan bool
 // BiPredicate represents a function that takes two values of type T and U and returns a boolean.
 type BiPredicate[T any, U any] func(T, U) bool
 
+type TriPredicate[T, U, V any] func(T, U, V) bool
+
 type VarPredicate[T any] func(...T) bool
 
 // BiPredicate2 represents a function that takes two values of type T and U and returns two booleans.

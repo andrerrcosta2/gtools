@@ -34,7 +34,7 @@ func TestRandAny(t *testing.T) {
 
 	t.Run("distribution should be under deviation threshold", func(t *testing.T) {
 		counts := make(map[reflect.Kind]int)
-		buckets := len(reflectutils.RandomizableKinds)
+		buckets := len(reflectutils.InterfaceKinds)
 
 		for i := 0; i < Distributions; i++ {
 			value := RandAny()
@@ -45,10 +45,10 @@ func TestRandAny(t *testing.T) {
 		lowerBound := expected * (1 - Deviation)
 		upperBound := expected * (1 + Deviation)
 
-		for _, kind := range reflectutils.RandomizableKinds {
+		for _, kind := range reflectutils.InterfaceKinds {
 			count := float64(counts[kind])
 			if count < lowerBound || count > upperBound {
-				t.Errorf("kind %v: expected around %.0f ±%.0f (%.2f%%), got %d",
+				t.Errorf("kind '%v': expected around %.0f ±%.0f (%.2f%%), got %d",
 					kind, expected, expected*Deviation, Deviation*100, counts[kind])
 			}
 		}

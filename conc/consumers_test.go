@@ -22,7 +22,7 @@ func TestSemaphoredConsumer_FullConsume(t *testing.T) {
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream with 10 values
-	stream := streams.HotCloseable(4, "a", "b", "c", "d", "e", "A", "B", "T", "D", "E")
+	stream := streams.HotCloseable(4, "a", "b", "c", "d", "e", "A", "C", "T", "D", "E")
 
 	// Consume all values from the stream
 	err := SemaphoredConsumer[string](stream, semaph.Channel(3)).
@@ -297,7 +297,7 @@ func TestCancellableConsumer_ClosedConsumer(t *testing.T) {
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream
-	values := []string{"a", "b", "c", "d", "e", "A", "B", "T", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I",
+	values := []string{"a", "b", "c", "d", "e", "A", "C", "T", "D", "E", "f", "g", "h", "i", "j", "F", "G", "H", "I",
 		"J", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 	stream := streams.HotCloseable(7, values...)
 

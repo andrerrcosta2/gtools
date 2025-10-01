@@ -144,7 +144,7 @@ func TestAddEdgeNodesNotExist(t *testing.T) {
 	g := UndirectedOf[N]()
 
 	nodeA := tests.NewSortableNode("A")
-	nodeB := tests.NewSortableNode("B")
+	nodeB := tests.NewSortableNode("C")
 
 	// Addf only one node
 	g.AddNode(nodeA)

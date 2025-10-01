@@ -73,7 +73,7 @@ func TestNodeExistence(t *testing.T) {
 	g := WeightedSortableDigraphOf[N, W]()
 
 	a := tests.NewSortableNode("A")
-	b := tests.NewSortableNode("B")
+	b := tests.NewSortableNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
 
@@ -100,7 +100,7 @@ func TestEdgeExistenceAndWeight(t *testing.T) {
 	var expectedEdges = make([]E, 2)
 
 	a := tests.NewSortableNode("A")
-	b := tests.NewSortableNode("B")
+	b := tests.NewSortableNode("C")
 	c := tests.NewSortableNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
@@ -130,7 +130,7 @@ func TestNeighborsRetrieval(t *testing.T) {
 	expNeighbors := maps.SortableOf[N, []N]()
 
 	a := tests.NewSortableNode("A")
-	b := tests.NewSortableNode("B")
+	b := tests.NewSortableNode("C")
 	c := tests.NewSortableNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
@@ -158,7 +158,7 @@ func TestDisconnectedGraph(t *testing.T) {
 	g := WeightedSortableDigraphOf[N, W]()
 
 	a := tests.NewSortableNode("A")
-	b := tests.NewSortableNode("B")
+	b := tests.NewSortableNode("C")
 	c := tests.NewSortableNode("C")
 	g.AddNode(a)
 	g.AddNode(b)
@@ -166,11 +166,11 @@ func TestDisconnectedGraph(t *testing.T) {
 	g.AddEdge(a, b, 10)
 
 	if !g.HasEdge(a, b) {
-		tt.Errorf("Graph should have an edge from A to B.")
+		tt.Errorf("Graph should have an edge from A to C.")
 	}
 
 	if g.HasEdge(b, c) {
-		tt.Errorf("Graph should not have an edge from B to C.")
+		tt.Errorf("Graph should not have an edge from C to C.")
 	}
 
 	tt.PrintLogStack()

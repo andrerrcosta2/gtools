@@ -22,7 +22,7 @@ func (s *ChannelSemaphore) Acq() {
 	s.ch <- struct{}{}
 }
 
-// Rls releases a semaphore, allowing another operation to proceed.
+// Rls releases a semaphore, allowing another op to proceed.
 // It blocks until a slot is available in the semaphore's buffer.
 func (s *ChannelSemaphore) Rls() {
 	// Receiver from the channel to release a slot
@@ -30,7 +30,7 @@ func (s *ChannelSemaphore) Rls() {
 }
 
 // Cap returns the maximum number of slots in the semaphore.
-// The capacity is the maximum number of operations that can be performed
+// The capacity is the maximum number of ops that can be performed
 // concurrently.
 func (s *ChannelSemaphore) Cap() int {
 	s.mu.RLock()

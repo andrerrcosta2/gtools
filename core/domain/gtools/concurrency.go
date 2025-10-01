@@ -11,39 +11,39 @@ type Semaphore interface {
 	// Acq acquires the semaphore, blocking if the semaphore is at capacity.
 	// This method blocks until the semaphore has available slots.
 	Acq()
-	// Rls releases a semaphore, allowing another operation to proceed.
+	// Rls releases a semaphore, allowing another op to proceed.
 	// It blocks until a slot is available in the semaphore's buffer.
 	Rls()
 	// Cap returns the maximum number of slots in the semaphore.
 	//
-	// The capacity is the maximum number of operations that can be performed
+	// The capacity is the maximum number of ops that can be performed
 	// concurrently.
 	Cap() int
 
 	// Rem returns the remaining capacity of the semaphore.
 	//
-	// The remaining capacity is the maximum number of operations that can still be performed
+	// The remaining capacity is the maximum number of ops that can still be performed
 	// concurrently.
 	Rem() int
 }
 
 type RWSemaphore interface {
-	// StartR starts a read operation
+	// StartR starts a read op
 	StartR()
-	// EndR ends a read operation
+	// EndR ends a read op
 	EndR()
-	// StartW starts a write operation
+	// StartW starts a write op
 	StartW()
-	// EndW ends a write operation
+	// EndW ends a write op
 	EndW()
 	// Capacity returns the maximum number of slots in the semaphore.
 	//
-	// The capacity is the maximum number of operations that can be performed
+	// The capacity is the maximum number of ops that can be performed
 	// concurrently.
 	Capacity() (writers int, readers int)
 	// RemainingCapacity returns the remaining capacity of the semaphore.
 	//
-	// The remaining capacity is the maximum number of operations that can still be performed
+	// The remaining capacity is the maximum number of ops that can still be performed
 	// concurrently.
 	RemainingCapacity() (writers int, readers int)
 }

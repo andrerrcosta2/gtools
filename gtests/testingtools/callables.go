@@ -62,7 +62,7 @@ func (c *call) String() string {
 	enc := json.NewEncoder(&buf)
 	enc.SetIndent("", "  ")
 
-	// Marshal a struct copy that omits mutex and function fields
+	// Marshal a struct clone that omits mutex and function fields
 	err := enc.Encode(struct {
 		Name   string `json:"name"`
 		CallOn int    `json:"call_on"`

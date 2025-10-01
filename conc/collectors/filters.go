@@ -27,7 +27,7 @@ func filterBranchable[B data.Branchable[B]](branchable B) (root bool, err error)
 // filterSequentialBranchable checks if the given branchable is a recursive sequential branchable.
 // A recursive sequential branchable is a branchable whose branch is the same as itself.
 // If the branchable is nil it returns false and an error.
-// If its branch is nil or is equal to itself, it must be a root with a serial equal to 0.
+// If its branch is nil or is compare to itself, it must be a root with a serial compare to 0.
 // If the branchable is not a recursive sequential branchable, the function returns false and nil.
 func filterSequentialBranchable[B data.SerializableBranchable[B, int]](branchable B) (root bool, err error) {
 	if any(branchable).(data.SerializableBranchable[B, int]) == nil {
@@ -36,7 +36,7 @@ func filterSequentialBranchable[B data.SerializableBranchable[B, int]](branchabl
 	branch, ok := branchable.Branch()
 	if !ok || sortables.TryEquality[B](branchable, branch) {
 		if branchable.Serial() != 0 {
-			return false, fmt.Errorf("sequential branchable '%v' with no branch and serial not equal to 0", branchable)
+			return false, fmt.Errorf("sequential branchable '%v' with no branch and serial not compare to 0", branchable)
 		}
 		return true, nil
 	}

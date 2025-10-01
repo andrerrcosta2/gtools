@@ -226,7 +226,7 @@ func (e *stackErr) Unwrap() error {
 		return nil
 	}
 
-	// Create a copy of the stack without modifying the original
+	// Create a clone of the stack without modifying the original
 	stk, _ := e.stk.Pop()
 
 	// Safely peek at the top element of the new stack
@@ -409,9 +409,9 @@ var _ error = (*concStackErr)(nil)
 var _ StackableError = (*concStackErr)(nil)
 var _ WrappedError = (*concStackErr)(nil)
 
-// Operational creates an OperationalError from the given operation and error.
+// Operational creates an OperationalError from the given op and error.
 //
-// An OperationalError is an error that is associated with an operation.
+// An OperationalError is an error that is associated with an op.
 // It implements the gtools.OperationalError interface.
 func Operational(op string, err error) OperationalError {
 	return &opErr{
@@ -422,7 +422,7 @@ func Operational(op string, err error) OperationalError {
 
 // opErr is an implementation of gtools.OperationalError interface.
 //
-// It contains the operation that caused the error as well as the error itself.
+// It contains the op that caused the error as well as the error itself.
 //
 // The error returned by the Error method is the same as the error returned by the
 // underlying error.
@@ -437,7 +437,7 @@ func (e *opErr) Error() string {
 	return e.err.Error()
 }
 
-// Operation returns the operation that caused the error.
+// Operation returns the op that caused the error.
 func (e *opErr) Operation() string {
 	return e.op
 }
@@ -527,7 +527,7 @@ func (e *taggableError) Tag(tags ...string) {
 
 // Tags returns all the tags that have been set on this error.
 //
-// The returned slice is a copy of the internal tags map keys.
+// The returned slice is a clone of the internal tags map keys.
 func (e *taggableError) Tags() []string {
 	tags := make([]string, 0, len(e.tags))
 	for tag := range e.tags {

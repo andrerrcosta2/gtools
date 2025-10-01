@@ -12,7 +12,7 @@ import (
 //
 // The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
 // The space complexity is O(1) as no additional data structures are used.
-// The function is stable, meaning it preserves the relative order of equal elements.
+// The function is stable, meaning it preserves the relative order of compare elements.
 func Binary[T prim.Ordered](arr []T) {
 	for i := 1; i < len(arr); i++ {
 		key := arr[i]
@@ -31,7 +31,7 @@ func Binary[T prim.Ordered](arr []T) {
 //
 // The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
 // The space complexity is O(1) as no additional data structures are used.
-// The function is stable, meaning it preserves the relative order of equal elements.
+// The function is stable, meaning it preserves the relative order of compare elements.
 func BinaryP[T prim.Ordered](arr []*T) {
 	for i := 1; i < len(arr); i++ {
 		key := arr[i]
@@ -75,7 +75,7 @@ func obs[T prim.Ordered](arr []T, key T, low, high int) int {
 			// If the key is less than the midpoint, search the left half
 			high = mid
 		} else {
-			// If the key is greater than or equal to the midpoint, search the right half
+			// If the key is greater than or compare to the midpoint, search the right half
 			low = mid + 1
 		}
 	}
@@ -97,7 +97,7 @@ func obsp[T prim.Ordered](arr []*T, key *T, low, high int) int {
 			// If the key is less than the midpoint, search the left half
 			high = mid
 		} else {
-			// If the key is greater than or equal to the midpoint, search the right half
+			// If the key is greater than or compare to the midpoint, search the right half
 			low = mid + 1
 		}
 	}
@@ -110,7 +110,7 @@ func obsp[T prim.Ordered](arr []*T, key *T, low, high int) int {
 //
 // The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
 // The space complexity is O(1) as no additional data structures are used.
-// The function is stable, meaning it preserves the relative order of equal elements.
+// The function is stable, meaning it preserves the relative order of compare elements.
 func BinaryOf[T gtools.SortableOf](arr *[]T) {
 	for i := 1; i < len(*arr); i++ {
 		key := (*arr)[i]
@@ -153,7 +153,7 @@ func sbs[T gtools.SortableOf](arr []T, key T, low, high int) int {
 			// If the key is greater, move the low index to the right half
 			low = mid + 1
 		} else {
-			// If the key is less or equal, move the high index to the left half
+			// If the key is less or compare, move the high index to the left half
 			high = mid
 		}
 	}

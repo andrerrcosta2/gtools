@@ -32,7 +32,7 @@ func (s *Slice[G]) After(i int) *Slice[G] {
 
 // Append appends the given values to the end of the slice.
 // It takes a variable number of arguments of type N and appends them to the slice.
-// It returns the same slice after the append operation has finished.
+// It returns the same slice after the append op has finished.
 func (s *Slice[G]) Append(v ...G) *Slice[G] {
 	// Append the values to the slice
 	*s = append(*s, v...)
@@ -41,7 +41,7 @@ func (s *Slice[G]) Append(v ...G) *Slice[G] {
 }
 
 func (s *Slice[G]) Async(fn func(i int, v G), maxParallels int) *Slice[G] {
-	// Create a Semaphore to limit the number of concurrent operations
+	// Create a Semaphore to limit the number of concurrent ops
 	smp := make(chan struct{}, maxParallels)
 
 	// Iterate over the slice and call the function for each element in a goroutine
@@ -87,7 +87,7 @@ func (s *Slice[G]) Between(i, j int) *Slice[G] {
 }
 
 // Duplicate returns two slices, one with the same elements as the original slice,
-// and the other with a copy of the original slice.
+// and the other with a clone of the original slice.
 // It takes no arguments and returns two slices of type Slice[N].
 func (s *Slice[G]) Duplicate() (*Slice[G], *Slice[G]) {
 	// Create a new slice with the same length as the original
@@ -103,7 +103,7 @@ func (s *Slice[G]) Duplicate() (*Slice[G], *Slice[G]) {
 // Each calls the given function for each element in the slice, passing the value to the function.
 // It takes a Consumer function that takes a value of type N and returns nothing.
 // It iterates over the slice and calls the function for each element.
-// It returns the same slice after all operations have finished.
+// It returns the same slice after all ops have finished.
 func (s *Slice[G]) Each(fn functions.Consumer[G]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for _, v := range *s {
@@ -118,7 +118,7 @@ func (s *Slice[G]) Each(fn functions.Consumer[G]) *Slice[G] {
 //
 // It takes a BiConsumer function that takes two parameters: the index of the element and the element value.
 // It iterates over the slice and calls the function for each element.
-// It returns the same slice after all operations have finished.
+// It returns the same slice after all ops have finished.
 func (s *Slice[G]) EachN(fn functions.BiConsumer[int, G]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for i, v := range *s {
@@ -209,7 +209,7 @@ func (s *Slice[G]) Map(fn functions.Function[G, G]) *Slice[G] {
 
 // Operation calls the given function for each element in the slice, passing the index and a pointer to the slice
 // itself to the function.
-// It returns the same slice after all operations have finished.
+// It returns the same slice after all ops have finished.
 func (s *Slice[G]) Operation(fn functions.BiConsumer[int, *Slice[G]]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for i := range *s {
@@ -223,14 +223,14 @@ func (s *Slice[G]) Operation(fn functions.BiConsumer[int, *Slice[G]]) *Slice[G] 
 // Parallel calls the given function for each element in the slice, passing the index and value to the function,
 // concurrently. It takes a BiConsumer function that takes two parameters: the index of the element and the element value.
 // It uses a WaitGroup to wait for all goroutines to finish.
-// It takes a Semaphore to limit the number of concurrent operations.
-// The function returns the same slice after all concurrent operations have finished.
+// It takes a Semaphore to limit the number of concurrent ops.
+// The function returns the same slice after all concurrent ops have finished.
 func (s *Slice[G]) Parallel(fn functions.BiConsumer[int, G], maxParallels int) *Slice[G] {
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	wg.Add(s.Len())
 
-	// Create a Semaphore to limit the number of concurrent operations
+	// Create a Semaphore to limit the number of concurrent ops
 	smp := make(chan struct{}, maxParallels)
 
 	// Iterate over the slice and call the function for each element in a goroutine
@@ -293,8 +293,8 @@ func (s *Slice[G]) Some(n int) *Slice[G] {
 		n = s.Len()
 	}
 
-	// Create a copy of the original slice
-	// We use a copy to avoid modifying the original slice
+	// Create a clone of the original slice
+	// We use a clone to avoid modifying the original slice
 	copySlice := make(Slice[G], len(*s))
 	copy(copySlice, *s)
 
@@ -462,7 +462,7 @@ func (m *Map[K, V]) Remove(k K) *Map[K, V] {
 
 // Values return a slice of all values in the map.
 // It iterates over the map and appends each value to the slice.
-// The length of the returned slice is equal to the number of entries in the map.
+// The length of the returned slice is compare to the number of entries in the map.
 func (m *Map[K, V]) Values() []V {
 	// Create a slice to store the values
 	values := make([]V, 0, len(*m))

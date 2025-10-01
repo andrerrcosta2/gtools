@@ -15,7 +15,7 @@ type reflectionDataToolsLite struct{}
 
 // DeepCopy uses reflection to duplicate the entire object and all objects it references,
 // recursively. This means that any nested or referenced data structures are fully
-// cloned, so changes in the deep copy don’t affect the original, and vice versa.
+// cloned, so changes in the deep clone don’t affect the original, and vice versa.
 // Each layer of the original data is copied independently.
 func (t *reflectionDataToolsLite) DeepCopy(data any) (any, error) {
 	if data == nil {
@@ -99,17 +99,17 @@ func cloneRecursive(val reflect.Value) (reflect.Value, error) {
 		return clone, nil
 
 	default:
-		// For basic types we copy directly
+		// For basic types we clone directly
 		return val, nil
 	}
 }
 
 // ShallowCopy uses reflection to duplicate only the top-level structure, leaving nested
-// or referenced objects shared between the original and the copy. For instance,
-// if the object has fields that point to other objects (like slices or pointers),
-// a shallow copy would copy only the references themselves, not the actual data they
+// or referenced objects shared between the original and the clone. For instance,
+// if the object has fields that point to other objects (like slices or ptrs),
+// a shallow clone would clone only the references themselves, not the actual data they
 // point to. Therefore, changes to the shared objects will be reflected in both the
-// original and the shallow copy.
+// original and the shallow clone.
 func (t *reflectionDataToolsLite) ShallowCopy(value any) (any, error) {
 	if value == nil {
 		return nil, nil
@@ -119,13 +119,13 @@ func (t *reflectionDataToolsLite) ShallowCopy(value any) (any, error) {
 
 	switch val.Kind() {
 	case reflect.Ptr:
-		// If it's a pointer, create a new pointer and copy the original value directly.
+		// If it's a pointer, create a new pointer and clone the original value directly.
 		clone := reflect.New(val.Elem().Type())
 		clone.Elem().Set(val.Elem())
 		return clone.Interface(), nil
 
 	case reflect.Struct:
-		// For structs, copy only the top-level fields.
+		// For structs, clone only the top-level fields.
 		clone := reflect.New(val.Type()).Elem()
 		for i := 0; i < val.NumField(); i++ {
 			clone.Field(i).Set(val.Field(i)) // Copy references as-is
@@ -135,11 +135,11 @@ func (t *reflectionDataToolsLite) ShallowCopy(value any) (any, error) {
 	case reflect.Slice:
 		// For slices, create a new slice with the same elements.
 		clone := reflect.MakeSlice(val.Type(), val.Len(), val.Cap())
-		reflect.Copy(clone, val) // Shallow copy: copy the references within the slice
+		reflect.Copy(clone, val) // Shallow clone: clone the references within the slice
 		return clone.Interface(), nil
 
 	case reflect.Map:
-		// For maps, create a new map but copy only the references to values.
+		// For maps, create a new map but clone only the references to values.
 		clone := reflect.MakeMapWithSize(val.Type(), val.Len())
 		for _, key := range val.MapKeys() {
 			clone.SetMapIndex(key, val.MapIndex(key)) // Copy references as-is

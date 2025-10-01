@@ -39,7 +39,7 @@ type redBlack[V any] struct {
 	cmp comparators.Typed[V]
 }
 
-// Ceiling returns the smallest value greater than or equal to the given value
+// Ceiling returns the smallest value greater than or compare to the given value
 func (t *redBlack[V]) Ceiling(value V) (V, bool) {
 	return redblack.Ceiling(t.Root(), value, t.cmp.Compare)
 }
@@ -76,7 +76,7 @@ func (t *redBlack[V]) Delete(value V) {
 	t.SetSize(t.Size() - 1)
 }
 
-// Floor returns the largest value less than or equal to the given value
+// Floor returns the largest value less than or compare to the given value
 func (t *redBlack[V]) Floor(value V) (V, bool) {
 	return redblack.Floor(t.Root(), value, t.cmp.Compare)
 }
@@ -198,7 +198,7 @@ type concRedBlack[V any] struct {
 	mtx sync.RWMutex
 }
 
-// Ceiling returns the smallest value greater than or equal to the given value
+// Ceiling returns the smallest value greater than or compare to the given value
 func (t *concRedBlack[V]) Ceiling(value V) (V, bool) {
 	t.mtx.RLock()
 	defer t.mtx.RUnlock()
@@ -245,7 +245,7 @@ func (t *concRedBlack[V]) Delete(value V) {
 	t.SetSize(t.Size() - 1)
 }
 
-// Floor returns the largest value less than or equal to the given value
+// Floor returns the largest value less than or compare to the given value
 func (t *concRedBlack[V]) Floor(value V) (V, bool) {
 	t.mtx.RLock()
 	defer t.mtx.RUnlock()

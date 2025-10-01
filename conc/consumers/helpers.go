@@ -35,12 +35,12 @@ func CloseableSelect[T any](closeable io.Closeable, stream gtools.Stream[T], sig
 
 // ConsumeCloseableSynchronously is a helper function that is used to consume values from a channel using a BiConsumer function.
 // It takes a WaitGroup, a Semaphore, a BiConsumer function, the index of the value to be consumed, and the value itself.
-// It checks if the consumer is closed, if so it waits for all operations to complete before returning false.
+// It checks if the consumer is closed, if so it waits for all ops to complete before returning false.
 // Otherwise, it tries to consume the value from the channel using the BiConsumer function and returns true.
 // It releases the Semaphore and decrements the WaitGroup.
 func ConsumeCloseableSynchronously[T any](closeable io.Closeable, stream gtools.Stream[T], wait *sync.WaitGroup,
 	semaphore gtools.Semaphore, fn functions.BiConsumer[int, T], counter int) bool {
-	// If the consumer is closed, wait for all operations to complete before returning false
+	// If the consumer is closed, wait for all ops to complete before returning false
 	if closeable.IsClosed() {
 		log.Printf("\nconsumer is closed, exiting...\n")
 		wait.Wait()
@@ -57,12 +57,12 @@ func ConsumeCloseableSynchronously[T any](closeable io.Closeable, stream gtools.
 func ConsumeSynchronously[T any](stream gtools.Stream[T], wait *sync.WaitGroup, semaphore gtools.Semaphore, counter int, consume functions.BiConsumer[int, T]) bool {
 	value, ok := <-stream
 	if !ok {
-		// If the channel is closed, wait for all operations to complete before returning
+		// If the channel is closed, wait for all ops to complete before returning
 		wait.Wait()
 		return false
 	}
 
-	// Increment the WaitGroup to indicate that a new operation is starting
+	// Increment the WaitGroup to indicate that a new op is starting
 	wait.Add(1)
 
 	// Consume the value using the provided function

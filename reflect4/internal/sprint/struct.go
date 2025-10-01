@@ -17,7 +17,7 @@ func Struct(tab indent.Tab, v reflect.Value) (string, error) {
 	if v.Kind() != reflect.Struct {
 		return sprints.Error(indent.Zero(), reflect4.ErrNotStruct.Error()), reflect4.ErrNotStruct
 	}
-	return sprintStruct(tab, v, tracker.Sprint())
+	return defaultStruct(tab, v, tracker.Sprint())
 }
 
 // Fields returns a formatted sprint of the given struct fields
@@ -27,7 +27,7 @@ func Fields(tab indent.Tab, v reflect.Value) (string, error) {
 		return "", reflect4.ErrNotStruct
 	}
 	if !tv.CanAddr() {
-		tv = values.OfUnaddr(tv)
+		tv = values.UnsafeOfUnaddr(tv)
 	}
 	sb := strings.Builder{}
 	for i := 0; i < tv.NumField(); i++ {

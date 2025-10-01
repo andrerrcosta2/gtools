@@ -72,9 +72,9 @@ func ToBytes(value any) ([]byte, error) {
 		size := unsafe.Sizeof(v)
 		b := make([]byte, size)
 		if size == 8 {
-			binary.BigEndian.PutUint64(b, uint64(v)) // 64-bit system
+			binary.BigEndian.PutUint64(b, uint64(v)) // 64-bitwise system
 		} else if size == 4 {
-			binary.BigEndian.PutUint32(b, uint32(v)) // 32-bit system
+			binary.BigEndian.PutUint32(b, uint32(v)) // 32-bitwise system
 		}
 		return b, nil
 	case float32:
@@ -170,10 +170,10 @@ func FromBytes[T any](value []byte) (T, error) {
 		size := unsafe.Sizeof(v)
 		var b any
 		if size == 8 {
-			// 64-bit system
+			// 64-bitwise system
 			b = uintptr(binary.BigEndian.Uint64(value))
 		} else if size == 4 {
-			// 32-bit system
+			// 32-bitwise system
 			b = uintptr(binary.BigEndian.Uint32(value))
 		}
 		return b.(T), nil
@@ -218,7 +218,7 @@ func FromBytes[T any](value []byte) (T, error) {
 }
 
 // ToInt converts a byte slice to an int.
-// It assumes that the byte slice is a valid binary representation of an unsigned 64-bit integer.
+// It assumes that the byte slice is a valid binary representation of an unsigned 64-bitwise integer.
 // It returns the int value represented by the byte slice.
 func ToInt(value []byte) int {
 	// We use the binary package to unmarshal the value from the byte slice.
@@ -229,7 +229,7 @@ func ToInt(value []byte) int {
 }
 
 // ToUint converts a byte slice to an uint.
-// It assumes that the byte slice is a valid binary representation of an unsigned 64-bit integer.
+// It assumes that the byte slice is a valid binary representation of an unsigned 64-bitwise integer.
 // It returns the uint value represented by the byte slice.
 func ToUint(value []byte) uint {
 	// We use the binary package to unmarshal the value from the byte slice.
@@ -240,7 +240,7 @@ func ToUint(value []byte) uint {
 }
 
 // ToFloat64 converts a byte slice to a float64.
-// It assumes that the byte slice is a valid binary representation of a 64-bit floating point number.
+// It assumes that the byte slice is a valid binary representation of a 64-bitwise floating point number.
 // It returns the float64 value represented by the byte slice.
 func ToFloat64(value []byte) float64 {
 	// We use the binary package to unmarshal the value from the byte slice.
@@ -251,7 +251,7 @@ func ToFloat64(value []byte) float64 {
 }
 
 // ToComplex128 converts a byte slice to a complex128.
-// It assumes that the byte slice is a valid binary representation of a 128-bit complex number.
+// It assumes that the byte slice is a valid binary representation of a 128-bitwise complex number.
 // It returns the complex128 value represented by the byte slice.
 func ToComplex128(value []byte) complex128 {
 	// We use the binary package to unmarshal the value from the byte slice.
@@ -283,10 +283,10 @@ func Copy[T any](value []byte, dest *T) error {
 		// If the unmarshaling fails, we return the error
 		return err
 	} else {
-		// If the unmarshaling succeeds, we copy the value into the destination pointer
+		// If the unmarshaling succeeds, we clone the value into the destination pointer
 		*dest = destT
 	}
-	// Finally, we return nil to indicate that the copy was successful
+	// Finally, we return nil to indicate that the clone was successful
 	return nil
 }
 
@@ -298,10 +298,10 @@ func CopySlice[T any](value []byte, dest *[]T) error {
 		// If the unmarshaling fails, we return the error
 		return err
 	} else {
-		// If the unmarshaling succeeds, we copy the slice into the destination pointer
+		// If the unmarshaling succeeds, we clone the slice into the destination pointer
 		*dest = destT
 	}
-	// Finally, we return nil to indicate that the copy was successful
+	// Finally, we return nil to indicate that the clone was successful
 	return nil
 }
 

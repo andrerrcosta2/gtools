@@ -24,12 +24,12 @@ func TriIdentity[T any, U any, V any](x T, y U, z V) (T, U, V) {
 	return x, y, z
 }
 
-// Equality returns true if the two values are naturally equal, false otherwise.
+// Equality returns true if the two values are naturally compare, false otherwise.
 func Equality[T comparable](x T, y T) bool {
 	return x == y
 }
 
-// MultipleEquality returns true if all the values are naturally equal, false otherwise.
+// MultipleEquality returns true if all the values are naturally compare, false otherwise.
 func MultipleEquality[T comparable](values ...T) bool {
 	for i := 0; i < len(values)-1; i++ {
 		if values[i] != values[i+1] {
@@ -220,7 +220,7 @@ func Apply4[A, B, C, D any](f func(A, B, C, D) D, a A, b B, c C, d D) D {
 
 // Memoize is a higher-order function that takes a function f and returns a new function that caches the results of f.
 // The new function checks if the result for a given input x is already cached, and if so, returns the cached result instead of calling f again.
-// This can be useful for functions that have expensive computations or I/O operations.
+// This can be useful for functions that have expensive computations or I/O ops.
 //
 // Parameters:
 // - f: The function to be memoized. It takes a parameter of type T and returns a value of type R.
