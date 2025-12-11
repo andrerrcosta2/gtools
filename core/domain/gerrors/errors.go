@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	NONE ErrorSeverity = iota
+	NONE Severity = iota
 	FATAL
 	ERROR
 	OPERATION
@@ -23,159 +23,125 @@ const (
 )
 
 var (
-	None          = ErrorLevel{Key: "None", Severity: NONE}
-	Not_found_err = ErrorLevel{Key: "NotFound", Severity: INPUT}
-	Operation_err = ErrorLevel{Key: "Operation", Severity: OPERATION}
-	Input_err     = ErrorLevel{Key: "Input", Severity: INPUT}
-	Output_err    = ErrorLevel{Key: "Output", Severity: OUTPUT}
-	Internal_err  = ErrorLevel{Key: "Internal", Severity: INTERNAL}
-	Inherit       = ErrorLevel{Key: "Inherit", Severity: INHERIT}
-	External_err  = ErrorLevel{Key: "External", Severity: EXTERNAL}
-	Unknown_err   = ErrorLevel{Key: "Unknown", Severity: UNKNOWN}
-	Os_err        = ErrorLevel{Key: "Os", Severity: OS}
-	Fatal_err     = ErrorLevel{Key: "Fatal", Severity: FATAL}
+	None          = Level{Key: "None", Severity: NONE}
+	Not_found_err = Level{Key: "NotFound", Severity: INPUT}
+	Operation_err = Level{Key: "Operation", Severity: OPERATION}
+	Input_err     = Level{Key: "Input", Severity: INPUT}
+	Output_err    = Level{Key: "Output", Severity: OUTPUT}
+	Internal_err  = Level{Key: "Internal", Severity: INTERNAL}
+	Inherit       = Level{Key: "Inherit", Severity: INHERIT}
+	External_err  = Level{Key: "External", Severity: EXTERNAL}
+	Unknown_err   = Level{Key: "Unknown", Severity: UNKNOWN}
+	Os_err        = Level{Key: "Os", Severity: OS}
+	Fatal_err     = Level{Key: "Fatal", Severity: FATAL}
 )
 
-// NewError creates a new Error instance with the given error level and error.
-// The function flattens the error using the FlattenError function and returns a pointer to the new Error instance.
+// New creates a new defaultErr instance with the given error level and error.
+// The function flattens the error using the FlattenError function and returns a pointer to the new defaultErr instance.
 //
 // Parameters:
-//   - lvl: the error level of the new Error instance.
-//   - err: the error to be wrapped in the new Error instance.
+//   - lvl: the error level of the new defaultErr instance.
+//   - err: the error to be wrapped in the new defaultErr instance.
 //
 // Returns:
-//   - *Error: a pointer to the new Error instance.
-func NewError(lvl ErrorLevel, err error) Error {
+//   - *defaultErr: a pointer to the new defaultErr instance.
+func New(lvl Level, err error) error {
 	// Flatten the error to get the stack trace and the top error
-	stk, top, isw := FlattenError(err)
+	stk := stack{FlattenError(err)}
 
-	if !isw {
-		// Create a new Error instance with the given level, top error, and stack trace
-		return Error{
-			lvl: handleLevel(lvl, err),
-			StackableError: &stackErr{
-				err: err,
-			},
-		}
-	}
-
-	// Create a new Error instance with the given level, top error, and stack trace
-	return Error{
-		lvl: handleLevel(lvl, top),
-		StackableError: &stackErr{
-			err: top,
-			stk: newStack(stk...),
+	// Create a new defaultErr instance with the given level, top error, and stack trace
+	return &defaultErr{
+		lvl: handleLevel(lvl, stk.Peek()),
+		Stackable: &stackErr{
+			stk: stk,
 		},
 	}
 }
 
-func handleLevel(lvl ErrorLevel, err error) ErrorLevel {
+func handleLevel(lvl Level, err error) Level {
 	if lvl == Inherit {
 		if lvlErr, ok := AsLeveled(err); ok {
 			return lvlErr.Level()
 		}
-		return Unknown_err
+		return None
 	}
 	return lvl
 }
 
-type Error struct {
-	StackableError
-	lvl ErrorLevel
+type defaultErr struct {
+	Stackable
+	lvl Level
 }
 
-// Stackable creates a new stackable error from the given error.
-// It implements the gtools.StackableError interface.
-// It returns a StackableError that can be used to stack errors.
+// StackableOf creates a new stackable error from the given error.
+// It implements the gtools.Stackable interface.
+// It returns a Stackable that can be used to stack errors.
 // It isn't thread safe.
-func Stackable(err error) StackableError {
+func StackableOf(err error) Stackable {
 	if err == nil {
 		return &stackErr{}
 	}
 	return &stackErr{
-		err: err,
-		stk: newStack(err),
+		stk: newStack(FlattenError(err)...),
 	}
 }
 
-func StackOf(err ...error) StackableError {
-	if len(err) == 0 {
+func StackOf(errs ...error) Stackable {
+	if len(errs) == 0 {
 		return &stackErr{}
 	}
+	var out []error
+	for _, err := range errs {
+		flat := FlattenError(err)
+		out = append(out, flat...)
+	}
 	return &stackErr{
-		err: err[0],
-		stk: newStack(err...),
+		stk: newStack(out...),
 	}
 }
 
-func Stack() StackableError {
+func Stack() Stackable {
 	return &stackErr{}
 }
 
 type stackErr struct {
-	err error
 	stk stack
 }
 
 func (e *stackErr) Cause() error {
-	if e.IsEmpty() {
+	if e.stk.Len() == 0 {
 		return nil
 	}
-	return e.stk.Cause()
+	return e.stk.stk[0]
 }
 
 // Error returns the error message of the underlying error.
 // It implements the error interface.
 func (e *stackErr) Error() string {
-	return e.err.Error()
+	return ReadTrace(e.stk.stk)
 }
 
-func (e *stackErr) From(err error) StackableError {
+func (e *stackErr) From(err error) Stackable {
 	if err == nil {
-		return e
+		return &stackErr{stk: newStack(e.Unwrap()...)}
 	}
+	flat := FlattenError(err)
+	if e.IsEmpty() {
+		return &stackErr{stk: newStack(flat...)}
 
-	if e.err == nil {
-		if stk, peek, isw := FlattenError(err); isw {
-			return &stackErr{
-				err: peek,
-				stk: newStack(stk...),
-			}
-		}
-		return &stackErr{err: err}
 	}
-
-	if stk, _, isw := FlattenError(err); isw {
-		return &stackErr{
-			err: e.err,
-			stk: newStack(stk...).Push(e.stk.stk...),
-		}
-	}
-
-	return &stackErr{err: e.err, stk: newStack(err).Push(e.stk.stk...)}
+	return &stackErr{stk: newStack(flat...).Push(e.Unwrap()...)}
 }
 
 func (e *stackErr) Is(target error) bool {
-	// Check if the current error matches the target
-	if errors.Is(e.err, target) {
-		return true
-	}
-
-	// Check if any error in the stack matches the target
-	for _, err := range e.stk.stk {
-		if errors.Is(err, target) {
-			return true
-		}
-	}
-
-	return false
+	return isStack(e, target)
 }
 
 // IsEmpty checks if the error is empty.
-// It implements the gtools.StackableError interface.
+// It implements the gtools.Stackable interface.
 // It returns true if the error is empty, false otherwise.
 func (e *stackErr) IsEmpty() bool {
-	return e.err == nil && e.stk.IsEmpty()
+	return e.stk.IsEmpty()
 }
 
 func (e *stackErr) Output() error {
@@ -185,174 +151,127 @@ func (e *stackErr) Output() error {
 	return e
 }
 
+// Len returns the number of errors in the stack trace of the error.
+// It implements the gtools.Stackable interface.
+// It returns the number of errors in the stack trace of the error.
+func (e *stackErr) Len() int {
+	return e.stk.Len()
+}
+
 // Stack appends the given error to the stack trace of the error and returns the new stackable error.
-// It implements the gtools.StackableError interface.
+// It implements the gtools.Stackable interface.
 // It takes an error and appends it to the stack trace of the error.
 // It returns the new stackable error.
 func (e *stackErr) Stack(err error) {
 	if err == nil {
 		return
 	}
-	// Flatten the given error to extract its stack trace
-	if flat, fer, isw := FlattenError(e); isw {
-		// Append the stack trace to the stack trace of the current error
-		e.stk = e.stk.Push(flat...)
-		e.err = fer
-		return
-	}
-
-	// ToSet the underlying error to the flattened error
-	e.stk = e.stk.Push(err)
-	e.err = err
-}
-
-func (e *stackErr) String() string {
-	return ReadTrace(e.stk.stk)
-}
-
-// Trace returns a string representing the stack trace of the error.
-// It implements the gtools.StackableError interface.
-// It returns a string that represents the stack trace of the error.
-func (e *stackErr) Trace() string {
-	// ReadTrace takes a slice of errors and returns a formatted string representing the stack trace of these errors.
-	// It takes the stack trace of the error and returns a string representing it.
-	return ReadTrace(e.stk.stk)
+	flat := FlattenError(err)
+	e.stk = e.stk.Push(flat...)
 }
 
 // Unwrap returns the underlying error.
 // It implements the gerrors.Wrapper interface.
-func (e *stackErr) Unwrap() error {
-	if e.stk.IsEmpty() {
-		return nil
-	}
-
-	// Create a clone of the stack without modifying the original
-	stk, _ := e.stk.Pop()
-
-	// Safely peek at the top element of the new stack
-	peek := stk.Peek()
-	if peek == nil {
-		return nil
-	}
-
-	// Return a new stackErr with the updated stack
-	return &stackErr{err: peek, stk: stk}
-}
-
-// Len returns the number of errors in the stack trace of the error.
-// It implements the gtools.StackableError interface.
-// It returns the number of errors in the stack trace of the error.
-func (e *stackErr) Len() int {
-	return e.stk.Len()
-}
-
-func (e *stackErr) Unstack() []error {
+func (e *stackErr) Unwrap() []error {
 	return e.stk.stk
 }
 
 var _ error = (*stackErr)(nil)
-var _ StackableError = (*stackErr)(nil)
-var _ WrappedError = (*stackErr)(nil)
+var _ Stackable = (*stackErr)(nil)
+var _ Wrapped = (*stackErr)(nil)
 
-// ConcStackable returns a new concurrent stackable error from the given error.
-// It implements the gtools.StackableError interface.
+// ConcStackableOf returns a new concurrent stackable error from the given error.
+// It implements the gtools.Stackable interface.
 // It wraps the given error and provides a thread-safe stack of errors.
-func ConcStackable(err error) StackableError {
+func ConcStackableOf(err error) Stackable {
 	if err == nil {
 		return &concStackErr{}
 	}
-	if flat, peek, isw := FlattenError(err); isw {
-		return &concStackErr{
-			stk: newStack(flat...),
-			err: peek,
-		}
+	return &concStackErr{
+		stk: newStack(FlattenError(err)...),
 	}
-	return &concStackErr{err: err, stk: newStack(err)}
+}
+
+func ConcStackOf(errs ...error) Stackable {
+	if len(errs) == 0 {
+		return &concStackErr{}
+	}
+	var out []error
+	for _, err := range errs {
+		flat := FlattenError(err)
+		out = append(out, flat...)
+	}
+	return &concStackErr{
+		stk: newStack(out...),
+	}
 }
 
 // ConcStack returns a new concurrent stackable error.
-func ConcStack() StackableError {
+func ConcStack() Stackable {
 	return &concStackErr{}
 }
 
 type concStackErr struct {
 	mtx sync.RWMutex
-	err error
 	stk stack
 }
 
 func (e *concStackErr) Cause() error {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
-	if e.IsEmpty() {
+	if e.stk.Len() == 0 {
 		return nil
 	}
-	return e.stk.Cause()
+	return e.stk.stk[0]
 }
 
 func (e *concStackErr) Error() string {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
-	return e.err.Error()
+	return ReadTrace(e.stk.stk)
 }
 
-func (e *concStackErr) From(err error) StackableError {
+func (e *concStackErr) From(err error) Stackable {
 	e.mtx.Lock()
 	defer e.mtx.Unlock()
 	if err == nil {
-		return e
+		return &concStackErr{stk: newStack(e.unwrap()...)}
 	}
+	flat := FlattenError(err)
+	if e.isEmpty() {
+		return &concStackErr{stk: newStack(flat...)}
 
-	if e.IsEmpty() {
-		if stk, peek, isw := FlattenError(err); isw {
-			return &concStackErr{
-				err: peek,
-				stk: newStack(stk...),
-			}
-		}
-		return &concStackErr{err: err}
 	}
-
-	if stk, _, isw := FlattenError(err); isw {
-		return &concStackErr{
-			err: e.err,
-			stk: newStack(stk...).Push(e.stk.stk...),
-		}
-	}
-
-	return &concStackErr{err: e.err, stk: newStack(err).Push(e.stk.stk...)}
+	return &concStackErr{stk: newStack(flat...).Push(e.unwrap()...)}
 }
 
 func (e *concStackErr) Is(target error) bool {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
-	// Check if the current error matches the target
-	if errors.Is(e.err, target) {
-		return true
-	}
-
-	// Check if any error in the stack matches the target
-	for _, err := range e.stk.stk {
-		if errors.Is(err, target) {
-			return true
-		}
-	}
-
-	return false
+	return isStack(e, target)
 }
 
 func (e *concStackErr) IsEmpty() bool {
 	e.mtx.RLock()
-	e.mtx.RUnlock()
-	return e.Len() == 0 && e.err == nil
+	defer e.mtx.RUnlock()
+	return e.isEmpty()
+}
+
+func (e *concStackErr) isEmpty() bool {
+	return e.len() == 0
 }
 
 func (e *concStackErr) Len() int {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
+	return e.len()
+}
+
+func (e *concStackErr) len() int {
 	return e.stk.Len()
 }
 
+// Output this method is right. it returns itself as an error only if it isn't empty (structs can't be nil)
 func (e *concStackErr) Output() error {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
@@ -368,70 +287,47 @@ func (e *concStackErr) Stack(err error) {
 	if err == nil {
 		return
 	}
-	// Flatten the given error to extract its stack trace
-	if flat, peek, isw := FlattenError(err); isw {
-		// Append the stack trace to the stack trace of the current error
-		e.stk = e.stk.Push(flat...)
-		e.err = peek
-		return
-	}
-
-	// ToSet the underlying error to the flattened error
-	e.stk = e.stk.Push(err)
-	e.err = err
+	flat := FlattenError(err)
+	e.stk = e.stk.Push(flat...)
 }
 
-func (e *concStackErr) String() string {
+func (e *concStackErr) Unwrap() []error {
 	e.mtx.RLock()
 	defer e.mtx.RUnlock()
-	return ReadTrace(e.stk.stk)
+	return e.unwrap()
 }
 
-func (e *concStackErr) Trace() string {
-	e.mtx.RLock()
-	defer e.mtx.RUnlock()
-	return ReadTrace(e.stk.stk)
-}
-
-func (e *concStackErr) Unstack() []error {
-	e.mtx.RLock()
-	defer e.mtx.RUnlock()
+func (e *concStackErr) unwrap() []error {
 	return e.stk.stk
 }
 
-func (e *concStackErr) Unwrap() error {
-	e.mtx.RLock()
-	defer e.mtx.RUnlock()
-	return e.err // this is correct. the stackable error never store wrapped errors.
-}
-
 var _ error = (*concStackErr)(nil)
-var _ StackableError = (*concStackErr)(nil)
-var _ WrappedError = (*concStackErr)(nil)
+var _ Stackable = (*concStackErr)(nil)
+var _ Wrapped = (*concStackErr)(nil)
 
-// Operational creates an OperationalError from the given op and error.
+// OperationalOf creates an Operational from the given op and error.
 //
-// An OperationalError is an error that is associated with an op.
-// It implements the gtools.OperationalError interface.
-func Operational(op string, err error) OperationalError {
+// An Operational is an error that is associated with an op.
+// It implements the gtools.Operational interface.
+func OperationalOf(op string, err error) Operational {
 	return &opErr{
 		op:  op,
 		err: err,
 	}
 }
 
-// opErr is an implementation of gtools.OperationalError interface.
+// opErr is an implementation of gtools.Operational interface.
 //
 // It contains the op that caused the error as well as the error itself.
 //
-// The error returned by the Error method is the same as the error returned by the
+// The error returned by the defaultErr method is the same as the error returned by the
 // underlying error.
 type opErr struct {
 	op  string
 	err error
 }
 
-// Error implements the error interface. It returns the string representation of
+// defaultErr implements the error interface. It returns the string representation of
 // the wrapped error.
 func (e *opErr) Error() string {
 	return e.err.Error()
@@ -444,25 +340,25 @@ func (e *opErr) Operation() string {
 
 var _ error = (*opErr)(nil)
 
-// AsOperational is a function that checks if an error is an OperationalError.
+// AsOperational is a function that checks if an error is an Operational.
 //
 // Parameters:
 // - err: The error to check.
 //
 // Returns:
-// - OperationalError: The error as OperationalError if it's of type OperationalError.
-// - bool: True if the error is of type OperationalError, false otherwise.
-func AsOperational(err error) (OperationalError, bool) {
-	// Declare a variable of type OperationalError
-	var opError OperationalError
+// - Operational: The error as Operational if it's of type Operational.
+// - bool: True if the error is of type Operational, false otherwise.
+func AsOperational(err error) (Operational, bool) {
+	// Declare a variable of type Operational
+	var opError Operational
 
-	// Check if the error is of type OperationalError
+	// Check if the error is of type Operational
 	if errors.As(err, &opError) {
 		// If it is, return the error and true
 		return opError, true
 	}
 
-	// If the error is not of type OperationalError, check if it is a pointer to a struct
+	// If the error is not of type Operational, check if it is a pointer to a struct
 	val := reflect.ValueOf(err)
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
@@ -477,24 +373,24 @@ func AsOperational(err error) (OperationalError, bool) {
 				op:  op,
 				err: err,
 			}
-			// Return the new OperationalError and true
+			// Return the new Operational and true
 			return opError, true
 		}
 	}
 
-	// If the error is not of type OperationalError, return nil and false
+	// If the error is not of type Operational, return nil and false
 	return nil, false
 }
 
-var _ OperationalError = (*opErr)(nil)
+var _ Operational = (*opErr)(nil)
 
 // Tagged creates a new taggableError from the given error and tags.
 //
 // The given tags are stored in the returned error, and can be retrieved
 // using the Tags() method.
 //
-// The returned error is of type gtools.TaggableError.
-func Tagged(err error, tags ...string) TaggableError {
+// The returned error is of type gtools.Taggable.
+func Tagged(err error, tags ...string) Taggable {
 	taggable := &taggableError{
 		tags:  map[string]struct{}{},
 		error: err,
@@ -508,7 +404,7 @@ type taggableError struct {
 	error error
 }
 
-// Error returns the error message of the underlying error.
+// defaultErr returns the error message of the underlying error.
 //
 // This method is part of the error interface.
 func (e *taggableError) Error() string {

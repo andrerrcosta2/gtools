@@ -13,6 +13,8 @@ func CastMethod(t reflect.Type) RandomKind {
 			return Any
 		}
 		return Injectable
+	case reflect.Struct:
+		return Struct
 	}
 	return Value
 }
@@ -22,6 +24,7 @@ type RandomKind uint8
 const (
 	Injectable RandomKind = iota
 	Value
+	Struct
 	Reference
 	Any
 )

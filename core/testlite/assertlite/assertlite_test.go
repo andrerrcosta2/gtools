@@ -4,9 +4,10 @@ package assertlite
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
 	"strings"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
 )
 
 // TestTrue tests the True function. This test must assert:
@@ -155,7 +156,7 @@ func TestPanic(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected a failure")
-		} else if !strings.Contains(mock.fatal[0], "expected panic, but got none") {
+		} else if !strings.Contains(mock.fatal[0], "expected a panic, but got none") {
 			t.Errorf("unexpected error message: %s", mock.fatal[0])
 		}
 	})
@@ -306,7 +307,7 @@ func TestEqual_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. values are not equals") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -316,7 +317,7 @@ func TestEqual_Primitives(t *testing.T) {
 		Equals(mock, 42, "42")
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. values are not equals") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -572,7 +573,7 @@ func TestEqual_InterfaceNilVsNonNil(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected values to be compare, but got different values") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. values are not equals") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1074,7 +1075,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different lengths") {
+		} else if !strings.Contains(mock.fatal[0], "expected slices to be equals, but got different lengths") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1089,7 +1090,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different values at") {
+		} else if !strings.Contains(mock.fatal[0], "expected slices to be equals, but got different values at") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1132,7 +1133,7 @@ func TestArrayEquals_Primitives(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "one on them is nil") {
+		} else if !strings.Contains(mock.fatal[0], "one of them is nil") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1168,7 +1169,8 @@ func TestArrayEquals_StructSlices_Comparable(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected slices to be compare, but got different values at") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. expected slices to be equals, "+
+			"but got different") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1386,7 +1388,7 @@ func TestNotNil_Interfaces(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected value not to be nil") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. target is nil") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})
@@ -1414,7 +1416,7 @@ func TestNotNil_Interfaces(t *testing.T) {
 		}
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "expected value not to be nil") {
+		} else if !strings.Contains(mock.fatal[0], "assertion failed. target is nil") {
 			t.Errorf("unexpected error: %s", mock.fatal[0])
 		}
 	})

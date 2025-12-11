@@ -3,10 +3,11 @@
 package sprints
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/code/indent"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"strconv"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/format/code/indent"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 )
 
 // Slicef formats the elements of a slice into a single string by applying
@@ -20,7 +21,7 @@ import (
 //	}, indent.None)
 //
 //	// Output: "1, 2, 3"
-func Slicef[I any](arr []I, f func(i I, t indent.Tab) string, t indent.Tab) string {
+func Slicef[I any](t indent.Indentor, arr []I, f func(t indent.Indentor, i I) string) string {
 	if len(arr) == 0 {
 		return ""
 	}
@@ -28,11 +29,11 @@ func Slicef[I any](arr []I, f func(i I, t indent.Tab) string, t indent.Tab) stri
 	sb := strings.Builder{}
 
 	for i := 0; i < len(arr)-1; i++ {
-		sb.WriteString(f(arr[i], t))
+		sb.WriteString(f(t, arr[i]))
 		sb.WriteString(", ")
 	}
 
-	sb.WriteString(f(arr[len(arr)-1], t))
+	sb.WriteString(f(t, arr[len(arr)-1]))
 	return sb.String()
 }
 
@@ -50,7 +51,7 @@ func Slicef[I any](arr []I, f func(i I, t indent.Tab) string, t indent.Tab) stri
 //	}, indent.None)
 //
 //	// Output: "'a', 'b', 'c'"
-func AnySlicef[S ~[]T, T any](arr any, f func(i T, t indent.Tab) string, t indent.Tab) string {
+func AnySlicef[S ~[]T, T any](t indent.Indentor, arr any, f func(t indent.Indentor, i T) string) string {
 	if arr == nil {
 		return "<nil>"
 	}
@@ -60,7 +61,7 @@ func AnySlicef[S ~[]T, T any](arr any, f func(i T, t indent.Tab) string, t inden
 		return t.Sprintf("<unexpected type: %T>", arr)
 	}
 
-	return Slicef(a, f, t)
+	return Slicef(t, a, f)
 }
 
 // SliceNf generates a comma-separated string by calling the function `f`
@@ -73,14 +74,14 @@ func AnySlicef[S ~[]T, T any](arr any, f func(i T, t indent.Tab) string, t inden
 //	}, indent.None)
 //
 //	// Output: "Item0, Item1, Item2"
-func SliceNf(n int, f func(i int, t indent.Tab) string, t indent.Tab) string {
+func SliceNf(t indent.Indentor, n int, f func(t indent.Indentor, i int) string) string {
 	sb := strings.Builder{}
 
 	for i := 0; i < n; i++ {
 		if i > 0 {
 			sb.WriteString(", ")
 		}
-		sb.WriteString(f(i, t))
+		sb.WriteString(f(t, i))
 	}
 
 	return sb.String()
@@ -88,12 +89,12 @@ func SliceNf(n int, f func(i int, t indent.Tab) string, t indent.Tab) string {
 
 // Mapf formats a map values to a string using the output of function f
 // for each element.
-func Mapf[K comparable, V any, M ~map[K]V](m M, f func(k K, v V, t indent.Tab) string, t indent.Tab) string {
+func Mapf[K comparable, V any, M ~map[K]V](t indent.Indentor, m M, f func(t indent.Indentor, k K, v V) string) string {
 	sb := strings.Builder{}
 	sb.WriteString("{\n")
 	k := 0
 	for key, value := range m {
-		sb.WriteString(f(key, value, t) + ",\n")
+		sb.WriteString(f(t, key, value) + ",\n")
 		k++
 	}
 	sb.WriteString(t.Sprintf("}"))

@@ -8,10 +8,11 @@
 package opt
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/domain/constraints"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/generics"
-	"reflect"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 )
 
 // Option is a wrapper for nullable variables.

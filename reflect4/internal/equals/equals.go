@@ -3,9 +3,10 @@
 package equals
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
-	"reflect"
 )
 
 func Deep[O internal.Option](a, b reflect.Value, o ...O) bool {
@@ -49,7 +50,7 @@ func deep(a, b reflect.Value, differ *Strategy) bool {
 	case reflect.Complex64, reflect.Complex128:
 		return a.Complex() == b.Complex()
 	case reflect.UnsafePointer:
-		return differ.unsafeptrs(a, b)
+		return differ.unsafe(a, b)
 	default:
 		// shouldn't reach this
 		panic(fmx.Sprintf("unreachable kind %v", a.Kind()))

@@ -4,10 +4,11 @@ package casters
 
 import (
 	"fmt"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/bins"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
-	"unsafe"
 )
 
 type emptyInterface struct {
@@ -17,13 +18,14 @@ type emptyInterface struct {
 
 // Assert casts the provided values to the type G and returns a slice of type G.
 // Panics if any value is not of type G.
-func Assert[G any](values ...any) []G {
-	var result []G
+func Assert[G any](values ...any) (result []G) {
+	result = make([]G, 0, len(values))
 	for _, value := range values {
 		if castValue, ok := Type[G](value); ok {
 			result = append(result, castValue)
 		} else {
-			panic(fmt.Sprintf("Assert will panic if the provided value are not of the expected type: %T", value))
+			panic(fmt.Sprintf("Assert will panic if the provided value are not of the expected type: '%T'",
+				value))
 		}
 	}
 	return result
@@ -98,6 +100,7 @@ func Type[T any](value any) (cast T, ok bool) {
 // The second return value allMatches is true if all values were successfully cast
 // to type G, and false otherwise.
 func Types[G any](values ...any) (result []G, allMatches bool) {
+	result = make([]G, 0, len(values))
 	allMatches = true
 	for _, value := range values {
 		if castValue, ok := Type[G](value); ok {

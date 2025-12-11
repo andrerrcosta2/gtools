@@ -4,6 +4,8 @@ package gtests
 
 import (
 	"context"
+
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 	"github.com/andrerrcosta2/gtools/core/format"
@@ -302,4 +304,9 @@ type LoggableAsyncRunnableTools interface {
 type LoggableRunnableTools interface {
 	LoggableTools
 	ConcurrentRunnableTools
+}
+
+type StatsLite[C, W nums.Real] interface {
+	Add(value C, weight W)
+	IsUnderDeviationOf(d float64) bool
 }

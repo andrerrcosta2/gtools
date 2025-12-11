@@ -19,7 +19,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.22.0'
+          go-version: '1.23.1'
 
       ## conc
       - name: Install core dependencies
@@ -43,6 +43,17 @@ jobs:
           cd ./core
           go test -v -tags=tt ./...
 
+      ## core/data
+      - name: Install core dependencies
+        run: |
+          cd ./core/data
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/domain
+          go test -v -tags=tt ./...
+
       ## core/domain
       - name: Install core dependencies
         run: |
@@ -51,18 +62,18 @@ jobs:
 
       - name: Run tests
         run: |
-          cd ./core/domain
+          cd ./core/data
           go test -v -tags=tt ./...
 
-      ## core/data
+      ## core/format
       - name: Install core dependencies
         run: |
-          cd ./core/domain
+          cd ./core/format
           go mod download
 
       - name: Run tests
         run: |
-          cd ./core/data
+          cd ./core/format
           go test -v -tags=tt ./...
 
       ## core/seeders
@@ -76,6 +87,28 @@ jobs:
           cd ./core/seeders
           go test -v -tags=tt ./...
 
+      ## core/testlite
+      - name: Install core dependencies
+        run: |
+          cd ./core/testlite
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/testlite
+          go test -v -tags=tt ./...
+
+      ## core/util
+      - name: Install core dependencies
+        run: |
+          cd ./core/util
+          go mod download
+
+      - name: Run tests
+        run: |
+          cd ./core/util
+          go test -v -tags=tt ./...
+
       ## datastr
       - name: Install core dependencies
         run: |
@@ -85,17 +118,6 @@ jobs:
       - name: Run tests
         run: |
           cd ./datastr
-          go test -v -tags=tt ./...
-
-      ## gflux
-      - name: Install core dependencies
-        run: |
-          cd ./gflux
-          go mod download
-
-      - name: Run tests
-        run: |
-          cd ./gflux
           go test -v -tags=tt ./...
 
       ## gflux/core
@@ -120,27 +142,38 @@ jobs:
           cd ./gflux/obs
           go test -v -tags=tt ./...
 
-      ## gtests
+      ## gtests/testingseeds
       - name: Install core dependencies
         run: |
-          cd ./gtests
+          cd ./gtests/testingseeds
           go mod download
 
       - name: Run tests
         run: |
-          cd ./gtests
+          cd ./gtests/testingseeds
           go test -v -tags=tt ./...
 
-      ## gvalidation
+      ## gtests/testingtools
       - name: Install core dependencies
         run: |
-          cd ./gvalidation
+          cd ./gtests/testingtools
           go mod download
 
       - name: Run tests
         run: |
-          cd ./gvalidation
+          cd ./gtests/testingtools
           go test -v -tags=tt ./...
+
+#      ## gvalidation
+#      - name: Install core dependencies
+#        run: |
+#          cd ./gvalidation
+#          go mod download
+#
+#      - name: Run tests
+#        run: |
+#          cd ./gvalidation
+#          go test -v -tags=tt ./...
 
       ## numbers
       - name: Install core dependencies
@@ -164,7 +197,7 @@ jobs:
           cd ./patterns
           go test -v -tags=tt ./...
 
-      ## patterns
+      ## reflect4
       - name: Install core dependencies
         run: |
           cd ./reflect4

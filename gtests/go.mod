@@ -14,13 +14,13 @@ require (
 	github.com/andrerrcosta2/gtools/core/seeders v0.0.2-alpha.3 // indirect
 	github.com/andrerrcosta2/gtools/core/util v0.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 )
 
 replace (
 	// Now we know about one more rule about go modules.
 	// replace are not transitive by default. That means it won't propagate
 	// the replacements up and down. only for submodules.
-	github.com/andrerrcosta2/gtools/core => ./../core
 	github.com/andrerrcosta2/gtools/core/domain => ./../core/domain
 	github.com/andrerrcosta2/gtools/core/format => ./../core/format
 	github.com/andrerrcosta2/gtools/core/seeders => ./../core/seeders

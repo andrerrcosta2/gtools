@@ -3,13 +3,13 @@
 package sprint
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/code/indent"
-	"github.com/andrerrcosta2/gtools/core/format/differs"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"github.com/andrerrcosta2/gtools/reflect4/internal/_testdata"
 	"reflect"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/format/code/indent"
+	"github.com/andrerrcosta2/gtools/core/format/differs"
+	"github.com/andrerrcosta2/gtools/core/format/sprints"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/_testdata"
 )
 
 func TestFields_BasicStructs(t *testing.T) {
@@ -76,8 +76,6 @@ func TestFields_BasicStructs(t *testing.T) {
 			}
 			if got != test.expected {
 				t.Errorf(differs.Quick(got, test.expected))
-			} else {
-				t.Log(fmx.SGreenf("fields match"))
 			}
 		})
 	}

@@ -3,20 +3,21 @@
 package reflect4
 
 import (
+	"reflect"
+	"strings"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/core/format/sprints/builder"
-	"reflect"
-	"strings"
-	"unsafe"
 )
 
-func Any(tab indent.Tab, value any) string {
+func Any(tab indent.Indentor, value any) string {
 	return an(tab, value)
 }
 
-func an(tab indent.Tab, value any) string {
+func an(tab indent.Indentor, value any) string {
 	switch v := value.(type) {
 	case string:
 		return pr(tab, v, "string")
@@ -47,11 +48,11 @@ func an(tab indent.Tab, value any) string {
 	}
 }
 
-func pr(tab indent.Tab, s any, typx string) string {
+func pr(tab indent.Indentor, s any, typx string) string {
 	return tab.Sprintf("<%s>%s", typx, sprints.Valuef(s))
 }
 
-func ob(tab indent.Tab, value reflect.Value) string {
+func ob(tab indent.Indentor, value reflect.Value) string {
 	if value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
 		if !value.IsValid() || value.IsNil() {
 			return sprints.Nil(tab)
@@ -81,7 +82,7 @@ func ob(tab indent.Tab, value reflect.Value) string {
 	}
 }
 
-func st(tab indent.Tab, value reflect.Value) string {
+func st(tab indent.Indentor, value reflect.Value) string {
 	stc := builder.Struct(tab, value.Type().Name())
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
@@ -91,7 +92,7 @@ func st(tab indent.Tab, value reflect.Value) string {
 	return stc.String()
 }
 
-func sl(tab indent.Tab, value reflect.Value) string {
+func sl(tab indent.Indentor, value reflect.Value) string {
 	// check if the slice is nil
 	if value.IsNil() {
 		return sprints.NilType(tab, value.Type().String())
@@ -113,7 +114,7 @@ func sl(tab indent.Tab, value reflect.Value) string {
 	return sb.String()
 }
 
-func mp(tab indent.Tab, value reflect.Value) string {
+func mp(tab indent.Indentor, value reflect.Value) string {
 	if value.IsNil() {
 		return sprints.NilType(tab, value.Type().String())
 	}
@@ -137,7 +138,7 @@ func mp(tab indent.Tab, value reflect.Value) string {
 	return sb.String()
 }
 
-func ch(tab indent.Tab, value reflect.Value) string {
+func ch(tab indent.Indentor, value reflect.Value) string {
 	if value.IsNil() {
 		return sprints.NilType(tab, value.Type().String())
 	}
@@ -158,7 +159,7 @@ func ch(tab indent.Tab, value reflect.Value) string {
 	return sprints.TypeValue(tab, dirStr, value.Type().Elem().String())
 }
 
-func fn(tab indent.Tab, value reflect.Value) string {
+func fn(tab indent.Indentor, value reflect.Value) string {
 	strings.TrimPrefix(value.Type().String(), "func")
 	return sprints.TypeValue(tab, "func", value.Type().String())
 }

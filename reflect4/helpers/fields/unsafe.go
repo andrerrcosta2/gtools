@@ -3,12 +3,13 @@
 package fields
 
 import (
+	"reflect"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/helpers/unwrap"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
-	"reflect"
-	"unsafe"
 )
 
 // UnsafeEach Iterates over all fields, exported and unexported and applies a function.
@@ -19,7 +20,7 @@ func UnsafeEach(target any, fn functions.BiConsumer[string, any]) error {
 		return fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
 	if !v.CanAddr() {
-		v = values.UnsafeOfUnaddr(v)
+		v = values.ForceOfUnaddr(v)
 	}
 	for i := 0; i < v.NumField(); i++ {
 		fn(v.Type().Field(i).Name, unsafe.Pointer(v.Field(i).UnsafeAddr()))
@@ -55,11 +56,12 @@ func UnsafeGet(target any, name string) (value any, err error) {
 //
 // to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGetAll(target any) (map[string]any, error) {
-	out := make(map[string]any)
-	m, err := values.UnsafeGetAllFields(reflect.ValueOf(target))
-	if err != nil {
-		return nil, err
+	v := values.Unwrap(reflect.ValueOf(target))
+	if v.Kind() != reflect.Struct {
+		return nil, fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
+	out := make(map[string]any)
+	m := values.UnsafeGetAllFields(v)
 	for k, v := range m {
 		out[k] = v.Interface()
 	}

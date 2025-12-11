@@ -20,7 +20,7 @@ import (
 func TestBufferedSupplier_AsyncBehaviour(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := BufferedSupplier[string](5)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Create a context to run the test
@@ -104,7 +104,7 @@ func TestBufferedSupplier_AsyncBehaviour(t *testing.T) {
 func TestBufferedChannelSupplier_Closed(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := BufferedSupplier[string](5)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Close the supplier
@@ -184,7 +184,7 @@ func TestBufferedChannelSupplier_Closed(t *testing.T) {
 func TestBufferedSupplier_MultipleAsyncSupplies(t *testing.T) {
 	// Create a supplier
 	var supplier = BufferedSupplier[string](5)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	mainCtx, exit := contexts.Synchronized(context.Background())
@@ -293,7 +293,7 @@ func TestBufferedSupplier_MultipleAsyncSupplies(t *testing.T) {
 func TestBufferedSupplier_UpdatedValues(t *testing.T) {
 	// Create a supplier
 	supplier := BufferedSupplier[string](15)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a main context
 	mainCtx, exit := contexts.WithConditionalCancel(context.Background())
@@ -416,7 +416,7 @@ func TestBufferedSupplier_UpdatedValues(t *testing.T) {
 func TestCancellableSupplier_AsyncBehaviour(t *testing.T) {
 	// Create a supplier
 	supplier := CancellableSupplier[string](context.Background(), 10)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	ctx, closeRunnable := context.WithCancel(context.Background())
@@ -498,7 +498,7 @@ func TestCancellableSupplier_AsyncBehaviour(t *testing.T) {
 func TestCancellableChannelSupplier_Close(t *testing.T) {
 	// Create a supplier with a buffer of 5
 	supplier := CancellableSupplier[string](context.Background(), 5)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	// Close the supplier
@@ -575,7 +575,7 @@ func TestCancellableChannelSupplier_CancelOnTheFly(t *testing.T) {
 	supplierCtx, cancel := context.WithCancel(context.Background())
 	// Create a supplier with a buffer of 5
 	supplier := CancellableSupplier[string](supplierCtx, 5)
-	// Call a helper
+	// Call a std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a context to run the test
 	mainCtx, exitMain := context.WithCancel(context.Background())

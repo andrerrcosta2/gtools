@@ -3,9 +3,10 @@
 package values
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"reflect"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 )
 
 var Empty = reflect.Value{}
@@ -70,16 +71,22 @@ func OfUnaddr(value reflect.Value) (reflect.Value, error) {
 	return ptr.Elem(), nil
 }
 
-// UnsafeOfUnaddr makes a reflect.Value addressable without safety checks.
+// ForceOfUnaddr makes a reflect.Value addressable without safety checks.
 // ⚠️ It will panic if 'value' is invalid or obtained from an unexported field.
 // Use only when you are sure the input is safe to clone.
-func UnsafeOfUnaddr(value reflect.Value) reflect.Value {
+func ForceOfUnaddr(value reflect.Value) reflect.Value {
 	// Create a new pointer to the value's type
 	ptr := reflect.New(value.Type())
 	// Copy the original value into the pointer
 	ptr.Elem().Set(value)
 	// Return the addressable value
 	return ptr.Elem()
+}
+
+// UnsafeForceOfUnaddr makes a reflect.Value addressable without safety checks
+// using unsafe pointer operations.
+func UnsafeForceOfUnaddr(v reflect.Value) reflect.Value {
+	return reflect.NewAt(v.Type(), unsafe.Pointer(v.UnsafeAddr())).Elem()
 }
 
 // UnsafeSet force-set a target value using the unsafe package
@@ -89,7 +96,7 @@ func UnsafeSet(target, value reflect.Value) error {
 			target.Kind(), value.Kind())
 	}
 	if !target.CanAddr() {
-		target = UnsafeOfUnaddr(target)
+		target = ForceOfUnaddr(target)
 	}
 	reflect.NewAt(target.Type(), unsafe.Pointer(target.UnsafeAddr())).
 		Elem().Set(value)

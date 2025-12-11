@@ -3,13 +3,14 @@
 package sprints
 
 import (
+	"strconv"
+	"strings"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
 	"github.com/andrerrcosta2/gtools/core/format"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"strconv"
-	"strings"
-	"unsafe"
 )
 
 const addrSentence = "0x%d"
@@ -26,11 +27,9 @@ func Array[A ~[]T, T any](tab indent.Indentor, size int, typx T, data A) string 
 
 const arraySentence = "[%d]%v{"
 
-func Bool[B ~bool](tab indent.Indentor, data B) string {
-	return tab.Sprintf(boolSentence, data)
+func Bool[B ~bool](tab indent.Indentor, v B) string {
+	return tab.String() + strconv.FormatBool(bool(v))
 }
-
-const boolSentence = "%t"
 
 func Byte[B ~byte](tab indent.Indentor, s B) string {
 	return tab.Sprintf(byteSentence, s)
@@ -181,3 +180,49 @@ func UnsafePointer(tab indent.Indentor, s unsafe.Pointer) string {
 }
 
 const valueSentence = "%v"
+
+func Value(tab indent.Indentor, value any) string {
+	switch v := value.(type) {
+	case nil:
+		return "<nil>"
+	case bool:
+		return tab.String() + strconv.FormatBool(v)
+	case int:
+		return tab.String() + strconv.FormatInt(int64(v), 10)
+	case int8:
+		return tab.String() + strconv.FormatInt(int64(v), 10)
+	case int16:
+		return tab.String() + strconv.FormatInt(int64(v), 10)
+	case int32:
+		return tab.String() + strconv.FormatInt(int64(v), 10)
+	case int64:
+		return tab.String() + strconv.FormatInt(v, 10)
+
+	case uint:
+		return tab.String() + strconv.FormatUint(uint64(v), 10)
+	case uint8:
+		return tab.String() + strconv.FormatUint(uint64(v), 10)
+	case uint16:
+		return tab.String() + strconv.FormatUint(uint64(v), 10)
+	case uint32:
+		return tab.String() + strconv.FormatUint(uint64(v), 10)
+	case uint64:
+		return tab.String() + strconv.FormatUint(v, 10)
+	case float32:
+		return tab.String() + strconv.FormatFloat(float64(v), 'f', -1, 32)
+	case float64:
+		return tab.String() + strconv.FormatFloat(v, 'f', -1, 64)
+
+	case complex64:
+		r, i := real(v), imag(v)
+		return tab.Sprintf("(%g + %gi)", r, i)
+	case complex128:
+		r, i := real(v), imag(v)
+		return tab.Sprintf("(%g + %gi)", r, i)
+
+	case string:
+		return v
+	default:
+		return Errorf(tab, "not a value: %v", value)
+	}
+}

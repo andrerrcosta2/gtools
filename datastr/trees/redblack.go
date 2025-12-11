@@ -3,15 +3,16 @@
 package trees
 
 import (
+	"sync"
+
 	"github.com/andrerrcosta2/gtools/core/data"
 	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"github.com/andrerrcosta2/gtools/core/generics"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"github.com/andrerrcosta2/gtools/datastr/trees/internal/redblack"
-	"sync"
 )
 
 // RedBlack returns a new red-black tree

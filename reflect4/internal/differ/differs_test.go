@@ -744,13 +744,14 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	// Test 9: Arrays of custom structs
 	t.Run("arrays of custom structs", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
+		name := "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Person2"
 		testDifferValues(tt, TestCase{
 			name:    "array of custom structs",
 			a:       reflect.ValueOf([...]_testdata.Person2{{"Alice", 30}, {"Bob", 25}}),
 			b:       reflect.ValueOf([...]_testdata.Person2{{"Alice", 30}, {"Charlie", 25}}),
 			options: strat,
 			diff: differs.Message(differs.Chain(differs.ArrayElem(zero, 1),
-				differs.StructFields(zero.Plus(1), "Name"), differs.Strings(zero.Plus(2), 0)),
+				differs.StructFields(zero.Plus(1), name, "Name"), differs.Strings(zero.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRedf("B")+"ob'", "'Charlie'")),
 			equals: false,
 		})
@@ -1421,13 +1422,14 @@ func TestBetween_Interfaces(t *testing.T) {
 
 	t.Run("same interfaces, same impl, different fields", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
+		snm := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.SimpleUnsafeCastableFloat"
 		testDifferValues(tt, TestCase{
 			name:    "Same type, different values",
 			a:       reflect.ValueOf(ptrs.New(interf.FloatTypeCastable(1, 36))).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interf.FloatTypeCastable(1, 38))).Elem(),
 			options: strat,
 			diff: differs.Chain(differs.InterfaceImpl(zero), differs.PointerValues(zero.Plus(1)),
-				differs.StructFields(zero.Plus(2), "ValueC"),
+				differs.StructFields(zero.Plus(2), snm, "ValueC"),
 				differs.Values(zero.Plus(3), sprints.Typed("float64", 36),
 					sprints.Typed("float64", 38))),
 			equals: false,
@@ -1528,7 +1530,7 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 			b:       reflect.ValueOf(ptrs.New(interface{}(struct{ Name string }{"Bob"}))).Elem(),
 			options: strat,
 			diff: differs.Message(differs.Chain(differs.InterfaceImpl(zero),
-				differs.StructFields(zero.Plus(1), "Name"), differs.Strings(zero.Plus(2), 0)),
+				differs.StructFields(zero.Plus(1), "struct { Name string }", "Name"), differs.Strings(zero.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRed("A")+"lice'", "'Bob'")),
 			equals: false,
 		})
@@ -1580,8 +1582,8 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "c": 2}),
-			diff: differs.Message(differs.MapKeys(zero), differs.MapKeysDiff(indent.Tab(0), []string{"c"}, []string{"b"},
-				[]string{"b"}, []string{"c"})),
+			diff: differs.Message(differs.MapKeys(zero), differs.MapKeysDiff(indent.Tab(0), []string{"<string>c"},
+				[]string{"<string>b"}, []string{"<string>b"}, []string{"<string>c"})),
 			equals: false,
 		})
 	})
@@ -1708,7 +1710,8 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 			a:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Bob"}}),
 			b:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Charlie"}}),
 			diff: differs.Message(differs.Chain(differs.MapValue(root, "b"),
-				differs.StructFields(root.Plus(1), "Name"), differs.Strings(root.Plus(2), 0)),
+				differs.StructFields(root.Plus(1), "struct { Name string }", "Name"),
+				differs.Strings(root.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRed("B")+"ob'", "'Charlie'")),
 			equals: false,
 		})
@@ -1760,8 +1763,8 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "c": 2}),
-			diff: differs.Message(differs.MapKeys(root), differs.MapKeysDiff(indent.Tab(0), []string{"c"}, []string{"b"},
-				[]string{"b"}, []string{"c"})),
+			diff: differs.Message(differs.MapKeys(root), differs.MapKeysDiff(indent.Tab(0), []string{"<string>c"},
+				[]string{"<string>b"}, []string{"<string>b"}, []string{"<string>c"})),
 			equals: false,
 		})
 	})
@@ -1901,7 +1904,7 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 			a:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Bob"}}),
 			b:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Charlie"}}),
 			diff: differs.Message(differs.Chain(differs.MapValue(root, "b"),
-				differs.StructFields(root.Plus(1), "Name"), differs.Strings(root.Plus(2), 0)),
+				differs.StructFields(root.Plus(1), "struct { Name string }", "Name"), differs.Strings(root.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRed("B")+"ob'", "'Charlie'")),
 			equals: false,
 		})
@@ -2034,12 +2037,14 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	t.Run("cyclic references, different values", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
+		snm := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.SimpleNode"
 		testDifferValues(tt, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
 			b:    reflect.ValueOf(models.CyclicSimpleNode(38, 36)),
-			diff: differs.Chain(differs.PointerValues(branch), differs.StructFields(branch.Plus(1), "Next"),
-				differs.PointerValues(branch.Plus(2)), differs.StructFields(branch.Plus(3), "Value"),
+			diff: differs.Chain(differs.PointerValues(branch), differs.StructFields(branch.Plus(1),
+				snm, "Next"), differs.PointerValues(branch.Plus(2)),
+				differs.StructFields(branch.Plus(3), snm, "Value"),
 				differs.InterfaceImpl(branch.Plus(4)),
 				differs.Values(branch.Plus(5), sprints.Typed("int", 38),
 					sprints.Typed("int", 36))),
@@ -2060,15 +2065,19 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	t.Run("cyclic linked list, different values", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
+		sn1 := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.LinkedList"
+		sn2 := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.BinaryNode"
 		testDifferValues(tt, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
 			b:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerE")),
 			diff: differs.Message(differs.Chain(differs.PointerValues(branch), differs.StructFields(branch.Plus(1),
-				"Head"), differs.PointerValues(branch.Plus(2)), differs.StructFields(branch.Plus(3),
-				"Left"), differs.PointerValues(branch.Plus(4)), differs.StructFields(branch.Plus(5),
-				"Value"), differs.InterfaceImpl(branch.Plus(6)), differs.Strings(branch.Plus(7),
-				5)), differs.Diff(indent.Tab(7), "'inner"+fmx.SRed("D")+"'", "'innerE'")),
+				sn1, "Head"), differs.PointerValues(branch.Plus(2)),
+				differs.StructFields(branch.Plus(3), sn2,
+					"Left"), differs.PointerValues(branch.Plus(4)), differs.StructFields(branch.Plus(5),
+					sn2, "Value"), differs.InterfaceImpl(branch.Plus(6)),
+				differs.Strings(branch.Plus(7), 5)), differs.Diff(indent.Tab(7),
+				"'inner"+fmx.SRed("D")+"'", "'innerE'")),
 			equals: false,
 		})
 	})
@@ -2308,7 +2317,8 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 			a:    reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Bob"}}),
 			b:    reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Charlie"}}),
 			diff: differs.Message(differs.Chain(differs.SliceValues(branch, 1),
-				differs.StructFields(branch.Plus(1), "Name"), differs.Strings(branch.Plus(2), 0)),
+				differs.StructFields(branch.Plus(1), "struct { Name string }", "Name"),
+				differs.Strings(branch.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRedf("B")+"ob'", "'Charlie'")),
 			equals: false,
 		})
@@ -2477,7 +2487,7 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 			b:       reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Charlie"}}),
 			options: strat,
 			diff: differs.Message(differs.Chain(differs.SliceValues(branch, 1),
-				differs.StructFields(branch.Plus(1), "Name"), differs.Strings(branch.Plus(2), 0)),
+				differs.StructFields(branch.Plus(1), "struct { Name string }", "Name"), differs.Strings(branch.Plus(2), 0)),
 				differs.Diff(indent.Tab(2), "'"+fmx.SRedf("B")+"ob'", "'Charlie'")),
 			equals: false,
 		})
@@ -2712,8 +2722,8 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 			a:       reflect.ValueOf(struct{ Name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ Name string }{"Bob"}),
 			options: strat,
-			diff: differs.Message(differs.Append(branch, differs.StructFields(branch, "Name"),
-				differs.Strings(branch.Plus(1), 0)),
+			diff: differs.Message(differs.Append(branch, differs.StructFields(branch, "struct { Name string }",
+				"Name"), differs.Strings(branch.Plus(1), 0)),
 				differs.Diff(indent.Tab(1), "'"+fmx.SRedf("A")+"lice'", "'Bob'")),
 			equals: false,
 		})
@@ -2766,8 +2776,8 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 			a:       reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{25}}),
 			b:       reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{30}}),
 			options: strat,
-			diff: differs.Chain(differs.StructFields(branch, "Info"),
-				differs.StructFields(branch.Plus(1), "Age"), differs.Values(branch.Plus(2),
+			diff: differs.Chain(differs.StructFields(branch, "struct { Info struct { Age int } }", "Info"),
+				differs.StructFields(branch.Plus(1), "struct { Age int }", "Age"), differs.Values(branch.Plus(2),
 					sprints.Typed("int", 25), sprints.Typed("int", 30))),
 			equals: false,
 		})
@@ -2780,9 +2790,9 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 			a:       reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 3}}),
 			b:       reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 4}}),
 			options: strat,
-			diff: differs.Chain(differs.StructFields(branch, "Numbers"), differs.SliceValues(branch.Plus(1),
-				2), differs.Values(branch.Plus(2), sprints.Typed("int", 3), sprints.Typed("int",
-				4))),
+			diff: differs.Chain(differs.StructFields(branch, "struct { Numbers []int }", "Numbers"),
+				differs.SliceValues(branch.Plus(1), 2), differs.Values(branch.Plus(2),
+					sprints.Typed("int", 3), sprints.Typed("int", 4))),
 			equals: false,
 		})
 	})
@@ -2794,7 +2804,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 			a:       reflect.ValueOf(struct{ name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ name string }{"Bob"}),
 			options: strat,
-			diff: differs.Message(differs.Chain(differs.StructFields(branch, "name"),
+			diff: differs.Message(differs.Chain(differs.StructFields(branch, "struct { name string }", "name"),
 				differs.Strings(branch.Plus(1), 0)), differs.Diff(indent.Tab(1),
 				"'"+fmx.SRedf("A")+"lice'", "'Bob'")),
 			equals: false,

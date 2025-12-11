@@ -2,7 +2,7 @@
 
 package tuple
 
-import "github.com/andrerrcosta2/gtools/core/generics"
+import "github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 
 func NewPair[A any, B any](a A, b B) *Pair[A, B] {
 	return &Pair[A, B]{

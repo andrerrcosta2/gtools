@@ -6,18 +6,19 @@
 package random
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/data"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
-	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 	"reflect"
 	"slices"
 	"strings"
 	"testing"
 	"time"
 	"unicode"
+
+	"github.com/andrerrcosta2/gtools/core/domain/data"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 )
 
 const (

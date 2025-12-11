@@ -4,7 +4,7 @@ package maps
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/generics"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"github.com/andrerrcosta2/gtools/datastr/tuple"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/maps"
 	"sort"

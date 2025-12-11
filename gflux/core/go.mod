@@ -6,13 +6,15 @@ require (
 	github.com/andrerrcosta2/gtools/core v0.0.2-alpha.3
 	github.com/andrerrcosta2/gtools/core/data v0.0.2-alpha.3
 	github.com/andrerrcosta2/gtools/core/domain v0.0.2-alpha3
+	github.com/andrerrcosta2/gtools/core/format v0.0.0
 	github.com/andrerrcosta2/gtools/core/seeders v0.0.2-alpha.3
+	github.com/andrerrcosta2/gtools/core/util v0.0.0
 	github.com/andrerrcosta2/gtools/gtests/testingtools v0.0.0
 )
 
 require (
-	github.com/andrerrcosta2/gtools/core/format v0.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 )
 
 replace (
@@ -21,5 +23,8 @@ replace (
 	github.com/andrerrcosta2/gtools/core/domain => ../../core/domain
 	github.com/andrerrcosta2/gtools/core/format => ../../core/format
 	github.com/andrerrcosta2/gtools/core/seeders => ../../core/seeders
+	github.com/andrerrcosta2/gtools/core/testlite => ../../core/testlite
+	github.com/andrerrcosta2/gtools/core/util => ../../core/util
+	github.com/andrerrcosta2/gtools/gtests => ../../gtests
 	github.com/andrerrcosta2/gtools/gtests/testingtools => ../../gtests/testingtools
 )

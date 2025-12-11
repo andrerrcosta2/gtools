@@ -6,10 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
 	"reflect"
 	"time"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
 )
 
 func init() {

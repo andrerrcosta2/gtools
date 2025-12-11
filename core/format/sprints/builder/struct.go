@@ -3,17 +3,18 @@
 package builder
 
 import (
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"strings"
 )
 
-func Struct(tab indent.Tab, name string) *StructBuilder {
+func Struct(tab indent.Indentor, name string) *StructBuilder {
 	return &StructBuilder{tab: tab, name: name}
 }
 
 type StructBuilder struct {
-	tab    indent.Tab
+	tab    indent.Indentor
 	name   string
 	fields []string
 }

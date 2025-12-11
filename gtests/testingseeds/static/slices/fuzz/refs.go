@@ -3,11 +3,12 @@
 package fuzz
 
 import (
+	"slices"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/interf"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
-	"slices"
-	"unsafe"
 )
 
 func referencesSet() []interface{} {
@@ -176,8 +177,7 @@ func pointerToChannelRefs() []interface{} {
 
 func edgeRefs() []interface{} {
 	return []interface{}{
-		random.SingleOf[**[]*interface{}](),
-		random.SingleOf[unsafe.Pointer](), random.SingleOf[*unsafe.Pointer](),
-		random.SingleOf[**unsafe.Pointer](), random.SingleOf[[][]*chan **unsafe.Pointer](),
+		random.SingleOf[**[]*interface{}](), random.SingleOf[*[]unsafe.Pointer](),
+		random.SingleOf[*[]*unsafe.Pointer](), random.SingleOf[*[][]*chan **unsafe.Pointer](),
 	}
 }

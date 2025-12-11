@@ -3,11 +3,12 @@
 package equals
 
 import (
+	"reflect"
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
 	"github.com/andrerrcosta2/gtools/reflect4/op"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
-	"reflect"
-	"strings"
 )
 
 func bytealg(a, b []byte) bool {
@@ -81,14 +82,76 @@ func defaultMap(a, b reflect.Value, differ *Strategy) bool {
 		return true
 	}
 	differ.mark(a, b)
-	iter := a.MapRange()
-	for iter.Next() {
-		val1 := iter.Value()
-		val2 := b.MapIndex(iter.Key())
-		if !val1.IsValid() || !val2.IsValid() || !deep(val1, val2, differ) {
+	// Detect whether we need deep key comparison
+	if differ.shouldDeepCompareKeys(a.Type().Key()) {
+		return deepKeyedMapEquals(a, b, differ)
+	}
+	return shallowKeyedMapEquals(a, b, differ)
+}
+
+// shallowKeyedMapEquals performs a shallow comparison for values whose key equality is met
+// directly. it performs a O(n) comparisons.
+func shallowKeyedMapEquals(a, b reflect.Value, differ *Strategy) bool {
+	for _, keyA := range a.MapKeys() {
+		valA := a.MapIndex(keyA)
+		valB := b.MapIndex(keyA)
+		if !valB.IsValid() {
+			return false // missing key in b
+		}
+		if !deep(valA, valB, differ) {
 			return false
 		}
 	}
+	return true
+}
+
+// deepKeyedMapEquals performs a deep comparison for maps whose key equality
+// cannot be determined by Go's built-in == operator. It performs O(n²)
+// comparisons but ensures one-to-one matching between keys.
+func deepKeyedMapEquals(a, b reflect.Value, differ *Strategy) bool {
+	// Collect keys of b once
+	keysB := b.MapKeys()
+	used := make([]bool, len(keysB))
+
+	// For each keyA in a, find an unused keyB such that:
+	//   deep(keyA, keyB) == true  AND  deep(valA, valB) == true
+	for _, keyA := range a.MapKeys() {
+		valA := a.MapIndex(keyA)
+		found := false
+
+		for i, keyB := range keysB {
+			if used[i] {
+				continue
+			}
+
+			// If keys are semantically equal, try the value
+			if !deep(keyA, keyB, differ) {
+				continue
+			}
+
+			valB := b.MapIndex(keyB)
+			if deep(valA, valB, differ) {
+				// only mark used when we found a matching key+value pair
+				used[i] = true
+				found = true
+				break
+			}
+			// otherwise: key matches but value doesn't — keep searching other keyB
+		}
+
+		if !found {
+			// no keyB had both equal key and equal value
+			return false
+		}
+	}
+
+	// ensure there are no unmatched keys left in b
+	for _, u := range used {
+		if !u {
+			return false
+		}
+	}
+
 	return true
 }
 
@@ -140,9 +203,13 @@ func defaultSlice(a, b reflect.Value, differ *Strategy) bool {
 //  1. Same type
 //  2. equality between fields
 func defaultStruct(a, b reflect.Value, differ *Strategy) (eq bool) {
+	eq = true
 	differ.rideFields(a, func(i int, value reflect.Value) bool {
-		eq = deep(a.Field(i), b.Field(i), differ)
-		return eq
+		if !deep(a.Field(i), b.Field(i), differ) {
+			eq = false
+			return false // short-circuit
+		}
+		return true
 	})
 	return
 }
@@ -265,11 +332,14 @@ func serialMap(a, b reflect.Value, differ *Strategy) bool {
 		return true
 	}
 	differ.mark(a, b)
-	iter := a.MapRange()
-	for iter.Next() {
-		val1 := iter.Value()
-		val2 := b.MapIndex(iter.Key())
-		if !val1.IsValid() || !val2.IsValid() || !deep(val1, val2, differ) {
+
+	for _, keyA := range a.MapKeys() {
+		valA := a.MapIndex(keyA)
+		valB := b.MapIndex(keyA)
+		if !valB.IsValid() {
+			return false // missing key in b
+		}
+		if !deep(valA, valB, differ) {
 			return false
 		}
 	}

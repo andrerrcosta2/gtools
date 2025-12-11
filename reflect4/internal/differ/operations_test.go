@@ -3,6 +3,11 @@
 package differ
 
 import (
+	"reflect"
+	"strings"
+	"testing"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
@@ -16,10 +21,6 @@ import (
 	"github.com/andrerrcosta2/gtools/reflect4/internal/standards"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
-	"reflect"
-	"strings"
-	"testing"
-	"unsafe"
 )
 
 // TestDefaultChanDiff tests the method defaultChanDiff
@@ -31,7 +32,7 @@ import (
 //	- Both channels are nil with same signature
 func TestDefaultChanDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instances", func(t *testing.T) {
 		c := make(chan int, 100)
@@ -78,7 +79,7 @@ func TestDefaultChanDiff(t *testing.T) {
 //	- Both channels are nil with the same signature
 func TestDefaultChanDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		var c chan int
@@ -229,7 +230,7 @@ func TestNilChanSignatureDiff(t *testing.T) {
 //	- both are nil with the same signature
 func TestSameChanDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instance", func(t *testing.T) {
 		c := make(chan bool)
@@ -255,7 +256,7 @@ func TestSameChanDiff(t *testing.T) {
 //	- both are nil with the same signature
 func TestSameChanDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		var c chan int
@@ -317,7 +318,7 @@ func TestSameChanDiff_EdgeCases(t *testing.T) {
 //	- have the same signature - even if the implementations are different
 func TestDefaultFuncDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instance", func(t *testing.T) {
 		f := func() string { return "hello world" }
@@ -352,7 +353,7 @@ func TestDefaultFuncDiff(t *testing.T) {
 //	- have the same signature - even if the implementations are different
 func TestDefaultFuncDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		f := ptrs.Nil[functions.Supplier[any]]()
@@ -538,7 +539,7 @@ func TestNilFuncSignatureDiff_EdgeCases(t *testing.T) {
 //	- both are nil and have the same signature - even if the implementations are different
 func TestSameFuncDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instance", func(t *testing.T) {
 		f := func() string { return "hello world" }
@@ -575,7 +576,7 @@ func TestSameFuncDiff(t *testing.T) {
 //	- both are nil and have the same signature - even if the implementations are different
 func TestSameFuncDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		f := ptrs.Nil[functions.Supplier[any]]()
@@ -627,7 +628,7 @@ func TestSameFuncDiff_EdgeCases(t *testing.T) {
 //	- all its elements are equals
 func TestDifferArrays(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same signature", func(t *testing.T) {
 		m := [1]int{1}
@@ -689,7 +690,7 @@ func TestDifferInt(t *testing.T) {
 //	A: both interface types and implementations are equals
 func TestDifferInterfaces(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same", func(t *testing.T) {
 		var iface interf.DataCalc[models.Float] = models.FloatAsValue(16)
@@ -738,7 +739,7 @@ func TestDifferInterfaces(t *testing.T) {
 //	A: both interface types and implementations are equals
 func TestDifferInterfaces_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil", func(t *testing.T) {
 		x := generics.Zero[interf.OneMethod]()
@@ -813,7 +814,7 @@ func TestDifferPrimitives(t *testing.T) {
 //	C: both types have the same signature
 func TestDefaultMapDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instances", func(t *testing.T) {
 		x := make(map[string]string)
@@ -870,7 +871,7 @@ func TestDefaultMapDiff(t *testing.T) {
 //	C: both types have the same signature
 func TestDefaultMapDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		var x map[string]string
@@ -919,7 +920,7 @@ func TestDefaultMapDiff_EdgeCases(t *testing.T) {
 //	C: both types have the same signature
 func TestSerializableMapDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instances", func(t *testing.T) {
 		x := make(map[string]string)
@@ -976,7 +977,7 @@ func TestSerializableMapDiff(t *testing.T) {
 //	C: both types have the same signature
 func TestSerializableMapDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
 		var x map[string]string
@@ -1040,7 +1041,7 @@ func TestSerializableMapDiff_EdgeCases(t *testing.T) {
 //	B: their elements are equals;
 func TestNotNilMapDiffer(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same instances", func(t *testing.T) {
 		x := make(map[string]string)
@@ -1108,7 +1109,7 @@ func TestNotNilMapDiffer_EdgeCases(t *testing.T) {
 //	C: both ptrs have the same type
 func TestDefaultPtrDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("same ptrs", func(t *testing.T) {
 		x := ptrs.New(10)
@@ -1155,7 +1156,7 @@ func TestDefaultPtrDiff(t *testing.T) {
 //	C: both ptrs have the same type
 func TestDefaultPtrDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("nil pointer, same type", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.Nil[int]())
@@ -1201,7 +1202,7 @@ func TestDefaultPtrDiff_EdgeCases(t *testing.T) {
 //	2. If the pointer is nil this test must return an error
 func TestPtrElemDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 	t.Run("same ptrs", func(t *testing.T) {
 		x := ptrs.New(10)
 		a := reflect.ValueOf(x)
@@ -1245,7 +1246,7 @@ func TestPtrElemDiff(t *testing.T) {
 //	receives nil elements
 func TestPtrElemDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("nil pointer, same type", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.Nil[int]())
@@ -1296,7 +1297,7 @@ func TestPtrElemDiff_EdgeCases(t *testing.T) {
 //	B: both ptrs have the same type
 func TestSamePtrDiff(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 	t.Run("same ptrs", func(t *testing.T) {
 		x := ptrs.New(10)
 		a := reflect.ValueOf(x)
@@ -1341,7 +1342,7 @@ func TestSamePtrDiff(t *testing.T) {
 //	B: both ptrs have the same type
 func TestSamePtrDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	strat := defaultStrat()
+	strat := DefaultStrat()
 
 	t.Run("nil pointer, same type", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.Nil[int]())
@@ -1389,7 +1390,7 @@ func TestSamePtrDiff_EdgeCases(t *testing.T) {
 func TestDifferStrings_Default(t *testing.T) {
 	before, _ := standards.DifferStartIndex, standards.DifferMaxSize
 	var zero indent.Tab
-	strat := defaultStrat()
+	strat := DefaultStrat()
 	t.Run("equals strings", func(t *testing.T) {
 		a := "lorem ipsum"
 		b := "lorem ipsum"
@@ -1722,7 +1723,7 @@ func TestDifferStrings_IgnoreCase_FormatOpts(t *testing.T) {
 //	C: Both slices are nil and have the same type.
 func TestDefaultSliceDiff(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same slice", func(t *testing.T) {
 		x := []int{1, 2, 3}
@@ -1785,7 +1786,7 @@ func TestDefaultSliceDiff(t *testing.T) {
 //	C: Both slices are nil and have the same type.
 func TestDefaultSliceDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same type, nil", func(t *testing.T) {
 		var x []int = nil
@@ -1852,7 +1853,7 @@ func TestDefaultSliceDiff_EdgeCases(t *testing.T) {
 //	C: Both slices are nil and have the same type.
 func TestDefaultNonNilSliceDiff(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same slice", func(t *testing.T) {
 		x := []int{1, 2, 3}
@@ -1907,7 +1908,7 @@ func TestDefaultNonNilSliceDiff(t *testing.T) {
 // Tests the method sliceElemDiff
 func TestSliceElemDiff(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same slice", func(t *testing.T) {
 		x := []int{1, 2, 3}
@@ -1952,7 +1953,7 @@ func TestSliceElemDiff(t *testing.T) {
 //	C: Both slices are nil or empty and have the same type.
 func TestSerializableSliceDiff(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same slice", func(t *testing.T) {
 		x := []int{1, 2, 3}
@@ -2015,7 +2016,7 @@ func TestSerializableSliceDiff(t *testing.T) {
 //	C: Both slices are nil or empty and have the same type.
 func TestSerializableSliceDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same type, nil", func(t *testing.T) {
 		var x []int = nil
@@ -2079,7 +2080,7 @@ func TestSerializableSliceDiff_EdgeCases(t *testing.T) {
 //	B: Both slices have the same type, length, and backing array pointer
 func TestSerializableNotNilSliceDiff(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same slice", func(t *testing.T) {
 		x := []int{1, 2, 3}
@@ -2139,7 +2140,7 @@ func TestSerializableNotNilSliceDiff(t *testing.T) {
 //	A: both struct fields are equals;
 func TestDiffStructs_Default(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same type, same fields", func(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
@@ -2152,7 +2153,8 @@ func TestDiffStructs_Default(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		b := reflect.ValueOf(models.TwoDataAsValue("abc", 12))
 		diff := diffStructs(zero, a, b, s)
-		expMsg := differs.Append(zero, differs.StructFields(zero, "Age"),
+		name := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.TwoData"
+		expMsg := differs.Append(zero, differs.StructFields(zero, name, "Age"),
 			differs.Values(zero.Inc(), sprints.Typed("int", 123), sprints.Typed("int", 12)))
 		assertNotEquals(t, diff, expMsg, "")
 	})
@@ -2171,7 +2173,7 @@ func TestDifferUint(t *testing.T) {
 	runPrimTests(t, uintSeed, differUint)
 }
 
-// TestDifferUnsafePointers tests the method differUnsafePointers
+// TestDifferUnsafePointers tests the method defaultUnsafePtrs
 //
 //	this test must assert:
 //	1. two unsafe ptrs are equals if:
@@ -2179,25 +2181,25 @@ func TestDifferUint(t *testing.T) {
 //	B: both ptrs are nil
 func TestDifferUnsafePointers(t *testing.T) {
 	var zero indent.Branch
-	s := defaultStrat()
+	s := DefaultStrat()
 
 	t.Run("same address", func(t *testing.T) {
 		ptr := ptrs.Unsafe(10)
-		diff := differUnsafePointers(zero, reflect.ValueOf(ptr), reflect.ValueOf(ptr), s)
+		diff := defaultUnsafePtrs(zero, reflect.ValueOf(ptr), reflect.ValueOf(ptr), s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("both nil", func(t *testing.T) {
 		var p1 unsafe.Pointer
 		var p2 unsafe.Pointer
-		diff := differUnsafePointers(zero, reflect.ValueOf(p1), reflect.ValueOf(p2), s)
+		diff := defaultUnsafePtrs(zero, reflect.ValueOf(p1), reflect.ValueOf(p2), s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different addresses", func(t *testing.T) {
 		ptr1 := ptrs.Unsafe(10)
 		ptr2 := ptrs.Unsafe(10)
-		diff := differUnsafePointers(zero, reflect.ValueOf(ptr1), reflect.ValueOf(ptr2), s)
+		diff := defaultUnsafePtrs(zero, reflect.ValueOf(ptr1), reflect.ValueOf(ptr2), s)
 		expMsg := differs.UnsafePointersAddr(zero,
 			sprints.Uintptrf(uintptr(ptr1)),
 			sprints.Uintptrf(uintptr(ptr2)),
@@ -2209,13 +2211,13 @@ func TestDifferUnsafePointers(t *testing.T) {
 		null := reflect.ValueOf(generics.Zero[unsafe.Pointer]())
 		nonNull := reflect.ValueOf(ptrs.Unsafe(20))
 		t.Run("nil received", func(t *testing.T) {
-			diff := differUnsafePointers(zero, null, nonNull, s)
+			diff := defaultUnsafePtrs(zero, null, nonNull, s)
 			expMsg := differs.NilReceived(zero, "unsafe.pointer",
 				sprints.Uintptrf(nonNull.Pointer()))
 			assertNotEquals(t, diff, expMsg, "")
 		})
 		t.Run("nil expected", func(t *testing.T) {
-			diff := differUnsafePointers(zero, nonNull, null, s)
+			diff := defaultUnsafePtrs(zero, nonNull, null, s)
 			expMsg := differs.NilExpected(zero, "unsafe.pointer",
 				sprints.Uintptrf(nonNull.Pointer()))
 			assertNotEquals(t, diff, expMsg, "")

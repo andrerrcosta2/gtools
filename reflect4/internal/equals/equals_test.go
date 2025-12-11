@@ -3,14 +3,21 @@
 package equals
 
 import (
-	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
-	"github.com/andrerrcosta2/gtools/reflect4/internal"
-	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
 	"math"
 	"reflect"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
+	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
+	"github.com/andrerrcosta2/gtools/reflect4/internal"
+	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
 )
+
+func TestSimple(t *testing.T) {
+	a, b := reflect.ValueOf(models.Simple{}), reflect.ValueOf(models.Simple{})
+	assertlite.True(t, deep(a, b, DefaultStrat()), "expected equals == true but got false")
+}
 
 type (
 	MyByte byte

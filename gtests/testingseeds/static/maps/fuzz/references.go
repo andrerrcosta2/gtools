@@ -3,9 +3,10 @@
 package fuzz
 
 import (
-	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"slices"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/seeders/random"
 )
 
 func referencesSet() []interface{} {

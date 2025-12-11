@@ -3,20 +3,22 @@
 package sprint
 
 import (
+	"reflect"
+	"regexp"
+	"testing"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
 	"github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
+	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/_testdata"
-	"reflect"
-	"regexp"
-	"testing"
 )
 
 var (
@@ -27,8 +29,6 @@ var (
 // TestValue_BasicTypes tests sprinting of basic types
 func TestValue_BasicTypes(t *testing.T) {
 	zero := indent.Zero()
-	strat := defaultStrat()
-
 	tests := []struct {
 		name     string
 		input    reflect.Value
@@ -88,9 +88,9 @@ func TestValue_BasicTypes(t *testing.T) {
 			name:  "Test array of strings",
 			input: reflect.ValueOf([3]string{"a", "b", "c"}),
 			expected: sprints.ClosedArray(zero, "string", 3,
-				sprints.TypedString("a"),
-				sprints.TypedString("b"),
-				sprints.TypedString("c"),
+				zero.Inc().Sprint(sprints.TypedString("a")),
+				zero.Inc().Sprint(sprints.TypedString("b")),
+				zero.Inc().Sprint(sprints.TypedString("c")),
 			),
 		},
 
@@ -168,7 +168,7 @@ func TestValue_BasicTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result := Of(zero, tc.input, strat)
+			result := Of[internal.Option](zero, tc.input)
 			compareMessages(tt, result, tc.expected)
 			tt.StackLn()
 		})
@@ -177,7 +177,6 @@ func TestValue_BasicTypes(t *testing.T) {
 
 func TestValue_ComplexTypes(t *testing.T) {
 	zero := indent.Zero()
-	strat := defaultStrat()
 	tests := []struct {
 		name     string
 		input    reflect.Value
@@ -208,11 +207,11 @@ func TestValue_ComplexTypes(t *testing.T) {
 				sprints.KeyValue(zero, "Name", "string"),
 				sprints.KeyValue(zero, "Age", "int"),
 				sprints.KeyValue(zero, "Child", sprints.Anonymous(zero, "struct",
-					sprints.KeyValue(zero, "Name", "string"),
-					sprints.KeyValue(zero, "Age", "int")))),
-				sprints.Field(zero, "Name", sprints.TypedString("Alice")),
-				sprints.Field(zero, "Age", sprints.Typed("int", 30)),
-				sprints.Field(zero, "Child", sprints.BClosedobj(zero.Inc(), sprints.Anonymous(zero, "struct",
+					sprints.KeyValue(zero, "Name", "string"), // tab doesn't matter here (no close)
+					sprints.KeyValue(zero, "Age", "int")))),  // tab doesn't matter here (no close)
+				sprints.Field(zero, "Name", sprints.TypedString("Alice")), // tab doesn't matter here (no close)
+				sprints.Field(zero, "Age", sprints.Typed("int", 30)),      // tab doesn't matter here
+				sprints.Field(zero, "Child", sprints.BClosedobj(zero, sprints.Anonymous(zero, "struct",
 					sprints.KeyValue(zero, "Name", "string"),
 					sprints.KeyValue(zero, "Age", "int")),
 					sprints.Field(zero, "Name", sprints.TypedString("Bob")),
@@ -229,13 +228,13 @@ func TestValue_ComplexTypes(t *testing.T) {
 				{"three": 3, "four": 4},
 			}),
 			expected: sprints.ClosedSlice(zero, "map[string]int",
-				sprints.ClosedMap(zero, "string", "int",
-					sprints.Field(zero, sprints.TypedString("one"), sprints.TypedDigit("int", 1)),
-					sprints.Field(zero, sprints.TypedString("two"), sprints.TypedDigit("int", 2)),
+				sprints.ClosedMap(zero.Inc(), "string", "int",
+					sprints.Field(zero.Inc(), sprints.TypedString("one"), sprints.TypedDigit("int", 1)),
+					sprints.Field(zero.Inc(), sprints.TypedString("two"), sprints.TypedDigit("int", 2)),
 				),
-				sprints.ClosedMap(zero, "string", "int",
-					sprints.Field(zero, sprints.TypedString("four"), sprints.TypedDigit("int", 4)),
-					sprints.Field(zero, sprints.TypedString("three"), sprints.TypedDigit("int", 3)),
+				sprints.ClosedMap(zero.Inc(), "string", "int",
+					sprints.Field(zero.Inc(), sprints.TypedString("four"), sprints.TypedDigit("int", 4)),
+					sprints.Field(zero.Inc(), sprints.TypedString("three"), sprints.TypedDigit("int", 3)),
 				),
 			),
 		},
@@ -249,14 +248,14 @@ func TestValue_ComplexTypes(t *testing.T) {
 			}),
 			expected: sprints.ClosedMap(zero, "string", "[]int",
 				sprints.Field(zero, sprints.TypedString("even"),
-					sprints.ClosedSlice(zero, "int",
+					sprints.ClosedSlice(zero.Inc(), "int",
 						sprints.TypedDigit("int", 2),
 						sprints.TypedDigit("int", 4),
 						sprints.TypedDigit("int", 6),
 					),
 				),
 				sprints.Field(zero, sprints.TypedString("odd"),
-					sprints.ClosedSlice(zero, "int",
+					sprints.ClosedSlice(zero.Inc(), "int",
 						sprints.TypedDigit("int", 1),
 						sprints.TypedDigit("int", 3),
 						sprints.TypedDigit("int", 5),
@@ -278,13 +277,13 @@ func TestValue_ComplexTypes(t *testing.T) {
 			expected: sprints.ClosedArray(zero, sprints.Anonymous(zero, "struct",
 				sprints.KeyValue(zero, "Name", "string"),
 				sprints.KeyValue(zero, "Age", "int")), 2,
-				sprints.BClosedobj(zero, sprints.Anonymous(zero, "struct",
+				sprints.BClosedobj(zero.Inc(), sprints.Anonymous(zero, "struct",
 					sprints.KeyValue(zero, "Name", "string"),
 					sprints.KeyValue(zero, "Age", "int")),
 					sprints.Field(zero, "Name", sprints.TypedString("Alice")),
 					sprints.Field(zero, "Age", sprints.Typed("int", 30)),
 				),
-				sprints.BClosedobj(zero, sprints.Anonymous(zero, "struct",
+				sprints.BClosedobj(zero.Inc(), sprints.Anonymous(zero, "struct",
 					sprints.KeyValue(zero, "Name", "string"),
 					sprints.KeyValue(zero, "Age", "int")),
 					sprints.Field(zero, "Name", sprints.TypedString("Bob")),
@@ -351,7 +350,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result := Of(zero, tc.input, strat)
+			result := Of[internal.Option](zero, tc.input)
 			compareMessages(tt, result, tc.expected)
 			tt.StackLn()
 		})
@@ -360,7 +359,6 @@ func TestValue_ComplexTypes(t *testing.T) {
 
 func TestValue_EdgeTypes(t *testing.T) {
 	zero := indent.Zero()
-	strat := defaultStrat()
 	tests := []struct {
 		name     string
 		input    reflect.Value
@@ -379,21 +377,21 @@ func TestValue_EdgeTypes(t *testing.T) {
 		{
 			name:  "Test Self Referenced Next",
 			input: reflect.ValueOf(_testdata.SelfReferencedNode),
-			expected: "*" + sprints.BClosedobj(zero, "_testdata.Node",
-				sprints.Field(zero, "Of", sprints.Typed("int", 1)),
-				sprints.Field(zero, "Next", sprints.Ptr(zero, sprints.CyclicRef(zero, "_testdata.Node",
+			expected: "*" + sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Node",
+				sprints.Field(zero, "Value", sprints.Typed("int", 1)),
+				sprints.Field(zero, "Next", sprints.Ptr(zero, sprints.CyclicRef(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Node",
 					sprints.Addr(_testdata.SelfReferencedNode)))),
 			),
 		},
 		{
 			name:     "Test named int",
 			input:    reflect.ValueOf(_testdata.NamedInt),
-			expected: sprints.Typed("_testdata.MyInt", 42),
+			expected: sprints.Typed("github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.MyInt", 42),
 		},
 		{
 			name:  "Test unexported field",
 			input: reflect.ValueOf(_testdata.UnexportedField),
-			expected: sprints.BClosedobj(zero, "_testdata.Person",
+			expected: sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Person",
 				sprints.Field(zero, "Name", sprints.TypedString("Alice")),
 				sprints.Field(zero, "age", sprints.Typed("int", 30)),
 			),
@@ -415,8 +413,8 @@ func TestValue_EdgeTypes(t *testing.T) {
 		},
 		{
 			name:     "Test unsafe pointer",
-			input:    reflect.ValueOf(ptrs.Unsafe(models.SimpleZeroInst)),
-			expected: zero.Sprintf("unsafe.pointers<%s>", sprints.Addr(models.SimpleZeroInst)),
+			input:    reflect.ValueOf(unsafe.Pointer(models.SimpleZeroInst)),
+			expected: sprints.UnsafePointer(zero, unsafe.Pointer(models.SimpleZeroInst)),
 		},
 	}
 
@@ -424,26 +422,32 @@ func TestValue_EdgeTypes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 			tt.StackTitle(tc.name, tc.expected)
-			result := Of(zero, tc.input, strat)
+			result := Of[internal.Option](zero, tc.input)
 			compareMessages(tt, result, tc.expected)
 			tt.StackLn()
 		})
 	}
 }
 
-func buildExpectedTree(base indent.Tab, depth int) string {
+func buildExpectedTree(base indent.Indentor, depth int) string {
 	if depth == 0 {
-		return sprints.NestedBClosedobj(base, "_testdata.Tree",
-			sprints.Field(base.Inc(), "Of", sprints.Typed("int", 0)),
-			sprints.Field(base.Inc(), "Left", sprints.Ptr(base, sprints.NilType(base, "_testdata.Tree"))),
-			sprints.Field(base.Inc(), "Right", sprints.Ptr(base, sprints.NilType(base, "_testdata.Tree"))),
+		return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+			sprints.Field(base.Inc(), "Value", sprints.Typed("int", 0)),
+			// reflect can't find the type package of nil elements
+			// this is golang
+			sprints.Field(base.Inc(), "Left", sprints.Ptr(base, sprints.NilType(base,
+				"_testdata.Tree"))),
+			sprints.Field(base.Inc(), "Right", sprints.Ptr(base, sprints.NilType(base,
+				"_testdata.Tree"))),
 		)
 	}
 
-	return sprints.NestedBClosedobj(base, "_testdata.Tree",
-		sprints.Field(base.Inc(), "Of", sprints.Typed("int", depth)),
+	return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+		sprints.Field(base.Inc(), "Value", sprints.Typed("int", depth)),
 		sprints.Field(base.Inc(), "Left", sprints.Ptr(base, buildExpectedTree(base.Inc(), depth-1))),
-		sprints.Field(base.Inc(), "Right", sprints.Ptr(base, sprints.CyclicRef(indent.Zero(), "_testdata.Tree", "0x00000000"))),
+		sprints.Field(base.Inc(), "Right", sprints.Ptr(base,
+			sprints.CyclicRef(indent.Zero(), "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+				"0x00000000"))),
 	)
 }
 

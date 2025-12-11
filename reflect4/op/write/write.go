@@ -9,5 +9,6 @@ const (
 	SkipUnexportedFields op.Write = 1 << iota
 	SkipChannels
 	SkipFunctions
-	SkipUnaddr
+	SkipPtr
+	SkipUnsafePtr
 )

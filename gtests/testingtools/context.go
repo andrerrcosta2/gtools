@@ -4,9 +4,10 @@ package testingtools
 
 import (
 	"context"
+	"sync"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/conc/syncs"
-	"sync"
 )
 
 type asyncContextToolsLite struct {

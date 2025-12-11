@@ -37,7 +37,7 @@ func Cub[T numbers.Real](a, b, c, d T, n int) T {
 	return a + b*T(n) + c*T(n*n) + d*T(n*n*n)
 }
 
-// Pow is a helper function to compute power for the polynomial evaluation.
+// Pow is a std function to compute power for the polynomial evaluation.
 func Pow(base, exp int) int {
 	result := 1
 	for i := 0; i < exp; i++ {

@@ -4,7 +4,7 @@ package op
 
 type (
 	// Clone is a bitmask type used to configure the clone on reflection operations
-	Clone uint8
+	Clone uint16
 	// Compare is a bitmask type used to configure the conditions of equality on reflection operations.
 	Compare uint16
 	// Read is a bitmask type used to configure the behavior of reflect read operations.

@@ -3,24 +3,27 @@
 package sprint
 
 import (
+	"reflect"
+	"sort"
+	"strings"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
-	"reflect"
-	"strings"
-	"unsafe"
 )
 
 // defaultArray extracts the sprint from an array
-func defaultArray(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultArray(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
 	sb := strings.Builder{}
 	if v.Len() == 0 {
 		return sprints.EmptyIterable(tab, name)
 	}
+
 	sb.WriteString(tab.Sprint(name) + "[")
 
 	for i := 0; i < v.Len(); i++ {
@@ -34,7 +37,7 @@ func defaultArray(tab indent.Tab, v reflect.Value, s *Strategy) string {
 }
 
 // defaultChan extracts the sprint from a channel
-func defaultChan(tab indent.Tab, v reflect.Value) string {
+func defaultChan(tab indent.Indentor, v reflect.Value) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
 	if v.IsNil() {
@@ -43,27 +46,56 @@ func defaultChan(tab indent.Tab, v reflect.Value) string {
 	return tab.Sprint(name)
 }
 
-// defaultField extracts the sprint from a field
-func defaultField(tab indent.Tab, value reflect.Value, s *Strategy) string {
-	// CanInterface() means:
-	// - Calling .interfaces() is safe (won't panic).
-	// - The value is exported.
-	// - If value is a pointer, calling .interfaces() gives you that pointer wrapped inside interface{}.
-	// - If value is a non-pointer value, .interfaces() gives you a clone of that value inside interface{}.
-	if value.CanInterface() || value.CanAddr() {
-		return sprintOf(tab, value, s)
+func defaultFields(tab indent.Indentor, v reflect.Value, s *Strategy) string {
+	typ := v.Type()
+	sb := strings.Builder{}
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		name := typ.Field(i).Name
+
+		if field.IsZero() && values.CanNil(field) {
+			sb.WriteString(sprints.Lfield(tab, name, sprints.NilType(indent.Zero(),
+				types.ValidValueName(field.Type()))) + ",")
+			continue
+		}
+
+		//if !field.CanInterface() {
+		//	// since only fields can be unexported
+		//	// here is the only method we need to use unsafe operations
+		//	if !field.IsZero() {
+		//		field = values.UnsafeForceOfUnaddr(field)
+		//	}
+		//}
+		sb.WriteString(sprints.Lfield(tab, name, sprintOf(tab, field, s)) + ",")
+	}
+	return sb.String()
+}
+
+func exportedFields(tab indent.Indentor, v reflect.Value, s *Strategy) string {
+	typ := v.Type()
+	var sb strings.Builder
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		name := typ.Field(i).Name
+
+		if field.IsZero() && values.CanNil(field) {
+			sb.WriteString(sprints.Lfield(tab, name, sprints.NilType(indent.Zero(), name)) + ",")
+			continue
+		}
+
+		if !typ.Field(i).IsExported() {
+			continue
+		}
+		val := sprintOf(tab, v.Field(i), s)
+		sb.WriteString(sprints.Lfield(tab, name, val) + ",")
 	}
 
-	// If neither CanInterface() nor CanAddr() is true, the value:
-	// - Is unexported (hence unsafe to use .interfaces()).
-	// - Is not directly addressable.
-	// - Is not directly addressable.
-	// - We must use unsafe.pointers and reflect.NewAt() to access it.
-	return sprintOf(tab.Inc(), values.UnsafeOfUnaddr(value), s)
+	return sb.String()
 }
 
 // defaultFunc extracts the sprint from a function
-func defaultFunc(tab indent.Tab, v reflect.Value) string {
+func defaultFunc(tab indent.Indentor, v reflect.Value) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
 	if v.IsNil() {
@@ -72,7 +104,7 @@ func defaultFunc(tab indent.Tab, v reflect.Value) string {
 	return tab.Sprint(name)
 }
 
-func defaultInterface(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultInterface(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
 	if v.IsNil() {
@@ -83,10 +115,11 @@ func defaultInterface(tab indent.Tab, v reflect.Value, s *Strategy) string {
 }
 
 // defaultMap extracts the sprint from a map
-func defaultMap(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultMap(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
-	if v.IsNil() {
+
+	if v.IsNil() || v.IsZero() {
 		return sprints.NilType(tab, name)
 	}
 	spr, ok := s.Check(v)
@@ -108,21 +141,34 @@ func defaultMap(tab indent.Tab, v reflect.Value, s *Strategy) string {
 
 	iter := v.MapRange()
 	sb.WriteString(tab.Sprint(name) + "{")
+	keys := make([]reflect.Value, 0, v.Len())
+
+	// order standard
 	for iter.Next() {
-		// Get the v for each sorted key
-		val := sprintOf(indent.Zero(), iter.Value(), s)
-		key := sprintOf(indent.Zero(), iter.Key(), s)
-		sb.WriteString("\n" + sprints.MapEntry(tab.Inc(), key, val))
+		keys = append(keys, iter.Key())
+	}
+
+	sort.Slice(keys, func(i, j int) bool {
+		ki := sprintOf(tab.Inc(), keys[i], s)
+		kj := sprintOf(tab.Inc(), keys[j], s)
+		return ki < kj
+	})
+
+	for _, k := range keys {
+		next := tab.Inc()
+		key := next.Trim(sprintOf(next, k, s))
+		val := next.Trim(sprintOf(next, v.MapIndex(k), s))
+
+		sb.WriteString("\n" + sprints.MapEntry(next, key, val))
 	}
 	sb.WriteString("\n" + tab.Sprint("}"))
 	return sb.String()
 }
 
-func defaultPointer(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultPointer(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
 	if v.IsNil() {
-		return sprints.NilType(tab, name)
+		return sprints.NilType(tab, "*"+types.ValidValueName(typ.Elem()))
 	}
 	spr, ok := s.Check(v)
 	if ok {
@@ -132,13 +178,13 @@ func defaultPointer(tab indent.Tab, v reflect.Value, s *Strategy) string {
 	// The correct approach is to mark it as cycle early and replace it on the same level
 	// before the return. Because it isn't a cycle just because it will be printed
 	// again later.
-	s.Mark(v, sprints.CyclicRef(tab, name, sprints.Uintptrf(addr)))
-	val := sprintOf(tab, v.Elem(), s)
+	s.Mark(v, sprints.CyclicRef(tab, "*"+types.ValidValueName(typ.Elem()), sprints.Uintptrf(addr)))
+	val := tab.Trim(sprintOf(tab, v.Elem(), s))
 	return sprints.PointerElem(tab, val)
 }
 
 // sprintPrimitive extracts a sprint from a primitive
-func sprintPrimitive(tab indent.Tab, v reflect.Value) string {
+func sprintPrimitive(tab indent.Indentor, v reflect.Value) string {
 	name := types.ValidValueName(v.Type())
 	switch v.Kind() {
 	case reflect.Bool:
@@ -159,7 +205,7 @@ func sprintPrimitive(tab indent.Tab, v reflect.Value) string {
 }
 
 // defaultSlice extracts the sprint from a slice
-func defaultSlice(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultSlice(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	name := types.ValidValueName(v.Type())
 	if v.IsNil() {
 		return sprints.NilType(tab, name)
@@ -185,7 +231,7 @@ func defaultSlice(tab indent.Tab, v reflect.Value, s *Strategy) string {
 }
 
 // defaultStruct extracts the sprint from a struct
-func defaultStruct(tab indent.Tab, v reflect.Value, s *Strategy) string {
+func defaultStruct(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
 	name := types.ValidValueName(typ)
 	if v.NumField() == 0 {
@@ -194,24 +240,28 @@ func defaultStruct(tab indent.Tab, v reflect.Value, s *Strategy) string {
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprint(fmx.SBold(name) + "{"))
 
-	if !v.CanAddr() {
-		v = values.UnsafeOfUnaddr(v)
-	}
-
-	for i := 0; i < v.NumField(); i++ {
-		val := defaultField(tab.Inc(), v.Field(i), s)
-		fieldName := typ.Field(i).Name
-		sb.WriteString(sprints.Ltfield(tab, fieldName, val) + ",")
-	}
-
+	//if !v.CanAddr() {
+	//	v = values.ForceOfUnaddr(v)
+	//}
+	sb.WriteString(s.Fields(tab.Inc(), v, s))
 	sb.WriteString("\n" + tab.Sprint("}"))
 	return sb.String()
 }
 
-func defaultUnsafe(tab indent.Tab, v reflect.Value) string {
+func defaultUnsafe(tab indent.Indentor, v reflect.Value) string {
 	if v.IsNil() {
 		return sprints.NilType(tab, "unsafe.pointers")
 	}
 	ptrVal := v.Interface().(unsafe.Pointer)
 	return sprints.UnsafePointer(tab, ptrVal)
+}
+
+func skipDeep(tab indent.Indentor, v reflect.Value, s *Strategy) string {
+	name := types.ValidValueName(v.Type())
+	return sprints.Errorf(tab, "<%v>(skipped)", name)
+}
+
+func skipShallow(tab indent.Indentor, v reflect.Value) string {
+	name := types.ValidValueName(v.Type())
+	return sprints.Errorf(tab, "<%v>(skipped)", name)
 }

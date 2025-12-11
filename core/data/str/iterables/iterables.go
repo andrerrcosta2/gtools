@@ -3,13 +3,14 @@
 package iterables
 
 import (
+	"math/rand"
+	"sort"
+	"sync"
+
 	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"math/rand"
-	"sort"
-	"sync"
 )
 
 // OfSlice creates a new Slice from a given variadic list of values.

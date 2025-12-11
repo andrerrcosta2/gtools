@@ -3,21 +3,24 @@
 package indent
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"math"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/format/printer"
 )
 
 type Indentor interface {
 	Dec() Indentor
 	Inc() Indentor
 	Indent(inc int, s ...any) string
+	Indentf(inc int, format string, args ...any) string
 	Plus(int) Indentor
 	Sprint(str ...interface{}) string
 	Sprintf(str string, args ...interface{}) string
 	Sprintln(str ...interface{}) string
 	Sprintlnf(str string, args ...interface{}) string
 	String() string
+	Trim(str string) string
 	Value() uint16
 }
 
@@ -106,6 +109,10 @@ func (t Tab) String() string {
 	return strings.Repeat("\t", int(t))
 }
 
+func (t Tab) Trim(str string) string {
+	return strings.TrimPrefix(str, t.String())
+}
+
 func (t Tab) Value() uint16 {
 	return uint16(t)
 }
@@ -187,6 +194,10 @@ func (t Branch) String() string {
 		return ""
 	}
 	return strings.Repeat("\t", int(t-1)) + "└── "
+}
+
+func (t Branch) Trim(str string) string {
+	return strings.TrimPrefix(str, t.String())
 }
 
 func (t Branch) Value() uint16 {

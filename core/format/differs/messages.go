@@ -3,10 +3,11 @@
 package differs
 
 import (
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"strings"
 )
 
 // Message sprints as:
@@ -430,7 +431,7 @@ const NilPointersSignMismatchFmt = "both pointers are nil but their signatures m
 //	   → Received: %s
 //	   → Expected: %s'
 func NilReceived(tab indent.Indentor, kind, typ string) string {
-	return tab.Sprintf(NilReceivedFmt, kind, recExp(tab, typ, "<nil>"))
+	return tab.Sprintf(NilReceivedFmt, kind, recExp(tab, "<nil>", typ))
 }
 
 const NilReceivedFmt = "The received '%s' is nil:%s"
@@ -460,6 +461,17 @@ func PointersAddrMismatch(tab indent.Indentor, a, b string) string {
 }
 
 const PointersAddrMismatchFmt = "pointer addresses mismatch:%s"
+
+// SizesOf sprint as:
+//
+//	'<name>' sizes mismatch:
+//	→ Received: %s
+//	→ Expected: %s'
+func SizesOf(tab indent.Indentor, name, a, b string) string {
+	return tab.Sprintf(SizesOfFmt, name, recExp(tab, a, b))
+}
+
+const SizesOfFmt = "'%s' sizes mismatch:%s"
 
 func Space(tab indent.Indentor, amount int) string {
 	return tab.Sprint(strings.Repeat("␣", amount))
@@ -508,12 +520,12 @@ const StructTypesMismatchFmt = "struct types mismatch:%s"
 
 // StructFields sprint as:
 //
-//	'struct field '%s' mismatch:
-func StructFields(tab indent.Indentor, field string) string {
-	return tab.Sprintf(StructFieldsFmt, field)
+//	'struct '%s' field '%s' mismatch:
+func StructFields(tab indent.Indentor, name, field string) string {
+	return tab.Sprintf(StructFieldsFmt, name, field)
 }
 
-const StructFieldsFmt = "struct field '%s' mismatch:"
+const StructFieldsFmt = "struct '%s' field '%s' mismatch:"
 
 // TypesMismatch returns a types mismatch Message
 func TypesMismatch(tab indent.Indentor, a, b string) string {
@@ -550,6 +562,17 @@ func Values(tab indent.Indentor, a, b string) string {
 }
 
 const ValuesFmt = "values mismatch:%s"
+
+// ValuesOf sprint as:
+//
+//	'<name>' values mismatch:
+//	→ Received: %s
+//	→ Expected: %s'
+func ValuesOf(tab indent.Indentor, name, a, b string) string {
+	return tab.Sprintf(ValuesOfFmt, name, recExp(tab, a, b))
+}
+
+const ValuesOfFmt = "'%s' values mismatch:%s"
 
 func clean(s string) string {
 	return strings.TrimRight(s, "\t\n ")

@@ -3,63 +3,64 @@
 package indent
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"strings"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/format/printer"
 )
 
 func TestSmarkf(t *testing.T) {
 	tests := []struct {
 		name     string
-		tab      Tab
+		tab      Branch
 		format   string
 		args     []any
 		expected string
 	}{
 		{
 			name:     "No indentation with Smarkf",
-			tab:      Zero(),
+			tab:      Branch(0),
 			format:   "Hello, %s!",
 			args:     []any{"World"},
 			expected: "Hello, World!", // Root level: no marker
 		},
 		{
 			name:     "One level of indentation with Smarkf",
-			tab:      Zero().Inc(),
+			tab:      Branch(Zero().Inc().Value()),
 			format:   "Value: %d",
 			args:     []any{42},
 			expected: "└── Value: 42", // First child of the root
 		},
 		{
 			name:     "Two levels of indentation with Smarkf",
-			tab:      Zero().Inc().Inc(),
+			tab:      Branch(Zero().Inc().Inc().Value()),
 			format:   "Key: %s, Value: %v",
 			args:     []any{"example", true},
 			expected: "\t└── Key: example, Value: true", // Second level
 		},
 		{
 			name:     "Multi-line string with Smarkf",
-			tab:      Zero().Inc(),
+			tab:      Branch(Zero().Inc().Value()),
 			format:   "Line 1\n\t\t%s",
 			args:     []any{"test"},
 			expected: "└── Line 1\n\t└── test", // Multi-line with tree structure
 		},
 		{
 			name:   "Nested levels with Smarkf",
-			tab:    Zero(),
+			tab:    Branch(0),
 			format: "Outer:\n\t%s\n\t\tInner:\n\t\t\t%s\n\t\t\t\tValue: %d",
 			args:   []any{"Level 1", "Level 2", 42},
 			expected: `Outer:
-    └── Level 1
-        └── Inner:
-            └── Level 2
-                └── Value: 42`,
+└── Level 1
+	└── Inner:
+		└── Level 2
+			└── Value: 42`,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.tab.Smarkf(tt.format, tt.args...)
+			result := Smarkf(tt.tab, tt.format, tt.args...)
 			if result != tt.expected {
 				t.Errorf("Smarkf(%q, %v) = %q, expected %q", tt.format, tt.args, result, tt.expected)
 				printer.Print(quickDiff(result, tt.expected))
@@ -89,7 +90,7 @@ func TestIndentWithTabs(t *testing.T) {
 		},
 		{
 			name:     "Indent multiple lines with tabs",
-			tab:      Zero().Inc(),
+			tab:      Tab(Zero().Inc().Value()),
 			inc:      1,
 			input:    "Line 1\nLine 2\nLine 3",
 			expected: "\t\tLine 1\n\t\tLine 2\n\t\tLine 3",

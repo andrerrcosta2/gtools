@@ -3,11 +3,12 @@
 package osys
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
-	"github.com/andrerrcosta2/gtools/core/io/fsys"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/core/io/fsys"
 )
 
 const seedDir = "./"
@@ -39,9 +40,9 @@ func TestReadFiles_Success(t *testing.T) {
 	data, err := ReadFiles(paths, 6)
 	if err != nil {
 		if stack, ok := gerrors.AsStackable(err); ok {
-			t.Fatalf("ReadFiles returned an error: %v", stack.Trace())
+			t.Fatalf("ReadFiles returned an error: %v", stack.Error())
 		} else {
-			t.Fatalf("Error should be stackable but is not: %v", err)
+			t.Fatalf("defaultErr should be stackable but is not: %v", err)
 		}
 	}
 
@@ -72,9 +73,9 @@ func TestReadFiles_Error(t *testing.T) {
 	data, err := ReadFiles(paths, 6)
 	if err != nil {
 		if stack, ok := gerrors.AsStackable(err); !ok {
-			t.Fatalf("Error should be stackable but is not: %v", err)
+			t.Fatalf("defaultErr should be stackable but is not: %v", err)
 		} else {
-			t.Logf("Error Stack: %s", stack.Trace())
+			t.Logf("defaultErr Stack: %s", stack.Error())
 		}
 	}
 
@@ -88,9 +89,9 @@ func TestReadFiles_Concurrency(t *testing.T) {
 	files, err := mckGlob(filepath.Join(seedDir, "*.txt"))
 	if err != nil {
 		if stack, ok := gerrors.AsStackable(err); ok {
-			t.Fatalf("failed to list files: %v", stack.Trace())
+			t.Fatalf("failed to list files: %v", stack.Error())
 		} else {
-			t.Fatalf("Error should be stackable but is not: %v", err)
+			t.Fatalf("defaultErr should be stackable but is not: %v", err)
 		}
 	}
 	if len(files) < 3 {
@@ -114,9 +115,9 @@ func TestReadFiles_Concurrency(t *testing.T) {
 	data, err := ReadFiles(paths, 2)
 	if err != nil {
 		if stack, ok := gerrors.AsStackable(err); ok {
-			t.Fatalf("ReadFiles returned an error: %v", stack.Trace())
+			t.Fatalf("ReadFiles returned an error: %v", stack.Error())
 		} else {
-			t.Fatalf("Error should be stackable but is not: %v", err)
+			t.Fatalf("defaultErr should be stackable but is not: %v", err)
 		}
 	}
 

@@ -4,10 +4,11 @@ package differ
 
 import (
 	"errors"
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
-	"reflect"
 )
 
 var (

@@ -13,7 +13,7 @@ import (
 
 // TestSortableOfMap_PutAndGet tests the Put and Get methods of the sortableOfMap
 func TestSortableOfMap_PutAndGet(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
@@ -39,7 +39,7 @@ func TestSortableOfMap_PutAndGet(t *testing.T) {
 
 // TestSortableOfMap_Delete tests the Delete method of the sortableOfMap
 func TestSortableOfMap_Delete(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
@@ -60,7 +60,7 @@ func TestSortableOfMap_Delete(t *testing.T) {
 
 // TestSortableOfMap_Contains tests the Contains method of the sortableOfMap
 func TestSortableOfMap_Contains(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
@@ -82,7 +82,7 @@ func TestSortableOfMap_Contains(t *testing.T) {
 
 // TestSortableOfMap_LenAndClear tests the Len and Clear methods of the sortableOfMap
 func TestSortableOfMap_LenAndClear(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode
@@ -112,7 +112,7 @@ func TestSortableOfMap_LenAndClear(t *testing.T) {
 
 // TestSortableOfMap_Iterator tests the Iterator method of the sortableOfMap
 func TestSortableOfMap_Iterator(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// types
 	type N = *tests.SortableNode

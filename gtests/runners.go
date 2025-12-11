@@ -6,7 +6,7 @@ import "testing"
 
 type HelperTesting interface {
 	// Helper is a method that is used to write a message to the console.
-	// It calls the testing.T.Helper method to mark the message as a helper.
+	// It calls the testing.T.Helper method to mark the message as a std.
 	// It takes a variable number of arguments, and they are passed to the
 	// fmt.Println function to print the message to the console.
 	Helper()

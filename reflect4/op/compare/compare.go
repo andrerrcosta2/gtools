@@ -43,7 +43,7 @@ const (
 	// AllowInvalids allows two invalid reflect.Values (obtained by operations like .Elem() on a nil pointer)
 	// to be considered equal when they are of the same type. Without this flag, invalids are treated as
 	// non-comparable and produce a difference.
-	AllowInvalids op.Compare = 1 << iota
+	AllowInvalids
 	// Serializable is an alias for AllowNilVsEmpty
 	Serializable = AllowNilVsEmpty
 	// ReflectSemantics combines all strict comparison flags to emulate the behavior of

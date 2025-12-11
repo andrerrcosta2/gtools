@@ -3,11 +3,13 @@
 package sprints
 
 import (
-	"github.com/andrerrcosta2/gtools/core/format/code/indent"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"strconv"
 	"testing"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/format/code/indent"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/testlite/differlite"
 )
 
 // TestAddr tests the Addr function
@@ -56,7 +58,7 @@ func TestObjects(t *testing.T) {
 			object: BClosedobj(indent.Zero(), "NestedObject",
 				Field(zero, "Name", "Alice"),
 				Field(zero, "Age", Digit(30)),
-				Field(zero, "Child", BClosedobj(zero.Inc(), "Child",
+				Field(zero, "Child", BClosedobj(zero, "Child",
 					Field(zero, "Name", "Bob"),
 					Field(zero, "Age", Digit(5)),
 				)),
@@ -75,8 +77,8 @@ func TestObjects(t *testing.T) {
 			object: BClosedobj(indent.Zero(), "StructWithMapsAndSlices",
 				Field(zero, "User", "Alice"),
 				Field(zero, "Email", "alice@me.com"),
-				Field(zero, "Roles", ClosedSlice(zero.Inc(), "string", "reader", "writer")),
-				Field(zero, "Permissions", ClosedMap(zero.Inc(), "string", "string",
+				Field(zero, "Roles", ClosedSlice(zero, "string", "reader", "writer")),
+				Field(zero, "Permissions", ClosedMap(zero, "string", "string",
 					Field(zero, "read", "true"),
 					Field(zero, "write", "false"),
 				)),
@@ -122,22 +124,22 @@ func TestObjects(t *testing.T) {
 			object: ClosedArray(zero, Anonymous(zero, "struct",
 				KeyValue(zero, "Name", "string"),
 				KeyValue(zero, "Age", "int")), 2,
-				BClosedobj(zero.Inc(), "",
-					Field(zero, "Name", TypedString("Alice")),
-					Field(zero, "Age", Typed("int", 30)),
+				Closedobj(zero.Inc(), "", // Inc because the outer function can't predict closing tabs
+					Field(zero, "Name", TypedString("Alice")), // zero because it doesn't contain closings
+					Field(zero, "Age", Typed("int", 30)),      // so it basically doesn't matter
 				),
-				BClosedobj(zero.Inc(), "",
+				Closedobj(zero.Inc(), "", // Inc because the outer function can't predict closing tabs
 					Field(zero, "Name", TypedString("Bob")),
 					Field(zero, "Age", Typed("int", 5)),
 				),
 			),
-			expected: "[2]struct{ Name string; Age int }[" +
+			expected: "[2]struct { Name string; Age int }[" +
 				"\n\t{" +
-				"\n\t\tName: <string>Alice," +
+				"\n\t\tName: <string>\"Alice\"," +
 				"\n\t\tAge: <int>30," +
 				"\n\t}," +
 				"\n\t{" +
-				"\n\t\tName: <string>Bob," +
+				"\n\t\tName: <string>\"Bob\"," +
 				"\n\t\tAge: <int>5," +
 				"\n\t}," +
 				"\n]",
@@ -148,9 +150,10 @@ func TestObjects(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			result := test.object
 			if result != test.expected {
-				t.Errorf("\nReceived: \n%s, \nExpected \n%s", result, test.expected)
+				t.Errorf("\nReceived: \n'%s', \nExpected \n'%s'", result, test.expected)
 				t.Log(fmx.SRedf("result length %d", len(result)))
 				t.Log(fmx.SRedf("expected length %d", len(test.expected)))
+				t.Log(differlite.Quick(result, test.expected))
 			}
 		})
 	}

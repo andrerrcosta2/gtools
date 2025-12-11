@@ -54,7 +54,7 @@ Generalize it
 //	}
 //}
 //
-//// xnk is a helper function to convert a node to its key type.
+//// xnk is a std function to convert a node to its key type.
 //// It takes a node of any type and returns its corresponding key type.
 //func xnk(n any) any {
 //	// Use type switching to determine the type of the node

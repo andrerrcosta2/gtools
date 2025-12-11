@@ -20,7 +20,7 @@ var ClosedConsumer = errors.New("consumer is closed...\n")
 var ClosedConsumerOnTheFly = errors.New("consumer was found unexpectedly closed on the fly while consume...\n")
 var Closed = errors.New("consumer is already closed...\n")
 
-// CloseableSelect is a helper function to be used with goroutines.
+// CloseableSelect is a std function to be used with goroutines.
 // It receives a domain.Streamable, a domain.CloseableConsumer, a WaitGroup, a Semaphore, a channel as signal, and a functions.BiConsumer[int, T] function.
 // It checks if the signal is sent, if so it call the closeable and returns false.
 // Otherwise, it tries to consume the value from the channel using the BiConsumer function
@@ -33,7 +33,7 @@ func CloseableSelect[T any](closeable io.Closeable, stream gtools.Stream[T], sig
 	})
 }
 
-// ConsumeCloseableSynchronously is a helper function that is used to consume values from a channel using a BiConsumer function.
+// ConsumeCloseableSynchronously is a std function that is used to consume values from a channel using a BiConsumer function.
 // It takes a WaitGroup, a Semaphore, a BiConsumer function, the index of the value to be consumed, and the value itself.
 // It checks if the consumer is closed, if so it waits for all ops to complete before returning false.
 // Otherwise, it tries to consume the value from the channel using the BiConsumer function and returns true.
@@ -50,7 +50,7 @@ func ConsumeCloseableSynchronously[T any](closeable io.Closeable, stream gtools.
 	return ConsumeSynchronously[T](stream, wait, semaphore, counter, fn)
 }
 
-// ConsumeSynchronously is a helper function that is used to consume values from a channel using a BiConsumer function.
+// ConsumeSynchronously is a std function that is used to consume values from a channel using a BiConsumer function.
 // It takes a WaitGroup, a Semaphore, a BiConsumer function, the index of the value to be consumed, and the value itself.
 // It acquires the Semaphore, consumes the value using the BiConsumer function, releases the Semaphore, and decrements the WaitGroup.
 // It returns true if a value was consumed, false otherwise.

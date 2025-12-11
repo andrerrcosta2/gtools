@@ -3,18 +3,17 @@
 package graphs
 
 import (
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/data/str"
 	"github.com/andrerrcosta2/gtools/core/data/str/edges"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
-	"testing"
 )
 
 // TestIsCyclicOf tests the isCyclicOf function for various graph structures
 func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[N]
@@ -125,6 +124,7 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
+			tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 			graph := tc.setup()
 			if got := isCyclicOf[N](graph); got != tc.expected {
 				tt.Errorf("isCyclicOf() = %v, want %v\nGraph: %v\n", got, tc.expected, graph)
@@ -132,13 +132,10 @@ func TestIsCyclicOf_UndirectedGraph(t *testing.T) {
 		})
 	}
 
-	tt.PrintLogStack()
 }
 
 // TestIsCyclicOf_DirectedGraph tests the isCyclicOf function for various directed graph structures
 func TestIsCyclicOf_DirectedGraph(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type E = edges.SortableSingleTyped[N]
@@ -152,11 +149,18 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			name: "No Cycle",
 			setup: func() str.GraphOf[N, E] {
 				g := DigraphOf[N]()
-				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("C"))
-				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"))
+
+				a := tests.NewSortableNode("A")
+				b := tests.NewSortableNode("B")
+				c := tests.NewSortableNode("C")
+
+				g.AddNode(a)
+				g.AddNode(b)
+				g.AddNode(c)
+
+				g.AddEdge(a, b) // A -> B
+				g.AddEdge(b, c) // B -> C
+
 				return g
 			},
 			expected: false,
@@ -254,6 +258,7 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
+			tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 			graph := tc.setup()
 			result := isCyclicOf[N](graph)
 			if result != tc.expected {
@@ -261,14 +266,10 @@ func TestIsCyclicOf_DirectedGraph(t *testing.T) {
 			}
 		})
 	}
-
-	tt.PrintLogStack()
 }
 
 // TestIsCyclicOf_WeightedGraph tests the isCyclicOf function for various weighted graph structures
 func TestIsCyclicOf_WeightedGraph(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
@@ -299,15 +300,20 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 			name: "No cycle with three nodes in a line",
 			setup: func() str.WOrderedGraphOf[N, W, E] {
 				g := WeightedSortableDigraphOf[N, W]()
-				g.AddNode(tests.NewSortableNode("A"))
-				g.AddNode(tests.NewSortableNode("C"))
-				g.AddNode(tests.NewSortableNode("C"))
-				g.AddEdge(tests.NewSortableNode("A"), tests.NewSortableNode("C"), 1)
-				g.AddEdge(tests.NewSortableNode("C"), tests.NewSortableNode("C"), 1)
+				a := tests.NewSortableNode("A")
+				b := tests.NewSortableNode("B")
+				c := tests.NewSortableNode("C")
+				g.AddNode(a)
+				g.AddNode(b)
+				g.AddNode(c)
+				g.AddEdge(a, b, 1) // A -> B (weight 1)
+				g.AddEdge(b, c, 1) // B -> C (weight 1)
+
 				return g
 			},
 			expected: false,
 		},
+
 		{
 			name: "Cycle with weighted edges",
 			setup: func() str.WOrderedGraphOf[N, W, E] {
@@ -375,6 +381,7 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
+			tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 			graph := tc.setup()
 			if result := isCyclicOf[N](graph); result != tc.expected {
 				tt.Errorf("isCyclicOf() = %v; want %v\nGraph:\n%v\n", result, tc.expected, graph)
@@ -382,5 +389,4 @@ func TestIsCyclicOf_WeightedGraph(t *testing.T) {
 		})
 	}
 
-	tt.PrintLogStack()
 }

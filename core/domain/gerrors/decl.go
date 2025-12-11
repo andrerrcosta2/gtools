@@ -4,55 +4,58 @@ package gerrors
 
 import (
 	"errors"
+
 	"github.com/andrerrcosta2/gtools/core/domain/data"
 )
 
-type ErrorSeverity uint8
+type Severity uint8
 
-// NewErrorLevel creates a new ErrorLevel instance with the provided key and severity.
+// NewLevel creates a new Level instance with the provided key and severity.
 // It's a value object that represents the level of an error, with a key and a severity.
 // The key is used to identify the error, and the severity is used to determine the importance of the error.
-// The severity is a value of the ErrorSeverity type.
-// The returned ErrorLevel is a value object, so it's safe to use the returned value directly.
-func NewErrorLevel(key string, severity ErrorSeverity) ErrorLevel {
-	return ErrorLevel{Key: key, Severity: severity}
+// The severity is a value of the Severity type.
+// The returned Level is a value object, so it's safe to use the returned value directly.
+func NewLevel(key string, severity Severity) Level {
+	return Level{Key: key, Severity: severity}
 }
 
-type ErrorLevel struct {
+type Level struct {
 	Key      string
-	Severity ErrorSeverity
+	Severity Severity
 }
 
-// String returns a string representation of the ErrorLevel.
+// String returns a string representation of the Level.
 // It simply returns the key as a string.
-func (e ErrorLevel) String() string {
+func (e Level) String() string {
 	return e.Key
 }
 
-// AsStackable checks if the error is of type StackableError and returns it.
-// If the error isn't of type StackableError, it returns nil and false.
-// Returns the error as StackableError and true if successful, nil and false otherwise.
-func AsStackable(err error) (StackableError, bool) {
-	// Declare a variable of type StackableError
-	var stackableError StackableError
+// AsStackable checks if the error is of type Stackable and returns it.
+// If the error isn't of type Stackable, it returns nil and false.
+// Returns the error as Stackable and true if successful, nil and false otherwise.
+func AsStackable(err error) (Stackable, bool) {
+	// Declare a variable of type Stackable
+	var stackableError Stackable
 
-	// Check if the error is of type StackableError
+	// Check if the error is of type Stackable
 	if !errors.As(err, &stackableError) {
 		// If not, return nil and false
 		return nil, false
 	}
 
-	// If the error is of type StackableError, return it and true
-	return err.(StackableError), true
+	// If the error is of type Stackable, return it and true
+	return err.(Stackable), true
 }
 
-type StackableError interface {
-	WrappedError
-	// From creates a new StackableError from the given error.
+type Stackable interface {
+	Wrapped
+	// From creates a new Stackable from the given error.
 	// It returns a new error with the given error as its underlying error.
-	// If the error is already of type StackableError, it returns the error as is.
+	// If the error is already of type Stackable, it returns the error as is.
 	// Otherwise, it returns a new error with the given error as its underlying error.
-	From(err error) StackableError
+	From(err error) Stackable
+	// Is reports whether the error is the same as the given error
+	Is(err error) bool
 	// IsEmpty checks if the error is empty.
 	// An error is empty if it has no underlying errors.
 	// It returns true if the error is empty, false otherwise.
@@ -69,117 +72,98 @@ type StackableError interface {
 	// If one error is passed, it returns the error as is.
 	// If more than one error is passed, it returns a new error with the given errors as its underlying errors.
 	Stack(err error)
-	// Trace returns a string representation of the stack trace
-	// of this error and all its underlying errors.
-	// It's useful for debugging and logging.
-	// It's the responsibility of the implementing type to
-	// provide a meaningful implementation of this method.
-	// If the type does not have a meaningful implementation,
-	// it should return an empty string.
-	Trace() string
-	// Unstack returns a slice of errors representing the underlying errors.
-	// It's the responsibility of the implementing type to
-	// provide a meaningful implementation of this method.
-	// If the type does not have a meaningful implementation,
-	// it should return an empty slice.
-	Unstack() []error
 }
 
-// AsWrapped checks if the given error is of type WrappedError.
-// If it is, it returns the error as WrappedError and true.
+// AsWrapped checks if the given error is of type Wrapped.
+// If it is, it returns the error as Wrapped and true.
 // If it's not, it returns nil and false.
 //
 // Parameters:
 // - err: The error to check.
 //
 // Returns:
-// - WrappedError: The error as WrappedError if it's of type WrappedError.
-// - Bool: True if the error is of type WrappedError, false otherwise.
-func AsWrapped(err error) (WrappedError, bool) {
-	// Declare a variable of type WrappedError
-	var wrappedError WrappedError
+// - Wrapped: The error as Wrapped if it's of type Wrapped.
+// - Bool: True if the error is of type Wrapped, false otherwise.
+func AsWrapped(err error) (Wrapped, bool) {
+	// Declare a variable of type Wrapped
+	var wrappedError Wrapped
 
-	// Check if the error is of type WrappedError
+	// Check if the error is of type Wrapped
 	if !errors.As(err, &wrappedError) {
 		// If not, return nil and false
 		return nil, false
 	}
 
-	// If the error is of type WrappedError, return it and true
-	return err.(WrappedError), true
+	// If the error is of type Wrapped, return it and true
+	return err.(Wrapped), true
 }
 
-type WrappedError interface {
+type Wrapped interface {
+	error
 	Cause() error
-	// Error returns the error message of the error.
-	// It's the responsibility of the implementing type to
-	// provide a meaningful implementation of this method.
-	// If the type does not have a meaningful implementation,
-	// it should return an empty string.
-	Error() string
-	// Unwrap returns the underlying error.
+	// Unwrap returns the underlying errors.
 	// It's the responsibility of the implementing type to
 	// provide a meaningful implementation of this method.
 	// If the type does not have a meaningful implementation,
 	// it should return nil.
-	Unwrap() error
+	Unwrap() []error
 }
 
-// AsLeveled checks if the given error is of type LeveledError.
-// If it is, it returns the error as LeveledError and true.
+// AsLeveled checks if the given error is of type Leveled.
+// If it is, it returns the error as Leveled and true.
 // If it's not, it returns nil and false.
 //
 // Parameters:
 // - err: The error to check.
 //
 // Returns:
-// - LeveledError: The error as LeveledError if it's of type LeveledError.
-// - Bool: True if the error is of type LeveledError, false otherwise.
-func AsLeveled(err error) (LeveledError, bool) {
-	// Declare a variable of type LeveledError
-	var leveledError LeveledError
+// - Leveled: The error as Leveled if it's of type Leveled.
+// - Bool: True if the error is of type Leveled, false otherwise.
+func AsLeveled(err error) (Leveled, bool) {
+	// Declare a variable of type Leveled
+	var leveledError Leveled
 
-	// Check if the error is of type LeveledError
+	// Check if the error is of type Leveled
 	if !errors.As(err, &leveledError) {
 		// If not, return nil and false
 		return nil, false
 	}
 
-	// If the error is of type LeveledError, return it and true
-	return err.(LeveledError), true
+	// If the error is of type Leveled, return it and true
+	return err.(Leveled), true
 }
 
-type LeveledError interface {
+type Leveled interface {
 	// Error returns the error message of the leveled error.
 	//
 	// This method is part of the error interface.
 	Error() string
 	// Level returns the level of the leveled error.
 	//
-	// This method is part of the LeveledError interface.
-	Level() ErrorLevel
+	// This method is part of the Leveled interface.
+	Level() Level
 	// Severity returns the severity of the leveled error.
 	// The bigger the number, the more severe the error is.
-	// This method is part of the LeveledError interface.
-	Severity() ErrorSeverity
-	// SeverityDiff returns the severity difference between the Error
-	// instance and the provided LeveledError.
+	// This method is part of the Leveled interface.
+	Severity() Severity
+	// SeverityDiff returns the severity difference between the defaultErr
+	// instance and the provided Leveled.
 	// It returns an integer representing the severity difference.
-	SeverityDiff(err LeveledError) int
+	SeverityDiff(err Leveled) int
 }
 
-type OperationalError interface {
+type Operational interface {
 	// Error returns the error message of the operational error.
 	//
 	// This method is part of the error interface.
 	Error() string
 	// Operation returns the op that caused the error.
 	//
-	// This method is part of the OperationalError interface.
+	// This method is part of the Operational interface.
 	Operation() string
 }
 
-type TaggableError interface {
+type Taggable interface {
 	data.Taggable[string]
 	// Error returns the error message of the taggable error.
 	//

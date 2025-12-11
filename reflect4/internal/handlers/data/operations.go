@@ -4,12 +4,12 @@ package data
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"github.com/andrerrcosta2/gtools/reflect4/internal/reflect4"
-	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 	"reflect"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/reflect4"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 )
 
 func deepCopy(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
@@ -96,7 +96,7 @@ func deepCopyMap(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 	return s.Cache(v, cp), nil
 }
 
-// deepCopySlice is a helper function for slice copying.
+// deepCopySlice is a std function for slice copying.
 func deepCopySlice(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 	if v.IsNil() {
 		return reflect.Zero(v.Type()), nil
@@ -114,10 +114,10 @@ func deepCopySlice(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 
 // deepCopyStruct deep copies each exported field of a struct.
 func deepCopyStruct(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
-	cp, ok := s.ReadStruct(v)
-	if !ok {
-		return reflect.Zero(v.Type()), nil
+	if !v.CanAddr() {
+		v = values.ForceOfUnaddr(v)
 	}
+	cp := reflect.New(v.Type()).Elem()
 
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
@@ -128,18 +128,7 @@ func deepCopyStruct(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 			return values.Empty, err
 		}
 
-		if field.Type().Kind() != fieldCopy.Kind() {
-			panic(fmx.Sprintf("error deep copying '%s'. fieldCopy '%s' mismatches source "+
-				"field '%s'", cp.String(), fieldCopy.String(), field.String()))
-		}
-
 		dest := cp.Field(i)
-
-		if fieldCopy.Kind() != dest.Kind() {
-			panic(fmx.Sprintf("error deep copying '%s'. fieldCopy '%s' mismatches destination "+
-				"field '%s'", cp.String(), fieldCopy.String(), dest.String()))
-		}
-
 		reflect.NewAt(dest.Type(), unsafe.Pointer(dest.UnsafeAddr())).
 			Elem().Set(fieldCopy)
 	}
@@ -147,6 +136,7 @@ func deepCopyStruct(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 	return cp, nil
 }
 
+// defaultDeepCopyPointer deep copies a pointer element
 func defaultDeepCopyPointer(v reflect.Value, s *CopyStrategy) (reflect.Value, error) {
 	if v.IsNil() {
 		return reflect.Zero(v.Type()), nil
@@ -191,9 +181,16 @@ func defaultDeepCopyChan(v reflect.Value, _ *CopyStrategy) (reflect.Value, error
 
 	// As channels are not addressable, we can't use reflect's "New" to create a new one.
 	// Instead, we create a new one using the "make" function.
-	typ := v.Type()
-	capacity := v.Cap() // only works for buffered channels
-	newChan := reflect.MakeChan(typ, capacity)
+	elemType := v.Type().Elem()
+	capacity := v.Cap()
+	// Always make a bidirectional version first
+	bidirChanType := reflect.ChanOf(reflect.BothDir, elemType)
+
+	newChan := reflect.MakeChan(bidirChanType, capacity)
+
+	// Convert back to the same direction as the original
+	newChan = newChan.Convert(v.Type())
+
 	return newChan, nil
 }
 

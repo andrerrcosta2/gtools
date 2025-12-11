@@ -27,7 +27,7 @@ func (s none) Equals(style Style) bool {
 }
 
 func (s none) Style(str ...any) string {
-	return printer.Sprint(str)
+	return printer.Sprint(str...)
 }
 
 func (s none) Styleln(str ...any) string {

@@ -5,10 +5,11 @@ package assertlite
 import (
 	"errors"
 	"fmt"
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/core/testlite/internal/ask"
-	"reflect"
 )
 
 // AllFieldsAreNil asserts all the struct fields are nil.
@@ -367,19 +368,18 @@ func NotTypeOf[T any](t testlite.HelperTesting, v any, msgAndArgs ...any) bool {
 // Panic asserts that the function panics or flag the test as failed
 func Panic(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
 	t.Helper()
-	var panicErr any
 	defer func() {
 		if r := recover(); r != nil {
-			panicErr = r
+			res = true
 		}
 	}()
 	f()
 
-	if panicErr == nil {
+	if !res {
 		fail(t, "expected a panic, but got none\n", msgAndArgs...)
 		return false
 	}
-	return true
+	return
 }
 
 // Same asserts that two references are pointing to the same object.

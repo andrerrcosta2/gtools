@@ -3,6 +3,8 @@
 package data
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/tracker"
@@ -10,12 +12,11 @@ import (
 	"github.com/andrerrcosta2/gtools/reflect4/op/clone"
 	"github.com/andrerrcosta2/gtools/reflect4/op/read"
 	"github.com/andrerrcosta2/gtools/reflect4/op/write"
-	"reflect"
 )
 
 // NewCopyStrategy creates a new CopyStrategy based on the given options parameters
 func NewCopyStrategy[O internal.Option](o ...O) *CopyStrategy {
-	s := defCopyStrat()
+	s := DefaultCopyStrat()
 	for _, opt := range o {
 		switch t := any(opt).(type) {
 		case op.Read:
@@ -39,8 +40,6 @@ func NewCopyStrategy[O internal.Option](o ...O) *CopyStrategy {
 			case write.SkipUnexportedFields:
 				s.ReadField = readSettableField
 				s.RideFields = rideSettableFields
-			case write.SkipUnaddr:
-				s.ReadStruct = readAddrStruct
 			default:
 				break
 			}
@@ -59,8 +58,6 @@ func NewCopyStrategy[O internal.Option](o ...O) *CopyStrategy {
 				s.CopyChan = skipCopy
 			case clone.SkipFunc:
 				s.CopyFunc = skipCopy
-			case clone.SkipUnaddrStructs:
-				s.ReadStruct = readAddrStruct
 			default:
 				break
 			}
@@ -79,10 +76,9 @@ type CopyStrategy struct {
 	CopyPtr    func(v reflect.Value, s *CopyStrategy) (reflect.Value, error)
 	ReadField  func(v reflect.Value, i int) (field reflect.Value, canRead bool)
 	RideFields func(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value])
-	ReadStruct func(v reflect.Value) (s reflect.Value, canRead bool)
 }
 
-func defCopyStrat() *CopyStrategy {
+func DefaultCopyStrat() *CopyStrategy {
 	t := tracker.Reference()
 	return &CopyStrategy{
 		Cache:      t.Mark,
@@ -91,7 +87,6 @@ func defCopyStrat() *CopyStrategy {
 		CopyFunc:   defaultDeepCopyFunc,
 		CopyPtr:    defaultDeepCopyPointer,
 		ReadField:  readAllFields,
-		ReadStruct: readAnyStruct,
 		RideFields: rideAllFields,
 	}
 }

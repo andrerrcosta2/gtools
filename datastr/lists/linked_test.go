@@ -3,11 +3,12 @@
 package lists
 
 import (
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/generics"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
-	"testing"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 )
 
 // TestHashLinked tests the hashLinked creation states

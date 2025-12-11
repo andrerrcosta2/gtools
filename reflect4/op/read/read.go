@@ -19,6 +19,12 @@ const (
 	Default op.Read = 0
 	// SkipUnexportedFields skips reading unexported struct fields
 	SkipUnexportedFields op.Read = 1 << iota
+	// SkipChannels skips reading operations over channels
 	SkipChannels
+	// SkipFunctions skips reading operations over functions
 	SkipFunctions
+	// SkipPtr skips reading operations over pointers
+	SkipPtr
+	// SkipUnsafePtr skips reading operations over unsafe pointers
+	SkipUnsafePtr
 )

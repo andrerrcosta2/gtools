@@ -4,18 +4,19 @@ package lite
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
-	"github.com/google/uuid"
 	"math/rand"
 	"reflect"
 	"time"
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
+	"github.com/google/uuid"
 )
 
 // RandAny generates a random value of any type except structs.
@@ -175,7 +176,7 @@ func RandMapOf(t reflect.Type) any {
 	return reflectrand.MapOf(t).Interface()
 }
 
-// RandOf generates a single random value
+// RandOf generates a single random value from a given type
 func RandOf(t reflect.Type) any {
 	if t == nil {
 		return nil

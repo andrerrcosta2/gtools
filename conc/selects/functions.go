@@ -8,7 +8,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/io"
 )
 
-// Closeable is a helper function to be used with goroutines.
+// Closeable is a std function to be used with goroutines.
 // It takes an io.Closeable, a channels.Signal, and a functions.Supplier[bool] function.
 // It checks if the signal is sent, if so it call the closeable and returns false.
 // Otherwise, it runs the supplier function
@@ -24,7 +24,7 @@ func Closeable(closeable io.Closeable, done channels.Signal, fn functions.Suppli
 	}
 }
 
-// Void is a helper function to be used with goroutines.
+// Void is a std function to be used with goroutines.
 // It takes a channels.Signal, and a functions.Supplier[bool] function.
 // It checks if the signal is sent, if so it returns.
 // Otherwise, it runs the supplier function
@@ -40,7 +40,7 @@ func Void(done channels.Signal, fn functions.Runnable) {
 	}
 }
 
-// Bool is a helper function to be used with goroutines.
+// Bool is a std function to be used with goroutines.
 // It takes a channels.Signal, and a functions.Supplier[bool] function.
 // It checks if the signal is sent, if so it returns false.
 // Otherwise, it runs the supplier function

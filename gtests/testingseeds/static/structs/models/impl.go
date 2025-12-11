@@ -5,8 +5,10 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"reflect"
+
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
+	"github.com/andrerrcosta2/gtools/core/seeders/random"
 )
 
 var BooleanZeroInst = new(Boolean)
@@ -448,8 +450,15 @@ type Map[K comparable, V any] struct {
 }
 
 func (m *Map[K, V]) String() string {
+	fmx.Print("Evaluating map")
 	var key K
 	var val V
+	if m == nil {
+		return "<nil Map>"
+	}
+	if m.data == nil {
+		return fmt.Sprintf("map[%T]%T{}", key, val)
+	}
 	return fmt.Sprintf("map[%T]%T%v", key, val, m.data)
 }
 

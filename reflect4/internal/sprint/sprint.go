@@ -3,16 +3,18 @@
 package sprint
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"reflect"
+	"github.com/andrerrcosta2/gtools/reflect4/internal"
 )
 
-func Of(tab indent.Tab, value reflect.Value, s *Strategy) string {
-	return sprintOf(tab, value, s)
+func Of[O internal.Option](tab indent.Indentor, value reflect.Value, o ...O) string {
+	return sprintOf(tab, value, NewStrategy(o...))
 }
 
-func sprintOf(tab indent.Tab, value reflect.Value, s *Strategy) string {
+func sprintOf(tab indent.Indentor, value reflect.Value, s *Strategy) string {
 	if !value.IsValid() {
 		return "invalid type: <invalid>"
 	}

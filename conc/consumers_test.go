@@ -18,7 +18,7 @@ import (
 // It asserts that the consumer consumes all values from the supplier synchronously and concurrent.
 // This test also asserts its automatic close after all values have been consumed.
 func TestSemaphoredConsumer_FullConsume(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream with 10 values
@@ -71,7 +71,7 @@ func TestSemaphoredConsumer_ClosedStreamEarly(t *testing.T) {
 // TestSemaphoredConsumer_ClosedStreamOnTheFly tests the behavior of a SemaphoredConsumer when the Streamable supplier is closed on the fly.
 // It asserts that not all values are consumed.
 func TestSemaphoredConsumer_ClosedStreamOnTheFly(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(3, bigSupply...)
@@ -142,7 +142,7 @@ func TestSemaphoredConsumer_ClosedConsumer(t *testing.T) {
 // SemaphoredConsumer when it is closed on the fly while consuming values from
 // a supplier.
 func TestSemaphoredConsumer_ClosedConsumerOnTheFly(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a supplier
@@ -192,7 +192,7 @@ func TestSemaphoredConsumer_ClosedConsumerOnTheFly(t *testing.T) {
 // It asserts that the consumer consumes all values from the supplier synchronously and concurrently.
 // This test also asserts its automatic close after all values have been consumed.
 func TestCancellableConsumer_FullConsume(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(5, bigSupply...)
@@ -220,7 +220,7 @@ func TestCancellableConsumer_FullConsume(t *testing.T) {
 // TestCancellableConsumer_EarlyClosedStream tests the CancellableConsumer.Consume() method against a stream that is closed before it is consumed.
 // It asserts that the consumer consumes no values from the supplier and that the supplier is closed.
 func TestCancellableConsumer_EarlyClosedStream(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
@@ -247,7 +247,7 @@ func TestCancellableConsumer_EarlyClosedStream(t *testing.T) {
 // TestCancellableConsumer_OnTheFlyClosedStream tests the CancellableConsumer.Consume() method against a stream that is closed on the fly.
 // It asserts that the consumer consumes fewer values than the stream size and that the supplier is closed.
 func TestCancellableConsumer_OnTheFlyClosedStream(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
@@ -293,7 +293,7 @@ func TestCancellableConsumer_OnTheFlyClosedStream(t *testing.T) {
 // TestCancellableConsumer_ClosedConsumer tests that calling Consume on a closed consumer
 // doesn't consume any values and returns an error.
 func TestCancellableConsumer_ClosedConsumer(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	// Create a stream
@@ -331,7 +331,7 @@ func TestCancellableConsumer_ClosedConsumer(t *testing.T) {
 }
 
 func TestCancellableConsumer_OnTheFlyClosedConsumer(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, bigSupply...)
@@ -379,7 +379,7 @@ func TestCancellableConsumer_OnTheFlyClosedConsumer(t *testing.T) {
 // TestCancellableConsumer_OnTheFlyCancelledConsumer tests the CancellableConsumer with a stream that is closed on the fly.
 // It creates a cancellable context and a cancellable consumer. It then consumes all values from the stream and asserts that no values are consumed if the consumer is closed on the fly.
 func TestCancellableConsumer_OnTheFlyCancelledConsumer(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	stream := streams.HotCloseable(7, mediumSupply...)

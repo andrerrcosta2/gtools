@@ -4,6 +4,11 @@ package random
 
 import (
 	"fmt"
+	"math"
+	"math/big"
+	"reflect"
+	"time"
+
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/ints"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums/uints"
@@ -15,10 +20,6 @@ import (
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
 	"github.com/andrerrcosta2/gtools/core/util/casters"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
-	"math"
-	"math/big"
-	"reflect"
-	"time"
 )
 
 const (
@@ -492,6 +493,58 @@ func Of[T any](q int) *iterables.Slice[T] {
 	}
 	t := reflect.TypeOf((*T)(nil)).Elem()
 	result := make(iterables.Slice[T], q)
+	// ⚠️ IMPORTANT CASTING STRATEGY NOTES (DO NOT REMOVE):
+	//
+	// The use of unsafe casts (UnsafeReferenceOf, UnsafeValueOf) is a TEMPORARY WORKAROUND
+	// due to a limitation in lite.RandOf(t): it generates values based on KIND
+	// rather than preserving the exact TYPE.
+	// This breaks direct type assertions like rdn.(T) for named types (ex. type MyInt int), causing panics.
+	//
+	// - For cat.Any (T = interface{}): direct assignment via rdn.(T) is safe because
+	//   every value implements the empty interface.
+	//
+	// - For cat.Struct: we assume lite.RandOf(t) correctly constructs a reflect.Value of type t
+	//   (including nested fields), so rdn.(T) is safe—even with slices/maps—because
+	//   reflect.Value.Interface() returns a properly typed value.
+	//
+	// - For cat.Reference (ptr, chan, map, func, unsafe.Pointer): we use UnsafeReferenceOf
+	//   because RandOf returns a correctly typed *interface{}*, but the value inside is a pointer-like
+	//   reference type.
+	//  UnsafeReferenceOf extracts the pointer word directly.
+	//   ⚠️ This assumes the runtime representation matches expectations.
+	//	When the Runtime Representation Might Not Match:
+	//	1. Go’s internal interface layout could change
+	//		- the emptyInterface struct mimics Go’s internal representation of an empty interface.
+	//		- This is not part of the Go spec—it’s an implementation detail of the compiler/runtime.
+	//		- While it’s been stable for years (two words: type + data), a future Go version could change it (ex, add
+	//		  metadata for generics, GC, or debugging).
+	//		- If that happens, ei.word no longer points to the data → silent memory corruption or crashes.
+	//	2. misusing it for non-pointer T
+	//		- Of[map[string]int](5)  // T = map[string]int → reference type → cat.Reference
+	//		```go```
+	//		 rdn := lite.RandOf(t)        // returns a map[string]int (as interface{})
+	//		  result[i] = UnsafeReferenceOf[map[string]int](rdn)
+	//		  return *(*map[string]int)(unsafe.Pointer(&ei.word))
+	//		``````
+	//		ei.word is already the map value (which is a pointer internally).
+	//		You’re taking the address of that pointer (&ei.word) and treating it as if it were the map itself.
+	// 		This creates a pointer to a local copy of the map header, not the map itself.
+	//		Result: The returned map[string]int is corrupted—it points to stack memory that becomes invalid
+	//		after the function returns.
+	//
+	// - For cat.Value (scalars, arrays, named types like MyInt): we currently use UnsafeValueOf
+	//   as a fallback because RandOf returns the UNDERLYING type instead of the NAMED type,
+	//   making rdn.(T) panic.
+	//  This unsafe cast bypasses type checking by reinterpreting raw memory.
+	//   ❗ THIS IS FRAGILE AND UNSAFE FOR TYPES CONTAINING POINTERS (structs with slices/maps).
+	//     It only "works" for simple, pointer-free named types (type Port uint16).
+	//
+	//  FUTURE: Update lite.RandOf(t) to always return a value of EXACT type t
+	//   (using reflect.New(t).Elem().Set(...) and kind-based population).
+	//   Once that’s done, ALL unsafe casts can be replaced with rdn.(T).
+	//
+	// Until then, this branching logic is necessary to avoid panics on named types
+	// while maintaining compatibility with complex and reference types.
 	switch cat.CastMethod(t) {
 	case cat.Any:
 		for i := 0; i < q; i++ {
@@ -508,10 +561,19 @@ func Of[T any](q int) *iterables.Slice[T] {
 	case cat.Reference:
 		for i := 0; i < q; i++ {
 			rdn := lite.RandOf(t)
-			result[i] = casters.UnsafeReferenceOf[T](rdn)
+			result[i] = rdn.(T)
+			//result[i] = casters.UnsafeReferenceOf[T](rdn)
 		}
 		break
+	case cat.Struct:
+		for i := 0; i < q; i++ {
+			rdn := lite.RandOf(t)
+			result[i] = rdn.(T)
+		}
 	default:
+		// Value types (including named scalars like MyInt)
+		// UnsafeValueOf is used ONLY because RandOf returns underlying type, not T
+		// ⚠️ Do NOT use for types containing pointers (slice, map, etc.)—memory layout will be corrupted!
 		for i := 0; i < q; i++ {
 			rdn := lite.RandOf(t)
 			result[i] = casters.UnsafeValueOf[T](rdn)
@@ -564,8 +626,8 @@ func SingleOf[T any]() (single T) {
 		return lite.RandAny().(T)
 	case cat.Injectable:
 		return single
-	case cat.Reference:
-		return casters.UnsafeReferenceOf[T](lite.RandOf(t))
+	case cat.Reference, cat.Struct:
+		return lite.RandOf(t).(T)
 	default:
 		return casters.UnsafeValueOf[T](lite.RandOf(t))
 	}
@@ -574,7 +636,9 @@ func SingleOf[T any]() (single T) {
 // String returns a slice of length q with random strings of length between min and max.
 // Each string is composed of random runes.
 // If min or max are not provided, it defaults to a minimum length of 1 and a maximum length
-// compare to the maximum length of a string.
+//
+//	compared to the maximum length of a string.
+//
 // It returns empty if q is negative.
 func String(q int, minMax ...int) *iterables.Slice[string] {
 	if q <= 0 {

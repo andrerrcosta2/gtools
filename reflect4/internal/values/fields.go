@@ -4,11 +4,12 @@ package values
 
 import (
 	"errors"
+	"reflect"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
-	"reflect"
-	"unsafe"
 )
 
 var (
@@ -32,7 +33,6 @@ func AccessFields(v reflect.Value, fn functions.BiConsumer[string, reflect.Value
 	for i := 0; i < v.NumField(); i++ {
 		fn(v.Type().Field(i).Name, v.Field(i))
 	}
-	return
 }
 
 // Field returns a field from a reflect.Value by its name
@@ -49,12 +49,24 @@ func FieldName(target reflect.Value, idx int) string {
 }
 
 // Fields returns all exported fields within a struct
+// if the reflect value isn't a struct it panics.
 func Fields(v reflect.Value) (fields map[string]reflect.Value) {
 	fields = make(map[string]reflect.Value, v.NumField())
 	for i := 0; i < v.NumField(); i++ {
 		fields[v.Type().Field(i).Name] = v.Field(i)
 	}
 	return
+}
+
+// UnsafeFieldValueByIndex retrieve a field value by index using its unsafe
+// address
+func UnsafeFieldValueByIndex(v reflect.Value, idx int) reflect.Value {
+	field := v.Field(idx)
+	if field.CanInterface() {
+		return field
+	}
+	ptr := unsafe.Pointer(field.UnsafeAddr())
+	return reflect.NewAt(field.Type(), ptr).Elem()
 }
 
 // NilFields returns all exported nil fields within a
@@ -112,7 +124,7 @@ func SetField(target reflect.Value, name string, value reflect.Value) error {
 // unexported fields.
 func UnsafeFieldAccess(v reflect.Value, name string, fn functions.BiConsumer[reflect.Value, unsafe.Pointer]) error {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	field := v.FieldByName(name)
@@ -129,7 +141,7 @@ func UnsafeFieldAccess(v reflect.Value, name string, fn functions.BiConsumer[ref
 // unexported fields.
 func UnsafeFieldsAccess(v reflect.Value, fn functions.BiConsumer[reflect.Value, unsafe.Pointer]) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	for i := 0; i < v.NumField(); i++ {
@@ -143,7 +155,7 @@ func UnsafeFieldsAccess(v reflect.Value, fn functions.BiConsumer[reflect.Value, 
 // to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGetAllFields(v reflect.Value) (fields map[string]reflect.Value) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 	fields = make(map[string]reflect.Value)
 	for i := 0; i < v.NumField(); i++ {
@@ -160,7 +172,7 @@ func UnsafeGetAllFields(v reflect.Value) (fields map[string]reflect.Value) {
 // to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGetField(v reflect.Value, name string) (value reflect.Value, err error) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 	field := v.FieldByName(name)
 	if !field.IsValid() {
@@ -175,7 +187,7 @@ func UnsafeGetField(v reflect.Value, name string) (value reflect.Value, err erro
 // to avoid GC issues the returned values are copies of the original values
 func UnsafeGetFields(v reflect.Value, names ...string) (fields map[string]any, err error) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	for _, name := range names {
@@ -196,7 +208,7 @@ func UnsafeNilFields(v reflect.Value) (fields []reflect.Value, err error) {
 	fields = make([]reflect.Value, 0, v.NumField())
 
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	for i := 0; i < v.NumField(); i++ {
@@ -214,7 +226,7 @@ func UnsafeNotNilFields(v reflect.Value) (fields []reflect.Value) {
 	fields = make([]reflect.Value, 0, v.NumField())
 
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	for i := 0; i < v.NumField(); i++ {
@@ -231,7 +243,7 @@ func UnsafeNotNilFields(v reflect.Value) (fields []reflect.Value) {
 // its unexported fields.
 func UnsafeRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Pointer]) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 
 	for i := 0; i < v.NumField(); i++ {
@@ -245,7 +257,7 @@ func UnsafeRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Po
 // its unexported fields.
 func UnsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Pointer]) {
 	if !v.CanAddr() {
-		v = UnsafeOfUnaddr(v)
+		v = ForceOfUnaddr(v)
 	}
 	unsafeDeepRideFields(v, fn)
 	return

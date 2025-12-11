@@ -3,8 +3,9 @@
 package fuzz
 
 import (
-	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 )
 
 func TestFuzzing_Refs(t *testing.T) {

@@ -59,7 +59,7 @@ func Unsafe(v reflect.Value) (uintptr, error) {
 // create Go ptrs, as that breaks the Go memory model.
 func UnsafeReadOnly(v reflect.Value) uintptr {
 	if !v.CanAddr() {
-		v = values.UnsafeOfUnaddr(v)
+		v = values.ForceOfUnaddr(v)
 	}
 	return v.UnsafeAddr()
 }

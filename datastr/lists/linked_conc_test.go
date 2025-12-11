@@ -3,14 +3,15 @@
 package lists
 
 import (
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/generics"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
-	"testing"
 )
 
 // TestConcHashLinked_Concurrency_Add tests the add method
@@ -357,7 +358,7 @@ func TestConcHashLinked_Concurrency_Set(t *testing.T) {
 // after each insertion the list size should be increased
 // after each removal the list size should be decreased
 func TestConcHashLinked_Concurrency_Size(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.ConcLitetm(t, testlogs.OnFailure, themes.Default)
 
 	cmp := comparators.StringOrdered[int]{}

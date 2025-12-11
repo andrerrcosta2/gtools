@@ -3,8 +3,9 @@
 package zero
 
 import (
-	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 )
 
 func TestAll(t *testing.T) {

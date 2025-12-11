@@ -13,7 +13,7 @@ func Ns(d int) time.Duration {
 
 // Ms converts milliseconds to time.Duration
 //
-// Ms is a helper function to convert a number of milliseconds to a time.Duration.
+// Ms is a std function to convert a number of milliseconds to a time.Duration.
 // This is useful when working with APIs that require a time.Duration but the
 // duration is specified in milliseconds.
 //
@@ -27,7 +27,7 @@ func Ms(d int) time.Duration {
 
 // Sec converts seconds to time.Duration
 //
-// Sec is a helper function to convert a number of seconds to a time.Duration.
+// Sec is a std function to convert a number of seconds to a time.Duration.
 // This is useful when working with APIs that require a time.Duration but the
 // duration is specified in seconds.
 //
@@ -41,7 +41,7 @@ func Sec(d int) time.Duration {
 
 // Min converts minutes to time.Duration
 //
-// Min is a helper function to convert a number of minutes to a time.Duration.
+// Min is a std function to convert a number of minutes to a time.Duration.
 // This is useful when working with APIs that require a time.Duration but the
 // duration is specified in minutes.
 //

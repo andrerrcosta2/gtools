@@ -24,7 +24,7 @@ type E = str.Entry[K, []S]
 // as the dictionary it was built from.
 // It also tests if an invalid dictionary returns an error.
 func TestPatternTrie_Build(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// building a valid newPatternTrie
@@ -217,7 +217,7 @@ func TestPatternTrie_DeleteConcurrently(t *testing.T) {
 
 func TestPatternTrie_EdgeCases_Build_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// build a valid trie
@@ -243,7 +243,7 @@ func TestPatternTrie_EdgeCases_Build_EdgeValidDictionary(t *testing.T) {
 // and then inserts all the symbols concurrently.
 func TestPatternTrie_EdgeCases_InsertConcurrently_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Insert_FullValidDictionary")
@@ -278,7 +278,7 @@ func TestPatternTrie_EdgeCases_InsertConcurrently_EdgeValidDictionary(t *testing
 // and then deletes half of the symbols concurrently.
 func TestPatternTrie_EdgeCases_DeleteConcurrently_EdgeValidDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Delete_FullValidDictionary")

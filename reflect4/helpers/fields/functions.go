@@ -4,12 +4,13 @@ package fields
 
 import (
 	"errors"
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/helpers/unwrap"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types/structs"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
-	"reflect"
 )
 
 var ErrNotStruct = errors.New("fields.GetValue - target is not a struct")
@@ -43,16 +44,16 @@ func Each(target any, fn func(name string, value any)) error {
 // If you need to access unexported fields, use UnsafeFrom function
 func From(target any) ([]any, error) {
 	v := unwrap.ToValue(target)
-	fields, err := values.Fields(v)
-	if err != nil {
-		return nil, err
+	if v.Kind() != reflect.Struct {
+		return nil, fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
+	fm := values.Fields(v)
 
-	values := make([]any, len(fields))
-	for i, field := range fields {
-		values[i] = field.Interface()
+	fields := make([]any, len(fm))
+	for _, field := range fm {
+		fields = append(fields, field.Interface())
 	}
-	return values, nil
+	return fields, nil
 }
 
 // Get returns the value of a struct field by name
@@ -86,14 +87,14 @@ func Has(target any, name string) (bool, error) {
 // Names Returns the list of exported field names.
 func Names(target any) ([]string, error) {
 	v := unwrap.ToValue(target)
-	fields, err := values.Fields(v)
-	if err != nil {
-		return nil, err
+	if v.Kind() != reflect.Struct {
+		return nil, fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
+	fields := values.Fields(v)
 
 	names := make([]string, len(fields))
-	for i, field := range fields {
-		names[i] = field.Type().Name()
+	for _, field := range fields {
+		names = append(names, field.Type().Name())
 	}
 	return names, nil
 }
@@ -105,7 +106,7 @@ func Nil(target any) (names []string, err error) {
 		return nil, fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
 	names = make([]string, 0, v.NumField())
-	err = values.AccessFields(v, func(field reflect.Value) {
+	values.AccessFields(v, func(_ string, field reflect.Value) {
 		if values.IsNil(field) {
 			names = append(names, field.Type().Name())
 		}
@@ -120,8 +121,8 @@ func NotNil(target any) (fields []any, err error) {
 		return nil, fmx.Errorf("%s: %s", ErrNotStruct.Error(), v.Type().String())
 	}
 	fields = make([]any, 0, v.NumField())
-	err = values.AccessFields(v, func(field reflect.Value) {
-		if values.IsNil(field) {
+	values.AccessFields(v, func(_ string, field reflect.Value) {
+		if !values.IsNil(field) {
 			fields = append(fields, field.Interface())
 		}
 	})

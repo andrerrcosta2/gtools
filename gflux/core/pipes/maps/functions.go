@@ -3,9 +3,10 @@
 package maps
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/generics"
 	"sort"
+
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 )
 
 // Any returns the first key-value pair in a map.

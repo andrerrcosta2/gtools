@@ -9,7 +9,7 @@ import (
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 )
 
-// shouldInsertEntrySuc is a helper function that tests the insertion of a single entry into a str.Trie.
+// shouldInsertEntrySuc is a std function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
 func shouldInsertEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
@@ -29,7 +29,7 @@ func shouldInsertEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, s
 	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
-// shouldNotInsertEntry is a helper function that tests the insertion of a single entry into a str.Trie.
+// shouldNotInsertEntry is a std function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
 func shouldNotInsertEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
@@ -47,7 +47,7 @@ func shouldNotInsertEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, s
 	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
-// shouldDeleteEntrySuc is a helper function that tests the deletion of a single entry from a str.Trie.
+// shouldDeleteEntrySuc is a std function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
 func shouldDeleteEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
@@ -69,7 +69,7 @@ func shouldDeleteEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, s
 	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
-// shouldNotDeleteEntry is a helper function that tests the deletion of a single entry from a str.Trie.
+// shouldNotDeleteEntry is a std function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
 func shouldNotDeleteEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
@@ -91,7 +91,7 @@ func shouldNotDeleteEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, s
 	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
-// shouldFindEntrySuc is a helper function that tests the searchSymbol of a single entry from a str.Trie.
+// shouldFindEntrySuc is a std function that tests the searchSymbol of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldFindEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) []grammar.Symbol {
 	t.Helper()
@@ -112,7 +112,7 @@ func shouldFindEntrySuc(t gtests.Loggable, trie Pattern, e str.Entry[string, sym
 	return sym
 }
 
-// shouldNotFindEntry is a helper function that tests the searchSymbol of a single entry from a str.Trie.
+// shouldNotFindEntry is a std function that tests the searchSymbol of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldNotFindEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, symbols.Logical]) {
 	t.Helper()
@@ -130,7 +130,7 @@ func shouldNotFindEntry(t gtests.Loggable, trie Pattern, e str.Entry[string, sym
 	t.StackLogf("searchSymbol: %v, result: %v\n", e.Key(), sym)
 }
 
-// shouldBeEmpty is a helper function that tests if a str.Trie is empty.
+// shouldBeEmpty is a std function that tests if a str.Trie is empty.
 // It logs the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldBeEmpty(t gtests.Loggable, trie Pattern) {
 	t.Helper()
@@ -153,7 +153,7 @@ func shouldBeEmpty(t gtests.Loggable, trie Pattern) {
 	}
 }
 
-// shouldNotBeEmpty is a helper function that tests if a str.Trie is not empty.
+// shouldNotBeEmpty is a std function that tests if a str.Trie is not empty.
 // It logs the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldNotBeEmpty(t gtests.Loggable, trie Pattern) {
 	t.Helper()
@@ -176,7 +176,7 @@ func shouldNotBeEmpty(t gtests.Loggable, trie Pattern) {
 	}
 }
 
-// shouldHaveSize is a helper function that tests if a str.Trie has a certain size.
+// shouldHaveSize is a std function that tests if a str.Trie has a certain size.
 // It logs the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldHaveSize(t gtests.Loggable, trie Pattern, size int) {
 	t.Helper()
@@ -189,7 +189,7 @@ func shouldHaveSize(t gtests.Loggable, trie Pattern, size int) {
 	}
 }
 
-// shouldHaveLength is a helper function that tests if a str.Trie has a certain length.
+// shouldHaveLength is a std function that tests if a str.Trie has a certain length.
 // It logs the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldHaveLength(t gtests.Loggable, trie Pattern, length int) {
 	t.Helper()
@@ -202,7 +202,7 @@ func shouldHaveLength(t gtests.Loggable, trie Pattern, length int) {
 	}
 }
 
-// shouldHaveSizeAndLength is a helper function that tests if a str.Trie has a certain size and length.
+// shouldHaveSizeAndLength is a std function that tests if a str.Trie has a certain size and length.
 // It logs the trie states before and after the searchSymbol and checks if an error occurred.
 func shouldHaveSizeAndLength(t gtests.Loggable, trie Pattern, size int, length int) {
 	t.Helper()

@@ -13,7 +13,7 @@ import (
 )
 
 func TestSignal(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	flag := NewFlag()
 

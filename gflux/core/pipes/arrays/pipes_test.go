@@ -12,7 +12,7 @@ import (
 )
 
 func TestReverse(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Testing with primitives
@@ -188,7 +188,7 @@ func div(acc, v int) int {
 }
 
 func TestHigher(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
@@ -219,7 +219,7 @@ func TestHigher(t *testing.T) {
 }
 
 func TestLower(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
@@ -250,7 +250,7 @@ func TestLower(t *testing.T) {
 }
 
 func TestKadane(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {
@@ -281,7 +281,7 @@ func TestKadane(t *testing.T) {
 }
 
 func TestMajority(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	tcs := []struct {

@@ -5,7 +5,7 @@ package sets
 import (
 	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/generics"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"math/rand"
 	"testing"
 )

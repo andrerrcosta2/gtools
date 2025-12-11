@@ -5,10 +5,11 @@ package testingtools
 import (
 	"encoding/json"
 	"encoding/xml"
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/serials"
-	"reflect"
 )
 
 type reflectionDataToolsLite struct{}

@@ -3,30 +3,43 @@
 package gerrors
 
 import (
+	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/domain/execution"
 	"runtime"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/domain/execution"
 )
 
-func printStackTrace() {
-	stack := getStackTrace(1)
-	for _, entry := range stack {
-		filePath := "file://" + entry // Ensure clickable format
-		fmt.Printf("\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\\n", filePath, entry)
+func newStackFromError(origin Stackable, from error) stack {
+	if from == nil {
+		return newStack(origin.Unwrap()...)
 	}
+	flat := FlattenError(from)
+	if origin.IsEmpty() {
+		return newStack(flat...)
+
+	}
+	return newStack(flat...).Push(origin.Unwrap()...)
 }
 
-func shouldSkipFunction(funcName string) bool {
-	skippedPrefixes := []string{
-		"runtime.", "testing.", "log.", "mylogger.", // Ignore Go internals & logging
+func isStack(e Stackable, target error) bool {
+	if target == nil {
+		return e.IsEmpty()
 	}
-	for _, prefix := range skippedPrefixes {
-		if strings.HasPrefix(funcName, prefix) {
+	for _, err := range e.Unwrap() {
+		if errors.Is(err, target) {
 			return true
 		}
 	}
 	return false
+}
+
+func printStackTrace() {
+	for _, entry := range getStackTrace(1) {
+		filePath := "file://" + entry // Ensure clickable format
+		fmt.Printf("\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\\n", filePath, entry)
+	}
 }
 
 func getStackTrace(skip int) []string {
@@ -47,4 +60,16 @@ func getStackTrace(skip int) []string {
 		}
 	}
 	return trace
+}
+
+func shouldSkipFunction(funcName string) bool {
+	skippedPrefixes := []string{
+		"runtime.", "testing.", "log.", "mylogger.", // Ignore Go internals & logging
+	}
+	for _, prefix := range skippedPrefixes {
+		if strings.HasPrefix(funcName, prefix) {
+			return true
+		}
+	}
+	return false
 }

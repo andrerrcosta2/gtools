@@ -20,6 +20,8 @@ const (
 	SkipChan
 	// SkipFunc skip copying functions
 	SkipFunc
-	// SkipUnaddrStructs skips copying unaddressable structs
-	SkipUnaddrStructs
+	// SkipPtr skip copying pointers
+	SkipPtr
+	// SkipUnsafePtr skip copying unsafe pointers
+	SkipUnsafePtr
 )

@@ -54,7 +54,7 @@ func between(tab indent.Indentor, a, b reflect.Value, diff *Strategy) differs.Di
 	case reflect.String:
 		return diffStrings(tab, a.String(), b.String(), diff)
 	case reflect.UnsafePointer:
-		return differUnsafePointers(tab, a, b, diff)
+		return diff.unsafe(tab, a, b, diff)
 	default:
 		return differs.DiffError(tab.Sprintf("unsupported kind: '%s' diff", a.Kind().String()),
 			fmx.Errorf("unsupported kind: '%s' diff", a.Kind().String()))
@@ -493,19 +493,29 @@ func notNilMapDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 	if a.Pointer() == b.Pointer() {
 		return differs.Equals()
 	}
-
 	if a.Type() != b.Type() {
 		msg := differs.MapTypesMismatch(tab, aa, bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
-
 	if a.Len() != b.Len() {
 		msg := differs.MapLenMismatch(tab, a.Len(), b.Len())
 		diff, _ := mapLengthDiffer(tab, a, b)
 		return s.cache(a, b, differs.NotEquals(msg, diff, aa, bb))
 	}
 
-	var missingKeysA, extraKeysA, missingKeysB, extraKeysB []string
+	if s.shouldDeepCompareKeys(a.Type().Key()) {
+		return mapDeepDiffer(tab, a, b, s)
+	}
+	return mapShallowDiffer(tab, a, b, s)
+
+}
+
+// mapShallowDiffer: uses MapIndex(key) fast path, but collects missing/extra keys to provide
+// a more complete keys diff (still returns immediately on a value mismatch).
+func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
+	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
+
+	var missingKeysB, extraKeysA, missingKeysA, extraKeysB []string
 
 	iterA := a.MapRange()
 	for iterA.Next() {
@@ -514,8 +524,10 @@ func notNilMapDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 		valB := b.MapIndex(key)
 
 		if !valB.IsValid() {
-			missingKeysB = append(missingKeysB, fmx.Sprintf("%v", key.Interface()))
-			extraKeysA = append(extraKeysA, fmx.Sprintf("%v", key.Interface()))
+			typ := types.ValidValueName(key.Type())
+			keyRepr := fmx.Sprintf("<%s>%v", typ, key.Interface())
+			missingKeysB = append(missingKeysB, keyRepr)
+			extraKeysA = append(extraKeysA, keyRepr)
 			continue
 		}
 
@@ -526,19 +538,103 @@ func notNilMapDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 		}
 	}
 
-	// Check for keys in b but missing in a
+	// now check for keys in b not in a
 	iterB := b.MapRange()
 	for iterB.Next() {
 		key := iterB.Key()
-		if !a.MapIndex(key).IsValid() {
-			missingKeysA = append(missingKeysA, fmx.Sprintf("%v", key.Interface()))
-			extraKeysB = append(extraKeysB, fmx.Sprintf("%v", key.Interface()))
+		if !maps.HasKey(a, key) {
+			typ := types.ValidValueName(key.Type())
+			keyRepr := fmx.Sprintf("<%s>%v", typ, key.Interface())
+			missingKeysA = append(missingKeysA, keyRepr)
+			extraKeysB = append(extraKeysB, keyRepr)
 		}
 	}
 
-	if len(missingKeysA) > 0 || len(extraKeysA) > 0 || len(missingKeysB) > 0 || len(extraKeysB) > 0 {
-		diff := differs.MapKeysDiff(indent.Tab(0), missingKeysA, extraKeysA, missingKeysB, extraKeysB)
+	if len(missingKeysA)+len(extraKeysA)+len(missingKeysB)+len(extraKeysB) > 0 {
+		diff := differs.MapKeysDiff(indent.Tab(tab.Value()), missingKeysA, extraKeysA, missingKeysB, extraKeysB)
 		return s.cache(a, b, differs.NotEquals(differs.MapKeys(tab), diff, aa, bb))
+	}
+
+	return s.cache(a, b, differs.Equals())
+}
+
+// mapDeepDiffer: O(n^2) semantic key comparison. Ensures matched keyB can't be reused
+// (prevents two different keyA entries from matching a single keyB).
+func mapDeepDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
+	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
+
+	// Collect b keys and mark used ones
+	var keysB []reflect.Value
+	iterB := b.MapRange()
+	for iterB.Next() {
+		keysB = append(keysB, iterB.Key())
+	}
+	used := make([]bool, len(keysB))
+
+	var missingKeysB, extraKeysA, missingKeysA, extraKeysB []string
+
+	iterA := a.MapRange()
+	for iterA.Next() {
+		keyA := iterA.Key()
+		valA := iterA.Value()
+
+		var (
+			found    bool
+			lastDiff differs.Difference
+		)
+
+		// Try all keyB to find a proper key-value match
+		for i, keyB := range keysB {
+			if used[i] {
+				continue
+			}
+
+			keyDiff := between(tab.Inc(), keyA, keyB, s)
+			if !keyDiff.Equals {
+				continue // not the same key
+			}
+
+			valB := b.MapIndex(keyB)
+			valDiff := between(tab.Inc(), valA, valB, s)
+			if valDiff.Equals {
+				used[i] = true
+				found = true
+				break // key-value pair found
+			} else {
+				// store the last mismatch for later reporting
+				lastDiff = valDiff
+			}
+		}
+
+		if !found {
+			// report either the last mismatch or key missing
+			var message string
+			if lastDiff.Message != "" {
+				message = differs.MapValue(tab, fmx.Sprint(keyA.Interface())) +
+					" on deep check\n" + lastDiff.Message
+			} else {
+				typ := types.ValidValueName(keyA.Type())
+				keyRepr := fmx.Sprintf("<%s>%v", typ, keyA.Interface())
+				message = differs.MapValue(tab, keyRepr) + " missing in target map"
+			}
+			return s.cache(a, b, differs.NotEquals(message, lastDiff.Diff, lastDiff.Received, lastDiff.Expected))
+		}
+	}
+
+	// detect unused keys in b
+	for i, keyB := range keysB {
+		if used[i] {
+			continue
+		}
+		typ := types.ValidValueName(keyB.Type())
+		keyRepr := fmx.Sprintf("<%s>%v", typ, keyB.Interface())
+		missingKeysA = append(missingKeysA, keyRepr)
+		extraKeysB = append(extraKeysB, keyRepr)
+	}
+
+	if len(missingKeysA)+len(extraKeysA)+len(missingKeysB)+len(extraKeysB) > 0 {
+		diff := differs.MapKeysDiff(indent.Tab(tab.Value()), missingKeysA, extraKeysA, missingKeysB, extraKeysB)
+		return s.cache(a, b, differs.NotEquals(differs.MapKeys(tab)+" on deep check", diff, aa, bb))
 	}
 
 	return s.cache(a, b, differs.Equals())
@@ -562,7 +658,7 @@ func mapLengthDiffer(tab indent.Indentor, a, b reflect.Value) (diff string, equa
 	iterB := b.MapRange()
 	for iterB.Next() {
 		key := iterB.Key()
-		if !maps.HasKey(a, key) { // ✅ Fixed: check against `a`
+		if !maps.HasKey(a, key) {
 			equals = false
 			keyStr := fmx.Sprintf("%v", key.Interface())
 			missingKeysA = append(missingKeysA, keyStr) // a is missing this key
@@ -883,8 +979,8 @@ func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff dif
 	}
 
 	if !a.CanAddr() {
-		a = values.UnsafeOfUnaddr(a)
-		b = values.UnsafeOfUnaddr(b)
+		a = values.ForceOfUnaddr(a)
+		b = values.ForceOfUnaddr(b)
 	}
 	diff = differs.Equals()
 
@@ -896,7 +992,7 @@ func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff dif
 
 		differ := between(tab.Inc(), f1, f2, s)
 		if !differ.Equals {
-			message := differs.StructFields(tab, field.Name) + "\n" + differ.Message
+			message := differs.StructFields(tab, aa, field.Name) + "\n" + differ.Message
 			diff = differs.NotEquals(message, differ.Diff, differ.Received, differ.Expected)
 			return false // stop iterating
 		}
@@ -916,12 +1012,12 @@ func differUint(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 	return differs.Equals()
 }
 
-// differUnsafePointers evaluates the difference between two unsafe ptrs by the constraints:
+// defaultUnsafePtrs evaluates the difference between two unsafe ptrs by the constraints:
 //
 //	A: both ptrs hold the same address; or
 //	B: both ptrs are nil
-func differUnsafePointers(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[differUnsafePointers] '%s' compare '%s': %t\n", a.String(), b.String(),
+func defaultUnsafePtrs(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
+	//fmx.Purplef("[defaultUnsafePtrs] '%s' compare '%s': %t\n", a.String(), b.String(),
 	//	reflect.DeepEqual(a.Interface(), b.Interface()))
 
 	if a.IsNil() && b.IsNil() {
@@ -972,8 +1068,8 @@ func readSettableField(v reflect.Value, i int) (field reflect.Value, canRead boo
 
 func rideAllFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value]) {
 	for i := 0; i < a.NumField(); i++ {
-		f1 := a.Field(i)
-		f2 := b.Field(i)
+		f1 := values.UnsafeFieldValueByIndex(a, i)
+		f2 := values.UnsafeFieldValueByIndex(b, i)
 		if !fn(i, f1, f2) {
 			return
 		}

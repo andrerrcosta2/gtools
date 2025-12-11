@@ -3,9 +3,10 @@
 package testingtools
 
 import (
+	"sync"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/gtests"
-	"sync"
 )
 
 type toolsLite struct {

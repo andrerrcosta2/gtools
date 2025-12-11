@@ -3,11 +3,12 @@
 package arrays
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/internal/tests"
-	"strings"
-	"testing"
 )
 
 func TestEmpty(t *testing.T) {

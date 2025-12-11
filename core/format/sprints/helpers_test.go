@@ -4,9 +4,10 @@ package sprints
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/testlite/differlite"
-	"testing"
 )
 
 func TestAnonymous(t *testing.T) {

@@ -4,5 +4,5 @@ package util
 
 import (
 	_ "github.com/andrerrcosta2/gtools/core/util/casters"
-	- "github.com/andrerrcosta2/gtools/core/util/typeutil"
+	_ "github.com/andrerrcosta2/gtools/core/util/typeutil"
 )

@@ -3,9 +3,10 @@
 package sprints
 
 import (
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
-	"strings"
 )
 
 func Anonymous(tab indent.Tab, typx string, fields ...string) string {

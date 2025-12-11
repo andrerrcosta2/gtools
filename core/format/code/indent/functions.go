@@ -4,8 +4,9 @@ package indent
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
 )
 
 // Hard enforces a minimum indentation level for each line in the input string.
@@ -113,7 +114,7 @@ func Smarklt(s ...any) string {
 	return sb.String()
 }
 
-func Smark[I Indentor](indentor I, s ...any) string {
+func Smark(indentor Indentor, s ...any) string {
 	ss := indentor.Sprint(s...)
 	lines := strings.Split(ss, "\n")
 	for i, line := range lines {
@@ -122,7 +123,7 @@ func Smark[I Indentor](indentor I, s ...any) string {
 	return strings.Join(lines, "\n")
 }
 
-func Smarkf[I Indentor](indentor I, format string, args ...any) string {
+func Smarkf(indentor Indentor, format string, args ...any) string {
 	s := indentor.Sprintf(format, args...)
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {

@@ -5,9 +5,10 @@ package testingtools
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"strings"
 	"sync"
+
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 func caller(value int, name string, callback functions.Runnable) *call {

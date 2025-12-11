@@ -18,7 +18,7 @@ import (
 
 // TestPatternTrie_BasicMethods tests the basic methods of a OfPatterns.
 func TestPatternTrie_BasicMethods(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// create an empty OfPatterns
@@ -61,7 +61,7 @@ func TestPatternTrie_BasicMethods(t *testing.T) {
 // It tests if the size and length of the new OfPatterns are the same as the dictionary it was built from.
 // It also tests if an invalid dictionary returns an error.
 func TestBuildTrie(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Build new OfPatterns with a single goroutine
@@ -101,7 +101,7 @@ func TestBuildTrie(t *testing.T) {
 // It tests if the size and length of the newPatternTrie are the same as the dictionary it was built from.
 // It also tests if an invalid dictionary returns an error.
 func TestPatternTrie_SimpleInsert(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -142,7 +142,7 @@ func TestPatternTrie_SimpleInsert(t *testing.T) {
 // It also tests if an invalid dictionary returns an error.
 func TestPatternTrie_InsertSymbolWithSymbolChild_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -173,7 +173,7 @@ func TestPatternTrie_InsertSymbolWithSymbolChild_EdgeCase01_0(t *testing.T) {
 // TestPatternTrie_Search Certainly this test is on infinite loop.
 func TestPatternTrie_Search(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -204,7 +204,7 @@ func TestPatternTrie_Search(t *testing.T) {
 
 func TestPatternTrie_Search_PathChildren(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -235,7 +235,7 @@ func TestPatternTrie_Search_PathChildren(t *testing.T) {
 // It tests if the searchSymbol returns the correct children and if the recursive children are correctly set.
 func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -343,7 +343,7 @@ func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_0(t *testing.T) {
 // It tests if the searchSymbol returns the correct children.
 func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	// Create a new OfPatterns
@@ -368,7 +368,7 @@ func TestPatternTrie_SearchRecursiveSymbol_EdgeCase01_1(t *testing.T) {
 // When the path is ambiguous between the tree internal symbols
 // When there are no special tokens between placeholders.
 func TestPatternTrie_Search_EmptyTrie_EdgeCase01_0(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -388,7 +388,7 @@ func TestPatternTrie_Search_EmptyTrie_EdgeCase01_0(t *testing.T) {
 // TestPatternTrie_Search_InvalidNodes_EdgeCase01_1 tests the searchSymbol of invalid nodes
 func TestPatternTrie_Search_InvalidNodes_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// create an empty trie
 	trie := OfPatterns(false, 0)
@@ -429,7 +429,7 @@ func TestPatternTrie_Search_InvalidNodes_EdgeCase01_1(t *testing.T) {
 // TestPatternTrie_Delete tests the deletion of symbols from a str.Trie.
 func TestPatternTrie_Delete(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -470,7 +470,7 @@ func TestPatternTrie_Delete(t *testing.T) {
 // Tests removeSymbol a symbol on the path to another symbol and expects the length of the newPatternTrie to still the same
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -503,7 +503,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_0(t *testing.T) {
 // while its size should decrease
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -538,7 +538,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_1(t *testing.T) {
 // number of nodes its symbol should backtrack
 func TestPatternTrie_DeleteBacktrack_EdgeCase01_2(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -604,7 +604,7 @@ func TestPatternTrie_DeleteBacktrack_EdgeCase01_2(t *testing.T) {
 // This newPatternTrie uses the value "\x01" as a Placeholder marker
 func TestPatternTrie_PlaceholderNode(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	trie := OfPatterns(false, 0)
 
@@ -647,7 +647,7 @@ func TestPatternTrie_PlaceholderNode(t *testing.T) {
 // This test handles edge cases when the tries should handle errors on Placeholder creations.
 func TestPatternTrie_PlaceholderNode_EdgeCase01_0(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -682,7 +682,7 @@ func TestPatternTrie_PlaceholderNode_EdgeCase01_0(t *testing.T) {
 // This test handles the case when a Placeholder is created successfully with an ambiguous marker
 func TestPatternTrie_PlaceholderNode_EdgeCase01_1(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 
 	trie := OfPatterns(false, 0)
@@ -700,7 +700,7 @@ func TestPatternTrie_PlaceholderNode_EdgeCase01_1(t *testing.T) {
 
 func TestPatternTrie_EdgeCases_Insert_EdgeDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnErrors)
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Insert_FullValidDictionary")
 
@@ -732,7 +732,7 @@ func TestPatternTrie_EdgeCases_Insert_EdgeDictionary(t *testing.T) {
 // It also checks if the searchSymbol results are the same as the dictionary.
 func TestPatternTrie_EdgeCases_Delete_EdgeDictionary(t *testing.T) {
 	t.Skip("Skipping this test due to changing requirements")
-	// helper
+	// std
 	tt := testingtools.LoggableToolsLite(t, testlogs.OnFailure)
 
 	tt.StackLog("Starting TestPatternTrie_EdgeCases_Delete_FullValidDictionary")

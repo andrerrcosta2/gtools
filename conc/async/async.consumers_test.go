@@ -19,7 +19,7 @@ import (
 // runnable to finish and verifying that the consumption is done after the outer
 // thread finishes.
 func TestSemaphoredConsumer_AsynchronousBehaviour(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 	// Create a cancelable context for the runnable
 	ctx, exit := context.WithCancel(context.Background())
@@ -72,7 +72,7 @@ func TestSemaphoredConsumer_AsynchronousBehaviour(t *testing.T) {
 // TestSemaphoredConsumer_CloseableBehaviour_CloseEarly tests the Consumer.Close() method and asserts that no values are consumed if the consumer is flag early.
 // It also tests the Consumer.Consume() method and asserts that an error is returned if the consumer is flag before the Consume() method is called.
 func TestSemaphoredConsumer_CloseableBehaviour_CloseEarly(t *testing.T) {
-	// helper
+	// std
 	tt := testingtools.AsyncLite(t, testlogs.OnFailure)
 
 	ctx, exitRunnable := context.WithCancel(context.Background())

@@ -3,12 +3,13 @@
 package testingtools
 
 import (
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/internal/logs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
-	"strings"
 )
 
 // LoggersLite creates a new gtests.Loggable from a gtests.FailureLoggableTesting instance.

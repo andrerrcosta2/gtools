@@ -3,12 +3,14 @@
 package reflect4
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/differ"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/equals"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/handlers/data"
-	"reflect"
+	"github.com/andrerrcosta2/gtools/reflect4/internal/sprint"
 )
 
 // DeepCopy creates a clone of the value pointed to by `t`.
@@ -133,8 +135,8 @@ func DeepCopy[T any](t *T, o ...Option) (cp T, err error) {
 //
 //	compare, diffs := DeepDiffer(a, b)
 //	// compare = true, diffs = nil
-func DeepDiffer(a, b any, opts ...Option) (diff string, equals bool, err error) {
-	return differ.Between(indent.Zero(), reflect.ValueOf(a), reflect.ValueOf(b), opts...)
+func DeepDiffer(a, b any, opts ...Option) (diff string, equals bool) {
+	return differ.Between(reflect.ValueOf(a), reflect.ValueOf(b), opts...)
 }
 
 // DeepEqual reports whether a and b are “deeply equal,” defined by the strategies
@@ -144,4 +146,8 @@ func DeepEqual(a, b any, opts ...Option) bool {
 		return a == b
 	}
 	return equals.Deep(reflect.ValueOf(a), reflect.ValueOf(b), opts...)
+}
+
+func Sprint(a any, opts ...Option) string {
+	return sprint.Of(indent.Zero(), reflect.ValueOf(a), opts...)
 }

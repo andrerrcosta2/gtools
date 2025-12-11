@@ -3,6 +3,8 @@
 package equals
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
@@ -11,11 +13,10 @@ import (
 	"github.com/andrerrcosta2/gtools/reflect4/op"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
 	"github.com/andrerrcosta2/gtools/reflect4/op/read"
-	"reflect"
 )
 
 func NewStrategy[O internal.Option](o ...O) *Strategy {
-	differ := defaultStrat()
+	differ := DefaultStrat()
 
 outer:
 	for _, opt := range o {
@@ -28,6 +29,10 @@ outer:
 				differ.channels = shallowSkip
 			case read.SkipFunctions:
 				differ.functions = shallowSkip
+			case read.SkipPtr:
+				differ.pointers = deepSkip
+			case read.SkipUnsafePtr:
+				differ.unsafe = shallowSkip
 			default:
 				break
 			}
@@ -35,19 +40,22 @@ outer:
 			switch t {
 			case compare.ChanIdentity:
 				differ.channels = identityShallow
+				differ.idChan = true
 			case compare.FuncIdentity:
 				differ.functions = identityShallow
+				differ.idFunc = true
 			case compare.PtrIdentity:
 				differ.pointers = identityDeep
+				differ.idPtr = true
 			case compare.AllowNilVsEmpty:
 				differ.channels = serialChan
 				differ.maps = serialMap
 				differ.slices = serialSlice
 			case compare.ReflectSemantics:
-				differ = reflStrat() // this option doesn't accept override
+				differ = ReflStrat() // this option doesn't accept override
 				break outer
 			case compare.Strict:
-				differ = strictStrat() // this option doesn't accept override
+				differ = StrictStrat() // this option doesn't accept override
 				break outer
 			case compare.IgnoreCase:
 				differ.strings = stringutil.EqualsIgnoreCase
@@ -74,13 +82,41 @@ type Strategy struct {
 	slices     DeepFunc
 	strings    func(a, b string) bool
 	structs    DeepFunc
-	unsafeptrs ShallowFunc
+	unsafe     ShallowFunc
 
 	rideFields   func(v reflect.Value, fn functions.BiPredicate[int, reflect.Value])
 	stringFormat op.Compare
+	idChan       bool
+	idFunc       bool
+	idPtr        bool
 }
 
-func defaultStrat() *Strategy {
+func (s *Strategy) shouldDeepCompareKeys(keyType reflect.Type) bool {
+	switch keyType.Kind() {
+	case reflect.Chan:
+		return !s.idChan
+	case reflect.Func:
+		return !s.idFunc
+	case reflect.Ptr, reflect.UnsafePointer:
+		return !s.idPtr
+	case reflect.Interface:
+		return true // always deep compare interface keys
+	case reflect.Array:
+		// check element type recursively
+		return s.shouldDeepCompareKeys(keyType.Elem())
+	case reflect.Struct:
+		for i := 0; i < keyType.NumField(); i++ {
+			if s.shouldDeepCompareKeys(keyType.Field(i).Type) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func DefaultStrat() *Strategy {
 	t := tracker.Eq()
 	return &Strategy{
 		check:      t.Check,
@@ -94,12 +130,12 @@ func defaultStrat() *Strategy {
 		slices:     defaultSlice,
 		strings:    stringutil.Equals,
 		structs:    defaultStruct,
-		unsafeptrs: defaultUnsafePointer,
+		unsafe:     defaultUnsafePointer,
 		rideFields: values.RideFields,
 	}
 }
 
-func reflStrat() *Strategy {
+func ReflStrat() *Strategy {
 	t := tracker.Eq()
 	return &Strategy{
 		check:      t.Check,
@@ -113,12 +149,12 @@ func reflStrat() *Strategy {
 		slices:     defaultSlice,
 		strings:    stringutil.Equals,
 		structs:    defaultStruct,
-		unsafeptrs: defaultUnsafePointer,
+		unsafe:     defaultUnsafePointer,
 		rideFields: values.RideFields,
 	}
 }
 
-func strictStrat() *Strategy {
+func StrictStrat() *Strategy {
 	t := tracker.Eq()
 	return &Strategy{
 		check:      t.Check,
@@ -132,7 +168,7 @@ func strictStrat() *Strategy {
 		slices:     identitySlice,
 		strings:    stringutil.Equals,
 		structs:    defaultStruct,
-		unsafeptrs: defaultUnsafePointer,
+		unsafe:     defaultUnsafePointer,
 		rideFields: values.RideFields,
 	}
 }
@@ -151,7 +187,7 @@ func serialStrat() *Strategy {
 		slices:     serialSlice,
 		strings:    stringutil.Equals,
 		structs:    defaultStruct,
-		unsafeptrs: defaultUnsafePointer,
+		unsafe:     defaultUnsafePointer,
 		rideFields: values.RideFields,
 	}
 }

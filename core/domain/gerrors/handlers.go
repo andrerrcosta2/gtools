@@ -3,9 +3,7 @@
 package gerrors
 
 import (
-	"errors"
-	"fmt"
-	"strings"
+	"unsafe"
 )
 
 // FlattenError takes an error and returns a slice of errors that represent the stack trace of the error,
@@ -16,21 +14,44 @@ import (
 //
 // Returns:
 // - []error: a slice of errors representing the stack trace of the error.
-// - Error: The last error in the stack trace.
-func FlattenError(err error) (stk []error, peek error, isWrapped bool) {
-	if err == nil {
-		return
+// - defaultErr: The last error in the stack trace.
+func FlattenError(err error) []error {
+	var out []error
+	var dfs func(error, []error)
+
+	dfs = func(cur error, path []error) {
+		if cur == nil {
+			return
+		}
+
+		// cycle detection: only in current path
+		for _, p := range path {
+			if Same(p, cur) {
+				return
+			}
+		}
+		path = append(path, cur)
+
+		// JOIN: do not include node; recurse into children
+		if u, ok := cur.(interface{ Unwrap() []error }); ok {
+			for _, ch := range u.Unwrap() {
+				dfs(ch, path)
+			}
+			return
+		}
+
+		// WRAP: include wrapper and STOP recursion
+		if _, ok := cur.(interface{ Unwrap() error }); ok {
+			out = append(out, cur)
+			return
+		}
+
+		// LEAF
+		out = append(out, cur)
 	}
 
-	errs := []error{err}
-	for err := errors.Unwrap(err); err != nil; err = errors.Unwrap(err) {
-		errs = append(errs, err)
-	}
-
-	for i, j := 0, len(errs)-1; i < j; i, j = i+1, j-1 {
-		errs[i], errs[j] = errs[j], errs[i]
-	}
-	return errs, err, len(errs) > 1
+	dfs(err, nil)
+	return out
 }
 
 // ReadTrace takes a slice of errors and returns a formatted string representing the stack trace of these errors.
@@ -41,21 +62,30 @@ func FlattenError(err error) (stk []error, peek error, isWrapped bool) {
 // Returns:
 // - string: a formatted string representing the stack trace.
 func ReadTrace(stack []error) string {
-	// Initialize a strings.Builder to hold the formatted string
-	var sb strings.Builder
-
-	// Write the header of the error trace to the strings.Builder
-	sb.WriteString("error trace:\n")
-
-	// Loop through each error in the stack trace
-	for i, err := range stack {
-		// Check if the current error is not nil
-		if err != nil {
-			// Write the current error to the strings.Builder with its index in the stack trace
-			sb.WriteString(fmt.Sprintf(" %d: %v\n", i+1, err))
-		}
+	// Since Join returns nil if every value in errs is nil,
+	// stack cannot be empty.
+	if len(stack) == 1 {
+		return stack[0].Error()
 	}
 
-	// Return the formatted string representing the stack trace
-	return sb.String()
+	b := []byte(stack[0].Error())
+	for _, err := range stack[1:] {
+		b = append(b, '\n')
+		b = append(b, err.Error()...)
+	}
+	// At this point, b has at least one byte '\n'.
+	return unsafe.String(&b[0], len(b))
+}
+
+func Unwrap(err error) (stk []error) {
+	if ss, ok := err.(interface {
+		Unwrap() []error
+	}); ok {
+		return ss.Unwrap()
+	} else if sss, ok := err.(interface {
+		Unwrap() error
+	}); ok {
+		return []error{sss.Unwrap()}
+	}
+	return []error{}
 }

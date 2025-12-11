@@ -5,8 +5,9 @@ package gstrings
 import (
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
 var (
@@ -141,23 +142,19 @@ func (v *valueNode[T]) SetValue(val string) {
 func writeNode[T prim.Hashable](b *strings.Builder, node Node[T], level uint16, tabSize uint8, showKeys bool) {
 	switch n := node.(type) {
 	case *structNode[T]:
-		// Write struct node key if necessary
 		if showKeys {
 			b.WriteString(fmt.Sprintf("%s%v {\n", writeTab(level, tabSize), n.key))
 		}
 
-		// Recursively process children
 		for _, child := range n.children {
 			writeNode[T](b, child, level+1, tabSize, showKeys)
 		}
 
-		// Close struct node block
 		if showKeys {
 			b.WriteString(fmt.Sprintf("%s}\n", writeTab(level, tabSize)))
 		}
 
 	case *valueNode[T]:
-		// Write value node
 		if showKeys {
 			b.WriteString(fmt.Sprintf("%s%v: %s\n", writeTab(level, tabSize), n.key, n.value))
 		} else {

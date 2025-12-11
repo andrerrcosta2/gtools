@@ -3,9 +3,10 @@
 package casters
 
 import (
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
 	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
-	"testing"
 )
 
 // TestTyped tests the capability of the Types function.
@@ -22,7 +23,7 @@ func TestTyped(t *testing.T) {
 	}{
 		{"WhenAllCancels correct types", []interface{}{1, 2, 3}, []int{1, 2, 3}, true},
 		{"Mixed types with correct type", []interface{}{1, "string", 3}, []int{1, 3}, false},
-		{"WhenAllCancels incorrect types", []interface{}{"string", 3.14}, nil, false},
+		{"WhenAllCancels incorrect types", []interface{}{"string", 3.14}, []int{}, false},
 		{"IsEmpty input", []interface{}{}, []int{}, true},
 	}
 

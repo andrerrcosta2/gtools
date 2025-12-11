@@ -3,6 +3,7 @@
 package types
 
 import (
+	"log"
 	"reflect"
 	"strings"
 )
@@ -46,6 +47,8 @@ func unwrapName(t reflect.Type) string {
 }
 
 func ValidValueName(t reflect.Type) string {
+	log.Printf("TYPE DEBUG: kind=%s name=%q pkg=%q string=%q\n",
+		t.Kind(), t.Name(), t.PkgPath(), t.String())
 	if t.Name() != "" {
 		if pkgPath := t.PkgPath(); pkgPath != "" {
 			return pkgPath + "." + t.Name()

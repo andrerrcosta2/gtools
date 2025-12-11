@@ -3,13 +3,14 @@
 package reflectrand
 
 import (
+	"math/rand"
+	"reflect"
+	"unsafe"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
-	"math/rand"
-	"reflect"
-	"unsafe"
 )
 
 // AnyValue generates a random reflect.Value of random type

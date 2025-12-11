@@ -3,17 +3,17 @@
 package testingtools
 
 import (
+	"math"
+
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/nums"
-	root "github.com/andrerrcosta2/gtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/gtests"
 	"github.com/andrerrcosta2/gtools/gtests/testingtools/internal/logs"
-	"math"
 )
 
 // StatsLite creates a testing tool instance for simple statistics tests.
 func StatsLite[C, N nums.Real](
-	testing gtests.FailureLoggableTesting, buckets int, min, max N) root.StatsLite[C, N] {
+	testing gtests.FailureLoggableTesting, buckets int, min, max N) gtests.StatsLite[C, N] {
 	return &statsLite[C, N]{
 		levelLoggableLite: levelLoggableLite[gtests.FailureLoggableTesting]{
 			FailureLoggableTesting: testing,

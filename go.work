@@ -13,4 +13,5 @@ use (
 	./reflect4
 	.
 	gflux/core
+	ast4
 )
