@@ -99,7 +99,7 @@ func HasExportedNilField(v reflect.Value) (bool, []string, error) {
 	return len(nf) > 0, nf, nil
 }
 
-// HasExportedNonInterfaceNilField reports whether a struct has exported non-interface nil fields
+// HasExportedNonInterfaceNilField reports whether a struct has exported non-interface nil field4
 func HasExportedNonInterfaceNilField(v reflect.Value) (bool, []string, error) {
 	v = unwrapValue(v)
 	if v.Kind() != reflect.Struct {
@@ -133,7 +133,7 @@ func IsReferenceType(typ reflect.Type) bool {
 	return false
 }
 
-// nilFields returns all nil fields from a struct
+// nilFields returns all nil field4 from a struct
 func nilFields(v reflect.Value) []string {
 	if !v.CanAddr() {
 		ptr := reflect.New(v.Type())
@@ -156,7 +156,7 @@ func nilFields(v reflect.Value) []string {
 	return nf
 }
 
-// nonNilFields returns all non-nil fields from a struct
+// nonNilFields returns all non-nil field4 from a struct
 func nonNilFields(v reflect.Value) []string {
 	if !v.CanAddr() {
 		ptr := reflect.New(v.Type())
@@ -179,7 +179,7 @@ func nonNilFields(v reflect.Value) []string {
 	return nf
 }
 
-// nilExportedFields returns the exported nil fields from a struct
+// nilExportedFields returns the exported nil field4 from a struct
 func nilExportedFields(v reflect.Value) []string {
 	var vt = v.Type()
 	var nf = make([]string, 0, v.NumField())
@@ -195,7 +195,7 @@ func nilExportedFields(v reflect.Value) []string {
 	return nf
 }
 
-// nonInterfaceNilFields returns all nil fields excluding interfaces
+// nonInterfaceNilFields returns all nil field4 excluding interfaces
 // with at least one method from a struct
 func nonInterfaceNilFields(v reflect.Value) []string {
 	if !v.CanAddr() {
@@ -227,7 +227,7 @@ func nonInterfaceNilFields(v reflect.Value) []string {
 	return nf
 }
 
-// nilExportedNonInterfaceFields returns the exported nil fields excluding interfaces
+// nilExportedNonInterfaceFields returns the exported nil field4 excluding interfaces
 // with at least one method from a struct
 func nilExportedNonInterfaceFields(v reflect.Value) []string {
 	var vt = v.Type()

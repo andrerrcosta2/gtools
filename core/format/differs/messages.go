@@ -96,14 +96,14 @@ const ArrayElemFmt = "array elements mismatch at index '%d':"
 
 // ArrayTypesMismatch sprint as:
 //
-//	'array types mismatch
+//	'array type4 mismatch
 //	 → Received: %s
 //	 → Expected: %s'
 func ArrayTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(ArrayTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const ArrayTypesMismatchFmt = "array types mismatch:%s"
+const ArrayTypesMismatchFmt = "array type4 mismatch:%s"
 
 // ChanAddressMismatch sprint as:
 //
@@ -140,25 +140,25 @@ const ChanDirMismatchFmt = "chan direction mismatch:%s"
 
 // ChanElemTypesMismatch sprint as:
 //
-//	'chan element types mismatch:
+//	'chan element type4 mismatch:
 //	 → Received: %s
 //	 → Expected: %s'
 func ChanElemTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(ChanElemTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const ChanElemTypesMismatchFmt = "chan element types mismatch:%s"
+const ChanElemTypesMismatchFmt = "chan element type4 mismatch:%s"
 
 // ChanTypesMismatch sprint as:
 //
-//	'chan types mismatch:
+//	'chan type4 mismatch:
 //	 → Received: %s
 //	 → Expected: %s'
 func ChanTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(ChanTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const ChanTypesMismatchFmt = "chan types mismatch:%s"
+const ChanTypesMismatchFmt = "chan type4 mismatch:%s"
 
 // Empty sprints en indented empty string
 func Empty(tab indent.Indentor) string {
@@ -200,14 +200,14 @@ const FuncSignMismatchFmt = "func mismatch:%s"
 
 // FuncTypesMismatch sprint as:
 //
-//	'func types mismatch:
+//	'func type4 mismatch:
 //	 → Received: %s
 //	 → Expected: %s'
 func FuncTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(FuncTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const FuncTypesMismatchFmt = "func types mismatch:%s"
+const FuncTypesMismatchFmt = "func type4 mismatch:%s"
 
 // GenericAddrMismatch sprint as:
 //
@@ -222,14 +222,14 @@ const GenericAddrMismatchFmt = "%s addresses mismatch:%s"
 
 // InterfaceTypesMismatch sprint as:
 //
-//	'interface types mismatch:
+//	'interface type4 mismatch:
 //	 → Received: %s
 //	 → Expected: %s'
 func InterfaceTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(InterfaceTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const InterfaceTypesMismatchFmt = "interface types mismatch:%s"
+const InterfaceTypesMismatchFmt = "interface type4 mismatch:%s"
 
 // InterfaceImpl sprint as:
 //
@@ -265,14 +265,14 @@ const InvalidReceivedFmt = "received value is invalid:%s"
 
 // MapTypesMismatch
 //
-//	'map types mismatch:
+//	'map type4 mismatch:
 //	 → Received: %s
 //	 → Expected: %s'
 func MapTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(MapTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const MapTypesMismatchFmt = "map types mismatch:%s"
+const MapTypesMismatchFmt = "map type4 mismatch:%s"
 
 // MapLenMismatch
 //
@@ -363,14 +363,14 @@ const NilChanDirectionMismatchFmt = "both channels are nil but their directions 
 
 // NilChanTypesMismatch sprints as:
 //
-//	'both channels are nil but their types mismatch:
+//	'both channels are nil but their type4 mismatch:
 //	  → Received: %s
 //	  → Expected: %s'
 func NilChanTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(NilChanTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const NilChanTypesMismatchFmt = "both channels are nil but their types mismatch:%s"
+const NilChanTypesMismatchFmt = "both channels are nil but their type4 mismatch:%s"
 
 // NilExpected sprint as:
 //
@@ -385,14 +385,14 @@ const NilExpectedFmt = "The expected '%s' is nil:%s"
 
 // NilFuncTypesMismatch sprint as:
 //
-//		'both functions are nil but their types mismatch:
+//		'both functions are nil but their type4 mismatch:
 //	   → Received: %s
 //		  → Expected: %s'
 func NilFuncTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(NilFuncTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const NilFuncTypesMismatchFmt = "both functions are nil but their types mismatch:%s"
+const NilFuncTypesMismatchFmt = "both functions are nil but their type4 mismatch:%s"
 
 // NilFuncSignMismatch sprint as:
 //
@@ -416,14 +416,14 @@ const NilInterfaceFmt = "The %s interface is nil"
 
 // NilPointersSignMismatch sprints as:
 //
-//		'both pointers are nil but their signatures mismatch:
+//		'both pointer4 are nil but their signatures mismatch:
 //	   → Received: %s
 //		  → Expected: %s'
 func NilPointersSignMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(NilPointersSignMismatchFmt, recExp(tab, a, b))
 }
 
-const NilPointersSignMismatchFmt = "both pointers are nil but their signatures mismatch:%s"
+const NilPointersSignMismatchFmt = "both pointer4 are nil but their signatures mismatch:%s"
 
 // NilReceived sprints as:
 //
@@ -438,14 +438,14 @@ const NilReceivedFmt = "The received '%s' is nil:%s"
 
 // NilTypesMismatch sprints as:
 //
-//	'both %s are nil but their types mismatch:
+//	'both %s are nil but their type4 mismatch:
 //	   → Received: %s
 //	   → Expected: %s'
 func NilTypesMismatch(tab indent.Indentor, kind, a, b string) string {
 	return tab.Sprintf(NilTypesMismatchFmt, kind, recExp(tab, a, b))
 }
 
-const NilTypesMismatchFmt = "both %s are nil but their types mismatch:%s"
+const NilTypesMismatchFmt = "both %s are nil but their type4 mismatch:%s"
 
 // PointerValues sprint as:
 //
@@ -493,7 +493,7 @@ func SliceTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(SliceTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const SliceTypesMismatchFmt = "slice types mismatch:%s"
+const SliceTypesMismatchFmt = "slice type4 mismatch:%s"
 
 func SliceValues(tab indent.Indentor, idx int) string {
 	return tab.Sprintf(SliceValuesFmt, idx)
@@ -509,14 +509,14 @@ const StringsFmt = "strings differ at index %d:"
 
 // StructTypesMismatch sprint as:
 //
-//	'struct types mismatch:
+//	'struct type4 mismatch:
 //	   → Received: %s
 //	   → Expected: %s'
 func StructTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(StructTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const StructTypesMismatchFmt = "struct types mismatch:%s"
+const StructTypesMismatchFmt = "struct type4 mismatch:%s"
 
 // StructFields sprint as:
 //
@@ -527,14 +527,14 @@ func StructFields(tab indent.Indentor, name, field string) string {
 
 const StructFieldsFmt = "struct '%s' field '%s' mismatch:"
 
-// TypesMismatch returns a types mismatch Message
+// TypesMismatch returns a type4 mismatch Message
 func TypesMismatch(tab indent.Indentor, a, b string) string {
 	a = "<" + a + ">"
 	b = "<" + b + ">"
 	return tab.Sprintf(TypesMismatchFmt, recExp(tab, a, b))
 }
 
-const TypesMismatchFmt = "types mismatch:%s"
+const TypesMismatchFmt = "type4 mismatch:%s"
 
 func UnsafePointers(tab indent.Indentor) string {
 	return tab.Sprint(UnsafePointersFmt)

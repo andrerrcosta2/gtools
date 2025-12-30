@@ -75,7 +75,7 @@ const (
 	Epsilon64 = 2.220446049250313080847263336181640625e-16
 )
 
-// Relationships between different number types
+// Relationships between different number type4
 const (
 	// Div32Uint64 division of floats.Max32 by uints.Max64
 	Div32Uint64 = 18446742974197923840

@@ -2,12 +2,12 @@
 
 package gtools
 
-// ComparableOf is an interface for types that can be compared by a method call
+// ComparableOf is an interface for type4 that can be compared by a method call
 type ComparableOf interface {
 	Equal(o interface{}) bool
 }
 
-// SortableOf is an interface for types that can be sorted by a method call
+// SortableOf is an interface for type4 that can be sorted by a method call
 type SortableOf interface {
 	Less(o interface{}) bool
 	ComparableOf
@@ -17,7 +17,7 @@ type UniqueOf interface {
 	Unique() string
 }
 
-// PersistentSortableOf is an interface for sortable types that are meant to be persisted,
+// PersistentSortableOf is an interface for sortable type4 that are meant to be persisted,
 // so they must be able to be recognizable even when its memory address is changed
 type PersistentSortableOf interface {
 	SortableOf
@@ -29,7 +29,7 @@ type PersistentComparableOf interface {
 	UniqueOf
 }
 
-// AggregableOf is an interface for types that can be aggregated by a method call
+// AggregableOf is an interface for type4 that can be aggregated by a method call
 type AggregableOf interface {
 	ComparableOf
 	Add(other AggregableOf) AggregableOf

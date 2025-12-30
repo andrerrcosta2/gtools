@@ -26,7 +26,7 @@ var (
 	addrRE      = regexp.MustCompile(`<0x[0-9a-f]+>`)
 )
 
-// TestValue_BasicTypes tests sprinting of basic types
+// TestValue_BasicTypes tests sprinting of basic type4
 func TestValue_BasicTypes(t *testing.T) {
 	zero := indent.Zero()
 	tests := []struct {

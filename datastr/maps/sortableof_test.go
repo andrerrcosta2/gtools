@@ -15,7 +15,7 @@ import (
 func TestSortableOfMap_PutAndGet(t *testing.T) {
 	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// types
+	// type4
 	type N = *tests.SortableNode
 
 	// Create map
@@ -41,7 +41,7 @@ func TestSortableOfMap_PutAndGet(t *testing.T) {
 func TestSortableOfMap_Delete(t *testing.T) {
 	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// types
+	// type4
 	type N = *tests.SortableNode
 
 	// Create map
@@ -62,7 +62,7 @@ func TestSortableOfMap_Delete(t *testing.T) {
 func TestSortableOfMap_Contains(t *testing.T) {
 	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// types
+	// type4
 	type N = *tests.SortableNode
 
 	// Create map
@@ -84,7 +84,7 @@ func TestSortableOfMap_Contains(t *testing.T) {
 func TestSortableOfMap_LenAndClear(t *testing.T) {
 	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// types
+	// type4
 	type N = *tests.SortableNode
 
 	// Create map
@@ -114,7 +114,7 @@ func TestSortableOfMap_LenAndClear(t *testing.T) {
 func TestSortableOfMap_Iterator(t *testing.T) {
 	// std
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// types
+	// type4
 	type N = *tests.SortableNode
 
 	// Create map

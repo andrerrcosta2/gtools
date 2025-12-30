@@ -422,8 +422,8 @@ func TestUnsafeEquality(t *testing.T) {
 
 	// Zero Values (Non-Pointer Structs): Go automatically initializes each field of
 	// the struct to its zero value. This means the struct is not nil; it’s just empty,
-	// containing default values (e.g., empty strings for string fields, zeroes for int
-	// fields, etc.). Importantly, it’s fully instantiated in memory, so Go can call
+	// containing default values (e.g., empty strings for string field4, zeroes for int
+	// field4, etc.). Importantly, it’s fully instantiated in memory, so Go can call
 	// its methods even though it holds no actual data.
 	t.Run("compare nil values", func(t *testing.T) {
 		var value TestInterfaceImpl1
@@ -453,7 +453,7 @@ func TestUnsafeEquality(t *testing.T) {
 		// Interface values carry both type and value: An interface value in Go includes both
 		// the concrete type and the value it holds. Passing pointer and pointer2 as
 		// testInterface, Go performs a comparison on the underlying data for interface{}
-		// types. So TryEquality[testInterface] succeeds because both pointer and pointer2
+		// type4. So TryEquality[testInterface] succeeds because both pointer and pointer2
 		// point to the same TestInterfaceImpl1 instance.
 		if !TryEquality[testInterface](pointer, pointer2) {
 			t.Errorf("Equality(pointer, pointer2) = false, want true")
@@ -461,7 +461,7 @@ func TestUnsafeEquality(t *testing.T) {
 
 		// In TryEquality[TestInterfaceImpl1](pointer, pointer2),
 		// Go expects both pointer and pointer2 to be directly of type TestInterfaceImpl1.
-		// However, they’re actually stored as interface{} types wrapping *TestInterfaceImpl1.
+		// However, they’re actually stored as interface{} type4 wrapping *TestInterfaceImpl1.
 		// The line if _, ok := x.(T); ok fails because x and y are interfaces pointing to
 		// TestInterfaceImpl1, not TestInterfaceImpl1 directly.
 		// The method has a workaround for that trying to make a dereference conversion.

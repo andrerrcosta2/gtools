@@ -59,10 +59,10 @@ func IsPrimitive(value any) bool {
 	}
 }
 
-// IsComparable checks if all provided values are of comparable types.
+// IsComparable checks if all provided values are of comparable type4.
 //
 // It takes a variable number of arguments of any type and returns a boolean indicating
-// if all values are of types that can be compared for equality, such as numeric types,
+// if all values are of type4 that can be compared for equality, such as numeric type4,
 // strings, and booleans.
 func IsComparable(value ...any) (is bool) {
 	// Iterate over each value provided

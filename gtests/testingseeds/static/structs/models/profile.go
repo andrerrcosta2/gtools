@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Profile represents a user's profile with different types of fields
+// Profile represents a user's profile with different type4 of field4
 type Profile struct {
 	FullName     string
 	Age          int
@@ -110,7 +110,7 @@ func ProfileAsRandValue() Profile {
 		LastLogin:   random.Timestamp(1, now.AddDate(-2, 0, 0), now).At(0),
 	}
 
-	// Generate a random profile with various fields
+	// Generate a random profile with various field4
 	size := random.Int(1, 1, 10).At(0)
 	friends := make([]*Profile, size)
 	for i := 0; i < size; i++ {
@@ -149,7 +149,7 @@ func ProfileAsRandRef() *Profile {
 		LastLogin:   random.Timestamp(1, now.AddDate(-2, 0, 0), now).At(0),
 	}
 
-	// Generate a random profile with various fields
+	// Generate a random profile with various field4
 	size := random.Int(1, 1, 10).At(0)
 	friends := make([]*Profile, size)
 	for i := 0; i < size; i++ {

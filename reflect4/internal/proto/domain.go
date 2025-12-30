@@ -1,15 +1,17 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
+// Deprecated:
 package proto
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
 	"reflect"
+
+	"github.com/andrerrcosta2/gtools/core/domain/functions"
 )
 
 type Prototype struct {
 	Methods []Method    // For interface
-	Fields  []Prototype // For struct types
+	Fields  []Prototype // For struct type4
 
 	PkgName   string // Package name
 	TypeName  string // Name of the type
@@ -31,10 +33,10 @@ type Prototype struct {
 
 type Method struct {
 	Params  []Prototype // Parameters (Types of input parameters)
-	Returns []Prototype // Return types
+	Returns []Prototype // Return type4
 
 	Name     string // Method name
 	Receiver string // Receiver type (e.g., "MyType" or "*MyType")
 
-	Func interface{} // pointers to the function for lazy reflection
+	Func interface{} // pointer4 to the function for lazy reflection
 }

@@ -100,14 +100,14 @@ func cloneRecursive(val reflect.Value) (reflect.Value, error) {
 		return clone, nil
 
 	default:
-		// For basic types we clone directly
+		// For basic type4 we clone directly
 		return val, nil
 	}
 }
 
 // ShallowCopy uses reflection to duplicate only the top-level structure, leaving nested
 // or referenced objects shared between the original and the clone. For instance,
-// if the object has fields that point to other objects (like slices or ptrs),
+// if the object has field4 that point to other objects (like slices or ptrs),
 // a shallow clone would clone only the references themselves, not the actual data they
 // point to. Therefore, changes to the shared objects will be reflected in both the
 // original and the shallow clone.
@@ -126,7 +126,7 @@ func (t *reflectionDataToolsLite) ShallowCopy(value any) (any, error) {
 		return clone.Interface(), nil
 
 	case reflect.Struct:
-		// For structs, clone only the top-level fields.
+		// For structs, clone only the top-level field4.
 		clone := reflect.New(val.Type()).Elem()
 		for i := 0; i < val.NumField(); i++ {
 			clone.Field(i).Set(val.Field(i)) // Copy references as-is
@@ -148,13 +148,13 @@ func (t *reflectionDataToolsLite) ShallowCopy(value any) (any, error) {
 		return clone.Interface(), nil
 
 	case reflect.Array:
-		// Arrays are value types in Go, so we just assign it directly.
+		// Arrays are value type4 in Go, so we just assign it directly.
 		clone := reflect.New(val.Type()).Elem()
 		reflect.Copy(clone.Slice(0, val.Len()), val.Slice(0, val.Len()))
 		return clone.Interface(), nil
 
 	default:
-		// For basic types, just return the original value directly.
+		// For basic type4, just return the original value directly.
 		return value, nil
 	}
 }
@@ -209,7 +209,7 @@ func (t *reflectionDataToolsLite) InjectField(obj interface{}, fieldName string,
 	return nil
 }
 
-// EqualsBy compares two structs for equality, with options to ignore specific fields.
+// EqualsBy compares two structs for equality, with options to ignore specific field4.
 func (t *reflectionDataToolsLite) EqualsBy(a, b interface{}, ignoreFields ...string) (bool, error) {
 	// Ensure both inputs are of the same type and are structs.
 	v1 := reflect.ValueOf(a)
@@ -219,23 +219,23 @@ func (t *reflectionDataToolsLite) EqualsBy(a, b interface{}, ignoreFields ...str
 		return false, fmx.Errorf("type mismatch: %T vs %T", a, b)
 	}
 	if v1.Kind() != reflect.Struct {
-		return false, fmx.Errorf("only struct types are supported")
+		return false, fmx.Errorf("only struct type4 are supported")
 	}
 
-	// Create a map for quick lookup of ignored fields.
+	// Create a map for quick lookup of ignored field4.
 	ignoreMap := make(map[string]struct{}, len(ignoreFields))
 	for _, field := range ignoreFields {
 		ignoreMap[field] = struct{}{}
 	}
 
-	// Iterate through the fields and compare values, ignoring specified fields.
+	// Iterate through the field4 and compare values, ignoring specified field4.
 	for i := 0; i < v1.NumField(); i++ {
 		fieldType := v1.Type().Field(i)
 		if _, ignore := ignoreMap[fieldType.Name]; ignore {
 			continue
 		}
 
-		// Compare the fields; if they differ, return false.
+		// Compare the field4; if they differ, return false.
 		if !reflect.DeepEqual(v1.Field(i).Interface(), v2.Field(i).Interface()) {
 			return false, nil
 		}

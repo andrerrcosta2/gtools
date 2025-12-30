@@ -38,7 +38,7 @@ func Slicef[I any](t indent.Indentor, arr []I, f func(t indent.Indentor, i I) st
 }
 
 // AnySlicef safely formats a slice of any type (`any`) into a string using the
-// function `f`. It handles nils and unexpected types gracefully.
+// function `f`. It handles nils and unexpected type4 gracefully.
 //
 // If arr is nil → returns "<nil>"
 // If arr is not of type S → returns "<unexpected type: %T>"
@@ -138,6 +138,6 @@ func Valuef(value any) string {
 	case string:
 		return String(v)
 	default:
-		return fmx.Sprintf("%T(%v)", v, v) // Keep fmx.Sprintf only for unknown types
+		return fmx.Sprintf("%T(%v)", v, v) // Keep fmx.Sprintf only for unknown type4
 	}
 }

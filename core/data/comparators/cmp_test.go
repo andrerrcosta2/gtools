@@ -60,7 +60,7 @@ func TestOrdered_Equals(t *testing.T) {
 	}
 }
 
-// TestOrdered_Generic tests the Ordered type with different generic types.
+// TestOrdered_Generic tests the Ordered type with different generic type4.
 func TestOrdered_Generic(t *testing.T) {
 	// Test with strings
 	var orderedString Ordered[string]
@@ -225,7 +225,7 @@ func TestStringOrdered_Hash(t *testing.T) {
 		input    any
 		expected string
 	}{
-		// Integer types
+		// Integer type4
 		{"int hash", 42, "42"},
 		{"negative int hash", -10, "-10"},
 		{"zero int hash", 0, "0"},
@@ -234,14 +234,14 @@ func TestStringOrdered_Hash(t *testing.T) {
 		{"int32 hash", int32(2147483647), "2147483647"},
 		{"int64 hash", int64(-9223372036854775808), "-9223372036854775808"},
 
-		// Unsigned integer types
+		// Unsigned integer type4
 		{"uint hash", uint(42), "42"},
 		{"uint8 hash", uint8(255), "255"},
 		{"uint16 hash", uint16(65535), "65535"},
 		{"uint32 hash", uint32(4294967295), "4294967295"},
 		{"uint64 hash", uint64(18446744073709551615), "18446744073709551615"},
 
-		// Floating-point types
+		// Floating-point type4
 		{"float32 hash", float32(3.14), "3.14"},
 		{"negative float32 hash", float32(-2.71), "-2.71"},
 		{"zero float32 hash", float32(0.0), "0"},
@@ -262,7 +262,7 @@ func TestStringOrdered_Hash(t *testing.T) {
 			defer func() {
 				if r := recover(); r != nil {
 					if tt.name == "unsupported type" {
-						// Expected panic for unsupported types
+						// Expected panic for unsupported type4
 						return
 					}
 					t.Errorf("unexpected panic: %v", r)

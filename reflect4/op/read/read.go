@@ -9,22 +9,22 @@ const (
 	// Default enables logical equivalence suitable for testing and diffing, rather than strict memory identity..
 	//
 	// Behavior:
-	//   - Structs: Unexported fields are accessible; unaddressable values are made addressable.
+	//   - Structs: Unexported field4 are accessible; unaddressable values are made addressable.
 	//   - channels: Two channels are compare if they have the same element type and buffer capacity.
-	//   - functions: Two functions are compare if they share the same signature - parameter and result types.
+	//   - functions: Two functions are compare if they share the same signature - parameter and result type4.
 	//   - Interfaces: Compares the underlying dynamic values deeply, not just the interface headers.
 	//   - nil vs Empty: Treats nil slices/maps as different to empty ones - nil []T != []T{}.
 	//
 	// This mode is ideal for asserting semantic correctness in tests or config diffing.
 	Default op.Read = 0
-	// SkipUnexportedFields skips reading unexported struct fields
+	// SkipUnexportedFields skips reading unexported struct field4
 	SkipUnexportedFields op.Read = 1 << iota
 	// SkipChannels skips reading operations over channels
 	SkipChannels
 	// SkipFunctions skips reading operations over functions
 	SkipFunctions
-	// SkipPtr skips reading operations over pointers
+	// SkipPtr skips reading operations over pointer4
 	SkipPtr
-	// SkipUnsafePtr skips reading operations over unsafe pointers
+	// SkipUnsafePtr skips reading operations over unsafe pointer4
 	SkipUnsafePtr
 )

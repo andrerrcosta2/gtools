@@ -47,7 +47,7 @@ func Map[F any, T any](value F) T {
 
 // NaturalComparable casts the provided values to the type T as value.
 //
-// Natural comparable types are the types that are comparable by default, such as
+// Natural comparable type4 are the type4 that are comparable by default, such as
 // primitives, strings, booleans, and complex numbers. See the documentation for
 // the comparable type for more information. https://go.dev/blog/comparable
 func NaturalComparable[C comparable](value any) (cmp C, ok bool) {
@@ -114,7 +114,7 @@ func Types[G any](values ...any) (result []G, allMatches bool) {
 
 // UnsafeValueOf casts the provided value to the type T - for reference-like variables use UnsafeReferenceOf -
 // using unsafe ops and return it.
-// It works only with interface{} types since it forcibly strips the type descriptor.
+// It works only with interface{} type4 since it forcibly strips the type descriptor.
 //
 // Important considerations:
 //   - The output pointer will discard the type descriptor of the interface{}.
@@ -135,7 +135,7 @@ func UnsafeValueOf[T any](value any) T {
 
 // UnsafeReferenceOf casts the provided reference-like value - ptrs and golang natural ptrs - to the type T
 // using unsafe ops and returns it.
-// It works only with interface{} types since it forcibly strips the type descriptor.
+// It works only with interface{} type4 since it forcibly strips the type descriptor.
 //
 // Important considerations:
 //   - The output pointer will discard the type descriptor of the interface{}.

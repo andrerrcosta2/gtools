@@ -12,17 +12,23 @@ import (
 )
 
 var (
-	ErrUnexportedFieldStruct = errors.New("cannot diff between structs as unexported fields")
+	ErrUnexportedFieldStruct = errors.New("cannot diff between structs as unexported field4")
 )
 
 // Between returns the difference between two values
 func Between[O internal.Option](value, expected reflect.Value, o ...O) (diff string, equals bool) {
-	//if value.Kind() != reflect.Ptr || expected.Kind() != reflect.Ptr {
-	//	panic(fmx.Sprintf("can't differ safely on non pointer values. got '%v' and '%v'",
-	//		value.Kind(), expected.Kind()))
-	//}
 	var tab indent.Branch
 	d := between(tab, value, expected, NewStrategy(o...))
+	if !d.Equals {
+		return differs.Message(d.Message, d.Diff), false
+	}
+	return "", true
+}
+
+// BetweenByStrat returns the difference between two values using a predefined strategy
+func BetweenByStrat(value, expected reflect.Value, strategy *Strategy) (diff string, equals bool) {
+	var tab indent.Branch
+	d := between(tab, value, expected, strategy)
 	if !d.Equals {
 		return differs.Message(d.Message, d.Diff), false
 	}

@@ -48,6 +48,18 @@ func FieldInterfaceOf(v any) FieldInterface {
 	return FieldInterface{i: i[0], field: field}
 }
 
+// ForceOfUnaddr makes a reflect.Value addressable without safety checks.
+// ⚠️ It will panic if 'value' is invalid or obtained from an unexported field.
+// Use only when you are sure the input is safe to clone.
+func ForceOfUnaddr(value reflect.Value) reflect.Value {
+	// Create a new pointer to the value's type
+	ptr := reflect.New(value.Type())
+	// Copy the original value into the pointer
+	ptr.Elem().Set(value)
+	// Return the addressable value
+	return ptr.Elem()
+}
+
 func IsNil(value reflect.Value) bool {
 	switch value.Kind() {
 	case reflect.Pointer, reflect.Map, reflect.Slice, reflect.Chan, reflect.Func, reflect.Interface, reflect.UnsafePointer:
@@ -55,6 +67,13 @@ func IsNil(value reflect.Value) bool {
 	default:
 		return false
 	}
+}
+
+func Name(v reflect.Value) string {
+	if !v.IsValid() {
+		return "<invalid>"
+	}
+	return ValidValueName(v)
 }
 
 // OfUnaddr forces a refkect.Value addressability. It returns an error if the value
@@ -69,18 +88,6 @@ func OfUnaddr(value reflect.Value) (reflect.Value, error) {
 	ptr := reflect.New(value.Type())
 	ptr.Elem().Set(value)
 	return ptr.Elem(), nil
-}
-
-// ForceOfUnaddr makes a reflect.Value addressable without safety checks.
-// ⚠️ It will panic if 'value' is invalid or obtained from an unexported field.
-// Use only when you are sure the input is safe to clone.
-func ForceOfUnaddr(value reflect.Value) reflect.Value {
-	// Create a new pointer to the value's type
-	ptr := reflect.New(value.Type())
-	// Copy the original value into the pointer
-	ptr.Elem().Set(value)
-	// Return the addressable value
-	return ptr.Elem()
 }
 
 // UnsafeForceOfUnaddr makes a reflect.Value addressable without safety checks
@@ -110,4 +117,15 @@ func xint(v any) (i []reflect.Value, value reflect.Value) {
 		value = i[len(i)-1]
 	}
 	return
+}
+
+func ValidValueName(v reflect.Value) string {
+	t := v.Type()
+	if t.Name() != "" {
+		if pkgPath := t.PkgPath(); pkgPath != "" {
+			return pkgPath + "." + t.Name()
+		}
+		return t.Name()
+	}
+	return t.String()
 }

@@ -77,7 +77,7 @@ var _ functions.VarPredicate[gtools.SortableOf] = MultipleEquality[gtools.Sortab
 //
 // 1. ImplementationOf ComparableOf
 // 2. Is a natural comparable type
-// 3. Uses pointer comparison for reference types
+// 3. Uses pointer comparison for reference type4
 func TryEquality[T any](x, y any) bool {
 	// If x or y implements ComparableOf
 	if comparableX, ok := x.(gtools.ComparableOf); ok {
@@ -87,7 +87,7 @@ func TryEquality[T any](x, y any) bool {
 		return comparableY.Equal(x)
 	}
 
-	// If x and y are from the primitive Comparable types
+	// If x and y are from the primitive Comparable type4
 	if equal, err := prim.Compare(x, y); err == nil {
 		return equal
 	}
@@ -137,7 +137,7 @@ func TryLess(x, y any) bool {
 		return comparableY.Less(x)
 	}
 
-	// If x and y are from the primitive Comparable types
+	// If x and y are from the primitive Comparable type4
 	if less, err := prim.TryLess(x, y); err == nil {
 		return less
 	}

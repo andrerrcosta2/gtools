@@ -29,7 +29,7 @@ const (
 	//   - nil []T == []T{}
 	//   - nil map[K]V == map[K]V{}
 	//
-	// This flag is especially useful when comparing deserialized data or optional fields, where the
+	// This flag is especially useful when comparing deserialized data or optional field4, where the
 	// distinction between nil and empty is often semantically irrelevant.
 	AllowNilVsEmpty
 	// IgnoreCase ignores case on string comparisons
@@ -54,7 +54,7 @@ const (
 	// This is useful when strict runtime identity matters more than logical equivalence.
 	//
 	// Note: Even this mode may differ slightly from reflect.DeepEqual in edge cases involving
-	// unexported struct fields or cyclic data, due to implementation safeguards.
+	// unexported struct field4 or cyclic data, due to implementation safeguards.
 	// Most precisely on functions where reflect package considers both to be the compare only when both are nil
 	ReflectSemantics = ChanIdentity | FuncIdentity
 	// Strict combines a ReflectSemantics and PtrIdentity

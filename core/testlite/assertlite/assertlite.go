@@ -12,7 +12,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/testlite/internal/ask"
 )
 
-// AllFieldsAreNil asserts all the struct fields are nil.
+// AllFieldsAreNil asserts all the struct field4 are nil.
 // This assertion performs only shallow inspection.
 // It flags the test as failed if the value isn't a struct or if it contains any non nil field.
 func AllFieldsAreNil(t testlite.HelperTesting, checkUnexported bool, target any, msgAndArgs ...any) bool {
@@ -31,7 +31,7 @@ func AllFieldsAreNil(t testlite.HelperTesting, checkUnexported bool, target any,
 		return false
 	} else if has {
 		t.Helper()
-		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil fields but got nil for "+
+		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil field4 but got nil for "+
 			"'%v' on '%s%v'\n", nf, tv.String(), target), msgAndArgs...)
 		return false
 	}
@@ -241,7 +241,7 @@ func NoError(t testlite.HelperTesting, err error, msgAndArgs ...any) bool {
 	return true
 }
 
-// NoNilFields asserts the struct has no nil fields.
+// NoNilFields asserts the struct has no nil field4.
 // This assertion performs only shallow inspection.
 // It flags the test as failed if the value isn't a struct or if it contains any nil field.
 func NoNilFields(t testlite.HelperTesting, checkUnexported bool, target any, msgAndArgs ...any) bool {
@@ -260,14 +260,14 @@ func NoNilFields(t testlite.HelperTesting, checkUnexported bool, target any, msg
 		return false
 	} else if has {
 		t.Helper()
-		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil fields but got nil for "+
+		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil field4 but got nil for "+
 			"'%v' on '%s%v'\n", nf, tv.String(), target), msgAndArgs...)
 		return false
 	}
 	return true
 }
 
-// NoNilNonInterfaceFields asserts the target has no nil fields except for interfaces with at least one method
+// NoNilNonInterfaceFields asserts the target has no nil field4 except for interfaces with at least one method
 func NoNilNonInterfaceFields(t testlite.HelperTesting, checkUnexported bool, target any, msgAndArgs ...any) bool {
 	var has bool
 	var nf []string
@@ -284,7 +284,7 @@ func NoNilNonInterfaceFields(t testlite.HelperTesting, checkUnexported bool, tar
 		return false
 	} else if has {
 		t.Helper()
-		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil fields but got nil for "+
+		fail(t, fmt.Sprintf("❌ assertion failed. expected no nil field4 but got nil for "+
 			"'%v' on '%s%v'\n", nf, tv.String(), target), msgAndArgs...)
 		return false
 	}
@@ -341,7 +341,7 @@ func noPanic(t testlite.HelperTesting, res *bool, msgAndArgs ...any) {
 }
 
 // NotSame asserts that two references aren't pointing to the same object.
-// It'll never return true for non-reference types
+// It'll never return true for non-reference type4
 func NotSame(t testlite.HelperTesting, a, b any, msgAndArgs ...any) bool {
 	same, addr, _ := ask.AreSameInstances(a, b)
 	if same {
@@ -383,7 +383,7 @@ func Panic(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
 }
 
 // Same asserts that two references are pointing to the same object.
-// It'll never return true for non-reference types
+// It'll never return true for non-reference type4
 func Same(t testlite.HelperTesting, a, b any, msgAndArgs ...any) bool {
 	same, addr, err := ask.AreSameInstances(a, b)
 	if err != nil {

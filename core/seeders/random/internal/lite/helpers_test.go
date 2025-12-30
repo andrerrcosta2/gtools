@@ -23,7 +23,7 @@ const (
 //
 // this test must assert:
 //   - No nil values
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestRandAny(t *testing.T) {
 	t.Run("shouldn't generate nil values", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -60,7 +60,7 @@ func TestRandAny(t *testing.T) {
 // this test should assert
 //   - no nil values are generated
 //   - all values are reflect.Array
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestRandArray(t *testing.T) {
 	t.Run("shouldn't generate nil values", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -120,7 +120,7 @@ func TestRandArrayOf(t *testing.T) {
 // this test must assert:
 //   - no nil values are generated
 //   - all values must be of kind reflect.Chan
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestRandChan(t *testing.T) {
 	t.Run("shouldn't generate nil values", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -181,7 +181,7 @@ func TestRandChanOf(t *testing.T) {
 // this test must assert:
 //   - no nil values are generated
 //   - all values must be comparable
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestRandCmp(t *testing.T) {
 	t.Run("shouldn't generate nil values", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -255,7 +255,7 @@ func TestRandFuncOf(t *testing.T) {
 // TestRandGiven tests the method RandGiven generation of random value based on a given slice
 //
 // this test should assert
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestRandGiven(t *testing.T) {
 	t.Run("distribution should be under deviation threshold", func(t *testing.T) {
 		counts := make(map[int]int)
@@ -281,7 +281,7 @@ func TestRandGiven(t *testing.T) {
 	})
 }
 
-// TestRandMap tests the method RandMap generation of random map types
+// TestRandMap tests the method RandMap generation of random map type4
 //
 // This test must assert
 //   - no nil values are generated
@@ -416,7 +416,7 @@ func TestRandOf(t *testing.T) {
 		assertlite.IsTypeOf[string](t, d16)
 	})
 
-	// Values can't be nil, but must check its fields.
+	// Values can't be nil, but must check its field4.
 	t.Run("Struct Values", func(t *testing.T) {
 		d1 := RandOf(reflect.TypeOf(testseed.NewSortableValue("test", 1)))
 		assertlite.IsTypeOf[testseed.SortableValue](t, d1)

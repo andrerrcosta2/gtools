@@ -151,7 +151,7 @@ var deepTests_refl = []DeepEqualTest{
 	{map[int]int{}, map[int]int{}, true},
 	{map[int]int(nil), map[int]int(nil), true},
 
-	// Mismatched types
+	// Mismatched type4
 	{1, 1.0, false},
 	{int32(1), int64(1), false},
 	{0.5, "hello", false},
@@ -177,7 +177,7 @@ var deepTests_refl = []DeepEqualTest{
 //
 // Array values are deeply equal when their corresponding elements are deeply equal.
 //
-// Struct values are deeply equal if their corresponding fields,
+// Struct values are deeply equal if their corresponding field4,
 // both exported and unexported, are deeply equal.
 //
 // Func values are deeply equal if both are nil; otherwise they are not deeply equal.
@@ -239,7 +239,7 @@ func TestDeepEqual_ReflStrat(t *testing.T) {
 	})
 
 	t.Run("unexported map", func(t *testing.T) {
-		// Check that DeepEqual can look at unexported fields.
+		// Check that DeepEqual can look at unexported field4.
 		x1 := UnexpT{map[int]int{1: 2}}
 		x2 := UnexpT{map[int]int{1: 2}}
 		v1, v2 := reflect.ValueOf(&x1), reflect.ValueOf(&x2)
@@ -313,7 +313,7 @@ var deepTests_default = []DeepEqualTest{
 	{map[int]int{}, map[int]int{}, true},
 	{map[int]int(nil), map[int]int(nil), true},
 
-	// Mismatched types
+	// Mismatched type4
 	{1, 1.0, false},
 	{int32(1), int64(1), false},
 	{0.5, "hello", false},
@@ -372,7 +372,7 @@ func TestDeepEqual_Default(t *testing.T) {
 	})
 
 	t.Run("unexported map", func(t *testing.T) {
-		// Check that DeepEqual can look at unexported fields.
+		// Check that DeepEqual can look at unexported field4.
 		x1 := UnexpT{map[int]int{1: 2}}
 		x2 := UnexpT{map[int]int{1: 2}}
 		v1, v2 := reflect.ValueOf(&x1), reflect.ValueOf(&x2)
@@ -446,7 +446,7 @@ var deepTests_serializable = []DeepEqualTest{
 	{map[int]int{}, map[int]int{}, true},
 	{map[int]int(nil), map[int]int(nil), true},
 
-	// Mismatched types
+	// Mismatched type4
 	{1, 1.0, false},
 	{int32(1), int64(1), false},
 	{0.5, "hello", false},
@@ -505,7 +505,7 @@ func TestDeepEqual_Serializable(t *testing.T) {
 	})
 
 	t.Run("unexported map", func(t *testing.T) {
-		// Check that DeepEqual can look at unexported fields.
+		// Check that DeepEqual can look at unexported field4.
 		x1 := UnexpT{map[int]int{1: 2}}
 		x2 := UnexpT{map[int]int{1: 2}}
 		v1, v2 := reflect.ValueOf(&x1), reflect.ValueOf(&x2)
@@ -583,7 +583,7 @@ var deepTests_strict = []DeepEqualTest{
 	{map[int]int{}, map[int]int{}, false},      // identityDeep
 	{map[int]int(nil), map[int]int(nil), true}, // identityDeep (nul vs nil)
 
-	// Mismatched types
+	// Mismatched type4
 	{1, 1.0, false},
 	{int32(1), int64(1), false},
 	{0.5, "hello", false},
@@ -642,7 +642,7 @@ func TestDeepEqual_Strict(t *testing.T) {
 	})
 
 	t.Run("unexported map", func(t *testing.T) {
-		// Check that DeepEqual can look at unexported fields.
+		// Check that DeepEqual can look at unexported field4.
 		x1 := UnexpT{map[int]int{1: 2}}
 		x2 := UnexpT{map[int]int{1: 2}}
 		v1, v2 := reflect.ValueOf(&x1), reflect.ValueOf(&x2)

@@ -3,11 +3,12 @@
 package data
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/reflect4"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
-	"reflect"
 )
 
 // DeepCopy deep copies the given value.
@@ -23,50 +24,57 @@ func DeepCopy[O internal.Option](value reflect.Value, o ...O) (cp reflect.Value,
 	return cp, nil
 }
 
+// DeepCopyByStrat deep copies the given value using a predefined strategy.
+// The function returns a deep clone of the value and an error.
+// The error is nil if the clone was successful.
+func DeepCopyByStrat(value reflect.Value, strategy *CopyStrategy) (cp reflect.Value, err error) {
+	// Call the deepCopy function with the pointer map to avoid cyclic references
+	cp, err = deepCopy(value, strategy)
+	if err != nil {
+		return values.Empty, fmx.Errorf("failed to deep clone value: %s%v: '%v'",
+			value.String(), value.Interface(), err)
+	}
+	return cp, nil
+}
+
 // ShallowCopy TODO: unimplemented
 func ShallowCopy(value reflect.Value, _ *CopyStrategy) (reflect.Value, error) {
 	panic("shallow clone not yet implemented")
 	return value, nil
 }
 
-// DeepCopyArray performs a deep clone of the given array based on the given
-// CopyStrategy.
+// DeepCopyArray performs a deep clone of the given array based on the given options
 // It panics if the value isn't an array
 func DeepCopyArray[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	return deepCopyArray(v, NewCopyStrategy(o...))
 }
 
-// DeepCopyChannel performs a deep clone of a given channel based on the given
-// CopyStrategy.
+// DeepCopyChannel performs a deep clone of a given channel based on the given options.
 // It panics if the value isn't a channel
 func DeepCopyChannel[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	return NewCopyStrategy(o...).CopyChan(v, nil)
 }
 
-// DeepCopyInterface performs a deep clone of a given interface based on the given
-// CopyStrategy.
+// DeepCopyInterface performs a deep clone of a given interface based on the given options.
 // It panics if the value isn't an interface
 func DeepCopyInterface[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	return deepCopyInterface(v, NewCopyStrategy(o...))
 }
 
-// DeepCopyMap performs a deep clone of a given map based on the given
-// CopyStrategy.
+// DeepCopyMap performs a deep clone of a given map based on the given options.
 // It panics if the value isn't a map
 func DeepCopyMap[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	return deepCopyMap(v, NewCopyStrategy(o...))
 }
 
-// DeepCopyPointer performs a deep clone of the given pointer based on the given
-// CopyStrategy.
+// DeepCopyPointer performs a deep clone of the given pointer based on the given options.
 // It panics if the value isn't a pointer
 func DeepCopyPointer[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	s := NewCopyStrategy(o...)
 	return s.CopyPtr(v, s)
 }
 
-// DeepCopySlice performs a deep clone of the given slice based on the given
-// CopyStrategy.
+// DeepCopySlice performs a deep clone of the given slice based on the given options.
 // It panics if the value isn't a slice
 func DeepCopySlice[O internal.Option](v reflect.Value, o ...O) (reflect.Value, error) {
 	return deepCopySlice(v, NewCopyStrategy(o...))

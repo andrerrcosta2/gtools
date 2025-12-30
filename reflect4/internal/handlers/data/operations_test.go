@@ -16,7 +16,7 @@ import (
 
 // TestDeepCopyArray_Default should have equal copy based on the constraints:
 //   - functions aren't copied
-//   - unsafe pointers
+//   - unsafe pointer4
 func TestDeepCopyArray_Default(t *testing.T) {
 	s := DefaultCopyStrat()
 	gtests.Arrays.Fuzz().Values().All().Each(func(arr any) {

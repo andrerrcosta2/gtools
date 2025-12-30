@@ -15,5 +15,8 @@ var (
 	ErrNotPrimitive = errors.New("target is not a primitive")
 	ErrNotSlice     = errors.New("target is not a slice")
 	ErrNotStruct    = errors.New("target is not a struct")
-	ErrNotUnsafePtr = errors.New("target is not an unsafe.pointers")
+	ErrNotUnsafePtr = errors.New("target is not an unsafe.pointer4")
+	ErrNilInterface = func(caller string) error {
+		return errors.New(caller + ": cannot handle nil interface")
+	}
 )

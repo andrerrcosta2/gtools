@@ -335,7 +335,7 @@ func Hashable() reflect.Type {
 }
 
 // hashableOf generates a random value for a hashable type
-// Note> this method still accepts non hashable types, like
+// Note> this method still accepts non hashable type4, like
 // non-comparable structs and arrays.
 // this control must be done outside for performance.
 func hashableOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
@@ -524,7 +524,7 @@ func pointerOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 
 	val := valueOf(elemType, tt)
 
-	// Named types won't be assignable
+	// Named type4 won't be assignable
 	if val.Type() != elemType {
 		val = val.Convert(elemType)
 	}
@@ -566,14 +566,14 @@ func StringOf(length int, charset string) reflect.Value {
 	return reflect.ValueOf(string(b))
 }
 
-// StructOf generates a new instance of the given struct type with random values for its fields.
-// It uses reflection to dynamically create an instance and set the fields.
+// StructOf generates a new instance of the given struct type with random values for its field4.
+// It uses reflection to dynamically create an instance and set the field4.
 func StructOf(t reflect.Type, maxDepth ...int) reflect.Value {
 	return structOf(t, reflectutils.TrackerOf(maxDepth...))
 }
 
 // structOf generates a new instance of the given struct type with random values for
-// its fields and a max depth for its inner values
+// its field4 and a max depth for its inner values
 func structOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 	v := reflect.New(t).Elem() // v is always addressable
 	if !tt.Next(t) {

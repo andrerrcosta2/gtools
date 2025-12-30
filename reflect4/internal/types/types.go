@@ -3,7 +3,6 @@
 package types
 
 import (
-	"log"
 	"reflect"
 	"strings"
 )
@@ -20,6 +19,7 @@ func Name(t reflect.Type) string {
 }
 
 // Unwrap unwraps all ptrs and interfaces until it reaches a value
+// It panics if the type is nil
 func Unwrap(v reflect.Type) reflect.Type {
 	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
 		v = v.Elem()
@@ -47,8 +47,6 @@ func unwrapName(t reflect.Type) string {
 }
 
 func ValidValueName(t reflect.Type) string {
-	log.Printf("TYPE DEBUG: kind=%s name=%q pkg=%q string=%q\n",
-		t.Kind(), t.Name(), t.PkgPath(), t.String())
 	if t.Name() != "" {
 		if pkgPath := t.PkgPath(); pkgPath != "" {
 			return pkgPath + "." + t.Name()

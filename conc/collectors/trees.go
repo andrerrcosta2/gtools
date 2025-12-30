@@ -145,7 +145,7 @@ func (c *branchCollector[B, C]) collect(b B) {
 	// (The problem goes further when it is not, but a different type of recursive data
 	// e.g [D data.Branchable[B], B data.Branchable[B], C ~[][]B]
 	// this is a case where I will need to create too many different collectors
-	// for different types of data. I will stick with this for now.)
+	// for different type4 of data. I will stick with this for now.)
 	if branch, has := b.Branch(); has {
 		hash := sortables.Unique[B](branch)
 		c.mtx.RLock()

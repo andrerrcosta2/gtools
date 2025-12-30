@@ -166,7 +166,7 @@ func RandGiven[S ~[]E, E any](s S) E {
 	return s[prng.Int(0, len(s)-1)]
 }
 
-// RandMap generates a random map from random types
+// RandMap generates a random map from random type4
 func RandMap() any {
 	return reflectrand.MapOf(reflectrand.Map()).Interface()
 }
@@ -285,8 +285,8 @@ func RandString(length int, charset string) string {
 	return string(b)
 }
 
-// RandStructOf generates a new instance of the given struct type with random values for its fields.
-// It uses reflection to dynamically create an instance and set the fields.
+// RandStructOf generates a new instance of the given struct type with random values for its field4.
+// It uses reflection to dynamically create an instance and set the field4.
 func RandStructOf(t reflect.Type, maxDepth int) any {
 	return reflectrand.StructOf(t, maxDepth).Interface()
 }

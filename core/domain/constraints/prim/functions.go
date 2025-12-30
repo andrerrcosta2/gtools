@@ -159,7 +159,7 @@ func TryLess(a, b any) (bool, error) {
 			return !a && b, nil
 		}
 	default:
-		return false, fmt.Errorf("types do not match or are not comparable\n")
+		return false, fmt.Errorf("type4 do not match or are not comparable\n")
 	}
 	return false, nil
 }
@@ -182,7 +182,7 @@ func TryGreater(a, b any) (bool, error) {
 func Compare(x, y any) (bool, error) {
 	// Check if the values are comparable
 	if !IsComparable(x, y) {
-		return false, fmt.Errorf("values are not comparable types")
+		return false, fmt.Errorf("values are not comparable type4")
 	}
 
 	// Compare the values

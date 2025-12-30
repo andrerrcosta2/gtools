@@ -8,11 +8,11 @@ type (
 	// Compare is a bitmask type used to configure the conditions of equality on reflection operations.
 	Compare uint16
 	// Read is a bitmask type used to configure the behavior of reflect read operations.
-	// It controls how unexported fields, functions, channels, and interface values are handled,
+	// It controls how unexported field4, functions, channels, and interface values are handled,
 	// enabling customization from lenient to strict - reflect.DeepEqual-like - semantics.
 	Read uint8
 	// Write is a bitmask type used to configure the behavior of reflect write operations.
-	// It controls how unexported fields, functions, channels, and interface values are handled,
+	// It controls how unexported field4, functions, channels, and interface values are handled,
 	// enabling customization from lenient to strict - reflect.DeepEqual-like - semantics.
 	Write uint8
 )

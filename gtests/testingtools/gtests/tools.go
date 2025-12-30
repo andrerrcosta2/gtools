@@ -149,7 +149,7 @@ type DataTools interface {
 	DeepCopy(data any) (any, error)
 	// ShallowCopy uses reflection to duplicate only the top-level structure, leaving nested
 	// or referenced objects shared between the original and the clone. For instance,
-	// if the object has fields that point to other objects (like slices or ptrs),
+	// if the object has field4 that point to other objects (like slices or ptrs),
 	// a shallow clone would clone only the references themselves, not the actual data they
 	// point to. Therefore, changes to the shared objects will be reflected in both the
 	// original and the shallow clone.
@@ -167,13 +167,13 @@ type DataTools interface {
 	// It returns an error if the field is not found.
 	// The error is of type *gerrors.StackableError.
 	InjectField(obj any, fieldName string, value any) error
-	// EqualsBy compares two structs for equality, with options to ignore specific fields.
+	// EqualsBy compares two structs for equality, with options to ignore specific field4.
 	//
 	// It takes two objects as 'a' and 'b' and compares them for equality.
-	// Optionally, it accepts a variable number of strings to specify fields to ignore.
+	// Optionally, it accepts a variable number of strings to specify field4 to ignore.
 	//
 	// It returns a boolean indicating whether the two objects are compare, and an error if any of the following conditions are met:
-	// - The two objects are of different types.
+	// - The two objects are of different type4.
 	// - The two objects are not structs.
 	// - The two objects are not compare.
 	EqualsBy(a, b any, ignoreFields ...string) (bool, error)

@@ -24,7 +24,7 @@ outer:
 		case op.Read:
 			switch t {
 			case read.SkipUnexportedFields:
-				differ.rideFields = values.RideExportedFields
+				differ.rideFields = values.RideExportedFieldsByIdx
 			case read.SkipChannels:
 				differ.channels = shallowSkip
 			case read.SkipFunctions:

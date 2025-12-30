@@ -109,7 +109,7 @@ func TestAlphanumeric(t *testing.T) {
 //
 // this test must assert:
 //   - no nil values are generated
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestAny(t *testing.T) {
 	t.Run("random any value", func(t *testing.T) {
 		Any(Loops).EachN(func(i int, a any) {
@@ -153,7 +153,7 @@ func TestArray(t *testing.T) {
 //
 // this test must assert
 //   - all values are reflect.Bool
-//   - the generated types are between the deviation limit of the distribution
+//   - the generated type4 are between the deviation limit of the distribution
 func TestBool(t *testing.T) {
 	t.Run("random bool", func(t *testing.T) {
 		count := 0
@@ -217,7 +217,7 @@ func TestBytes(t *testing.T) {
 //	this test must assert:
 //	- no nil values are generated
 //	- all values must be naturally comparable
-//	- the generated types are between the deviation limit of the distribution
+//	- the generated type4 are between the deviation limit of the distribution
 func TestComparable(t *testing.T) {
 	t.Run("random comparable", func(t *testing.T) {
 		Comparable(Loops).EachN(func(i int, a any) {
@@ -402,7 +402,7 @@ func TestInt64(t *testing.T) {
 //
 // This test must assert that after each call:
 //   - All returned slices contain the number of elements passed as argument.
-//   - All returned slices contain only the types passed as generic argument.
+//   - All returned slices contain only the type4 passed as generic argument.
 func TestOf(t *testing.T) {
 	t.Run("Of primitives", func(t *testing.T) {
 		integers := Of[int](10)
