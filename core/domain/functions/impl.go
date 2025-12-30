@@ -56,8 +56,8 @@ func Constant[T any](value T) func() T {
 }
 
 // Flip reverses the order of arguments for a binary function.
-// Given a function f that takes arguments of type4 A and B and returns a value of type C,
-// Flip returns a new function that takes arguments of type4 B and A and returns a value of type C.
+// Given a function f that takes arguments of types A and B and returns a value of type C,
+// Flip returns a new function that takes arguments of types B and A and returns a value of type C.
 func Flip[A, B, C any](f func(A, B) C) func(B, A) C {
 	return func(b B, a A) C {
 		return f(a, b)
@@ -68,7 +68,7 @@ func Flip[A, B, C any](f func(A, B) C) func(B, A) C {
 // The new function applies `g` to its input, and then applies `f` to the result.
 // It is useful for composing multiple functions together.
 //
-// The type parameters `A`, `B`, and `C` represent the type4 of the input and output values of the functions.
+// The type parameters `A`, `B`, and `C` represent the types of the input and output values of the functions.
 //
 // Parameters:
 // - f: a function that takes a value of type `B` and returns a value of type `C`.
@@ -83,7 +83,7 @@ func Compose[A, B, C any](f func(B) C, g func(A) B) func(A) C {
 	}
 }
 
-// Curry is a higher-order function that takes a function `f` that takes two arguments of type4 `A` and `B` and returns a value of type `C`.
+// Curry is a higher-order function that takes a function `f` that takes two arguments of types `A` and `B` and returns a value of type `C`.
 // It returns a new function that takes only one argument of type `A` and returns a new function that takes one argument of type `B` and returns a value of type `C`.
 // This is known as currying, where a function with multiple arguments is converted into a sequence of functions each with a single argument.
 // This allows for partial application of arguments, where only some of the arguments are provided at the time of function call.
@@ -278,7 +278,7 @@ func Once[T any](f Supplier[T]) Supplier[T] {
 // This is useful for partial application of functions.
 //
 // Parameters:
-// - f: The function to be partially applied. It takes two parameters of type4 `A` and `B`, and returns a value of type `C`.
+// - f: The function to be partially applied. It takes two parameters of types `A` and `B`, and returns a value of type `C`.
 // - a: The value of type `A` to be partially applied.
 //
 // Returns:

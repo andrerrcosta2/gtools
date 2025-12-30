@@ -11,7 +11,7 @@ import (
 // filterBranchable checks if the branchable is a recursive branchable, i.e. if its branch is the same type of
 // itself. It returns true if it is recursive, or false if it is not, along with an error.
 // If the branchable is nil or its branch is nil, it returns false and an error.
-// It uses a method of unsafe equality to check if the type4 are the same. That means a singular
+// It uses a method of unsafe equality to check if the type are the same. That means a singular
 // library view of equality is used.
 func filterBranchable[B data.Branchable[B]](branchable B) (root bool, err error) {
 	if any(branchable).(data.Branchable[B]) == nil {

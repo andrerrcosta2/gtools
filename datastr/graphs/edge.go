@@ -38,7 +38,7 @@ func directedEdgesEquality[A any, B any](a, b edges.Edge[A, B]) bool {
 //
 // The function takes three parameters: 'a', which represents the edge to be hashed;
 // 'direct', which is a boolean indicating whether the edge is directed or undirected;
-// and 'A' and 'B', which are the type4 of the nodes that the edge connects.
+// and 'A' and 'B', which are the types of the nodes that the edge connects.
 //
 // The function first gets the unique string representation of the 'from' and 'to' nodes
 // of the edge.  If the edge is directed, the function returns a string in the format

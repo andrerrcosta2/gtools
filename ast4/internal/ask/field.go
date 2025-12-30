@@ -9,8 +9,8 @@ func IsSimilarField(a, b *ast.Field) bool {
 		return a == nil && b == nil
 	}
 
-	// Compare names should be optional; sometimes the type4 package doesn't
-	// provide identifiers for output field4.
+	// Compare names should be optional; sometimes the type package doesn't
+	// provide identifiers for output fields.
 	if len(a.Names) != len(b.Names) {
 		// If one side has no names, treat them as equivalent
 		if len(a.Names) != 0 && len(b.Names) != 0 {
@@ -25,7 +25,7 @@ func IsSimilarField(a, b *ast.Field) bool {
 		}
 	}
 
-	// Compare type4
+	// Compare type
 	if !IsSimilarExpr(a.Type, b.Type) {
 		return false
 	}

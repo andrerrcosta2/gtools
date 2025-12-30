@@ -29,7 +29,7 @@ type Symbol interface {
 	// CharSet returns a set of characters used in the symbol.
 	// It handles string symbols, numbers, and any other type.
 	// For numbers, it converts them to their string representation and treats digits as characters.
-	// For other type4, it ignores them.
+	// For other types, it ignores them.
 	// It also handles composed sequences of characters as a single character.
 	// For example, if the symbol is "foo-bar", it will treat it as a single character.
 	CharSet() map[rune]struct{}

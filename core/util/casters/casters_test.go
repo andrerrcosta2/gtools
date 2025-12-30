@@ -21,9 +21,9 @@ func TestTyped(t *testing.T) {
 		expected []int
 		ok       bool
 	}{
-		{"WhenAllCancels correct type4", []interface{}{1, 2, 3}, []int{1, 2, 3}, true},
-		{"Mixed type4 with correct type", []interface{}{1, "string", 3}, []int{1, 3}, false},
-		{"WhenAllCancels incorrect type4", []interface{}{"string", 3.14}, []int{}, false},
+		{"WhenAllCancels correct types", []interface{}{1, 2, 3}, []int{1, 2, 3}, true},
+		{"Mixed types with correct type", []interface{}{1, "string", 3}, []int{1, 3}, false},
+		{"WhenAllCancels incorrect types", []interface{}{"string", 3.14}, []int{}, false},
 		{"IsEmpty input", []interface{}{}, []int{}, true},
 	}
 
@@ -47,9 +47,9 @@ func TestAssertedTyped(t *testing.T) {
 		expected []int
 		panic    bool
 	}{
-		{"WhenAllCancels correct type4", []interface{}{1, 2, 3}, []int{1, 2, 3}, false},
-		{"Mixed type4 with correct type", []interface{}{1, "string", 3}, []int{1, 3}, true}, // Expect panic here
-		{"WhenAllCancels incorrect type4", []interface{}{"string", 3.14}, nil, true},        // Expect panic here
+		{"WhenAllCancels correct types", []interface{}{1, 2, 3}, []int{1, 2, 3}, false},
+		{"Mixed types with correct type", []interface{}{1, "string", 3}, []int{1, 3}, true}, // Expect panic here
+		{"WhenAllCancels incorrect types", []interface{}{"string", 3.14}, nil, true},        // Expect panic here
 		{"IsEmpty input", []interface{}{}, []int{}, false},
 	}
 

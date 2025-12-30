@@ -190,7 +190,7 @@ func TestPanic(t *testing.T) {
 //   - Custom message override
 //   - Formatted custom message
 //   - Nil handling
-//   - Mixed type4
+//   - Mixed types
 func TestEqual_Primitives(t *testing.T) {
 	t.Run("should return true when integers are compare", func(t *testing.T) {
 		mock := &mockTesting{}
@@ -312,7 +312,7 @@ func TestEqual_Primitives(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail when type4 are different", func(t *testing.T) {
+	t.Run("should fail when types are different", func(t *testing.T) {
 		mock := &mockTesting{}
 		Equals(mock, 42, "42")
 		if !mock.Failed() {
@@ -1474,7 +1474,7 @@ func TestNotNil_Interfaces(t *testing.T) {
 }
 
 func TestNoNilFields_ExportedOnly(t *testing.T) {
-	t.Run("should return true for struct with no nil field4 (as value)", func(t *testing.T) {
+	t.Run("should return true for struct with no nil fields (as value)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersNoNilFieldsAsValue()
 		result := NoNilFields(mock, false, target)
@@ -1486,7 +1486,7 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("should return true for struct with no nil field4 (as pointer)", func(t *testing.T) {
+	t.Run("should return true for struct with no nil fields (as pointer)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersNoNilFieldsAsRef()
 		result := NoNilFields(mock, false, target)
@@ -1498,7 +1498,7 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail for struct with all nil field4 (as value)", func(t *testing.T) {
+	t.Run("should fail for struct with all nil fields (as value)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersAllNilFieldsAsValue()
 		result := NoNilFields(mock, false, target)
@@ -1515,7 +1515,7 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail for struct with all nil field4 (as pointer)", func(t *testing.T) {
+	t.Run("should fail for struct with all nil fields (as pointer)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersAllNilFieldsAsRef()
 		result := NoNilFields(mock, false, target)
@@ -1529,7 +1529,7 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail for struct with some nil field4 (as value)", func(t *testing.T) {
+	t.Run("should fail for struct with some nil fields (as value)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersSomeNilFieldsAsValue()
 		result := NoNilFields(mock, false, target)
@@ -1543,7 +1543,7 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail for struct with some nil field4 (as pointer)", func(t *testing.T) {
+	t.Run("should fail for struct with some nil fields (as pointer)", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersSomeNilFieldsAsRef()
 		result := NoNilFields(mock, false, target)
@@ -1573,11 +1573,11 @@ func TestNoNilFields_ExportedOnly(t *testing.T) {
 	t.Run("should format message with arguments", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersAllNilFieldsAsValue()
-		NoNilFields(mock, false, target, "struct has nil field4: %v", target)
+		NoNilFields(mock, false, target, "struct has nil fields: %v", target)
 
 		if !mock.Failed() {
 			t.Error("expected failure")
-		} else if !strings.Contains(mock.fatal[0], "nil field4") {
+		} else if !strings.Contains(mock.fatal[0], "nil fields") {
 			t.Errorf("formatted message not found: %s", mock.fatal[0])
 		}
 	})
@@ -1610,7 +1610,7 @@ func TestNoNilFields_Unexported(t *testing.T) {
 		}
 	})
 
-	t.Run("should fail for all nil unexported/exported field4", func(t *testing.T) {
+	t.Run("should fail for all nil unexported/exported fields", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersAndUnexportedsAllNilFieldsAsRef()
 		result := NoNilFields(mock, true, target)
@@ -1625,12 +1625,12 @@ func TestNoNilFields_Unexported(t *testing.T) {
 				!strings.Contains(err, "data") ||
 				!strings.Contains(err, "Values") ||
 				!strings.Contains(err, "Config") {
-				t.Errorf("missing expected nil field4 in error: %s", err)
+				t.Errorf("missing expected nil fields in error: %s", err)
 			}
 		}
 	})
 
-	t.Run("should ignore unexported field4 when checkUnexported is false", func(t *testing.T) {
+	t.Run("should ignore unexported fields when checkUnexported is false", func(t *testing.T) {
 		mock := &mockTesting{}
 		target := testseed.StructWithPointersAndUnexportedsSomeNilFieldsAsRef()
 		result := NoNilFields(mock, false, target)

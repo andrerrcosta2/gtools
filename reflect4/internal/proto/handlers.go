@@ -16,7 +16,7 @@ package proto
 //}
 //
 //// gdp generates a deep prototype representation of a given reflective type.
-//// It handles various kinds of type4, including primitives, ptrs, iterables, maps, and structs,
+//// It handles various kinds of types, including primitives, ptrs, iterables, maps, and structs,
 //// recursively extracting detailed metadata for each type class.
 //// If the type is invalid or unrecognized, it returns an error.
 //func gdp(t *reflective.Prototype) (proto *reflective.Prototype, err error) {
@@ -37,9 +37,9 @@ package proto
 //}
 //
 //// deepMap returns a deep prototype representation of a given map type.
-//// It returns a prototype with Name and OfValue field4 set to the corresponding
-//// prototypes of the map's key and element type4.
-//// The prototypes of the key and element type4 are recursively extracted
+//// It returns a prototype with Name and OfValue fields set to the corresponding
+//// prototypes of the map's key and element types.
+//// The prototypes of the key and element types are recursively extracted
 //// using the Deep function.
 //func deepMap(t *reflective.Prototype) (proto *reflective.Prototype, err error) {
 //	// Recursively extract the prototype of the key type
@@ -84,7 +84,7 @@ package proto
 //
 //// deepStruct returns a deep prototype representation of a given struct type.
 //// It extracts metadata such as the type name, kind, and field names of the struct
-//// and its field4, and recursively extracts the prototypes of the field4 using the Deep function.
+//// and its fields, and recursively extracts the prototypes of the fields using the Deep function.
 //func deepStruct(t *reflective.Prototype) (proto *reflective.Prototype, err error) {
 //	// Iterate through each field of the struct
 //	for i := 0; i < len(t.Fields); i++ {

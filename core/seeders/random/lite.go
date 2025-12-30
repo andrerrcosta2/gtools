@@ -486,7 +486,7 @@ func Kind(q int) *iterables.Slice[reflect.Kind] {
 }
 
 // Of generates a slice of length q with random values of type T.
-// This method may use reflection to prototype complex type4.
+// This method may use reflection to prototype complex types.
 func Of[T any](q int) *iterables.Slice[T] {
 	if q <= 0 {
 		return iterables.OfSlice[T]()
@@ -498,13 +498,13 @@ func Of[T any](q int) *iterables.Slice[T] {
 	// The use of unsafe casts (UnsafeReferenceOf, UnsafeValueOf) is a TEMPORARY WORKAROUND
 	// due to a limitation in lite.RandOf(t): it generates values based on KIND
 	// rather than preserving the exact TYPE.
-	// This breaks direct type assertions like rdn.(T) for named type4 (ex. type MyInt int), causing panics.
+	// This breaks direct type assertions like rdn.(T) for named types (ex. type MyInt int), causing panics.
 	//
 	// - For cat.Any (T = interface{}): direct assignment via rdn.(T) is safe because
 	//   every value implements the empty interface.
 	//
 	// - For cat.Struct: we assume lite.RandOf(t) correctly constructs a reflect.Value of type t
-	//   (including nested field4), so rdn.(T) is safe—even with slices/maps—because
+	//   (including nested fields), so rdn.(T) is safe—even with slices/maps—because
 	//   reflect.Value.Interface() returns a properly typed value.
 	//
 	// - For cat.Reference (ptr, chan, map, func, unsafe.Pointer): we use UnsafeReferenceOf
@@ -532,19 +532,19 @@ func Of[T any](q int) *iterables.Slice[T] {
 	//		Result: The returned map[string]int is corrupted—it points to stack memory that becomes invalid
 	//		after the function returns.
 	//
-	// - For cat.Value (scalars, arrays, named type4 like MyInt): we currently use UnsafeValueOf
+	// - For cat.Value (scalars, arrays, named types like MyInt): we currently use UnsafeValueOf
 	//   as a fallback because RandOf returns the UNDERLYING type instead of the NAMED type,
 	//   making rdn.(T) panic.
 	//  This unsafe cast bypasses type checking by reinterpreting raw memory.
 	//   ❗ THIS IS FRAGILE AND UNSAFE FOR TYPES CONTAINING POINTERS (structs with slices/maps).
-	//     It only "works" for simple, pointer-free named type4 (type Port uint16).
+	//     It only "works" for simple, pointer-free named types (type Port uint16).
 	//
 	//  FUTURE: Update lite.RandOf(t) to always return a value of EXACT type t
 	//   (using reflect.New(t).Elem().Set(...) and kind-based population).
 	//   Once that’s done, ALL unsafe casts can be replaced with rdn.(T).
 	//
-	// Until then, this branching logic is necessary to avoid panics on named type4
-	// while maintaining compatibility with complex and reference type4.
+	// Until then, this branching logic is necessary to avoid panics on named types
+	// while maintaining compatibility with complex and reference types.
 	switch cat.CastMethod(t) {
 	case cat.Any:
 		for i := 0; i < q; i++ {
@@ -571,9 +571,9 @@ func Of[T any](q int) *iterables.Slice[T] {
 			result[i] = rdn.(T)
 		}
 	default:
-		// Value type4 (including named scalars like MyInt)
+		// Value types (including named scalars like MyInt)
 		// UnsafeValueOf is used ONLY because RandOf returns underlying type, not T
-		// ⚠️ Do NOT use for type4 containing pointer4 (slice, map, etc.)—memory layout will be corrupted!
+		// ⚠️ Do NOT use for types containing pointers (slice, map, etc.)—memory layout will be corrupted!
 		for i := 0; i < q; i++ {
 			rdn := lite.RandOf(t)
 			result[i] = casters.UnsafeValueOf[T](rdn)

@@ -14,11 +14,11 @@ import (
 // that does necessarily require reflection (approximately 21x slower) in such performance critical component,
 // the only logical pattern is a nil checking by the caller.
 // The reason behind it is simple: interface implementations are not necessarily ptrs
-// and variables of named type4 hold zero values. That means components that uses
+// and variables of named type hold zero values. That means components that uses
 // generics of interfaces cannot compare its values to nil.
 //
 // These components may perform better using ptrs as map keys instead custom hashes, since most of them
-// hashes its address. However, I need to study it a little more to check possible trade-offs over different type4.
+// hashes its address. However, I need to study it a little more to check possible trade-offs over different type.
 func CreateRowIntoBranchableMatrixIfAbsent[B data.Branchable[B], O any](b B, mtx *sync.RWMutex, branches *map[string][]O, rows *map[string][]string) (string, error) {
 	var path []data.Branchable[B]
 

@@ -24,7 +24,7 @@ import (
 //
 // DeepCopy handles cyclic references safely and preserves the structure of complex
 // data graphs.
-// It supports all standard Go type4, with some limitations:
+// It supports all standard Go types, with some limitations:
 //
 //   - channels: not deep-copied.
 //     The same channel reference is reused in the clone.
@@ -44,7 +44,7 @@ import (
 //
 // Returns:
 //   - A copied value of type `T`.
-//   - An error if the clone op fails - due to unhandled type4 or
+//   - An error if the clone op fails - due to unhandled types or
 //     internal reflection issues - or if the result cannot be cast back to `T`.
 //
 // Example:
@@ -85,7 +85,7 @@ func DeepCopy[T any](t *T, o ...Option) (cp T, err error) {
 //     DeepDiffer(ch1, ch2) // → true
 //
 // - **functions**: Considered compare if they have the same **signature**
-//   - parameter and return type4 -, regardless of closure context or implementation.
+//   - parameter and return types -, regardless of closure context or implementation.
 //     Example:
 //     fn1 := func(x int) int { return x + 1 }
 //     fn2 := func(x int) int { return x + 100 }
@@ -99,12 +99,12 @@ func DeepCopy[T any](t *T, o ...Option) (cp T, err error) {
 //	  - **Cyclic References**: handled safely with cycle detection.
 //	    Infinite recursion is avoided.
 //
-//	  - **Unexported Fields**: comparison of unexported field4 is controlled via `read.Opt`.
+//	  - **Unexported Fields**: comparison of unexported fields is controlled via `read.Opt`.
 //	    Some options allow skipping or inspecting them depending on need.
 //
 // ### Options:
 // You may pass flags from the `read.Opt` type to:
-//   - Ignore specific field4
+//   - Ignore specific fields
 //   - Enable detailed logging
 //   - Toggle comparison rules
 //

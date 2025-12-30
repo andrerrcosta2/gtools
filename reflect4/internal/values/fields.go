@@ -25,7 +25,7 @@ var (
 
 	ErrFieldsNotFound = func(caller string, fields ...string) error {
 		sb := strings.Builder{}
-		sb.WriteString(caller + ": the field4")
+		sb.WriteString(caller + ": the fields")
 		for _, field := range fields {
 			sb.WriteString(" '" + field + "', ")
 		}
@@ -77,7 +77,7 @@ func FieldName(target reflect.Value, idx int) string {
 	return target.Type().Field(idx).Name
 }
 
-// Fields returns all exported field4 within a struct
+// Fields returns all exported fields within a struct
 // if the reflect value isn't a struct it panics.
 func Fields(v reflect.Value) (fields map[string]reflect.Value) {
 	fields = make(map[string]reflect.Value, v.NumField())
@@ -98,7 +98,7 @@ func UnsafeFieldValueByIndex(v reflect.Value, idx int) reflect.Value {
 	return reflect.NewAt(field.Type(), ptr).Elem()
 }
 
-// NilFields returns all exported nil field4 within a
+// NilFields returns all exported nil fields within a
 func NilFields(v reflect.Value) (fields map[string]reflect.Value) {
 	fields = make(map[string]reflect.Value, v.NumField())
 	for i := 0; i < v.NumField(); i++ {
@@ -110,7 +110,7 @@ func NilFields(v reflect.Value) (fields map[string]reflect.Value) {
 	return
 }
 
-// NoNilFields returns all non-nil field4 within a struct
+// NoNilFields returns all non-nil fields within a struct
 func NoNilFields(v reflect.Value) map[string]reflect.Value {
 	fields := make(map[string]reflect.Value, v.NumField())
 	for i := 0; i < v.NumField(); i++ {
@@ -122,7 +122,7 @@ func NoNilFields(v reflect.Value) map[string]reflect.Value {
 	return fields
 }
 
-// RideExportedFieldsByIdx rides a struct exported field4 with a bi-predicate giving its index and value
+// RideExportedFieldsByIdx rides a struct exported fields with a bi-predicate giving its index and value
 func RideExportedFieldsByIdx(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		if v.Type().Field(i).IsExported() {
@@ -133,7 +133,7 @@ func RideExportedFieldsByIdx(v reflect.Value, fn functions.BiPredicate[int, refl
 	}
 }
 
-// RideExportedFieldsByName rides a struct exported field4 with a bi-predicate giving its name and value.
+// RideExportedFieldsByName rides a struct exported fields with a bi-predicate giving its name and value.
 // It panics if the reflect.Value isn't a struct
 func RideExportedFieldsByName(v reflect.Value, fn functions.BiPredicate[string, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
@@ -146,7 +146,7 @@ func RideExportedFieldsByName(v reflect.Value, fn functions.BiPredicate[string, 
 	}
 }
 
-// RideFields rides a struct field4 with a bi-predicate giving its index and value
+// RideFields rides a struct fields with a bi-predicate giving its index and value
 func RideFields(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		if !fn(i, v.Field(i)) {
@@ -155,7 +155,7 @@ func RideFields(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
 	}
 }
 
-// RideFieldsByName accesses all struct field4 by the provided function
+// RideFieldsByName accesses all struct fields by the provided function
 // retrieving each name and reflect.Value
 func RideFieldsByName(v reflect.Value, fn functions.BiPredicate[string, reflect.Value]) {
 	for i := 0; i < v.NumField(); i++ {
@@ -189,7 +189,7 @@ func SetExpFieldByName(target reflect.Value, name string, value reflect.Value) e
 }
 
 // UnsafeFieldAccess accesses a struct field by name using the unsafe package to allow access
-// unexported field4.
+// unexported fields.
 func UnsafeFieldAccess(v reflect.Value, name string, fn functions.BiConsumer[reflect.Value, unsafe.Pointer]) error {
 	if !v.CanAddr() {
 		return ErrUnaddressable("reflect4.UnsafeFieldAccess")
@@ -224,7 +224,7 @@ func UnsafeFieldAccessIfAddr(
 	return fn(field, unsafe.Pointer(field.UnsafeAddr()))
 }
 
-// UnsafeGetAllFields returns all unexported field4 of a struct
+// UnsafeGetAllFields returns all unexported fields of a struct
 //
 // to avoid GC issues, the returned value is a clone of the original value
 func UnsafeGetAllFields(v reflect.Value) (fields map[string]reflect.Value) {
@@ -256,7 +256,7 @@ func UnsafeGetField(v reflect.Value, name string) (value reflect.Value, err erro
 	return reflect.NewAt(field.Type(), ptr).Elem(), nil
 }
 
-// UnsafeGetFields returns a map of values of struct field4 by names
+// UnsafeGetFields returns a map of values of struct fields by names
 //
 // to avoid GC issues the returned values are copies of the original values
 func UnsafeGetFields(v reflect.Value, names ...string) (map[string]any, error) {
@@ -288,7 +288,7 @@ func UnsafeGetFields(v reflect.Value, names ...string) (map[string]any, error) {
 	return fields, nil
 }
 
-// UnsafeNilFields returns all nil field4 within a
+// UnsafeNilFields returns all nil fields within a
 func UnsafeNilFields(v reflect.Value) (fields []reflect.Value, err error) {
 	fields = make([]reflect.Value, 0, v.NumField())
 
@@ -306,7 +306,7 @@ func UnsafeNilFields(v reflect.Value) (fields []reflect.Value, err error) {
 	return
 }
 
-// UnsafeNotNilFields returns all non-nil field4 within a struct
+// UnsafeNotNilFields returns all non-nil fields within a struct
 func UnsafeNotNilFields(v reflect.Value) (fields []reflect.Value) {
 	fields = make([]reflect.Value, 0, v.NumField())
 
@@ -325,7 +325,7 @@ func UnsafeNotNilFields(v reflect.Value) (fields []reflect.Value) {
 }
 
 // UnsafeRideFields rides a struct using the unsafe package to allow access to
-// its unexported field4.
+// its unexported fields.
 // it retrieves its unsafe pointer value and its reflect.StructField in order
 // to provide enough information
 func UnsafeRideFields(
@@ -349,7 +349,7 @@ func UnsafeRideFields(
 }
 
 // UnsafeDeepRideFields rides a struct deeply using the unsafe package to allow access to
-// its unexported field4.
+// its unexported fields.
 func UnsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Pointer]) {
 	if !v.CanAddr() {
 		v = ForceOfUnaddr(v)
@@ -371,14 +371,14 @@ func unsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsaf
 }
 
 // UnsafeSetFieldByName sets a struct field by name using the unsafe package to allow access
-// to unexported field4.
+// to unexported fields.
 func UnsafeSetFieldByName(target, value reflect.Value, name string) error {
 	field := target.FieldByName(name)
 	return UnsafeSet(field, value)
 }
 
 // UnsafeSetFieldByIndex sets a struct field by index using the unsafe package to allow access
-// to unexported field4.
+// to unexported fields.
 func UnsafeSetFieldByIndex(target, value reflect.Value, idx ...int) error {
 	field := target.FieldByIndex(idx)
 	return UnsafeSet(field, value)

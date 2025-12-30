@@ -27,8 +27,8 @@ type Piped[I any, O any, C any] interface {
 type Flattener[I any, O any, C any] interface {
 	Collector[I, C]
 	// Pipe is a method which is applied to flat each value collected to the same output pipeline.
-	// The flat function must be able to handle its own zero value type4
-	// since its initial value cannot be out with itself and the type4
+	// The flat function must be able to handle its own zero value type
+	// since its initial value cannot be out with itself and the type
 	// between collection and flattening are not guaranteed to be the same
 	Pipe(function functions.BiFunction[O, I, O]) Flattener[I, O, C]
 }

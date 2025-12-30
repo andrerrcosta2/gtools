@@ -637,7 +637,7 @@ func TestDifferArrays(t *testing.T) {
 		assertEquals(t, diff)
 	})
 
-	// if fact, arrays with different length are considered different type4
+	// if fact, arrays with different length are considered different types
 	t.Run("same element, different length", func(t *testing.T) {
 		var a1 [3]int
 		var a2 [2]int
@@ -687,7 +687,7 @@ func TestDifferInt(t *testing.T) {
 //
 //	this test must assert:
 //	1. Interfaces are equals only if:
-//	A: both interface type4 and implementations are equals
+//	A: both interface types and implementations are equals
 func TestDifferInterfaces(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -720,7 +720,7 @@ func TestDifferInterfaces(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, same impl", func(t *testing.T) {
+	t.Run("different types, same impl", func(t *testing.T) {
 		i1 := interf.ThreeDataAsTwoMethodsRef("abc", 123, 3.14)
 		i2 := interf.ThreeDataAsThreeMethodsRef("abc", 123, 3.14)
 		a := reflect.ValueOf(&i1).Elem()
@@ -736,7 +736,7 @@ func TestDifferInterfaces(t *testing.T) {
 //
 //	this test must assert:
 //	1. Interfaces are equals only if:
-//	A: both interface type4 and implementations are equals
+//	A: both interface types and implementations are equals
 func TestDifferInterfaces_EdgeCases(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -749,7 +749,7 @@ func TestDifferInterfaces_EdgeCases(t *testing.T) {
 		assertEquals(t, diff)
 	})
 
-	t.Run("nil, different type4", func(t *testing.T) {
+	t.Run("nil, different types", func(t *testing.T) {
 		i1 := generics.Zero[interf.OneMethod]()
 		i2 := generics.Zero[interf.TwoMethods]()
 		a := reflect.ValueOf(&i1).Elem()
@@ -810,8 +810,8 @@ func TestDifferPrimitives(t *testing.T) {
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil: and
-//	C: both type4 have the same signature
+//	C: both types are nil: and
+//	C: both types have the same signature
 func TestDefaultMapDiff(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -867,8 +867,8 @@ func TestDefaultMapDiff(t *testing.T) {
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil: and
-//	C: both type4 have the same signature
+//	C: both types are nil: and
+//	C: both  have the same signature
 func TestDefaultMapDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -916,8 +916,8 @@ func TestDefaultMapDiff_EdgeCases(t *testing.T) {
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil or empty: and
-//	C: both type4 have the same signature
+//	C: both  are nil or empty: and
+//	C: both  have the same signature
 func TestSerializableMapDiff(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -973,8 +973,8 @@ func TestSerializableMapDiff(t *testing.T) {
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil or empty: and
-//	C: both type4 have the same signature
+//	C: both  are nil or empty: and
+//	C: both  have the same signature
 func TestSerializableMapDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
 	strat := DefaultStrat()
@@ -1103,7 +1103,7 @@ func TestNotNilMapDiffer_EdgeCases(t *testing.T) {
 //	this method must assert:
 //	1. two ptrs are equals only if:
 //	A: both addresses are the same; or
-//	B: both type4 are equals; and
+//	B: both  are equals; and
 //	B: both elements are equals; or
 //	C: both ptrs are nil; and
 //	C: both ptrs have the same type
@@ -1119,14 +1119,14 @@ func TestDefaultPtrDiff(t *testing.T) {
 		assertEquals(t, diff)
 	})
 
-	t.Run("different addresses, equals type4 and values", func(t *testing.T) {
+	t.Run("different addresses, equals  and values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(10))
 		diff := defaultPtrDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
 
-	t.Run("equals type4, different values", func(t *testing.T) {
+	t.Run("equals , different values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(1))
 		b := reflect.ValueOf(ptrs.New(2))
 		expMsg := differs.Append(zero, differs.PointerValues(zero),
@@ -1135,7 +1135,7 @@ func TestDefaultPtrDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, equals values", func(t *testing.T) {
+	t.Run("different , equals values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New[any](1))
 		b := reflect.ValueOf(ptrs.New[int](2))
 		expMsg := differs.Append(zero, differs.PointerValues(zero),
@@ -1150,7 +1150,7 @@ func TestDefaultPtrDiff(t *testing.T) {
 //	this method must assert:
 //	1. two ptrs are equals only if:
 //	A: both addresses are the same; or
-//	B: both type4 are equals; and
+//	B: both  are equals; and
 //	B: both elements are equals; or
 //	C: both ptrs are nil; and
 //	C: both ptrs have the same type
@@ -1210,14 +1210,14 @@ func TestPtrElemDiff(t *testing.T) {
 		diff := ptrElemDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
-	t.Run("different addresses, equals type4 and values", func(t *testing.T) {
+	t.Run("different addresses, equals  and values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(10))
 		diff := ptrElemDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
 
-	t.Run("equals type4, different values", func(t *testing.T) {
+	t.Run("equals , different values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(1))
 		b := reflect.ValueOf(ptrs.New(2))
 		expMsg := differs.Append(zero, differs.PointerValues(zero),
@@ -1226,7 +1226,7 @@ func TestPtrElemDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, equals values", func(t *testing.T) {
+	t.Run("different , equals values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New[any](1))
 		b := reflect.ValueOf(ptrs.New[int](2))
 		expMsg := differs.Append(zero, differs.PointerValues(zero),
@@ -1305,7 +1305,7 @@ func TestSamePtrDiff(t *testing.T) {
 		diff := samePtrDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
-	t.Run("different addresses, equals type4 and values", func(t *testing.T) {
+	t.Run("different addresses, equals  and values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(10))
 		diff := samePtrDiff(zero, a, b, strat)
@@ -1314,7 +1314,7 @@ func TestSamePtrDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("equals type4, different values", func(t *testing.T) {
+	t.Run("equals , different values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(11))
 		diff := samePtrDiff(zero, a, b, strat)
@@ -1323,7 +1323,7 @@ func TestSamePtrDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, equals values", func(t *testing.T) {
+	t.Run("different , equals values", func(t *testing.T) {
 		a := reflect.ValueOf(ptrs.New[any](10))
 		b := reflect.ValueOf(ptrs.New[int](10))
 		diff := samePtrDiff(zero, a, b, strat)
@@ -1765,7 +1765,7 @@ func TestDefaultSliceDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, same length, capacity and elements", func(t *testing.T) {
+	t.Run("different , same length, capacity and elements", func(t *testing.T) {
 		a := reflect.ValueOf(slices.Of[[]int](3, 1, 2, 3))
 		b := reflect.ValueOf(slices.Of[[]int8](4, 1, 2, 3))
 		diff := defaultSliceDiff(zero, a, b, s)
@@ -1895,7 +1895,7 @@ func TestDefaultNonNilSliceDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, same length, capacity and elements", func(t *testing.T) {
+	t.Run("different , same length, capacity and elements", func(t *testing.T) {
 		a := reflect.ValueOf(slices.Of[[]int](3, 1, 2, 3))
 		b := reflect.ValueOf(slices.Of[[]int8](4, 1, 2, 3))
 		diff := defaultSliceDiff(zero, a, b, s)
@@ -1995,7 +1995,7 @@ func TestSerializableSliceDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, same length, capacity and elements", func(t *testing.T) {
+	t.Run("different , same length, capacity and elements", func(t *testing.T) {
 		a := reflect.ValueOf(slices.Of[[]int](3, 1, 2, 3))
 		b := reflect.ValueOf(slices.Of[[]int8](4, 1, 2, 3))
 		diff := serializableSliceDiff(zero, a, b, s)
@@ -2122,7 +2122,7 @@ func TestSerializableNotNilSliceDiff(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4, same length, capacity and elements", func(t *testing.T) {
+	t.Run("different , same length, capacity and elements", func(t *testing.T) {
 		a := reflect.ValueOf(slices.Of[[]int](3, 1, 2, 3))
 		b := reflect.ValueOf(slices.Of[[]int8](4, 1, 2, 3))
 		diff := serializableNotNilSliceDiff(zero, a, b, s)
@@ -2137,19 +2137,19 @@ func TestSerializableNotNilSliceDiff(t *testing.T) {
 //	this test must assert:
 //	1. two structs are equals if:
 //	A: both structs have the same type; and
-//	A: both struct field4 are equals;
+//	A: both struct fields are equals;
 func TestDiffStructs_Default(t *testing.T) {
 	var zero indent.Branch
 	s := DefaultStrat()
 
-	t.Run("same type, same field4", func(t *testing.T) {
+	t.Run("same type, same fields", func(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		b := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		diff := diffStructs(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
-	t.Run("same type, different field4", func(t *testing.T) {
+	t.Run("same type, different fields", func(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		b := reflect.ValueOf(models.TwoDataAsValue("abc", 12))
 		diff := diffStructs(zero, a, b, s)
@@ -2159,7 +2159,7 @@ func TestDiffStructs_Default(t *testing.T) {
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
-	t.Run("different type4", func(t *testing.T) {
+	t.Run("different ", func(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		b := reflect.ValueOf(models.OneDataAsValue("abc"))
 		diff := diffStructs(zero, a, b, s)

@@ -14,14 +14,14 @@ const (
 	// FuncIdentity clones all functions underlying memory address - shallow clone.
 	FuncIdentity
 
-	// SkipUnexportedFields skips copying unexported struct field4.
+	// SkipUnexportedFields skips copying unexported struct fields.
 	SkipUnexportedFields
 	// SkipChan skip copying channels
 	SkipChan
 	// SkipFunc skip copying functions
 	SkipFunc
-	// SkipPtr skip copying pointer4
+	// SkipPtr skip copying pointers
 	SkipPtr
-	// SkipUnsafePtr skip copying unsafe pointer4
+	// SkipUnsafePtr skip copying unsafe pointers
 	SkipUnsafePtr
 )

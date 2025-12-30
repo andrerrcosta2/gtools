@@ -201,7 +201,7 @@ func defaultSlice(a, b reflect.Value, differ *Strategy) bool {
 
 // defaultStruct evaluates slice equality as:
 //  1. Same type
-//  2. equality between field4
+//  2. equality between fields
 func defaultStruct(a, b reflect.Value, differ *Strategy) (eq bool) {
 	eq = true
 	differ.rideFields(a, func(i int, value reflect.Value) bool {
@@ -287,7 +287,7 @@ func ignoreCaseString(a, b reflect.Value) bool {
 }
 
 // nativeChan evaluates channel equality by:
-//  1. same type4
+//  1. same types
 //  2. same nullable state
 //  3. same memory address
 func nativeChan(a, b reflect.Value) bool {

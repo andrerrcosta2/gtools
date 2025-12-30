@@ -3,18 +3,19 @@
 package address
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
-	"reflect"
 )
 
 // Of returns an uintptr representing the stable identity of a reflect.Value.
-// It only supports pointer-like type4 - Ptr, slices, maps, channel, functions, UnsafePointer.
+// It only supports pointer-like types - Ptr, slices, maps, channel, functions, UnsafePointer.
 // Returns an error if the kind doesn't naturally support a stable pointer.
 func Of(v reflect.Value) (uintptr, error) {
 	switch v.Kind() {
 
-	// These type4 support the pointer4() method which does give you the address of the underlying data for explicit
+	// These types support the pointers() method which does give you the address of the underlying data for explicit
 	// ptrs, and golang's underlying ptrs.
 	// However, it isn't always the same as the actual pointer variable you’d get in Go code,
 	// but it's usually a valid unique handle for that instance during that reflection session.
@@ -55,7 +56,7 @@ func Unsafe(v reflect.Value) (uintptr, error) {
 //
 // ⚠️ This function does not check for v.IsValid(), and the address returned
 // for non-addressable values is from a clone — it should not be used for mutation.
-// It also does not safely handle unexported field4 and should not be used to
+// It also does not safely handle unexported fields and should not be used to
 // create Go ptrs, as that breaks the Go memory model.
 func UnsafeReadOnly(v reflect.Value) uintptr {
 	if !v.CanAddr() {

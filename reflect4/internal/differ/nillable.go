@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ErrInvalidVTypes   = errors.New("can't diff between invalid type4")
+	ErrInvalidVTypes   = errors.New("can't diff between invalid types")
 	ErrInvalidReceived = errors.New("couldn't diff because the received type is invalid")
 	ErrInvalidExpected = errors.New("couldn't diff because the expected type is invalid")
 )

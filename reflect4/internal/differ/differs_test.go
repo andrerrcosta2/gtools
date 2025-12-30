@@ -635,11 +635,11 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 2: array with mixed type4
-	t.Run("array with mixed type4", func(t *testing.T) {
+	// Test 2: array with mixed types
+	t.Run("array with mixed types", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "array with mixed type4",
+			name:    "array with mixed types",
 			a:       reflect.ValueOf([...]interface{}{1, "hello"}),
 			b:       reflect.ValueOf([...]interface{}{1, "world"}),
 			options: strat,
@@ -895,10 +895,10 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 	})
 
 	// Different channels
-	t.Run("different channel type4", func(t *testing.T) {
+	t.Run("different channel types", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "Different channel type4",
+			name:    "Different channel types",
 			a:       reflect.ValueOf(make(chan int)),
 			b:       reflect.ValueOf(make(chan string)),
 			options: strat,
@@ -1175,10 +1175,10 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 	})
 
 	// Different functions
-	t.Run("different function type4", func(t *testing.T) {
+	t.Run("different function types", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "different function type4",
+			name:    "different function ",
 			a:       reflect.ValueOf(func(int) {}),
 			b:       reflect.ValueOf(func(string) {}),
 			options: strat,
@@ -1303,12 +1303,12 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 	})
 
 	// Different functions
-	t.Run("different function type4", func(t *testing.T) {
+	t.Run("different function ", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(func(int) {})
 		b := reflect.ValueOf(func(string) {})
 		testDifferValues(tt, TestCase{
-			name:    "different function type4",
+			name:    "different function ",
 			a:       a,
 			b:       b,
 			options: strat,
@@ -1420,7 +1420,7 @@ func TestBetween_Interfaces(t *testing.T) {
 		})
 	})
 
-	t.Run("same interfaces, same impl, different field4", func(t *testing.T) {
+	t.Run("same interfaces, same impl, different fields", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		snm := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.SimpleUnsafeCastableFloat"
 		testDifferValues(tt, TestCase{
@@ -1522,7 +1522,7 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 		})
 	})
 
-	t.Run("generic interfaces, different structs field4", func(t *testing.T) {
+	t.Run("generic interfaces, different structs fields", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name:    t.Name(),
@@ -2401,10 +2401,10 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("Different int type4 as any", func(t *testing.T) {
+	t.Run("Different int  as any", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "Different int type4 as any",
+			name:    "Different int  as any",
 			a:       reflect.ValueOf([]any{1, 2, 3, 4, 5, 6}),
 			b:       reflect.ValueOf([]any{int8(1), int8(2), int8(3), int8(4), int8(5), int8(6)}),
 			options: strat,
@@ -2570,10 +2570,10 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("Different int type4 as any", func(t *testing.T) {
+	t.Run("Different int  as any", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "Different int type4 as any",
+			name:    "Different int  as any",
 			a:       reflect.ValueOf([]any{1, 2, 3, 4, 5, 6}),
 			b:       reflect.ValueOf([]any{int8(1), int8(2), int8(3), int8(4), int8(5), int8(6)}),
 			options: strat,
@@ -2697,7 +2697,7 @@ func TestBetween_Strings_EdgeCases(t *testing.T) {
 //	This test must assert:
 //	1. structs are equals only when the conditions below are met:
 //	a: they have the same signature
-//	a: all its field4 are equals
+//	a: all its fields are equals
 //	2. Retrieve the standard messages on differences
 func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 	var branch indent.Branch
@@ -2742,10 +2742,10 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("Different field type4", func(t *testing.T) {
+	t.Run("Different field ", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "Different field type4",
+			name:    "Different field ",
 			a:       reflect.ValueOf(struct{ Age int }{25}),
 			b:       reflect.ValueOf(struct{ Age string }{"25"}),
 			options: strat,
@@ -2762,7 +2762,7 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 //	This test must assert:
 //	1. structs are equals only when the conditions below are met:
 //	a: they have the same signature
-//	a: all its field4 are equals
+//	a: all its fields are equals
 //	2. Retrieve the standard messages on differences
 func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 	var branch indent.Branch
@@ -2783,7 +2783,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("same signature, slice field4 with different values", func(t *testing.T) {
+	t.Run("same signature, slice fields with different values", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name:    "structs with slices",
@@ -2797,10 +2797,10 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("same signature, unexported field4 with different values", func(t *testing.T) {
+	t.Run("same signature, unexported fields with different values", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
-			name:    "StructsPtr with unexported field4",
+			name:    "StructsPtr with unexported fields",
 			a:       reflect.ValueOf(struct{ name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ name string }{"Bob"}),
 			options: strat,
@@ -2843,8 +2843,8 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 //	This test must assert:
 //	1. structs are equals only when the conditions below are met:
 //	a: they have the same signature
-//	a: all its exported field4 are equals or
-//	b: both field4 are unaddressable
+//	a: all its exported fields are equals or
+//	b: both fields are unaddressable
 //	2. Retrieve the standard messages on differences
 func TestBetween_Structs_SkipUnexpFields(t *testing.T) {
 	// TODO:
@@ -2856,7 +2856,7 @@ func TestBetween_Structs_SkipUnexpFields(t *testing.T) {
 //	This test must assert:
 //	1. structs are equals only when the conditions below are met:
 //	a: they have the same signature
-//	a: all its field4 are equals
+//	a: all its fields are equals
 //	2. Retrieve the standard messages on differences
 func TestBetween_Structs_EdgeCases_SkipUnexpFields(t *testing.T) {
 	// TODO:
@@ -2948,7 +2948,7 @@ func TestBetween_UnsafePointers_EdgeCases(t *testing.T) {
 
 	// This is a case where two unsafe ptrs are nil
 	// and the api sees them as equals
-	t.Run("uninitialized ptrs, different type4", func(t *testing.T) {
+	t.Run("uninitialized ptrs, different ", func(t *testing.T) {
 		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		testDifferValues(tt, TestCase{
 			name: "uninitialized ptrs",

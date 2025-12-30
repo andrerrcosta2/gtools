@@ -24,11 +24,11 @@ var (
 	}
 )
 
-// EachExp Iterates over exported field4 and applies a function.
+// EachExp Iterates over exported fields and applies a function.
 // It returns an error if the target isn't a struct
-// It ignores unexported field4
+// It ignores unexported fields
 //
-// If you need to access unexported field4, use UnsafeEach function
+// If you need to access unexported fields, use UnsafeEach function
 func EachExp(target any, fn func(name string, value any) bool) error {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if !v.IsValid() || v.Kind() != reflect.Struct {
@@ -40,11 +40,11 @@ func EachExp(target any, fn func(name string, value any) bool) error {
 	return nil
 }
 
-// FromExp returns a slice of the values of all the exported field4 of a struct
+// FromExp returns a slice of the values of all the exported fields of a struct
 // It returns an error if the target isn't a struct
-// It ignores unexported field4
+// It ignores unexported fields
 //
-// If you need to access unexported field4, use UnsafeFrom function
+// If you need to access unexported fields, use UnsafeFrom function
 func FromExp(target any) ([]any, error) {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if !v.IsValid() || v.Kind() != reflect.Struct {
@@ -61,7 +61,7 @@ func FromExp(target any) ([]any, error) {
 // GetExp returns the value of an exported struct field by name
 // It returns an error if the target isn't a struct.
 //
-// This method only works with exported field4. If you need to access unexported field4,
+// This method only works with exported fields. If you need to access unexported fields,
 // use UnsafeGet function
 func GetExp(target any, name string) (any, error) {
 	v := values.Unwrap(reflect.ValueOf(target))
@@ -105,7 +105,7 @@ func Names(target any) ([]string, error) {
 }
 
 // Nil returns all field names whose values are nil.
-// Only field4 of nil-able type4 (ptr, slice, map, chan, func, interface) can be nil.
+// Only fields of nil-able types (ptr, slice, map, chan, func, interface) can be nil.
 // Returns an error if target is not a struct.
 func Nil(target any) ([]string, error) {
 	v := values.Unwrap(reflect.ValueOf(target))
@@ -122,7 +122,7 @@ func Nil(target any) ([]string, error) {
 	return names, nil
 }
 
-// NotNilExp returns all exported not nil field4 within a struct
+// NotNilExp returns all exported not nil fields within a struct
 func NotNilExp(target any) (fields []any, err error) {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if !v.IsValid() || v.Kind() != reflect.Struct {
@@ -138,7 +138,7 @@ func NotNilExp(target any) (fields []any, err error) {
 	return
 }
 
-// NumExported returns the number of exported field4. If the target isn't a struct, an error is returned.
+// NumExported returns the number of exported fields. If the target isn't a struct, an error is returned.
 func NumExported(target any) (int, error) {
 	t := reflect.TypeOf(target)
 	if t == nil {
@@ -151,7 +151,7 @@ func NumExported(target any) (int, error) {
 	return structs.NumExportedFields(t), nil
 }
 
-// NumUnexported returns the number of unexported field4. If the target isn't a struct, an error is returned.
+// NumUnexported returns the number of unexported fields. If the target isn't a struct, an error is returned.
 func NumUnexported(target any) (int, error) {
 	t := reflect.TypeOf(target)
 	if t == nil {
@@ -165,7 +165,7 @@ func NumUnexported(target any) (int, error) {
 }
 
 // SetExp sets the field with the given name to the given value. If the target isn't a struct, an error is returned.
-// This method only works with exported field4. For unexported field4 use UnsafeSet
+// This method only works with exported fields. For unexported fields use UnsafeSet
 func SetExp(target any, name string, value any) error {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if !v.IsValid() || v.Kind() != reflect.Struct {

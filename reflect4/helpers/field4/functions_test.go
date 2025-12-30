@@ -31,7 +31,7 @@ func TestEachExp(t *testing.T) {
 		}
 	})
 
-	t.Run("empty struct calls no field4", func(t *testing.T) {
+	t.Run("empty struct calls no fields", func(t *testing.T) {
 		called := false
 		err := EachExp(emptyStruct{}, func(name string, value any) bool {
 			called = true
@@ -45,7 +45,7 @@ func TestEachExp(t *testing.T) {
 		}
 	})
 
-	t.Run("iterates over exported field4 only", func(t *testing.T) {
+	t.Run("iterates over exported fields only", func(t *testing.T) {
 		val := 42
 		obj := testStruct{
 			Name:    "Alice",
@@ -65,7 +65,7 @@ func TestEachExp(t *testing.T) {
 
 		expected := []string{"Name", "Age", "Value"}
 		if len(calledFields) != len(expected) {
-			t.Errorf("expected %d field4, got %d: %v", len(expected), len(calledFields), calledFields)
+			t.Errorf("expected %d fields, got %d: %v", len(expected), len(calledFields), calledFields)
 		}
 		for i, exp := range expected {
 			if calledFields[i] != exp {
@@ -100,7 +100,7 @@ func TestEachExp(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		if fields != 3 { // Name, Age, Value (Value is nil, but still exported)
-			t.Errorf("expected 3 field4, got %d", fields)
+			t.Errorf("expected 3 fields, got %d", fields)
 		}
 	})
 
@@ -142,7 +142,7 @@ func TestFromExp(t *testing.T) {
 		}
 	})
 
-	t.Run("returns exported field4 only", func(t *testing.T) {
+	t.Run("returns exported fields only", func(t *testing.T) {
 		val := 42
 		obj := testStruct{
 			Name:    "Alice",
@@ -157,7 +157,7 @@ func TestFromExp(t *testing.T) {
 		}
 
 		if len(fields) != 3 {
-			t.Errorf("expected 3 field4, got %d", len(fields))
+			t.Errorf("expected 3 fields, got %d", len(fields))
 		}
 
 		if fields[0] != "Alice" {
@@ -180,7 +180,7 @@ func TestFromExp(t *testing.T) {
 		}
 
 		if len(fields) != 3 {
-			t.Errorf("expected 3 field4, got %d", len(fields))
+			t.Errorf("expected 3 fields, got %d", len(fields))
 		}
 	})
 
@@ -471,7 +471,7 @@ func TestNames(t *testing.T) {
 }
 
 func TestNil(t *testing.T) {
-	t.Run("should return names of nil field4", func(t *testing.T) {
+	t.Run("should return names of nil fields", func(t *testing.T) {
 		s := manyFields{
 			A: 10,
 			B: nil, // *int
@@ -488,7 +488,7 @@ func TestNil(t *testing.T) {
 
 		expected := map[string]bool{"B": true, "C": true, "D": true}
 		if len(names) != len(expected) {
-			t.Fatalf("expected %d nil field4, got %d: %v", len(expected), len(names), names)
+			t.Fatalf("expected %d nil fields, got %d: %v", len(expected), len(names), names)
 		}
 
 		for _, name := range names {
@@ -498,11 +498,11 @@ func TestNil(t *testing.T) {
 			delete(expected, name)
 		}
 		if len(expected) > 0 {
-			t.Errorf("missing nil field4: %v", expected)
+			t.Errorf("missing nil fields: %v", expected)
 		}
 	})
 
-	t.Run("no nil field4 returns empty slice", func(t *testing.T) {
+	t.Run("no nil fields returns empty slice", func(t *testing.T) {
 		x := 42
 		s := manyFields{
 			A: 10,
@@ -518,7 +518,7 @@ func TestNil(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if len(names) != 0 {
-			t.Errorf("expected no nil field4, got: %v", names)
+			t.Errorf("expected no nil fields, got: %v", names)
 		}
 	})
 
@@ -563,7 +563,7 @@ func TestNil(t *testing.T) {
 		}
 	})
 
-	t.Run("struct with zero-value non-nilable field4", func(t *testing.T) {
+	t.Run("struct with zero-value non-nilable fields", func(t *testing.T) {
 		s := manyFields{
 			A: 0,
 			B: new(int),
@@ -578,13 +578,13 @@ func TestNil(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if len(names) != 0 {
-			t.Errorf("expected no nil field4, got: %v", names)
+			t.Errorf("expected no nil fields, got: %v", names)
 		}
 	})
 }
 
 func TestNotNil(t *testing.T) {
-	t.Run("should return only exported non-nil field4", func(t *testing.T) {
+	t.Run("should return only exported non-nil fields", func(t *testing.T) {
 		x := 42
 		s := manyFields{
 			A: 10,
@@ -600,25 +600,25 @@ func TestNotNil(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		// Expected: A, B, C, D, E → 5 field4
+		// Expected: A, B, C, D, E → 5 fields
 		if len(fields) != 5 {
-			t.Fatalf("expected 5 non-nil exported field4, got %d: %v", len(fields), fields)
+			t.Fatalf("expected 5 non-nil exported fields, got %d: %v", len(fields), fields)
 		}
 
 		if val, ok := fields[0].(int); !ok || val != 10 {
-			t.Errorf("field4[0] (A): expected 10, got %v", fields[0])
+			t.Errorf("fields[0] (A): expected 10, got %v", fields[0])
 		}
 		if val, ok := fields[1].(*int); !ok || *val != 42 {
-			t.Errorf("field4[1] (B): expected *int=42, got %v", fields[1])
+			t.Errorf("fields[1] (B): expected *int=42, got %v", fields[1])
 		}
 		if val, ok := fields[2].([]int); !ok || len(val) != 3 || val[0] != 1 {
-			t.Errorf("field4[2] (C): expected [1,2,3], got %v", fields[2])
+			t.Errorf("fields[2] (C): expected [1,2,3], got %v", fields[2])
 		}
 		if val, ok := fields[3].(map[string]int); !ok || val["a"] != 1 {
-			t.Errorf("field4[3] (D): expected map[a:1], got %v", fields[3])
+			t.Errorf("fields[3] (D): expected map[a:1], got %v", fields[3])
 		}
 		if val, ok := fields[4].(inner); !ok || val.X != 7 {
-			t.Errorf("field4[4] (E): expected inner{X:7}, got %v", fields[4])
+			t.Errorf("fields[4] (E): expected inner{X:7}, got %v", fields[4])
 		}
 
 		for i, f := range fields {
@@ -628,7 +628,7 @@ func TestNotNil(t *testing.T) {
 		}
 	})
 
-	t.Run("nil exported field4 are excluded", func(t *testing.T) {
+	t.Run("nil exported fields are excluded", func(t *testing.T) {
 		s := manyFields{
 			A: 0,
 			B: nil,
@@ -643,11 +643,11 @@ func TestNotNil(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		// Included: A (0), E (inner{}) → 2 field4
+		// Included: A (0), E (inner{}) → 2 fields
 		// B, C, D are nil → excluded
 		// f is unexported → excluded
 		if len(fields) != 2 {
-			t.Errorf("expected 2 field4 (A, E), got %d: %v", len(fields), fields)
+			t.Errorf("expected 2 fields (A, E), got %d: %v", len(fields), fields)
 		}
 
 		// A should be 0
@@ -660,7 +660,7 @@ func TestNotNil(t *testing.T) {
 		}
 	})
 
-	t.Run("all exported field4 nil: empty result", func(t *testing.T) {
+	t.Run("all exported fields nil: empty result", func(t *testing.T) {
 		type testStruct struct {
 			Ptr   *int
 			Slice []string
@@ -680,7 +680,7 @@ func TestNotNil(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if len(fields) != 0 {
-			t.Errorf("expected empty slice (all exported field4 nil), got %v", fields)
+			t.Errorf("expected empty slice (all exported fields nil), got %v", fields)
 		}
 	})
 
@@ -873,7 +873,7 @@ func TestTags(t *testing.T) {
 		}
 
 		if len(jsonTags) != len(expectedJSON) {
-			t.Fatalf("json: expected %d field4, got %d: %v", len(expectedJSON), len(jsonTags), jsonTags)
+			t.Fatalf("json: expected %d fields, got %d: %v", len(expectedJSON), len(jsonTags), jsonTags)
 		}
 
 		for name, expectedTag := range expectedJSON {
@@ -899,7 +899,7 @@ func TestTags(t *testing.T) {
 		}
 
 		if len(dbTags) != len(expectedDB) {
-			t.Fatalf("db: expected %d field4, got %d: %v", len(expectedDB), len(dbTags), dbTags)
+			t.Fatalf("db: expected %d fields, got %d: %v", len(expectedDB), len(dbTags), dbTags)
 		}
 
 		for name, expectedTag := range expectedDB {
@@ -934,7 +934,7 @@ func TestTags(t *testing.T) {
 		}
 	})
 
-	t.Run("includes unexported field4", func(t *testing.T) {
+	t.Run("includes unexported fields", func(t *testing.T) {
 		s := taggedStruct{}
 		tags, err := Tags(s, "json")
 		if err != nil {

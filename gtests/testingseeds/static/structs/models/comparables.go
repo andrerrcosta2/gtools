@@ -8,15 +8,15 @@ var NaturallyComparableZeroInst = new(NaturallyComparable)
 
 // NaturallyComparableAsValue is a struct that can be compared using the == operator
 // StructsPtr are naturally comparable if they do not contain:
-//   - Slices: Since slices are inherently non-comparable (they are reference type4
+//   - Slices: Since slices are inherently non-comparable (they are reference types
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
-//   - Maps: Maps are reference type4 as well and cannot be compared with == (except for nil comparisons).
-//   - Functions: Function field4 are non-comparable because they refer to code blocks and may hold
+//   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
+//   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
 //     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
-//   - Channels: Channels are reference type4 and cannot be compared with ==.
-//   - StructsPtr and interfaces with non-comparable field4: If a struct contains a field that is non-comparable,
+//   - Channels: Channels are reference types and cannot be compared with ==.
+//   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
 //   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.
@@ -26,15 +26,15 @@ func NaturallyComparableAsValue(a int, b string) NaturallyComparable {
 
 // NaturallyComparableAsRef is a struct that can be compared using the == operator
 // StructsPtr are naturally comparable if they do not contain:
-//   - Slices: Since slices are inherently non-comparable (they are reference type4
+//   - Slices: Since slices are inherently non-comparable (they are reference types
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
-//   - Maps: Maps are reference type4 as well and cannot be compared with == (except for nil comparisons).
-//   - Functions: Function field4 are non-comparable because they refer to code blocks and may hold
+//   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
+//   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
 //     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
-//   - Channels: Channels are reference type4 and cannot be compared with ==.
-//   - StructsPtr and interfaces with non-comparable field4: If a struct contains a field that is non-comparable,
+//   - Channels: Channels are reference types and cannot be compared with ==.
+//   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
 //   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.
@@ -100,15 +100,15 @@ func (n *NaturallyComparableWithMethods) ComparableValueB() string {
 
 // NotComparableZeroInst is a struct that cannot be compared using the == operator
 // StructsPtr are non-comparable if they contain:
-//   - Slices: Since slices are inherently non-comparable (they are reference type4
+//   - Slices: Since slices are inherently non-comparable (they are reference types
 //     with varying lengths and capacities), any struct containing a slice is also non-comparable.
-//   - Maps: Maps are reference type4 as well and cannot be compared with == (except for nil comparisons).
-//   - Functions: Function field4 are non-comparable because they refer to code blocks and may hold
+//   - Maps: Maps are reference types as well and cannot be compared with == (except for nil comparisons).
+//   - Functions: Function fields are non-comparable because they refer to code blocks and may hold
 //     unique address or closures, making them inherently unique per instance.
 //   - Arrays with Non-Comparable Elements: If a struct contains an array where elements themselves are
 //     non-comparable, the array (and hence the struct) becomes non-comparable.
-//   - Channels: Channels are reference type4 and cannot be compared with ==.
-//   - StructsPtr and interfaces with non-comparable field4: If a struct contains a field that is non-comparable,
+//   - Channels: Channels are reference types and cannot be compared with ==.
+//   - StructsPtr and interfaces with non-comparable fields: If a struct contains a field that is non-comparable,
 //     the struct itself becomes non-comparable.
 //   - unsafe.Pointer: Since ptrs are inherently non-comparable, any struct containing a pointer
 //     is also non-comparable.

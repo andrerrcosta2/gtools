@@ -21,7 +21,7 @@ func Struct[O internal.Option](v reflect.Value, o ...O) (string, error) {
 	return defaultStruct(indent.Zero(), v, NewStrategy(o...)), nil
 }
 
-// Fields returns a formatted sprint of the given struct field4
+// Fields returns a formatted sprint of the given struct fields
 func Fields(tab indent.Tab, v reflect.Value) (string, error) {
 	tv := values.Unwrap(v)
 	if tv.Kind() != reflect.Struct {

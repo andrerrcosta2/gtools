@@ -232,7 +232,7 @@ func TestHasRecursiveRef(t *testing.T) {
 		}
 	})
 
-	t.Run("recursive via slice of pointer4", func(t *testing.T) {
+	t.Run("recursive via slice of pointers", func(t *testing.T) {
 		v := RecursiveSlice{}
 		ok, err := HasRecursiveRef(v)
 		if err != nil {
@@ -254,7 +254,7 @@ func TestHasRecursiveRef(t *testing.T) {
 		}
 	})
 
-	t.Run("primitive type4 are not recursive", func(t *testing.T) {
+	t.Run("primitive types are not recursive", func(t *testing.T) {
 		for _, val := range []any{42, "hello", true, []int{1, 2, 3}, map[string]int{}} {
 			ok, err := HasRecursiveRef(val)
 			if err != nil {

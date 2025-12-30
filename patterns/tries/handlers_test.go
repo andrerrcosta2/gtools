@@ -15,7 +15,7 @@ import (
 func TestHandlers_SearchSymbolsByPattern_LinearOpenSymbols(t *testing.T) {
 	// Helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// type4
+	// types
 	type V = *symbols.Logical
 	type K = string
 
@@ -37,7 +37,7 @@ func TestHandlers_SearchSymbolsByPattern_LinearOpenSymbols(t *testing.T) {
 func TestHandlers_SearchSymbolsByPattern_LinearClosedSymbols(t *testing.T) {
 	// Helper
 	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-	// type4
+	// types
 	type V = *symbols.Logical
 	type K = string
 

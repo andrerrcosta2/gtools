@@ -2,7 +2,7 @@
 
 package prim
 
-// Any covers all primitive type4
+// Any covers all primitive types
 // Runes and bytes are int32 and uint8 respectively
 type Any interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
@@ -11,7 +11,7 @@ type Any interface {
 		~bool | ~complex64 | ~complex128
 }
 
-// Ordered covers all ordered primitive type4
+// Ordered covers all ordered primitive types
 // Runes and bytes are int32 and uint8 respectively
 type Ordered interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
@@ -19,7 +19,7 @@ type Ordered interface {
 		~uintptr | ~float32 | ~float64 | ~string
 }
 
-// Hashable covers all primitive type4 that are suited to be hashed
+// Hashable covers all primitive types that are suited to be hashed
 type Hashable interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
@@ -32,7 +32,7 @@ type Serializable interface {
 		~string
 }
 
-// Comparable covers all comparable primitive type4
+// Comparable covers all comparable primitive types
 // Runes and bytes are int32 and uint8 respectively
 type Comparable interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |

@@ -60,7 +60,7 @@ func defaultFields(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 		}
 
 		//if !field.CanInterface() {
-		//	// since only field4 can be unexported
+		//	// since only fields can be unexported
 		//	// here is the only method we need to use unsafe operations
 		//	if !field.IsZero() {
 		//		field = values.UnsafeForceOfUnaddr(field)
@@ -250,7 +250,7 @@ func defaultStruct(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 
 func defaultUnsafe(tab indent.Indentor, v reflect.Value) string {
 	if v.IsNil() {
-		return sprints.NilType(tab, "unsafe.pointer4")
+		return sprints.NilType(tab, "unsafe.pointer")
 	}
 	ptrVal := v.Interface().(unsafe.Pointer)
 	return sprints.UnsafePointer(tab, ptrVal)

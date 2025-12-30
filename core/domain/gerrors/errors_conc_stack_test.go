@@ -217,7 +217,7 @@ func TestConcurrentStackableError_From(t *testing.T) {
 // TestConcurrentStackableError_Is tests the method Is
 // it should be true only if the stack of errors contains the same error instances
 func TestConcurrentStackableError_Is(t *testing.T) {
-	t.Run("equal pointer4, same stack len", func(t *testing.T) {
+	t.Run("equal pointers, same stack len", func(t *testing.T) {
 		baseErr := errors.New("base error")
 		cse := ConcStackableOf(baseErr)
 
@@ -226,7 +226,7 @@ func TestConcurrentStackableError_Is(t *testing.T) {
 		}
 	})
 
-	t.Run("equal pointer4, different stack len", func(t *testing.T) {
+	t.Run("equal pointers, different stack len", func(t *testing.T) {
 		baseErr := errors.New("base error")
 		secondErr := errors.New("second error")
 		cse := ConcStackableOf(baseErr)
@@ -237,7 +237,7 @@ func TestConcurrentStackableError_Is(t *testing.T) {
 		}
 	})
 
-	t.Run("equal strings, different pointer4", func(t *testing.T) {
+	t.Run("equal strings, different pointers", func(t *testing.T) {
 		s1 := ConcStackableOf(errors.New("a"))
 		s1.Stack(errors.New("b"))
 

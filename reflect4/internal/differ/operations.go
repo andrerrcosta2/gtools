@@ -352,10 +352,10 @@ func differInt(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 
 // differInterfaces interfaces are equals if:
 //
-//	A: both interface type4 are equals; and
+//	A: both interface types are equals; and
 //	A: both implementations are equals; or
 //	B: both interfaces are nil; and
-//	B: both type4 are equals
+//	B: both types are equals
 func differInterfaces(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	//fmx.Purplef("[differInterfaces] '%s' compare '%s': %t\n", a.String(), b.String(),
 	//	reflect.DeepEqual(a.Interface(), b.Interface()))
@@ -416,8 +416,8 @@ func differPrimitives(tab indent.Indentor, a, b reflect.Value) differs.Differenc
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil: and
-//	C: both type4 have the same signature
+//	C: both types are nil: and
+//	C: both types have the same signature
 func defaultMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	//fmx.Purplef("[defaultMapDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
 	//	reflect.DeepEqual(a.Interface(), b.Interface()))
@@ -449,8 +449,8 @@ func defaultMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 //	B: they have the same signature; and
 //	B: they have the same length; and
 //	B: their elements are equals; or
-//	C: both type4 are nil or empty: and
-//	C: both type4 have the same signature
+//	C: both types are nil or empty: and
+//	C: both types have the same signature
 func serializableMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	//fmx.Purplef("[defaultMapDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
 	//	reflect.DeepEqual(a.Interface(), b.Interface()))
@@ -675,7 +675,7 @@ func mapLengthDiffer(tab indent.Indentor, a, b reflect.Value) (diff string, equa
 // defaultPtrDiff evaluates the defaultStringDiff between two ptrs given the following constraints:
 //
 //	A: both addresses are the same; or
-//	B: both type4 are equals; and
+//	B: both types are equals; and
 //	B: both elements are equals; or
 //	C: both ptrs are nil; and
 //	C: both ptrs have the same type
@@ -879,7 +879,7 @@ func defaultNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy
 	//   - Type (already checked earlier),
 	//   - Length (a.Len() == b.Len()),
 	//   - Capacity (a.Cap() == b.Cap()),
-	//   - Data pointer (a.pointer4() == b.pointer4()),
+	//   - Data pointer (a.pointer() == b.pointer()),
 	//
 	// they reference the same portion of the same underlying array.
 	// This means they are semantically the same instance of the slice.
@@ -967,7 +967,7 @@ func serializableNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Str
 // diffStructs evaluates the difference between two structs based on the constraints:
 //
 //	A: both structs have the same type; and
-//	A: both struct field4 are equals;
+//	A: both struct fields are equals;
 func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff differs.Difference) {
 	//fmx.Purplef("[diffStructs] '%s' compare '%s': %t\n", a.String(), b.String(),
 	//	reflect.DeepEqual(readableValue(a), readableValue(b)))

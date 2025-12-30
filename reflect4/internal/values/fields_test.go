@@ -20,7 +20,7 @@ import (
 //		If the field is exported, it should:
 //		- Be able to interfaces
 //		- Be able to set if the field is addressable
-//	 Non exported field4 shouldn't be able to interface nor set.
+//	 Non exported fields shouldn't be able to interface nor set.
 func TestAccessField(t *testing.T) {
 	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
@@ -115,7 +115,7 @@ func TestAccessField(t *testing.T) {
 func TestAccessFields(t *testing.T) {
 	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
-	t.Run("value: exported addressable/unaddressable field4", func(t *testing.T) {
+	t.Run("value: exported addressable/unaddressable fields", func(t *testing.T) {
 		x := models.ExportedFieldsAsValue(1, "address")
 		RideFieldsByName(reflect.ValueOf(x), func(name string, field reflect.Value) bool {
 			if name == "Addressable" {
@@ -147,7 +147,7 @@ func TestAccessFields(t *testing.T) {
 		assertlite.Equals(t, x.Unaddressable, 1)
 	})
 
-	t.Run("reference: exported addressable/unaddressable field4", func(t *testing.T) {
+	t.Run("reference: exported addressable/unaddressable fields", func(t *testing.T) {
 		x := models.ExportedFieldsAsRef(1, "address")
 		RideFieldsByName(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) bool {
 			if name == "Addressable" {
@@ -175,7 +175,7 @@ func TestAccessFields(t *testing.T) {
 		assertlite.Equals(t, x.Unaddressable, 20)
 	})
 
-	t.Run("value: unexported addressable/unaddressable field4", func(t *testing.T) {
+	t.Run("value: unexported addressable/unaddressable fields", func(t *testing.T) {
 		x := models.UnexportedFieldsAsValue(1, "address")
 		RideFieldsByName(reflect.ValueOf(x), func(name string, field reflect.Value) bool {
 			if name == "addressable" {
@@ -213,7 +213,7 @@ func TestAccessFields(t *testing.T) {
 		assertlite.Equals(t, x.Unaddressable(), 1)
 	})
 
-	t.Run("reference: unexported addressable/unaddressable field4", func(t *testing.T) {
+	t.Run("reference: unexported addressable/unaddressable fields", func(t *testing.T) {
 		x := models.UnexportedFieldsAsRef(1, "address")
 		RideFieldsByName(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) bool {
 			if name == "addressable" {
@@ -252,27 +252,27 @@ func TestAccessFields(t *testing.T) {
 	})
 }
 
-// TestFields Tests if the method is able to extract all field4 from a struct,
+// TestFields Tests if the method is able to extract all fields from a struct,
 //
-//	This test should be able to extract only exported field4
+//	This test should be able to extract only exported fields
 func TestFields(t *testing.T) {
 	structs := gtests.Structs.Fuzz().Categories().Values()
 
-	t.Run("Structs with only exported field4", func(t *testing.T) {
+	t.Run("Structs with only exported fields", func(t *testing.T) {
 		structs.OfExportedFieldsOnly().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := Fields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of field4 mismatch", len(fields), rv.NumField()))
+				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 		})
 	})
 
-	t.Run("Structs with unexported field4", func(t *testing.T) {
+	t.Run("Structs with unexported fields", func(t *testing.T) {
 		structs.WithUnexportedFields().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := Fields(rv)
 			assertlite.False(t, len(fields) == 0,
-				gtests.ErrorMismatchValues("Number of field4 matched", len(fields), 0))
+				gtests.ErrorMismatchValues("Number of fields matched", len(fields), 0))
 		})
 	})
 }
@@ -280,10 +280,10 @@ func TestFields(t *testing.T) {
 // TestNilFields tests the method NilFields
 //
 // After each test it should:
-//   - Return the number of nullable field4 that are nil as key-pair map
-//   - Both exported and unexported field4 must be tracked
+//   - Return the number of nullable fields that are nil as key-pair map
+//   - Both exported and unexported fields must be tracked
 func TestNilFields(t *testing.T) {
-	t.Run("no nil field4, half nullables, half unexported", func(t *testing.T) {
+	t.Run("no nil fields, half nullables, half unexported", func(t *testing.T) {
 		value := models.MixedExportedUnexportedFieldsAsValue("addrx", "addru", "unaddrx", "unaddru")
 		nf := NilFields(reflect.ValueOf(value))
 		assertlite.True(t, len(nf) == 0)
@@ -299,7 +299,7 @@ func TestNilFields(t *testing.T) {
 		})
 	})
 
-	t.Run("no nil field4, half nullables, all unexported", func(t *testing.T) {
+	t.Run("no nil fields, half nullables, all unexported", func(t *testing.T) {
 		value := models.UnexportedFieldsAsValue(1, "addru")
 		nf := NilFields(reflect.ValueOf(value))
 		assertlite.True(t, len(nf) == 0)
@@ -316,7 +316,7 @@ func TestNilFields(t *testing.T) {
 		})
 	})
 
-	t.Run("no nil field4, all nullables, all exported", func(t *testing.T) {
+	t.Run("no nil fields, all nullables, all exported", func(t *testing.T) {
 		value := models.ExportedAddressableFieldsAsValue(1, 1.0, true, "test")
 		nf := NilFields(reflect.ValueOf(value))
 		assertlite.True(t, len(nf) == 0)
@@ -332,11 +332,11 @@ func TestNilFields(t *testing.T) {
 // TestNoNilFields tests the method NoNilFields
 //
 // After each test it should:
-//   - Return the number of field4 that are not nil as key-pair map
-//   - Both exported and unexported field4 must be tracked
-//   - Non-addressable field4 must be always retrieved.
+//   - Return the number of fields that are not nil as key-pair map
+//   - Both exported and unexported fields must be tracked
+//   - Non-addressable fields must be always retrieved.
 func TestNoNilFields(t *testing.T) {
-	t.Run("no nil field4, half nullables, half exported", func(t *testing.T) {
+	t.Run("no nil fields, half nullables, half exported", func(t *testing.T) {
 		value := models.MixedExportedUnexportedFieldsAsValue("addrx", "addru", "unaddrx", "unaddru")
 		nf := NoNilFields(reflect.ValueOf(value))
 		assertlite.True(t, len(nf) == 4)
@@ -352,7 +352,7 @@ func TestNoNilFields(t *testing.T) {
 		})
 	})
 
-	t.Run("no nil field4, half nullables, all unexported", func(t *testing.T) {
+	t.Run("no nil fields, half nullables, all unexported", func(t *testing.T) {
 		value := models.UnexportedFieldsAsValue(1, "addru")
 		rv := reflect.ValueOf(value)
 		nf := NoNilFields(rv)
@@ -370,19 +370,19 @@ func TestNoNilFields(t *testing.T) {
 		})
 	})
 
-	t.Run("no nil field4, all field4 as nullables", func(t *testing.T) {
+	t.Run("no nil fields, all fields as nullables", func(t *testing.T) {
 		value := models.ExportedAddressableFieldsAsValue(1, 1.0, true, "test")
 		rv := reflect.ValueOf(value)
 		nf := NoNilFields(rv)
-		assertlite.True(t, len(nf) == rv.NumField(), "expected nil field4 map "+
+		assertlite.True(t, len(nf) == rv.NumField(), "expected nil fields map "+
 			"to have len compare to '%d' but got '%d'", rv.NumField(), len(nf))
 		assertlite.NoNilFields(t, true, value)
 	})
 
-	t.Run("zero struct, all field4 are nullables", func(t *testing.T) {
+	t.Run("zero struct, all fields are nullables", func(t *testing.T) {
 		value := models.ExportedAddressableFields{}
 		nf := NoNilFields(reflect.ValueOf(value))
-		assertlite.True(t, len(nf) == 0, "expected nil field4 map "+
+		assertlite.True(t, len(nf) == 0, "expected nil fields map "+
 			"to have len compare to '0' but got '%d'", len(nf))
 		assertlite.AllFieldsAreNil(t, true, value)
 	})
@@ -391,7 +391,7 @@ func TestNoNilFields(t *testing.T) {
 // TestRideFields tests the method RideFields
 //
 // This test should assert:
-//   - All field4 of any struct are visited - exported and unexported.
+//   - All fields of any struct are visited - exported and unexported.
 //   - The method retrieves its name and its reflect.Value
 func TestRideFields(t *testing.T) {
 	t.Run("unaddressable struct", func(t *testing.T) {
@@ -431,29 +431,29 @@ func TestSetField(t *testing.T) {
 	})
 }
 
-// TestUnsafeGetAllFields Tests if the method is able to extract all field4 from a struct using
+// TestUnsafeGetAllFields Tests if the method is able to extract all fields from a struct using
 // the unsafe package
 func TestUnsafeGetAllFields(t *testing.T) {
 	structs := gtests.Structs.Fuzz().Categories().Values()
 
-	t.Run("Structs with exported field4", func(t *testing.T) {
+	t.Run("Structs with exported fields", func(t *testing.T) {
 		structs.OfExportedFieldsOnly().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := UnsafeGetAllFields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of field4 mismatch", len(fields), rv.NumField()))
+				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 			for k, v := range fields {
 				assertlite.NotNil(t, v, "field '%s' is nil", k)
 			}
 		})
 	})
 
-	t.Run("Structs with unexported field4", func(t *testing.T) {
+	t.Run("Structs with unexported fields", func(t *testing.T) {
 		structs.WithUnexportedFields().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := UnsafeGetAllFields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of field4 mismatch", len(fields), rv.NumField()))
+				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 			for k, v := range fields {
 				assertlite.NotNil(t, v, "field '%s' is nil", k)
 			}
@@ -461,10 +461,10 @@ func TestUnsafeGetAllFields(t *testing.T) {
 	})
 }
 
-// TestUnsafeRideFields Tests if the method is able to ride over all field4 from a struct using
+// TestUnsafeRideFields Tests if the method is able to ride over all fields from a struct using
 // the unsafe package
 //
-//   - All field4 (exported/unexported) should be accessible as unsafe ptrs.
+//   - All fields (exported/unexported) should be accessible as unsafe ptrs.
 //func TestUnsafeRideFields(t *testing.T) {
 //	values := gtests.Structs.Fuzz().Categories().Values()
 //	refs := gtests.Structs.Fuzz().Categories().Refs()

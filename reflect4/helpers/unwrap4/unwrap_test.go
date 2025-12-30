@@ -69,7 +69,7 @@ func TestToValue(t *testing.T) {
 		}
 	})
 
-	t.Run("deeply nested interfaces and pointer4", func(t *testing.T) {
+	t.Run("deeply nested interfaces and pointers", func(t *testing.T) {
 		x := 99
 		type Wrapper struct{ Value int }
 		w := Wrapper{Value: x}
@@ -214,7 +214,7 @@ func TestToTypeValue(t *testing.T) {
 		}
 	})
 
-	t.Run("nested interfaces and pointer4", func(t *testing.T) {
+	t.Run("nested interfaces and pointers", func(t *testing.T) {
 		var x float64 = 3.14
 		var i1 any = &x
 		var i2 any = i1
@@ -240,7 +240,7 @@ func TestToTypeValue(t *testing.T) {
 		}
 	})
 
-	t.Run("slice and map type4", func(t *testing.T) {
+	t.Run("slice and map types", func(t *testing.T) {
 		// Slice
 		typ, err := ToTypeValue([]string{"a"})
 		if err != nil {

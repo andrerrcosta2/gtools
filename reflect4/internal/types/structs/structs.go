@@ -23,7 +23,7 @@ func Name(t reflect.Type) string {
 	return t.Name()
 }
 
-// NumExportedFields returns the number of exported field4 within a struct
+// NumExportedFields returns the number of exported fields within a struct
 // It panics if the type isn't struct
 func NumExportedFields(t reflect.Type) int {
 	var count int
@@ -35,7 +35,7 @@ func NumExportedFields(t reflect.Type) int {
 	return count
 }
 
-// NumUnexportedFields returns the number of unexported field4 within a struct
+// NumUnexportedFields returns the number of unexported fields within a struct
 // It panics if the type isn't struct
 func NumUnexportedFields(t reflect.Type) int {
 	var count int

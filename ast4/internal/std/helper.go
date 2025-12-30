@@ -16,7 +16,7 @@ func DeclTypeError(tab indent.Indentor, decl ast.Decl) string {
 }
 
 func DeclTypeDiffError(tab indent.Indentor, a, b ast.Decl) string {
-	return sprints.Errorf(tab, "unsupported decl type4: a = '%T', b = '%T'", a, b)
+	return sprints.Errorf(tab, "unsupported decl type: a = '%T', b = '%T'", a, b)
 }
 
 func ExprTypeError(tab indent.Indentor, expr ast.Expr) string {
@@ -32,7 +32,7 @@ func NodeTypeError(tab indent.Indentor, node ast.Node) string {
 }
 
 func NodeTypeDiffError(tab indent.Indentor, a, b ast.Node) string {
-	return sprints.Errorf(tab, "unsupported node type4: a = '%T', b = '%T'", a, b)
+	return sprints.Errorf(tab, "unsupported node type: a = '%T', b = '%T'", a, b)
 }
 
 func SpecTypeError(tab indent.Indentor, spec ast.Spec) string {
@@ -40,7 +40,7 @@ func SpecTypeError(tab indent.Indentor, spec ast.Spec) string {
 }
 
 func SpecTypeDiffError(tab indent.Indentor, a, b ast.Spec) string {
-	return sprints.Errorf(tab, "unsupported spec type4: a = '%T', b = '%T'", a, b)
+	return sprints.Errorf(tab, "unsupported spec type: a = '%T', b = '%T'", a, b)
 }
 
 func StmtTypeError(tab indent.Indentor, stmt ast.Stmt) string {
@@ -48,5 +48,5 @@ func StmtTypeError(tab indent.Indentor, stmt ast.Stmt) string {
 }
 
 func StmtTypeDiffError(tab indent.Indentor, a, b ast.Stmt) string {
-	return sprints.Errorf(tab, "unsupported statement type4: a = '%T', b = '%T'", a, b)
+	return sprints.Errorf(tab, "unsupported statement type: a = '%T', b = '%T'", a, b)
 }

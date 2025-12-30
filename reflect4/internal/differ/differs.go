@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ErrUnexportedFieldStruct = errors.New("cannot diff between structs as unexported field4")
+	ErrUnexportedFieldStruct = errors.New("cannot diff between structs as unexported fields")
 )
 
 // Between returns the difference between two values

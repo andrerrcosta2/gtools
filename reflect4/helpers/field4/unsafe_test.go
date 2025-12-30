@@ -30,7 +30,7 @@ func TestUnsafeEach(t *testing.T) {
 		}
 	})
 
-	t.Run("empty struct calls no field4", func(t *testing.T) {
+	t.Run("empty struct calls no fields", func(t *testing.T) {
 		called := false
 		err := UnsafeEach(emptyStruct{}, func(name string, value any) bool {
 			called = true
@@ -44,7 +44,7 @@ func TestUnsafeEach(t *testing.T) {
 		}
 	})
 
-	t.Run("iterates over exported and unexported field4", func(t *testing.T) {
+	t.Run("iterates over exported and unexported fields", func(t *testing.T) {
 		val := 42
 		obj := testStruct{
 			Name:    "Alice",
@@ -65,7 +65,7 @@ func TestUnsafeEach(t *testing.T) {
 		}
 
 		if len(got) != 4 {
-			t.Fatalf("expected 4 field4, got %d", len(got))
+			t.Fatalf("expected 4 fields, got %d", len(got))
 		}
 
 		if got["private"] != true {
@@ -103,7 +103,7 @@ func TestUnsafeEach(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if fields != 4 {
-			t.Fatalf("expected 4 field4, got %d", fields)
+			t.Fatalf("expected 4 fields, got %d", fields)
 		}
 	})
 }
@@ -292,7 +292,7 @@ type manyFields struct {
 }
 
 func TestUnsafeGetAll(t *testing.T) {
-	t.Run("should get all field4 correctly", func(t *testing.T) {
+	t.Run("should get all fields correctly", func(t *testing.T) {
 		x := 42
 		s := manyFields{
 			A: 10,
@@ -359,10 +359,10 @@ func TestUnsafeGetAll(t *testing.T) {
 			t.Errorf("f: expected 'secret', got %q", f)
 		}
 
-		// no extra field4
+		// no extra fields
 		expectedKeys := []string{"A", "B", "C", "D", "E", "f"}
 		if len(out) != len(expectedKeys) {
-			t.Errorf("expected %d field4, got %d: %v", len(expectedKeys), len(out), out)
+			t.Errorf("expected %d fields, got %d: %v", len(expectedKeys), len(out), out)
 		}
 	})
 
@@ -430,7 +430,7 @@ func TestUnsafeGetAll(t *testing.T) {
 }
 
 func TestUnsafeGetf(t *testing.T) {
-	t.Run("should get specified field4 correctly", func(t *testing.T) {
+	t.Run("should get specified fields correctly", func(t *testing.T) {
 		x := 42
 		s := manyFields{
 			A: 10,
@@ -446,9 +446,9 @@ func TestUnsafeGetf(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		// Should only have requested field4
+		// Should only have requested fields
 		if len(out) != 3 {
-			t.Fatalf("expected 3 field4, got %d: %v", len(out), out)
+			t.Fatalf("expected 3 fields, got %d: %v", len(out), out)
 		}
 
 		// Check A
@@ -541,7 +541,7 @@ func TestUnsafeGetf(t *testing.T) {
 
 		// Should ignore unknown field
 		if len(out) != 2 {
-			t.Errorf("expected 2 field4 (A and f), got %d: %v", len(out), out)
+			t.Errorf("expected 2 fields (A and f), got %d: %v", len(out), out)
 		}
 		if _, hasA := out["A"]; !hasA {
 			t.Errorf("missing A")

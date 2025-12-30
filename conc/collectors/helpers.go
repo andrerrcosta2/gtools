@@ -44,7 +44,7 @@ func backtrackBranchable[B data.Branchable[B]](branchable B, action func(B)) {
 		// The overhead this kind of type checking adds to the performance
 		// is negligible mostly due to golang compiler optimizations
 		if next, ok = any(nb).(B); !ok {
-			panic("gtools:collectors: recursive collector with different type4\n")
+			panic("gtools:collectors: recursive collector with different type\n")
 		}
 	}
 }

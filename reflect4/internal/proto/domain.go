@@ -11,7 +11,7 @@ import (
 
 type Prototype struct {
 	Methods []Method    // For interface
-	Fields  []Prototype // For struct type4
+	Fields  []Prototype // For struct types
 
 	PkgName   string // Package name
 	TypeName  string // Name of the type
@@ -33,10 +33,10 @@ type Prototype struct {
 
 type Method struct {
 	Params  []Prototype // Parameters (Types of input parameters)
-	Returns []Prototype // Return type4
+	Returns []Prototype // Return types
 
 	Name     string // Method name
 	Receiver string // Receiver type (e.g., "MyType" or "*MyType")
 
-	Func interface{} // pointer4 to the function for lazy reflection
+	Func interface{} // pointers to the function for lazy reflection
 }

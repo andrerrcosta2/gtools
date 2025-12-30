@@ -20,7 +20,7 @@ const (
 )
 
 // TestAnyValue tests the AnyValue function generation of random reflect.Value of random
-// type4.
+// types.
 //
 // This test must assert:
 //   - No nil value is generated
@@ -54,10 +54,10 @@ func TestAnyInterfaceValue(t *testing.T) {
 	}
 }
 
-// TestArray tests the generation of Array type4
+// TestArray tests the generation of Array types
 //
 // this test must assert:
-//   - All type4 have its kind as reflect.Array
+//   - All types have its kind as reflect.Array
 func TestArray(t *testing.T) {
 	for i := 0; i < Loops; i++ {
 		a := Array()
@@ -78,10 +78,10 @@ func TestArrayOf(t *testing.T) {
 	}
 }
 
-// TestChan tests the generation of random channel type4
+// TestChan tests the generation of random channel types
 //
 // this test must assert:
-//   - All type4 have as its kind a reflect.Chan
+//   - All types have as its kind a reflect.Chan
 func TestChan(t *testing.T) {
 	for i := 0; i < Loops; i++ {
 		c := Chan()
@@ -106,7 +106,7 @@ func TestChanOf(t *testing.T) {
 // TestCmpKind tests the CmpKind function generation of random reflect.Kind.
 //
 // This test must assert:
-//   - the generated type4 are between the deviation limit of the distribution
+//   - the generated types are between the deviation limit of the distribution
 func TestCmpKind(t *testing.T) {
 	counts := make(map[reflect.Kind]int)
 	buckets := len(reflectutils.CmpKinds)
@@ -134,7 +134,7 @@ func TestCmpKind(t *testing.T) {
 //
 // This test must assert:
 //   - No type is invalid
-//   - the generated type4 are between the deviation limit of the distribution
+//   - the generated types are between the deviation limit of the distribution
 func TestCmpType(t *testing.T) {
 	counts := make(map[reflect.Kind]int)
 	buckets := len(reflectutils.CmpKinds)
@@ -158,10 +158,10 @@ func TestCmpType(t *testing.T) {
 	}
 }
 
-// TestFunc tests the generation of random func type4
+// TestFunc tests the generation of random func types
 //
 // this test must assert
-//   - All type4 are reflect.Func
+//   - All types are reflect.Func
 func TestFunc(t *testing.T) {
 	for i := 0; i < Loops; i++ {
 		fn := Func()
@@ -184,7 +184,7 @@ func TestFuncOf(t *testing.T) {
 	}
 }
 
-// TestInterface tests the method Interface generation of Interface type4
+// TestInterface tests the method Interface generation of Interface types
 func TestInterface(t *testing.T) {
 	tt := Interface()
 	assertlite.True(t, tt.Kind() == reflect.Interface, "Interface() should have a "+
@@ -234,13 +234,13 @@ func TestInterfaceOf(t *testing.T) {
 	})
 }
 
-// TestInterfaceType tests the method interfaceType generation of random interface{} type4
+// TestInterfaceType tests the method interfaceType generation of random interface{} types
 //
 // this test must assert:
-//   - the generated type4 are valid and one of the kinds from reflectutils.InterfaceKinds
-//   - the generated type4 are between the deviation limit of the distribution
+//   - the generated types are valid and one of the kinds from reflectutils.InterfaceKinds
+//   - the generated types are between the deviation limit of the distribution
 func TestInterfaceType(t *testing.T) {
-	t.Run("interface type4 shouldn't be interfaces", func(t *testing.T) {
+	t.Run("interface types shouldn't be interfaces", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
 			typ := interfaceType()
 			assertlite.True(t, slices.ContainsFunc(reflectutils.InterfaceKinds, func(kind reflect.Kind) bool {
@@ -287,7 +287,7 @@ func TestInvalidValue(t *testing.T) {
 //
 // This test must assert
 //   - Only randomized kinds can be generated (expect reflect.Struct and reflect.Invalid
-//   - the generated type4 are between the deviation limit of the distribution
+//   - the generated types are between the deviation limit of the distribution
 func TestKind(t *testing.T) {
 	counts := make(map[reflect.Kind]int)
 	buckets := len(reflectutils.RandomizableKinds)
@@ -312,7 +312,7 @@ func TestKind(t *testing.T) {
 	}
 }
 
-// TestMap tests the Map function generation of Map type4
+// TestMap tests the Map function generation of Map types
 //
 // this test must assert
 func TestMap(t *testing.T) {
@@ -381,10 +381,10 @@ func TestMapOf(t *testing.T) {
 	})
 }
 
-// TestPointer tests the Pointer method generation of random pointer type4
+// TestPointer tests the Pointer method generation of random pointer types
 //
 // this test must assert
-//   - All type4 are reflect.Ptr and have valid element type4
+//   - All types are reflect.Ptr and have valid element types
 func TestPointer(t *testing.T) {
 	t.Run("all values should be pointer", func(t *testing.T) {
 		typ := Pointer()
@@ -435,11 +435,11 @@ func TestPointerOf(t *testing.T) {
 	})
 }
 
-// TestSlice tests the Slice method generation of random slice type4
+// TestSlice tests the Slice method generation of random slice types
 //
 // this test must assert:
-//   - all type4 are reflect.Slice
-//   - the generated type4 are between the deviation limit of the distribution
+//   - all types are reflect.Slice
+//   - the generated types are between the deviation limit of the distribution
 func TestSlice(t *testing.T) {
 	t.Run("all values should be slice", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -484,10 +484,10 @@ func TestSliceOf(t *testing.T) {
 	})
 }
 
-// TestString tests the method String generation of string type4
+// TestString tests the method String generation of string types
 //
 // this test must assert:
-//   - all type4 are reflect.String
+//   - all types are reflect.String
 func TestString(t *testing.T) {
 	t.Run("all values should be string", func(t *testing.T) {
 		for i := 0; i < Loops; i++ {
@@ -524,7 +524,7 @@ func TestStringOf(t *testing.T) {
 // this test must assert
 //   - No invalid values are generated
 //   - All values must be of kind 'reflect.Struct'
-//   - No field4 - except interface with methods - can be nil
+//   - No fields - except interface with methods - can be nil
 func TestStructOf(t *testing.T) {
 	for _, zero := range testseed.ZeroValues() {
 		tt := reflect.TypeOf(zero)
@@ -552,7 +552,7 @@ func TestStructOf_EdgeCase(t *testing.T) {
 //
 // This test must assert:
 //   - No type is invalid
-//   - the generated type4 are between the deviation limit of the distribution
+//   - the generated types are between the deviation limit of the distribution
 func TestType(t *testing.T) {
 	t.Run("shouldn't generate any invalid type", func(t *testing.T) {
 		for i := 0; i < 500; i++ {
@@ -586,7 +586,7 @@ func TestType(t *testing.T) {
 // TestValueOf tests the ValueOf generation of random values by a given type
 //
 // this test must assert:
-//   - both type4 and values have the same kind
+//   - both types and values have the same kind
 //   - No invalid values are generated
 //   - the generated values are between the deviation limit of the distribution
 func TestValueOf(t *testing.T) {

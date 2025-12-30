@@ -11,7 +11,7 @@ import (
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 )
 
-// UnsafeEach Iterates over all field4, exported and unexported and applies a function.
+// UnsafeEach Iterates over all fields, exported and unexported and applies a function.
 // It returns an error if the target isn't a struct
 func UnsafeEach(target any, fn functions.BiPredicate[string, any]) error {
 	v := values.Unwrap(reflect.ValueOf(target))
@@ -76,7 +76,7 @@ func UnsafeGet(target any, name string) (value any, err error) {
 	return value, err
 }
 
-// UnsafeGetAll returns all field4 of a struct
+// UnsafeGetAll returns all fields of a struct
 // It returns an error if the target is not a struct
 //
 // to avoid GC issues, the returned value is a clone of the original value
@@ -93,7 +93,7 @@ func UnsafeGetAll(target any) (map[string]any, error) {
 	return out, nil
 }
 
-// UnsafeGetf returns a map of values of struct field4 by names
+// UnsafeGetf returns a map of values of struct fields by names
 // It returns an error if the target isn't a struct
 //
 // to avoid GC issues, the returned values are copies of the original values
