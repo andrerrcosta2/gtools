@@ -20,22 +20,16 @@ type SortableNode struct {
 	Value string
 }
 
-func (n *SortableNode) Unique() string {
+func (n *SortableNode) ID() string {
 	return n.Value
 }
 
-func (n *SortableNode) Less(o any) bool {
-	if other, ok := o.(*SortableNode); ok {
-		return n.Value < other.Value
-	}
-	return false
+func (n *SortableNode) Less(o *SortableNode) bool {
+	return n.Value < o.Value
 }
 
-func (n *SortableNode) Equal(o any) bool {
-	if other, ok := o.(*SortableNode); ok {
-		return n.Value == other.Value
-	}
-	return false
+func (n *SortableNode) Equal(o *SortableNode) bool {
+	return n.Value == o.Value
 }
 
 func (n *SortableNode) String() string {

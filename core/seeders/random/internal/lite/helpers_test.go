@@ -3,14 +3,15 @@
 package lite
 
 import (
+	"reflect"
+	"slices"
+	"testing"
+
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils/reflectrand"
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
-	"reflect"
-	"slices"
-	"testing"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 )
 
 const (
@@ -91,7 +92,7 @@ func TestRandArray(t *testing.T) {
 	})
 }
 
-// TestRandArrayOf tests the method RandArrayOf generation of random arrays based on a given type
+// TestRandArrayOf tests the method RandArrayOf generation of random array based on a given type
 //
 // this test must assert:
 //   - no nil values are generated
@@ -215,7 +216,7 @@ func TestRandCmp(t *testing.T) {
 	})
 }
 
-// TestRandFunc tests the method RandFunc generation of random functions
+// TestRandFunc tests the method RandFunc generation of random function
 //
 // this test must assert:
 //   - no nil values are generated
@@ -232,7 +233,7 @@ func TestRandFunc(t *testing.T) {
 	})
 }
 
-// TestRandFuncOf tests the method RandFuncOf generation of random functions from a given type
+// TestRandFuncOf tests the method RandFuncOf generation of random function from a given type
 //
 // this test should assert:
 //   - No nil values are generated
@@ -418,24 +419,24 @@ func TestRandOf(t *testing.T) {
 
 	// Values can't be nil, but must check its fields.
 	t.Run("Struct Values", func(t *testing.T) {
-		d1 := RandOf(reflect.TypeOf(testseed.NewSortableValue("test", 1)))
-		assertlite.IsTypeOf[testseed.SortableValue](t, d1)
+		d1 := RandOf(reflect.TypeOf(models.NewSortableValue("test", 1)))
+		assertlite.IsTypeOf[models.SortableValue](t, d1)
 		assertlite.NoNilFields(t, true, d1)
 
-		d2 := RandOf(reflect.TypeOf(testseed.NewSortableRef("test", 1)))
-		assertlite.IsTypeOf[*testseed.SortableRef](t, d2)
+		d2 := RandOf(reflect.TypeOf(models.NewSortableRef("test", 1)))
+		assertlite.IsTypeOf[*models.SortableRef](t, d2)
 		assertlite.NoNilFields(t, true, d2)
 
-		d3 := RandOf(reflect.TypeOf(testseed.NewComparableValue("test", 1)))
-		assertlite.IsTypeOf[testseed.ComparableValue](t, d3)
+		d3 := RandOf(reflect.TypeOf(models.NewComparableValue("test", 1)))
+		assertlite.IsTypeOf[models.ComparableValue](t, d3)
 		assertlite.NoNilFields(t, true, d3)
 
-		d4 := RandOf(reflect.TypeOf(testseed.NewComparableRef("test", 1)))
-		assertlite.IsTypeOf[*testseed.ComparableRef](t, d4)
+		d4 := RandOf(reflect.TypeOf(models.NewComparableRef("test", 1)))
+		assertlite.IsTypeOf[*models.ComparableRef](t, d4)
 		assertlite.NoNilFields(t, true, d4)
 
-		d5 := RandOf(reflect.TypeOf(testseed.NewStructStringer("test")))
-		assertlite.IsTypeOf[*testseed.StructStringer](t, d5)
+		d5 := RandOf(reflect.TypeOf(models.NewStructStringer("test")))
+		assertlite.IsTypeOf[*models.StructStringer](t, d5)
 		assertlite.NoNilFields(t, true, d5)
 		fmx.Printf("d5: %v", d5)
 	})

@@ -1,6 +1,6 @@
 // Andre R. R. Costa * github.com/andrerrcosta2 * andrerrcosta@gmail.com
 
-// Package stringutil provides utility functions for manipulating and formatting strings.
+// Package stringutil provides utility function for manipulating and formatting strings.
 package stringutil
 
 import (

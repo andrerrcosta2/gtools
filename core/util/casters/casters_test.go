@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 )
 
 // TestTyped tests the capability of the Types function.
@@ -56,7 +56,7 @@ func TestAssertedTyped(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.panic {
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					Assert[int](tt.input...)
 				})
 			} else {
@@ -113,24 +113,24 @@ func Test_UnsafeValueOf_Primitives(t *testing.T) {
 
 func TestUnsafeValueOf_Structs(t *testing.T) {
 	t.Run("comparable struct", func(t *testing.T) {
-		var s any = testseed.ComparableValue{Name: "John", Age: 31}
-		result := UnsafeValueOf[testseed.ComparableValue](s)
-		assertlite.IsTypeOf[testseed.ComparableValue](t, result)
+		var s any = models.ComparableValue{Name: "John", Age: 31}
+		result := UnsafeValueOf[models.ComparableValue](s)
+		assertlite.IsTypeOf[models.ComparableValue](t, result)
 		assertlite.Equals(t, result, s)
 	})
 
 	t.Run("struct one data", func(t *testing.T) {
-		var s any = testseed.StructOneData{Name: "John"}
-		result := UnsafeValueOf[testseed.StructOneData](s)
-		assertlite.IsTypeOf[testseed.StructOneData](t, result)
+		var s any = models.StructOneData{Name: "John"}
+		result := UnsafeValueOf[models.StructOneData](s)
+		assertlite.IsTypeOf[models.StructOneData](t, result)
 		assertlite.Equals(t, result, s)
 	})
 
 	t.Run("struct with ptrs", func(t *testing.T) {
 		name := "John"
-		var s any = testseed.StructWithPointers{Name: &name}
-		result := UnsafeValueOf[testseed.StructWithPointers](s)
-		assertlite.IsTypeOf[testseed.StructWithPointers](t, result)
+		var s any = models.StructWithPointers{Name: &name}
+		result := UnsafeValueOf[models.StructWithPointers](s)
+		assertlite.IsTypeOf[models.StructWithPointers](t, result)
 		assertlite.Equals(t, result, s)
 	})
 }
@@ -157,7 +157,7 @@ func TestUnsafeReferenceOf(t *testing.T) {
 		// ❌ Attempt to cast as if it's an inline value
 		result := UnsafeValueOf[map[string]int](s)
 		assertlite.IsTypeOf[map[string]int](t, result)
-		assertlite.Panic(t, func() {
+		assertlite.Panics(t, func() {
 			assertlite.NotEquals(t, s, result)
 		}, "expected panic on deep equality reflection due to bad pointer in frame")
 		assertlite.NotSame(t, s, result)
@@ -176,7 +176,7 @@ func TestUnsafeReferenceOf(t *testing.T) {
 		// ❌ Cast as a value
 		result := UnsafeValueOf[*int](s)
 		assertlite.IsTypeOf[*int](t, result)
-		assertlite.Panic(t, func() {
+		assertlite.Panics(t, func() {
 			assertlite.NotEquals(t, s, result)
 		})
 		assertlite.NotSame(t, s, result)

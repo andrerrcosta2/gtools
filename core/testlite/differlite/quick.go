@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// Quick returns a compact one-point diff between two strings.
+// It reports the first mismatch index and a short context window around it.
 func Quick(received, expected string) string {
 	if received == expected {
 		return "Strings match."

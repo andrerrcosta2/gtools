@@ -4,7 +4,7 @@ package iterables
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
 )
 
 // DetectCycle detects if a list has a cycle.
@@ -19,7 +19,7 @@ import (
 //
 // The time complexity of this function is O(n) where n is the length of the list.
 // The space complexity is O(1) as no additional data structures are used.
-func DetectCycle[T any](head data.Iterator[T], comparator comparators.Typed[T]) T {
+func DetectCycle[T any](head data.Iterator[T], comparator comparator.EqComparer[T]) T {
 	var zero T
 	// If the list is empty or has only one element, return nil
 	if head == nil || !head.HasNext() {

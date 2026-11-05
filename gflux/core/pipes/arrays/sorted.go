@@ -3,22 +3,23 @@
 package arrays
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/sortables/sorters"
 	"sort"
+
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
+	"github.com/andrerrcosta2/gtools/core/sortables/sorters"
 )
 
 // Sorted sorts a slice of ordered elements in ascending order.
 // It uses the sort.Slice function from the standard library to perform the sorting.
 // The function returns the sorted slice.
-func Sorted[T sorters.Sorter[E, S], E prim.Ordered, S ~[]E](arr S) SortedSlice[E] {
-	sorter := sorters.Get[T, E, S]()
+func Sorted[T sorters.Sorter[S, E], E prim.Ordered, S ~[]E](arr S) SortedSlice[E] {
+	sorter := sorters.Get[T, S, E]()
 	sorter.Sort(&arr)
 	return SortedSlice[E](arr)
 }
 
-func SortedBy[T prim.Ordered, K prim.Ordered](arr []T, f functions.Function[T, K]) SortedSlice[T] {
+func SortedBy[T prim.Ordered, K prim.Ordered](arr []T, f function.Function[T, K]) SortedSlice[T] {
 	sort.Slice(arr, func(i, j int) bool {
 		return f(arr[i]) < f(arr[j])
 	})

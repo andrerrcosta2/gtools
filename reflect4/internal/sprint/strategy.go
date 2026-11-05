@@ -9,6 +9,7 @@ import (
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/tracker"
 	"github.com/andrerrcosta2/gtools/reflect4/op"
+	"github.com/andrerrcosta2/gtools/reflect4/op/custom"
 	"github.com/andrerrcosta2/gtools/reflect4/op/read"
 )
 
@@ -24,9 +25,9 @@ func NewStrategy[O internal.Option](o ...O) *Strategy {
 			case read.SkipUnexportedFields:
 				s.Fields = exportedFields
 			case read.SkipChannels:
-				s.Chan = skipShallow
+				s.Chan = skipDeep
 			case read.SkipFunctions:
-				s.Func = skipShallow
+				s.Func = skipDeep
 			case read.SkipPtr:
 				s.Ptr = skipDeep
 			case read.SkipUnsafePtr:
@@ -34,6 +35,15 @@ func NewStrategy[O internal.Option](o ...O) *Strategy {
 			default:
 				break
 			}
+		case op.Custom:
+			switch t {
+			case custom.UseQualifiedName:
+				s.UseQfName = true
+			default:
+				break
+			}
+		default:
+			break
 		}
 	}
 	return s
@@ -43,8 +53,8 @@ type Strategy struct {
 	Check     func(v reflect.Value) (string, bool)
 	Mark      func(v reflect.Value, s string) string
 	Array     DeepFunc
-	Chan      ShallowFunc
-	Func      ShallowFunc
+	Chan      DeepFunc
+	Func      DeepFunc
 	Fields    DeepFunc
 	Interface DeepFunc
 	Map       DeepFunc
@@ -52,6 +62,7 @@ type Strategy struct {
 	Slice     DeepFunc
 	Struct    DeepFunc
 	Unsafe    ShallowFunc
+	UseQfName bool
 }
 
 func DefaultStrat() *Strategy {

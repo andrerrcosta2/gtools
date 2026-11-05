@@ -7,10 +7,10 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/keyer"
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 )
 
 // OfSlice creates a new Slice from a given variadic list of values.
@@ -105,7 +105,7 @@ func (s *Slice[G]) Duplicate() (*Slice[G], *Slice[G]) {
 // It takes a Consumer function that takes a value of type N and returns nothing.
 // It iterates over the slice and calls the function for each element.
 // It returns the same slice after all ops have finished.
-func (s *Slice[G]) Each(fn functions.Consumer[G]) *Slice[G] {
+func (s *Slice[G]) Each(fn function.Consumer[G]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for _, v := range *s {
 		// Call the function with the current value
@@ -120,7 +120,7 @@ func (s *Slice[G]) Each(fn functions.Consumer[G]) *Slice[G] {
 // It takes a BiConsumer function that takes two parameters: the index of the element and the element value.
 // It iterates over the slice and calls the function for each element.
 // It returns the same slice after all ops have finished.
-func (s *Slice[G]) EachN(fn functions.BiConsumer[int, G]) *Slice[G] {
+func (s *Slice[G]) EachN(fn function.BiConsumer[int, G]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for i, v := range *s {
 		fn(i, v)
@@ -132,7 +132,7 @@ func (s *Slice[G]) EachN(fn functions.BiConsumer[int, G]) *Slice[G] {
 // It takes a predicate function `fn` as an argument. The predicate function takes a value of type `N` and returns a boolean.
 // The function returns a new slice with all elements from the original slice that satisfy the predicate function.
 // The element order in the new slice is the same as in the original slice.
-func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
+func (s *Slice[G]) Filter(fn function.Predicate[G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
 	newSlice := make([]G, 0, s.Len())
 	// Iterate over the original slice
@@ -151,7 +151,7 @@ func (s *Slice[G]) Filter(fn functions.Predicate[G]) *Slice[G] {
 // It takes a BiPredicate function `fn` as an argument. The BiPredicate function takes two parameters: the index of the element and the element value.
 // It returns a new slice with all elements from the original slice that satisfy the predicate function.
 // The element order in the new slice is the same as in the original slice.
-func (s *Slice[G]) FilterN(fn functions.BiPredicate[int, G]) *Slice[G] {
+func (s *Slice[G]) FilterN(fn function.BiPredicate[int, G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
 	newSlice := make(Slice[G], 0, len(*s))
 	// Iterate over the original slice
@@ -196,7 +196,7 @@ func (s *Slice[G]) Len() int {
 // It takes a single argument of type Function[N, N] and returns a pointer to a Slice[N].
 // The function is called for each element in the slice, and the result is appended to the new slice.
 // The order of the elements in the new slice is the same as the order of the elements in the original slice.
-func (s *Slice[G]) Map(fn functions.Function[G, G]) *Slice[G] {
+func (s *Slice[G]) Map(fn function.Function[G, G]) *Slice[G] {
 	// Create a new slice with enough capacity to store all elements from the original slice that satisfy the predicate
 	newSlice := make(Slice[G], 0, len(*s))
 	// Iterate over the original slice
@@ -211,7 +211,7 @@ func (s *Slice[G]) Map(fn functions.Function[G, G]) *Slice[G] {
 // Operation calls the given function for each element in the slice, passing the index and a pointer to the slice
 // itself to the function.
 // It returns the same slice after all ops have finished.
-func (s *Slice[G]) Operation(fn functions.BiConsumer[int, *Slice[G]]) *Slice[G] {
+func (s *Slice[G]) Operation(fn function.BiConsumer[int, *Slice[G]]) *Slice[G] {
 	// Iterate over the slice and call the function for each element
 	for i := range *s {
 		// Call the function with the current index and a pointer to the slice
@@ -226,7 +226,7 @@ func (s *Slice[G]) Operation(fn functions.BiConsumer[int, *Slice[G]]) *Slice[G] 
 // It uses a WaitGroup to wait for all goroutines to finish.
 // It takes a Semaphore to limit the number of concurrent ops.
 // The function returns the same slice after all concurrent ops have finished.
-func (s *Slice[G]) Parallel(fn functions.BiConsumer[int, G], maxParallels int) *Slice[G] {
+func (s *Slice[G]) Parallel(fn function.BiConsumer[int, G], maxParallels int) *Slice[G] {
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	wg.Add(s.Len())
@@ -274,7 +274,7 @@ func (s *Slice[G]) RemoveAt(i int) *Slice[G] {
 
 // Remove returns a new slice with the first element that satisfies the given predicate removed.
 // It takes a Predicate function as an argument and returns a slice of type Slice[N].
-func (s *Slice[G]) Remove(v G, compare functions.BiFunction[G, G, int]) (*Slice[G], bool) {
+func (s *Slice[G]) Remove(v G, compare function.BiFunction[G, G, int]) (*Slice[G], bool) {
 	for i := 0; i < s.Len(); i++ {
 		if compare((*s)[i], v) == 0 {
 			return s.RemoveAt(i), true
@@ -313,7 +313,7 @@ func (s *Slice[G]) Some(n int) *Slice[G] {
 }
 
 // Sort sorts the slice using the given less function.
-func (s *Slice[G]) Sort(less functions.BiPredicate[G, G]) *Slice[G] {
+func (s *Slice[G]) Sort(less function.BiPredicate[G, G]) *Slice[G] {
 	sort.SliceStable(*s, func(i, j int) bool {
 		return less((*s)[i], (*s)[j])
 	})
@@ -321,13 +321,13 @@ func (s *Slice[G]) Sort(less functions.BiPredicate[G, G]) *Slice[G] {
 }
 
 // ToSet returns a new slice with all unique elements from the original slice.
-// It requires a comparators.KeyTyped[G, string] function as an argument.
-func (s *Slice[G]) ToSet(cmp comparators.KeyTyped[G, string]) *Slice[G] {
+// It requires a comparator.KeyTyped[G, string] function as an argument.
+func (s *Slice[G]) ToSet(cmp keyer.Comparable[G, string]) *Slice[G] {
 	// Sort the slice using the given less function
 	values := make(map[string]bool)
 	set := make(Slice[G], 0, s.Len())
 	for _, v := range *s {
-		hash := cmp.Hash(v)
+		hash := cmp.Key(v)
 		if !values[hash] {
 			values[hash] = true
 			set = append(set, v)
@@ -345,7 +345,7 @@ func (s *Slice[G]) Values() []G {
 // OfMap creates a new Map from the given pairs of values.
 // It takes a variable number of arguments of type tuple.Pair[N, V] and returns a pointer to a Map[N, V].
 // The map is initialized with the given key-value pairs.
-func OfMap[K prim.Ordered, V any](values ...str.Entry[K, V]) *Map[K, V] {
+func OfMap[K prim.Ordered, V any](values ...dict.Entry[K, V]) *Map[K, V] {
 	// Initialize the map with the given key-value pairs.
 	m := Map[K, V]{}
 	for _, entry := range values {
@@ -376,7 +376,7 @@ func (m *Map[K, V]) Contains(k K) bool {
 // It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of type V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *Map[K, V]) Each(fn functions.BiConsumer[K, V]) *Map[K, V] {
+func (m *Map[K, V]) Each(fn function.BiConsumer[K, V]) *Map[K, V] {
 	// Iterate over the map and call the function for each key-value pair
 	for k, v := range *m {
 		// Pass the value to the function
@@ -402,7 +402,7 @@ func (m *Map[K, V]) Len() int {
 // Operation calls the given function for each key in the map, passing the key and a pointer to the map itself to the function.
 // It iterates over the map and calls the function for each key.
 // It returns a pointer to the map.
-func (m *Map[K, V]) Operation(fn functions.BiConsumer[K, *Map[K, V]]) *Map[K, V] {
+func (m *Map[K, V]) Operation(fn function.BiConsumer[K, *Map[K, V]]) *Map[K, V] {
 	// Iterate over the map and call the function for each key
 	for k := range *m {
 		// Pass the map itself to the function
@@ -416,7 +416,7 @@ func (m *Map[K, V]) Operation(fn functions.BiConsumer[K, *Map[K, V]]) *Map[K, V]
 // It takes a BiConsumer function that takes two parameters: the key of type N and the value of type V.
 // It iterates over the map concurrently and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *Map[K, V]) Parallel(fn functions.BiConsumer[K, V], maxParallels int) *Map[K, V] {
+func (m *Map[K, V]) Parallel(fn function.BiConsumer[K, V], maxParallels int) *Map[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	// ToSet the maximum number of goroutines to run concurrently
@@ -425,7 +425,7 @@ func (m *Map[K, V]) Parallel(fn functions.BiConsumer[K, V], maxParallels int) *M
 	wg.Add(m.Len())
 	// Iterate over the map and call the function for each key-value pair concurrently
 	for k, v := range *m {
-		// Start a goroutine for each key-value pair
+		// start a goroutine for each key-value pair
 		go func(k K, v V) {
 			defer wg.Done()
 			// Acquire the Semaphore
@@ -477,7 +477,7 @@ func (m *Map[K, V]) Values() []V {
 
 // OfSliceMap creates a new empty SliceMap.
 // It returns a pointer to an empty SliceMap[N, V].
-func OfSliceMap[K comparable, V any](values ...str.Entry[K, []V]) *SliceMap[K, V] {
+func OfSliceMap[K comparable, V any](values ...dict.Entry[K, []V]) *SliceMap[K, V] {
 	// Initialize the map with the given key-value pairs.
 	m := SliceMap[K, V]{}
 	for _, entry := range values {
@@ -525,7 +525,7 @@ func (m *SliceMap[K, V]) Contains(k K) bool {
 // It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of a type []V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *SliceMap[K, V]) Each(fn functions.BiConsumer[K, *V]) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) Each(fn function.BiConsumer[K, *V]) *SliceMap[K, V] {
 	// Iterate over each key-value pair in the map
 	for k, v := range *m {
 		for i := range v {
@@ -540,7 +540,7 @@ func (m *SliceMap[K, V]) Each(fn functions.BiConsumer[K, *V]) *SliceMap[K, V] {
 // It takes a BiConsumer function that takes two parameters: the key of type N and a pointer to the value of a type []V.
 // It iterates over the map and calls the function for each key-value pair.
 // It returns a pointer to the map.
-func (m *SliceMap[K, V]) EachSlice(fn functions.BiConsumer[K, *[]V]) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) EachSlice(fn function.BiConsumer[K, *[]V]) *SliceMap[K, V] {
 	// Iterate over each key-value pair in the map
 	for k, v := range *m {
 		// Call the function with the key and a pointer to the value
@@ -563,14 +563,14 @@ func (m *SliceMap[K, V]) Len() int {
 	return len(*m)
 }
 
-func (m *SliceMap[K, V]) MapValues(fn functions.BiFunction[K, []V, []V]) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) MapValues(fn function.BiFunction[K, []V, []V]) *SliceMap[K, V] {
 	for k, v := range *m {
 		(*m)[k] = fn(k, v)
 	}
 	return m
 }
 
-func (m *SliceMap[K, V]) MapEach(fn functions.BiFunction[K, *V, V]) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) MapEach(fn function.BiFunction[K, *V, V]) *SliceMap[K, V] {
 	for k, slice := range *m {
 		for i := range slice {
 
@@ -584,7 +584,7 @@ func (m *SliceMap[K, V]) MapEach(fn functions.BiFunction[K, *V, V]) *SliceMap[K,
 // the function.
 // It iterates over the map and calls the function for each key.
 // It returns a pointer to the map.
-func (m *SliceMap[K, V]) Operation(fn functions.BiConsumer[K, *SliceMap[K, V]]) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) Operation(fn function.BiConsumer[K, *SliceMap[K, V]]) *SliceMap[K, V] {
 	// Iterate over the map and call the function for each key
 	for k := range *m {
 		// Pass a pointer to the map itself to the function
@@ -594,7 +594,7 @@ func (m *SliceMap[K, V]) Operation(fn functions.BiConsumer[K, *SliceMap[K, V]]) 
 	return m
 }
 
-func (m *SliceMap[K, V]) Parallel(fn functions.BiConsumer[K, []V], maxParallels int) *SliceMap[K, V] {
+func (m *SliceMap[K, V]) Parallel(fn function.BiConsumer[K, []V], maxParallels int) *SliceMap[K, V] {
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
 	// ToSet the maximum number of goroutines to run concurrently
@@ -603,7 +603,7 @@ func (m *SliceMap[K, V]) Parallel(fn functions.BiConsumer[K, []V], maxParallels 
 	wg.Add(m.Len())
 	// Iterate over the map and call the function for each key-value pair concurrently
 	for k, v := range *m {
-		// Start a goroutine for each key-value pair
+		// start a goroutine for each key-value pair
 		go func(k K, v []V) {
 			defer wg.Done()
 			// Acquire the Semaphore

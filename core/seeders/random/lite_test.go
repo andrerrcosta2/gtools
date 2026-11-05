@@ -17,7 +17,7 @@ import (
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 )
 
@@ -447,8 +447,8 @@ func TestOf(t *testing.T) {
 
 	t.Run("Of complex structures", func(t *testing.T) {
 		arrays := Of[[5]int](10)
-		assertlite.True(t, arrays.Len() == 10, "Expected 10 arrays, got %d", arrays.Len())
-		//fmt.Printf("arrays: %v\n", arrays)
+		assertlite.True(t, arrays.Len() == 10, "Expected 10 array, got %d", arrays.Len())
+		//fmt.Printf("array: %v\n", array)
 		slices := Of[[]int](10)
 		assertlite.True(t, slices.Len() == 10, "Expected 10 slices, got %d", slices.Len())
 		//fmt.Printf("slices: %v\n", slices)
@@ -456,8 +456,8 @@ func TestOf(t *testing.T) {
 		assertlite.True(t, channels.Len() == 10, "Expected 10 channels, got %d", channels.Len())
 		//fmt.Printf("channels: %v\n", channels)
 		maps := Of[map[int]int](10)
-		assertlite.True(t, maps.Len() == 10, "Expected 10 maps, got %d", maps.Len())
-		//fmt.Printf("maps: %v\n", maps)
+		assertlite.True(t, maps.Len() == 10, "Expected 10 dicts, got %d", maps.Len())
+		//fmt.Printf("dicts: %v\n", dicts)
 	})
 
 	t.Run("Structs", func(t *testing.T) {
@@ -594,17 +594,17 @@ func TestStruct(t *testing.T) {
 			"Expected 10 CloserReaderWriterSuccess, got %d", closerReaderWriters.Len())
 
 		// This isn't a struct, is a named type
-		assertlite.Panic(t, func() {
+		assertlite.Panics(t, func() {
 			Struct[testseed.StructFloat](10)
 		})
 
 		// This isn't a struct, is a named type
-		assertlite.Panic(t, func() {
+		assertlite.Panics(t, func() {
 			Struct[testseed.StructInteger](10)
 		})
 
 		// This isn't a struct, is a named type
-		assertlite.Panic(t, func() {
+		assertlite.Panics(t, func() {
 			Struct[testseed.StructString](10)
 		})
 

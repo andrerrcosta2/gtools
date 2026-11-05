@@ -127,7 +127,7 @@ func Types[G any](values ...any) (result []G, allMatches bool) {
 // @Important: Keep the "value" parameter alive in the caller scope (or explicitly call runtime.KeepAlive)
 // to prevent premature garbage collection of the underlying memory and possible corruption.
 func UnsafeValueOf[T any](value any) T {
-	// We cast the interface{} to its internal representation (emptyInterface)
+	// We cast the interface{} to its infra representation (emptyInterface)
 	// then extract the data pointer to the underlying value.
 	ei := (*emptyInterface)(unsafe.Pointer(&value))
 	return *(*T)(ei.word)

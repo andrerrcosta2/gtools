@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
 )
 
@@ -42,7 +42,7 @@ var (
 )
 
 // AccessFieldByName accesses a struct field by the provided function.
-func AccessFieldByName(v reflect.Value, name string, fn functions.Consumer[reflect.Value]) error {
+func AccessFieldByName(v reflect.Value, name string, fn function.Consumer[reflect.Value]) error {
 	_, ok := v.Type().FieldByName(name)
 	if !ok {
 		return ErrFieldNotFound("reflect4.AccessFieldByName", name)
@@ -123,7 +123,7 @@ func NoNilFields(v reflect.Value) map[string]reflect.Value {
 }
 
 // RideExportedFieldsByIdx rides a struct exported fields with a bi-predicate giving its index and value
-func RideExportedFieldsByIdx(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
+func RideExportedFieldsByIdx(v reflect.Value, fn function.BiPredicate[int, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		if v.Type().Field(i).IsExported() {
 			if !fn(i, v.Field(i)) {
@@ -135,7 +135,7 @@ func RideExportedFieldsByIdx(v reflect.Value, fn functions.BiPredicate[int, refl
 
 // RideExportedFieldsByName rides a struct exported fields with a bi-predicate giving its name and value.
 // It panics if the reflect.Value isn't a struct
-func RideExportedFieldsByName(v reflect.Value, fn functions.BiPredicate[string, reflect.Value]) {
+func RideExportedFieldsByName(v reflect.Value, fn function.BiPredicate[string, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		ft := v.Type().Field(i)
 		if ft.IsExported() {
@@ -147,7 +147,7 @@ func RideExportedFieldsByName(v reflect.Value, fn functions.BiPredicate[string, 
 }
 
 // RideFields rides a struct fields with a bi-predicate giving its index and value
-func RideFields(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
+func RideFields(v reflect.Value, fn function.BiPredicate[int, reflect.Value]) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		if !fn(i, v.Field(i)) {
 			break
@@ -157,7 +157,7 @@ func RideFields(v reflect.Value, fn functions.BiPredicate[int, reflect.Value]) {
 
 // RideFieldsByName accesses all struct fields by the provided function
 // retrieving each name and reflect.Value
-func RideFieldsByName(v reflect.Value, fn functions.BiPredicate[string, reflect.Value]) {
+func RideFieldsByName(v reflect.Value, fn function.BiPredicate[string, reflect.Value]) {
 	for i := 0; i < v.NumField(); i++ {
 		if !fn(v.Type().Field(i).Name, v.Field(i)) {
 			break
@@ -190,7 +190,7 @@ func SetExpFieldByName(target reflect.Value, name string, value reflect.Value) e
 
 // UnsafeFieldAccess accesses a struct field by name using the unsafe package to allow access
 // unexported fields.
-func UnsafeFieldAccess(v reflect.Value, name string, fn functions.BiConsumer[reflect.Value, unsafe.Pointer]) error {
+func UnsafeFieldAccess(v reflect.Value, name string, fn function.BiConsumer[reflect.Value, unsafe.Pointer]) error {
 	if !v.CanAddr() {
 		return ErrUnaddressable("reflect4.UnsafeFieldAccess")
 	}
@@ -350,7 +350,7 @@ func UnsafeRideFields(
 
 // UnsafeDeepRideFields rides a struct deeply using the unsafe package to allow access to
 // its unexported fields.
-func UnsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Pointer]) {
+func UnsafeDeepRideFields(v reflect.Value, fn function.BiConsumer[string, unsafe.Pointer]) {
 	if !v.CanAddr() {
 		v = ForceOfUnaddr(v)
 	}
@@ -360,7 +360,7 @@ func UnsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsaf
 
 // unsafeDeepRideFields should be used only under favorable conditions where none on its ops
 // could panic, like handling with unaddressable data.
-func unsafeDeepRideFields(v reflect.Value, fn functions.BiConsumer[string, unsafe.Pointer]) {
+func unsafeDeepRideFields(v reflect.Value, fn function.BiConsumer[string, unsafe.Pointer]) {
 	for i := 0; i < v.NumField(); i++ {
 		if types.HasDepth(v.Type()) {
 			unsafeDeepRideFields(v.Field(i), fn)

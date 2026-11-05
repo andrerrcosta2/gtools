@@ -7,7 +7,7 @@ import (
 )
 
 // Symbol removes a symbol node from the trie or changes to transition node if it has children
-// Then it proceeds with a backtrack removal of unnecessary transition nodes.
+// Then it proceeds with a backtrack removal of unnecessary transition node.
 // It returns an error if the node cannot be removed.
 func Symbol(node nodes.PatternTrie) (err error, length int) {
 	if node.HasChildren() {

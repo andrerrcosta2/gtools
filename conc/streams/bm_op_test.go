@@ -10,7 +10,7 @@ import (
 )
 
 func BenchmarkStreamNoCheck(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		values := generateTestValues(1000)
 		ch := make(chan string, 10)
 		go func() {
@@ -28,7 +28,7 @@ func BenchmarkStreamNoCheck(b *testing.B) {
 }
 
 func BenchmarkStreamWithCheck(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		values := generateTestValues(1000)
 		var closed atomic.Bool
 		ch := make(chan string, 10)

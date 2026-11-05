@@ -3,18 +3,18 @@
 package trees
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/seeders/random"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"sync"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
+	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/core/testlite"
 )
 
 // TestConcRedBlack_InsertConcurrently
 func TestConcRedBlack_InsertConcurrently(t *testing.T) {
-	tt := testingtools.ConcLite(t, testlogs.OnFailure)
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
+	counter := testlite.Map(t)
 
 	// Test 1: random values inserted concurrently
 	t.Run("random values inserted concurrently", func(t *testing.T) {
@@ -25,15 +25,15 @@ func TestConcRedBlack_InsertConcurrently(t *testing.T) {
 				tree.Insert(v)
 				if _, ok := ins.Load(v); !ok {
 					ins.Store(v, true)
-					tt.RegisterCalls(1, "inserted")
+					counter.Add(1, "inserted")
 				}
 				if !tree.Contains(v) {
 					t.Errorf("tree should contain '%d'", v)
 				}
 			}, 6)
 
-		tt.AssertCallsTo("inserted", tree.Size(), "tree size should be '%d', but got '%d",
-			tt.CallsTo("inserted"), tree.Size())
+		counter.AssertCountTo("inserted", tree.Size(), "tree size should be '%d', but got '%d",
+			counter.Get("inserted"), tree.Size())
 	})
 
 }

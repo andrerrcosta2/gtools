@@ -3,16 +3,17 @@
 package random
 
 import (
+	"reflect"
+
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/domain/validators"
+	"github.com/andrerrcosta2/gtools/core/domain/contracts/validator"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/cat"
 	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/lite"
 	"github.com/andrerrcosta2/gtools/core/util/casters"
-	"reflect"
 )
 
-// Validated TODO: maybe create a new randOf which uses validators
-func Validated[T any](v validators.Typed[T], q int) *iterables.Slice[T] {
+// Validated TODO: maybe create a new randOf which uses validator
+func Validated[T any](v validator.Typed[T], q int) *iterables.Slice[T] {
 	if q <= 0 {
 		return iterables.OfSlice[T]()
 	}

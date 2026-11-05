@@ -47,14 +47,14 @@ func defaultChan(a, b reflect.Value) bool {
 
 // defaultFunc evaluates function equality as:
 //  1. Same type
-//  2. Same nullability state
+//  2. Same nullability states
 func defaultFunc(a, b reflect.Value) bool {
 	return a.IsNil() == b.IsNil()
 }
 
 // defaultInterface evaluates interface equality as:
 //  1. Same type
-//  2. Same nullability state
+//  2. Same nullability states
 //  3. equality between elements
 func defaultInterface(a, b reflect.Value, differ *Strategy) bool {
 	if a.IsNil() || b.IsNil() {
@@ -65,7 +65,7 @@ func defaultInterface(a, b reflect.Value, differ *Strategy) bool {
 
 // defaultMap evaluates msp equality as:
 //  1. Same type
-//  2. Same nullability state
+//  2. Same nullability states
 //  3. Same length
 //  4. equality between elements
 func defaultMap(a, b reflect.Value, differ *Strategy) bool {
@@ -105,7 +105,7 @@ func shallowKeyedMapEquals(a, b reflect.Value, differ *Strategy) bool {
 	return true
 }
 
-// deepKeyedMapEquals performs a deep comparison for maps whose key equality
+// deepKeyedMapEquals performs a deep comparison for dicts whose key equality
 // cannot be determined by Go's built-in == operator. It performs O(n²)
 // comparisons but ensures one-to-one matching between keys.
 func deepKeyedMapEquals(a, b reflect.Value, differ *Strategy) bool {
@@ -246,7 +246,7 @@ func formatString(s string, f op.Compare) string {
 
 // identityShallow evaluates any shallow type equality by:
 //  1. same type
-//  2. same nullable state
+//  2. same nullable states
 //  3. same memory address
 func identityShallow(a, b reflect.Value) bool {
 	if !a.IsNil() && !b.IsNil() {
@@ -257,7 +257,7 @@ func identityShallow(a, b reflect.Value) bool {
 
 // identitySlice evaluates slice equality by:
 //  1. same type
-//  2. same nullable state
+//  2. same nullable states
 //  3. same memory address
 //  4. same length (contiguous fetching space)
 func identitySlice(a reflect.Value, b reflect.Value, _ *Strategy) bool {
@@ -271,7 +271,7 @@ func identitySlice(a reflect.Value, b reflect.Value, _ *Strategy) bool {
 
 // identityShallow evaluates any deep type equality by:
 //  1. same type
-//  2. same nullable state
+//  2. same nullable states
 //  3. same memory address
 func identityDeep(a, b reflect.Value, _ *Strategy) bool {
 	if !a.IsNil() && !b.IsNil() {
@@ -288,7 +288,7 @@ func ignoreCaseString(a, b reflect.Value) bool {
 
 // nativeChan evaluates channel equality by:
 //  1. same types
-//  2. same nullable state
+//  2. same nullable states
 //  3. same memory address
 func nativeChan(a, b reflect.Value) bool {
 	return a.IsNil() && b.IsNil() || a.Pointer() == b.Pointer()

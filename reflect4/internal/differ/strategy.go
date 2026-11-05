@@ -5,13 +5,14 @@ package differ
 import (
 	"reflect"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/tracker"
 	"github.com/andrerrcosta2/gtools/reflect4/op"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
+	"github.com/andrerrcosta2/gtools/reflect4/op/custom"
 	"github.com/andrerrcosta2/gtools/reflect4/op/read"
 )
 
@@ -63,6 +64,11 @@ outer:
 			default:
 				s.stringFormat |= t
 			}
+		case op.Custom:
+			switch t {
+			case custom.UseQualifiedName:
+				s.useQfName = true
+			}
 		}
 	}
 	return s
@@ -81,11 +87,12 @@ type Strategy struct {
 	strings      func(value, expected string) (string, string, int)
 	unsafe       Diff
 	readField    func(v reflect.Value, i int) (field reflect.Value, canRead bool)
-	rideFields   func(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value])
+	rideFields   func(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value])
 	stringFormat op.Compare
 	idChan       bool
 	idFunc       bool
 	idPtr        bool
+	useQfName    bool
 }
 
 func (s *Strategy) shouldDeepCompareKeys(keyType reflect.Type) bool {

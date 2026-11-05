@@ -32,6 +32,15 @@ jobs:
           cd ./conc
           go test -v -tags=tt ./...
 
+      # Optional race run for conc.
+      # Note: current Windows environments may fail race binaries with exit status 0xc0000139.
+      # Enable by setting repository variable RUN_RACE=true.
+      - name: Run race tests (conc, opt-in)
+        if: ${{ runner.os != 'Windows' && vars.RUN_RACE == 'true' }}
+        run: |
+          cd ./conc
+          go test -race ./...
+
       ## core
       - name: Install core dependencies
         run: |

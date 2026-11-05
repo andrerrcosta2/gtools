@@ -385,25 +385,25 @@ const NilExpectedFmt = "The expected '%s' is nil:%s"
 
 // NilFuncTypesMismatch sprint as:
 //
-//		'both functions are nil but their types mismatch:
+//		'both function are nil but their types mismatch:
 //	   → Received: %s
 //		  → Expected: %s'
 func NilFuncTypesMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(NilFuncTypesMismatchFmt, recExp(tab, a, b))
 }
 
-const NilFuncTypesMismatchFmt = "both functions are nil but their types mismatch:%s"
+const NilFuncTypesMismatchFmt = "both function are nil but their types mismatch:%s"
 
 // NilFuncSignMismatch sprint as:
 //
-//		'both functions are nil but their signatures mismatch:
+//		'both function are nil but their signatures mismatch:
 //	   → Received: %s
 //		  → Expected: %s'
 func NilFuncSignMismatch(tab indent.Indentor, a, b string) string {
 	return tab.Sprintf(NilFuncSignMismatchFmt, recExp(tab, a, b))
 }
 
-const NilFuncSignMismatchFmt = "both functions are nil but their signatures mismatch:%s"
+const NilFuncSignMismatchFmt = "both function are nil but their signatures mismatch:%s"
 
 // NilInterface sprint as:
 //

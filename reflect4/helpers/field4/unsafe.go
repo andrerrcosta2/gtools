@@ -6,14 +6,14 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 )
 
 // UnsafeEach Iterates over all fields, exported and unexported and applies a function.
 // It returns an error if the target isn't a struct
-func UnsafeEach(target any, fn functions.BiPredicate[string, any]) error {
+func UnsafeEach(target any, fn function.BiPredicate[string, any]) error {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if !v.IsValid() || v.Kind() != reflect.Struct {
 		return ErrNotStruct("field4.UnsafeEach", values.Name(v))
@@ -106,7 +106,7 @@ func UnsafeGetf(target any, names ...string) (map[string]any, error) {
 }
 
 // UnsafeAccess accesses a struct field by name using the unsafe package
-func UnsafeAccess(target any, name string, fn functions.BiConsumer[any, unsafe.Pointer]) error {
+func UnsafeAccess(target any, name string, fn function.BiConsumer[any, unsafe.Pointer]) error {
 	v := values.Unwrap(reflect.ValueOf(target))
 	if v.Kind() != reflect.Struct {
 		return ErrNotStruct("field4.UnsafeAccess", values.Name(v))

@@ -7,14 +7,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"os"
+
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/io"
-	"os"
 )
 
 // Dictionary creates a new empty dictionary of symbols
-func Dictionary[K prim.Hashable, V ~[]S, S Symbol](entries ...str.Entry[K, V]) str.Dictionary[K, V] {
+func Dictionary[K prim.Hashable, V ~[]S, S Symbol](entries ...dict.Entry[K, V]) dict.Dictionary[K, V] {
 	d := make(SymbolDictionary[K, V, S], len(entries))
 
 	// Iterate over the given entries and add them to the dictionary.
@@ -67,8 +68,8 @@ func (d *SymbolDictionary[K, V, S]) IsEmpty() bool {
 }
 
 // Entries returns a slice of Entry objects representing the key-value pairs in the dictionary.
-func (d *SymbolDictionary[K, V, S]) Entries() []str.Entry[K, V] {
-	var entries []str.Entry[K, V]
+func (d *SymbolDictionary[K, V, S]) Entries() []dict.Entry[K, V] {
+	var entries []dict.Entry[K, V]
 	// Iterate over each key-value pair in the dictionary
 	for key, values := range *d {
 		// Create a new Entry from the current key-value pair
@@ -202,7 +203,7 @@ func (d *SymbolDictionary[K, V, S]) loadFromCSV(file *os.File) error {
 	return nil
 }
 
-var _ str.Dictionary[string, []Symbol] = (*SymbolDictionary[string, []Symbol, Symbol])(nil)
+var _ dict.Dictionary[string, []Symbol] = (*SymbolDictionary[string, []Symbol, Symbol])(nil)
 
 // SymbolEntry creates a new Entry for a SymbolDictionary.
 //
@@ -210,7 +211,7 @@ var _ str.Dictionary[string, []Symbol] = (*SymbolDictionary[string, []Symbol, Sy
 // The function takes two parameters, the key and the value, and returns a new Entry.
 //
 // The Entry is created using the symbolEntry struct, which contains the key and value.
-func SymbolEntry[K prim.Hashable, V ~[]S, S Symbol](key K, values ...S) str.Entry[K, V] {
+func SymbolEntry[K prim.Hashable, V ~[]S, S Symbol](key K, values ...S) dict.Entry[K, V] {
 	return &symbolEntry[K, V, S]{key: key, values: values}
 }
 
@@ -249,7 +250,7 @@ func (e *symbolEntry[K, V, S]) String() string {
 	return fmt.Sprintf("{ key: %v, value: %v }", e.key, e.values)
 }
 
-var _ str.Entry[string, []Symbol] = (*symbolEntry[string, []Symbol, Symbol])(nil)
+var _ dict.Entry[string, []Symbol] = (*symbolEntry[string, []Symbol, Symbol])(nil)
 
 type DictionaryFileType int
 

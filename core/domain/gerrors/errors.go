@@ -423,7 +423,7 @@ func (e *taggableError) Tag(tags ...string) {
 
 // Tags returns all the tags that have been set on this error.
 //
-// The returned slice is a clone of the internal tags map keys.
+// The returned slice is a clone of the infra tags map keys.
 func (e *taggableError) Tags() []string {
 	tags := make([]string, 0, len(e.tags))
 	for tag := range e.tags {

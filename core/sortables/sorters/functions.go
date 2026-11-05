@@ -3,7 +3,7 @@
 package sorters
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 )
 
@@ -13,18 +13,18 @@ import (
 // If T is a mergeSorter, Quick or binarySorter, the respective Sorter instance will be returned.
 // Otherwise, the Native Sorter will be returned.
 //
-// Note: The default comparator is an instance of comparables.Ordered[S]{},
+// Note: The default comparator is an instance of comparables.ordered[S]{},
 // which is the default comparator for the given type S.
-func Get[T Sorter[E, S], E prim.Ordered, S ~[]E]() Sorter[E, S] {
+func Get[T Sorter[S, E], S ~[]E, E prim.Ordered]() Sorter[S, E] {
 	var sort T
 	switch any(sort).(type) {
-	case mergeSorter[E, S]:
-		return Merge[E, S](comparators.Ordered[E]{})
-	case quickSorter[E, S]:
-		return Quick[E, S](comparators.Ordered[E]{})
-	case binarySorter[E, S]:
-		return Binary[E, S](comparators.Ordered[E]{})
+	case mergeSorter[S, E]:
+		return Merge[S](comparators.Ordered[E]())
+	case quickSorter[S, E]:
+		return Quick[S](comparators.Ordered[E]())
+	case binarySorter[S, E]:
+		return Binary[S](comparators.Ordered[E]())
 	default:
-		return Native[E, S](comparators.Ordered[E]{})
+		return Native[S](comparators.Ordered[E]())
 	}
 }

@@ -2,6 +2,8 @@
 
 package datastr
 
-import "errors"
+import (
+	"errors"
+)
 
 var Err = errors.New("build constraints exclude all the Go files in this package\n")

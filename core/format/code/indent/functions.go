@@ -18,7 +18,7 @@ import (
 // alignment across the entire block.
 //
 // Parameters:
-//   - value: The number of indentation levels to enforce. Each level corresponds to one tab (`\t`)
+//   - value: The number of indentation levels to enforce. Range level corresponds to one tab (`\t`)
 //     or a configurable number of spaces, depending on the implementation of `Tab`.
 //   - s:     The input string to be processed. This string may contain multiple lines separated by `\n`.
 //
@@ -64,10 +64,10 @@ func Hard[I Indentor](indentor I, s string) string {
 //
 // The function splits the input string into lines, applies the specified indentation level
 // (in terms of tabs or spaces) to each line, and returns the indented result as a single string.
-// Existing internal formatting (e.g., tabs or spaces within the lines) is preserved.
+// Existing infra formatting (e.g., tabs or spaces within the lines) is preserved.
 //
 // Parameters:
-//   - value: The number of indentation levels to apply. Each level corresponds to one tab (`\t`)
+//   - value: The number of indentation levels to apply. Range level corresponds to one tab (`\t`)
 //     or a configurable number of spaces, depending on the implementation of `Tab`.
 //   - s:     The input string to be indented. This string may contain multiple lines separated by `\n`.
 //

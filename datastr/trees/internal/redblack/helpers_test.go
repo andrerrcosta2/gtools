@@ -3,10 +3,11 @@
 package redblack
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
-	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
+	"github.com/andrerrcosta2/gtools/core/format/fmx"
 )
 
 // TestDeleteFixup tests the fixup after a deletion
@@ -15,7 +16,7 @@ import (
 // 1. the node can't be found on the tree
 // 2. the tree remains balanced
 func TestDeleteFixup(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	t.Run("Balanced black-red siblings", func(t *testing.T) {
 		// Balanced tree:
 		//      a(10)(Root)
@@ -66,7 +67,7 @@ func TestDeleteFixup(t *testing.T) {
 		if a.parent != root {
 			t.Errorf("expected parent of a to be root, but got %v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected left child of root to be black, but got %s", a.color)
 		}
 		if root.right != e {
@@ -75,7 +76,7 @@ func TestDeleteFixup(t *testing.T) {
 		if e.parent != root {
 			t.Errorf("expected parent of e to be root, but got %v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("expected right child of root to be red, but got %s", root.right.color)
 		}
 		if a.left != nil {
@@ -93,7 +94,7 @@ func TestDeleteFixup(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("expected parent of d to be a, but got %v", d.parent)
 		}
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("expected d color to be Black, but got %s", d.color)
 		}
 		if d.left != nil {
@@ -147,7 +148,7 @@ func TestDeleteFixup(t *testing.T) {
 		if a.parent != root {
 			t.Errorf("expected parent of a to be root, but got %v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected left child of root to be black, but got %s", a.color)
 		}
 		if root.right != c {
@@ -156,7 +157,7 @@ func TestDeleteFixup(t *testing.T) {
 		if c.parent != root {
 			t.Errorf("expected parent of c to be root, but got %v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected right child of root to be red, but got %s", root.right.color)
 		}
 		if a.left != nil {
@@ -216,7 +217,7 @@ func TestDeleteFixup(t *testing.T) {
 		if a.parent != root {
 			t.Errorf("Expected parent of a to be root, but got %v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected left child of root to be Red, but got %s", root.left.color)
 		}
 		if a.left != nil {
@@ -231,7 +232,7 @@ func TestDeleteFixup(t *testing.T) {
 		if d.parent != root {
 			t.Errorf("Expected parent of d to be root, but got %v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d color to be Black, but got %s", d.color)
 		}
 		if d.left != nil {
@@ -279,7 +280,7 @@ func TestDeleteFixup(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("Expected parent of d to be b, but got %v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d color to be Black, but got %s", d.color)
 		}
 		if d.left != nil {
@@ -294,7 +295,7 @@ func TestDeleteFixup(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("Expected parent of a to be b, but got %v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a color to be Black, but got %s", a.color)
 		}
 		if a.left != nil {
@@ -368,7 +369,7 @@ func TestDeleteFixup(t *testing.T) {
 		if b.parent != root {
 			t.Errorf("Expected parent of b to be a, but got %v", b.parent)
 		}
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("Expected b color to be Black, but got %s", b.color)
 		}
 		if b.left != d {
@@ -384,7 +385,7 @@ func TestDeleteFixup(t *testing.T) {
 		if c.parent != root {
 			t.Errorf("Expected parent of c to be a, but got %v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c color to be Black, but got %s", c.color)
 		}
 		if c.left != f {
@@ -397,7 +398,7 @@ func TestDeleteFixup(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("Expected parent of d to be b, but got %v", d.parent)
 		}
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("Expected d color to be Red, but got %s", d.color)
 		}
 		if d.left != h {
@@ -410,7 +411,7 @@ func TestDeleteFixup(t *testing.T) {
 		if e.parent != b {
 			t.Errorf("Expected parent of e to be b, but got %v", e.parent)
 		}
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("Expected e color to be Red, but got %s", e.color)
 		}
 		if e.left != j {
@@ -423,7 +424,7 @@ func TestDeleteFixup(t *testing.T) {
 		if f.parent != c {
 			t.Errorf("Expected parent of f to be c, but got %v", f.parent)
 		}
-		if f.color != nodes.Red {
+		if f.color != node.Red {
 			t.Errorf("Expected f color to be Black, but got %s", f.color)
 		}
 		if f.left != nil {
@@ -436,7 +437,7 @@ func TestDeleteFixup(t *testing.T) {
 		if g.parent != c {
 			t.Errorf("Expected parent of g to be c, but got %v", g.parent)
 		}
-		if g.color != nodes.Black {
+		if g.color != node.Black {
 			t.Errorf("Expected g color to be Black, but got %s", g.color)
 		}
 		if g.left != nil {
@@ -465,7 +466,7 @@ func TestDeleteFixup(t *testing.T) {
 		//        / \            /             /
 		//h(10)[B]  i(18)[B] j(23)[B]      k(38)[R]
 		assertValidRoot(t, "a", root, a)
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("expected d color to be Black, but got %s", b.color)
 		}
 		if b.parent != a {
@@ -478,7 +479,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected right child of b to be e(%d), but got %v", e.value, b.right.value)
 		}
 
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got %s", c.color)
 		}
 		if f.parent != a {
@@ -491,7 +492,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected f right child to be c(%d), but got %v", c.value, f.right.value)
 		}
 
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("expected d color to be red but got %s", d.color)
 		}
 		if d.parent != b {
@@ -504,7 +505,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected d right child to be i(%d), but got %v", i.value, d.right.value)
 		}
 
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e color to be red but got %s", e.color)
 		}
 		if e.parent != b {
@@ -517,7 +518,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected e right child to be nil, but got %v", e.right.value)
 		}
 
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected c color to be black but got %s", c.color)
 		}
 		if c.parent != f {
@@ -530,7 +531,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected c.right to be nil, but got %v", c.right.value)
 		}
 
-		if h.color != nodes.Black {
+		if h.color != node.Black {
 			t.Errorf("expected h color to be Black, but got %s", h.color)
 		}
 		if h.parent != d {
@@ -543,7 +544,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected h right child to be nil, but got %v", h.right.value)
 		}
 
-		if i.color != nodes.Black {
+		if i.color != node.Black {
 			t.Errorf("expected i color to be Black, but got %s", i.color)
 		}
 		if i.parent != d {
@@ -556,7 +557,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected i right child to be nil, but got %v", i.right.value)
 		}
 
-		if j.color != nodes.Black {
+		if j.color != node.Black {
 			t.Errorf("expected j color to be Black, but got %s", j.color)
 		}
 		if j.parent != e {
@@ -569,7 +570,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected j right child to be nil, but got %v", j.right.value)
 		}
 
-		if k.color != nodes.Red {
+		if k.color != node.Red {
 			t.Errorf("expected k color to be Black, but got %s", k.color)
 		}
 		if k.parent != c {
@@ -585,7 +586,7 @@ func TestDeleteFixup(t *testing.T) {
 		// Case 3: Delete c(40)[B] causes unbalance, but it doesn't fixup
 		// because the replacement is red. So we delete K(38)[B]
 		root, _, _ = halfTransplantLeft(root, c)
-		f.right.color = nodes.Black // color fixup
+		f.right.color = node.Black // color fixup
 		root, parent, _ = halfTransplantRight(root, k)
 		//                        a(30)[Root]
 		//                       /          \
@@ -604,7 +605,7 @@ func TestDeleteFixup(t *testing.T) {
 		//                       /
 		//                  j(23)[B]
 		assertValidRoot(t, "b", b, root)
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d to be black but got '%s'", d.color)
 		}
 		if d.parent != b {
@@ -617,7 +618,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected right child of d to be i(%d) but got %v", i.value, d.right.value)
 		}
 
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected a to be black but got '%s'", a.color)
 		}
 		if a.parent != b {
@@ -629,7 +630,7 @@ func TestDeleteFixup(t *testing.T) {
 		if a.right != f {
 			t.Errorf("expect a right child to be f(%d) but got %v", f.value, a.right.value)
 		}
-		if h.color != nodes.Black {
+		if h.color != node.Black {
 			t.Errorf("expected h to be black but got '%s'", h.color)
 		}
 		if h.parent != d {
@@ -642,7 +643,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected h right child to be nil, but got %v", h.right.value)
 		}
 
-		if i.color != nodes.Black {
+		if i.color != node.Black {
 			t.Errorf("expected i to be black but got '%s'", i.color)
 		}
 		if i.parent != d {
@@ -655,7 +656,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected i right child to be nil, but got %v", i.right.value)
 		}
 
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e to be red but got '%s'", e.color)
 		}
 		if e.parent != a {
@@ -668,7 +669,7 @@ func TestDeleteFixup(t *testing.T) {
 			t.Errorf("expected right child of e to be nil, but got %v", e.right.value)
 		}
 
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got '%s'", f.color)
 		}
 		if f.parent != a {
@@ -750,7 +751,7 @@ func TestDeleteNode(t *testing.T) {
 		if b.parent != root {
 			t.Errorf("Expected parent of b to be a, but got %v", b.parent)
 		}
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("Expected b color to be Black, but got %s", b.color)
 		}
 		if b.left != d {
@@ -766,7 +767,7 @@ func TestDeleteNode(t *testing.T) {
 		if c.parent != root {
 			t.Errorf("Expected parent of c to be a, but got %v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c color to be Black, but got %s", c.color)
 		}
 		if c.left != f {
@@ -779,7 +780,7 @@ func TestDeleteNode(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("Expected parent of d to be b, but got %v", d.parent)
 		}
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("Expected d color to be Red, but got %s", d.color)
 		}
 		if d.left != h {
@@ -792,7 +793,7 @@ func TestDeleteNode(t *testing.T) {
 		if e.parent != b {
 			t.Errorf("Expected parent of e to be b, but got %v", e.parent)
 		}
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("Expected e color to be Red, but got %s", e.color)
 		}
 		if e.left != j {
@@ -805,7 +806,7 @@ func TestDeleteNode(t *testing.T) {
 		if f.parent != c {
 			t.Errorf("Expected parent of f to be c, but got %v", f.parent)
 		}
-		if f.color != nodes.Red {
+		if f.color != node.Red {
 			t.Errorf("Expected f color to be Black, but got %s", f.color)
 		}
 		if f.left != nil {
@@ -818,7 +819,7 @@ func TestDeleteNode(t *testing.T) {
 		if g.parent != c {
 			t.Errorf("Expected parent of g to be c, but got %v", g.parent)
 		}
-		if g.color != nodes.Black {
+		if g.color != node.Black {
 			t.Errorf("Expected g color to be Black, but got %s", g.color)
 		}
 		if g.left != nil {
@@ -838,7 +839,7 @@ func TestDeleteNode(t *testing.T) {
 	//        / \            /             \
 	//h(10)[B]  i(18)[B] j(23)[B]      k(38)[B]
 	t.Run("Delete black node with red sibling", func(t *testing.T) {
-		// 1. first ensure the previous test case state:
+		// 1. first ensure the previous test case states:
 		if g.right != nil {
 			root = DeleteNode(root, g.right)
 		}
@@ -853,7 +854,7 @@ func TestDeleteNode(t *testing.T) {
 		//        / \            /             /
 		//h(10)[B]  i(18)[B] j(23)[B]      k(38)[R]
 		assertValidRoot(t, "a", root, a)
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("expected d color to be Black, but got %s", b.color)
 		}
 		if b.parent != a {
@@ -866,7 +867,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected right child of b to be e(%d), but got %v", e.value, b.right.value)
 		}
 
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got %s", c.color)
 		}
 		if f.parent != a {
@@ -879,7 +880,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected f right child to be c(%d), but got %v", c.value, f.right.value)
 		}
 
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("expected d color to be red but got %s", d.color)
 		}
 		if d.parent != b {
@@ -892,7 +893,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected d right child to be i(%d), but got %v", i.value, d.right.value)
 		}
 
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e color to be red but got %s", e.color)
 		}
 		if e.parent != b {
@@ -905,7 +906,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected e right child to be nil, but got %v", e.right.value)
 		}
 
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected c color to be black but got %s", c.color)
 		}
 		if c.parent != f {
@@ -918,7 +919,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected c.right to be nil, but got %v", c.right.value)
 		}
 
-		if h.color != nodes.Black {
+		if h.color != node.Black {
 			t.Errorf("expected h color to be Black, but got %s", h.color)
 		}
 		if h.parent != d {
@@ -931,7 +932,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected h right child to be nil, but got %v", h.right.value)
 		}
 
-		if i.color != nodes.Black {
+		if i.color != node.Black {
 			t.Errorf("expected i color to be Black, but got %s", i.color)
 		}
 		if i.parent != d {
@@ -944,7 +945,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected i right child to be nil, but got %v", i.right.value)
 		}
 
-		if j.color != nodes.Black {
+		if j.color != node.Black {
 			t.Errorf("expected j color to be Black, but got %s", j.color)
 		}
 		if j.parent != e {
@@ -957,7 +958,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected j right child to be nil, but got %v", j.right.value)
 		}
 
-		if k.color != nodes.Red {
+		if k.color != node.Red {
 			t.Errorf("expected k color to be Black, but got %s", k.color)
 		}
 		if k.parent != c {
@@ -1000,7 +1001,7 @@ func TestDeleteNode(t *testing.T) {
 
 		// 3. Assert the expected states of the tree
 		assertValidRoot(t, "b", b, root)
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d to be black but got '%s'", d.color)
 		}
 		if d.parent != b {
@@ -1013,7 +1014,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected right child of d to be i(%d) but got %v", i.value, d.right.value)
 		}
 
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected a to be black but got '%s'", a.color)
 		}
 		if a.parent != b {
@@ -1025,7 +1026,7 @@ func TestDeleteNode(t *testing.T) {
 		if a.right != f {
 			t.Errorf("expect a right child to be f(%d) but got %v", f.value, a.right.value)
 		}
-		if h.color != nodes.Black {
+		if h.color != node.Black {
 			t.Errorf("expected h to be black but got '%s'", h.color)
 		}
 		if h.parent != d {
@@ -1038,7 +1039,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected h right child to be nil, but got %v", h.right.value)
 		}
 
-		if i.color != nodes.Black {
+		if i.color != node.Black {
 			t.Errorf("expected i to be black but got '%s'", i.color)
 		}
 		if i.parent != d {
@@ -1051,7 +1052,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected i right child to be nil, but got %v", i.right.value)
 		}
 
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e to be red but got '%s'", e.color)
 		}
 		if e.parent != a {
@@ -1064,7 +1065,7 @@ func TestDeleteNode(t *testing.T) {
 			t.Errorf("expected right child of e to be nil, but got %v", e.right.value)
 		}
 
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got '%s'", f.color)
 		}
 		if f.parent != a {
@@ -1115,7 +1116,7 @@ func TestDeleteNode(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("Expected parent of d to be b(%d), but got %v", b.value, d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d to be black but got '%s'", d.color)
 		}
 		if d.left != h {
@@ -1128,7 +1129,7 @@ func TestDeleteNode(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("expected a parent to be b(%d), but got %v", b.value, a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected a to be black but got '%s'", a.color)
 		}
 		if a.left != e {
@@ -1141,7 +1142,7 @@ func TestDeleteNode(t *testing.T) {
 		if h.parent != d {
 			t.Errorf("Expected parent of h to be d(%d), but got %v", d.value, h.parent)
 		}
-		if h.color != nodes.Black {
+		if h.color != node.Black {
 			t.Errorf("expected h color to be black but got '%s'", h.color)
 		}
 		if h.left != nil {
@@ -1154,7 +1155,7 @@ func TestDeleteNode(t *testing.T) {
 		if i.parent != d {
 			t.Errorf("Expected parent of i to be d(%d), but got %v", d.value, i.parent)
 		}
-		if i.color != nodes.Black {
+		if i.color != node.Black {
 			t.Errorf("expected i color to be black but got '%s'", i.color)
 		}
 		if i.left != nil {
@@ -1167,7 +1168,7 @@ func TestDeleteNode(t *testing.T) {
 		if e.parent != a {
 			t.Errorf("Expected parent of e to be a(%d), but got %v", a.value, e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("expected e color to be black but got '%s'", e.color)
 		}
 		if e.left != nil {
@@ -1180,7 +1181,7 @@ func TestDeleteNode(t *testing.T) {
 		if f.parent != a {
 			t.Errorf("Expected parent of f to be a(%d), but got %v", a.value, f.parent)
 		}
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got '%s'", f.color)
 		}
 		if f.left != nil {
@@ -1198,7 +1199,7 @@ func TestDeleteNode(t *testing.T) {
 	//      /    \              /   \
 	// h(10)[B]   x <-i  e(25)[B] f(35)[B]
 	t.Run("Deleting black node with black sibling", func(t *testing.T) {
-		// 1. assert the tree inherits the last test final state
+		// 1. assert the tree inherits the last test final states
 		if f.right != nil {
 			root = DeleteNode(root, g.right)
 			root = DeleteNode(root, g)
@@ -1225,7 +1226,7 @@ func TestDeleteNode(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("Expected parent of d to be b(%d), but got %v", b.value, d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d to be black but got '%s'", d.color)
 		}
 		if d.left != h {
@@ -1238,7 +1239,7 @@ func TestDeleteNode(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("expected a parent to be b(%d), but got %v", b.value, a.parent)
 		}
-		if a.color != nodes.Red {
+		if a.color != node.Red {
 			t.Errorf("expected a to be black but got '%s'", a.color)
 		}
 		if a.left != e {
@@ -1251,7 +1252,7 @@ func TestDeleteNode(t *testing.T) {
 		if h.parent != d {
 			t.Errorf("Expected parent of h to be d(%d), but got %v", d.value, h.parent)
 		}
-		if h.color != nodes.Red {
+		if h.color != node.Red {
 			t.Errorf("expected h color to be black but got '%s'", h.color)
 		}
 		if h.left != nil {
@@ -1264,7 +1265,7 @@ func TestDeleteNode(t *testing.T) {
 		if e.parent != a {
 			t.Errorf("Expected parent of e to be a(%d), but got %v", a.value, e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("expected e color to be black but got '%s'", e.color)
 		}
 		if e.left != nil {
@@ -1277,7 +1278,7 @@ func TestDeleteNode(t *testing.T) {
 		if f.parent != a {
 			t.Errorf("Expected parent of f to be a(%d), but got %v", a.value, f.parent)
 		}
-		if f.color != nodes.Black {
+		if f.color != node.Black {
 			t.Errorf("expected f color to be black but got '%s'", f.color)
 		}
 		if f.left != nil {
@@ -1295,7 +1296,7 @@ func TestDeleteNode(t *testing.T) {
 	//      /                /   \
 	// h(10)[R]        e(25)[B] f(35)[B]
 	t.Run("Case 6: Delete root", func(t *testing.T) {
-		// 1. assert the tree state is the same as the final state from case 5
+		// 1. assert the tree states is the same as the final states from case 5
 		if f.right != nil {
 			root = DeleteNode(root, g.right)
 			root = DeleteNode(root, g)
@@ -1306,7 +1307,7 @@ func TestDeleteNode(t *testing.T) {
 		}
 		// 2. delete the root
 		root = DeleteNode(root, b)
-		// expected final state
+		// expected final states
 		//               e(25)[B]
 		//             /        \
 		//      d(15)[B]        a(30)[B]
@@ -1323,7 +1324,7 @@ func TestDeleteNode(t *testing.T) {
 		if d.parent != e {
 			t.Errorf("Expected parent of 'd' to be 'e(%d)', but got '%v'", e.value, d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected 'd' color to be 'black' but got '%s'", d.color)
 		}
 		if d.left != h {
@@ -1336,7 +1337,7 @@ func TestDeleteNode(t *testing.T) {
 		if a.parent != e {
 			t.Errorf("expected 'a' parent to be 'e(%d)', but got '%v'", e.value, a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected 'a' color to be 'black' but got '%s'", a.color)
 		}
 		if a.left != nil {
@@ -1349,7 +1350,7 @@ func TestDeleteNode(t *testing.T) {
 		if h.parent != d {
 			t.Errorf("expected 'h' parent to be 'd(%d)', but got '%v'", d.value, h.parent)
 		}
-		if h.color != nodes.Red {
+		if h.color != node.Red {
 			t.Errorf("expected 'h' color to be 'red' but got '%s'", h.color)
 		}
 		if h.left != nil {
@@ -1362,7 +1363,7 @@ func TestDeleteNode(t *testing.T) {
 		if f.parent != a {
 			t.Errorf("expected 'f' parent to be 'a(%d)', but got '%v'", a.value, f.parent)
 		}
-		if f.color != nodes.Red {
+		if f.color != node.Red {
 			t.Errorf("expected 'f' color to be 'red' but got %s", f.color)
 		}
 		if f.left != nil {
@@ -1411,10 +1412,10 @@ func TestInsertFixup(t *testing.T) {
 		root = insertFixup(root, n)
 
 		// Verify the structure
-		if root.color != nodes.Black {
+		if root.color != node.Black {
 			t.Errorf("expected root color to be Black, but got %s", root.color)
 		}
-		if root.left.color != nodes.Black || root.right.color != nodes.Black {
+		if root.left.color != node.Black || root.right.color != node.Black {
 			t.Errorf("expected left and right children of root to be Black")
 		}
 	})
@@ -1427,7 +1428,7 @@ func TestInsertFixup(t *testing.T) {
 		//       \
 		//       7(R)
 		root := Black(10)
-		root.color = nodes.Black
+		root.color = node.Black
 		root.left = Red(5, root)
 		n := Red(7, root.left)
 		root.left.right = n
@@ -1447,13 +1448,13 @@ func TestInsertFixup(t *testing.T) {
 		if root.left.value != 5 {
 			t.Errorf("expected left child of root to be 5, but got %v", root.left.value)
 		}
-		if root.color != nodes.Black {
+		if root.color != node.Black {
 			t.Errorf("expected root color to be Black, but got %s", root.color)
 		}
-		if root.left.color != nodes.Red {
+		if root.left.color != node.Red {
 			t.Errorf("expected left child of root to be Red, but got %s", root.left.color)
 		}
-		if root.right.color != nodes.Red {
+		if root.right.color != node.Red {
 			t.Errorf("expected right child of root to be Red, but got %s", root.right.color)
 		}
 	})
@@ -1483,13 +1484,13 @@ func TestInsertFixup(t *testing.T) {
 		if root.left.value != 10 {
 			t.Errorf("expected left child of root to be 10, but got %v", root.left.value)
 		}
-		if root.color != nodes.Black {
+		if root.color != node.Black {
 			t.Errorf("expected root color to be Black, but got %s", root.color)
 		}
-		if root.left.color != nodes.Red {
+		if root.left.color != node.Red {
 			t.Errorf("expected left child of root to be Red, but got %s", root.left.color)
 		}
-		if root.right.color != nodes.Red {
+		if root.right.color != node.Red {
 			t.Errorf("expected right child of root to be Red, but got %s", root.right.color)
 		}
 	})
@@ -1520,13 +1521,13 @@ func TestInsertFixup(t *testing.T) {
 		if root.left.value != 5 {
 			t.Errorf("expected left child of root to be 5, but got %v", root.left.value)
 		}
-		if root.color != nodes.Black {
+		if root.color != node.Black {
 			t.Errorf("expected root color to be Black, but got %s", root.color)
 		}
-		if root.left.color != nodes.Red {
+		if root.left.color != node.Red {
 			t.Errorf("expected left child of root to be Red, but got %s", root.left.color)
 		}
-		if root.right.color != nodes.Red {
+		if root.right.color != node.Red {
 			t.Errorf("expected right child of root to be Red, but got %s", root.right.color)
 		}
 	})
@@ -1539,7 +1540,7 @@ func TestInsertFixup(t *testing.T) {
 		root = insertFixup(root, root)
 
 		// Verify the structure
-		if root.value != 10 || root.color != nodes.Black {
+		if root.value != 10 || root.color != node.Black {
 			t.Errorf("Unexpected tree structure after fixup on single-node tree")
 		}
 	})
@@ -1554,13 +1555,13 @@ func TestInsertNode(t *testing.T) {
 	// Test 1. Empty tree
 	var root *Node[int]
 	var ok bool
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	var tree = make(map[string]*Node[int])
 	t.Run("test node on empty tree", func(t *testing.T) {
 		if len(tree) != 0 {
 			tree = make(map[string]*Node[int])
 		}
-		a := NewNode(10, nodes.Black)
+		a := NewNode(10, node.Black)
 		root, ok = InsertNode(root, a, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", a)
@@ -1579,17 +1580,17 @@ func TestInsertNode(t *testing.T) {
 
 	// Test 2. Tree with one node
 	t.Run("test insert higher value than root", func(t *testing.T) {
-		// ensure last test state on single run
+		// ensure last test states on single run
 		if len(tree) == 0 {
 			tree = make(map[string]*Node[int])
-			a := NewNode(10, nodes.Black)
+			a := NewNode(10, node.Black)
 			root, ok = InsertNode(root, a, cmp.Compare)
 			if !ok {
 				t.Errorf("InsertNode returned false while inserting\n%v", a)
 			}
 			tree["a"] = a
 		}
-		b := NewNode(15, nodes.Black)
+		b := NewNode(15, node.Black)
 		root, ok = InsertNode(root, b, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", b)
@@ -1606,24 +1607,24 @@ func TestInsertNode(t *testing.T) {
 		if b.parent != tree["a"] {
 			t.Errorf("expected b.parent to be 'a(10)', but got\n%v", b.parent)
 		}
-		if b.color != nodes.Red {
+		if b.color != node.Red {
 			t.Errorf("expected b.color to be 'Red', but got '%v'", b.color)
 		}
 		tree["b"] = b
 	})
 
-	// Test 3. Tree with two nodes
+	// Test 3. Tree with two node
 	t.Run("insert higher value to force unbalance", func(t *testing.T) {
-		// ensure last test state on single run
+		// ensure last test states on single run
 		if len(tree) < 2 {
 			tree = make(map[string]*Node[int])
-			a := NewNode(10, nodes.Black)
+			a := NewNode(10, node.Black)
 			root, ok = InsertNode(root, a, cmp.Compare)
 			if !ok {
 				t.Errorf("InsertNode returned false while inserting\n%v", a)
 			}
 			tree["a"] = a
-			b := NewNode(15, nodes.Black)
+			b := NewNode(15, node.Black)
 			root, ok = InsertNode(root, b, cmp.Compare)
 			if !ok {
 				t.Errorf("InsertNode returned false while inserting\n%v", b)
@@ -1631,7 +1632,7 @@ func TestInsertNode(t *testing.T) {
 			tree["b"] = b
 		}
 
-		c := NewNode(20, nodes.Black)
+		c := NewNode(20, node.Black)
 		root, ok = InsertNode(root, c, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", c)
@@ -1654,7 +1655,7 @@ func TestInsertNode(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("expected a.parent to be 'b(15)', but got\n%v", a.parent)
 		}
-		if a.color != nodes.Red {
+		if a.color != node.Red {
 			t.Errorf("expected a.color to be 'Red', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -1667,7 +1668,7 @@ func TestInsertNode(t *testing.T) {
 		if c.parent != b {
 			t.Errorf("expected c.parent to be 'b(15)', but got\n%v", c.parent)
 		}
-		if c.color != nodes.Red {
+		if c.color != node.Red {
 			t.Errorf("expected c.color to be 'Red', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -1680,21 +1681,21 @@ func TestInsertNode(t *testing.T) {
 	})
 
 	t.Run("Insert between root and smaller value", func(t *testing.T) {
-		// ensure last test state on single run
+		// ensure last test states on single run
 		if len(tree) < 3 {
 			tree = make(map[string]*Node[int])
-			a := NewNode(10, nodes.Black)
+			a := NewNode(10, node.Black)
 			root, _ = InsertNode(root, a, cmp.Compare)
 			tree["a"] = a
-			b := NewNode(15, nodes.Black)
+			b := NewNode(15, node.Black)
 			root, _ = InsertNode(root, b, cmp.Compare)
 			tree["b"] = b
-			c := NewNode(20, nodes.Black)
+			c := NewNode(20, node.Black)
 			root, _ = InsertNode(root, c, cmp.Compare)
 			tree["c"] = c
 		}
 
-		d := NewNode(12, nodes.Black)
+		d := NewNode(12, node.Black)
 		root, ok = InsertNode(root, d, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", d)
@@ -1720,7 +1721,7 @@ func TestInsertNode(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("expected a.parent to be 'b(15)', but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -1733,7 +1734,7 @@ func TestInsertNode(t *testing.T) {
 		if c.parent != b {
 			t.Errorf("expected c.parent to be 'b(15)', but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -1746,7 +1747,7 @@ func TestInsertNode(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("expected d.parent to be 'a(10)', but got\n%v", d.parent)
 		}
-		if d.color != nodes.Red {
+		if d.color != node.Red {
 			t.Errorf("expected d.color to be 'Red', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -1759,24 +1760,24 @@ func TestInsertNode(t *testing.T) {
 	})
 
 	t.Run("Insert between d and root to force rotations", func(t *testing.T) {
-		// ensure last test state on single run
+		// ensure last test states on single run
 		if len(tree) < 4 {
 			tree = make(map[string]*Node[int])
-			a := NewNode(10, nodes.Black)
+			a := NewNode(10, node.Black)
 			root, _ = InsertNode(root, a, cmp.Compare)
 			tree["a"] = a
-			b := NewNode(15, nodes.Black)
+			b := NewNode(15, node.Black)
 			root, _ = InsertNode(root, b, cmp.Compare)
 			tree["b"] = b
-			c := NewNode(20, nodes.Black)
+			c := NewNode(20, node.Black)
 			root, _ = InsertNode(root, c, cmp.Compare)
 			tree["c"] = c
-			d := NewNode(12, nodes.Black)
+			d := NewNode(12, node.Black)
 			root, _ = InsertNode(root, d, cmp.Compare)
 			tree["d"] = d
 		}
 
-		e := NewNode(13, nodes.Black)
+		e := NewNode(13, node.Black)
 		root, ok = InsertNode(root, e, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", e)
@@ -1803,7 +1804,7 @@ func TestInsertNode(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("expected d.parent to be 'b(15)', but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != a {
@@ -1816,7 +1817,7 @@ func TestInsertNode(t *testing.T) {
 		if c.parent != b {
 			t.Errorf("expected c.parent to be 'b(15)', but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -1829,7 +1830,7 @@ func TestInsertNode(t *testing.T) {
 		if a.parent != d {
 			t.Errorf("expected a.parent to be d(12) but got\n%v", a.parent)
 		}
-		if a.color != nodes.Red {
+		if a.color != node.Red {
 			t.Errorf("expected a.color to be 'Red', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -1842,7 +1843,7 @@ func TestInsertNode(t *testing.T) {
 		if e.parent != d {
 			t.Errorf("expected e.parent to be d(12) but got\n%v", e.parent)
 		}
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e.color to be 'Red', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -1855,27 +1856,27 @@ func TestInsertNode(t *testing.T) {
 	})
 
 	t.Run("insert on right side shouldn't fixup", func(t *testing.T) {
-		// ensure last test state on single run
+		// ensure last test states on single run
 		if len(tree) < 5 {
 			tree = make(map[string]*Node[int])
-			a := NewNode(10, nodes.Black)
+			a := NewNode(10, node.Black)
 			root, _ = InsertNode(root, a, cmp.Compare)
 			tree["a"] = a
-			b := NewNode(15, nodes.Black)
+			b := NewNode(15, node.Black)
 			root, _ = InsertNode(root, b, cmp.Compare)
 			tree["b"] = b
-			c := NewNode(20, nodes.Black)
+			c := NewNode(20, node.Black)
 			root, _ = InsertNode(root, c, cmp.Compare)
 			tree["c"] = c
-			d := NewNode(12, nodes.Black)
+			d := NewNode(12, node.Black)
 			root, _ = InsertNode(root, d, cmp.Compare)
 			tree["d"] = d
-			e := NewNode(13, nodes.Black)
+			e := NewNode(13, node.Black)
 			root, _ = InsertNode(root, e, cmp.Compare)
 			tree["e"] = e
 		}
 
-		f := NewNode(25, nodes.Black)
+		f := NewNode(25, node.Black)
 		root, ok = InsertNode(root, f, cmp.Compare)
 		if !ok {
 			t.Errorf("InsertNode returned false while inserting\n%v", f)
@@ -1902,7 +1903,7 @@ func TestInsertNode(t *testing.T) {
 		if d.parent != b {
 			t.Errorf("expected d.parent to be 'b(15)', but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != a {
@@ -1915,7 +1916,7 @@ func TestInsertNode(t *testing.T) {
 		if c.parent != b {
 			t.Errorf("expected c.parent to be 'b(15)', but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -1928,7 +1929,7 @@ func TestInsertNode(t *testing.T) {
 		if a.parent != d {
 			t.Errorf("expected a.parent to be d(12) but got\n%v", a.parent)
 		}
-		if a.color != nodes.Red {
+		if a.color != node.Red {
 			t.Errorf("expected a.color to be 'Red', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -1941,7 +1942,7 @@ func TestInsertNode(t *testing.T) {
 		if e.parent != d {
 			t.Errorf("expected e.parent to be d(12) but got\n%v", e.parent)
 		}
-		if e.color != nodes.Red {
+		if e.color != node.Red {
 			t.Errorf("expected e.color to be 'Red', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -1954,7 +1955,7 @@ func TestInsertNode(t *testing.T) {
 		if f.parent != c {
 			t.Errorf("expected f.parent to be c(20) but got\n%v", f.parent)
 		}
-		if f.color != nodes.Red {
+		if f.color != node.Red {
 			t.Errorf("expected f.color to be 'Red', but got '%v'", f.color)
 		}
 		if f.left != nil {
@@ -2009,7 +2010,7 @@ func TestRotations(t *testing.T) {
 		if z.parent != y {
 			t.Errorf("Expected z.parent to be 'y(20)', but got %v", z.parent)
 		}
-		if z.color != nodes.Black {
+		if z.color != node.Black {
 			t.Errorf("Expected z.color to be 'Black', but got %v", z.color)
 		}
 		if z.left != nil {
@@ -2024,7 +2025,7 @@ func TestRotations(t *testing.T) {
 		if x.parent != y {
 			t.Errorf("Expected x.parent to be 'y(20)', but got %v", x.parent)
 		}
-		if x.color != nodes.Black {
+		if x.color != node.Black {
 			t.Errorf("Expected x.color to be 'Black', but got %v", x.color)
 		}
 		if x.left != nil {
@@ -2077,7 +2078,7 @@ func TestRotations(t *testing.T) {
 		if z.parent != y {
 			t.Errorf("Expected z.parent to be 'y(20)', but got %v", z.parent)
 		}
-		if z.color != nodes.Black {
+		if z.color != node.Black {
 			t.Errorf("Expected z.color to be 'Black', but got %v", z.color)
 		}
 		if z.left != nil {
@@ -2092,7 +2093,7 @@ func TestRotations(t *testing.T) {
 		if x.parent != y {
 			t.Errorf("Expected x.parent to be 'y(20)', but got %v", x.parent)
 		}
-		if x.color != nodes.Black {
+		if x.color != node.Black {
 			t.Errorf("Expected x.color to be 'Black', but got %v", x.color)
 		}
 		if x.left != nil {
@@ -2167,7 +2168,7 @@ func TestRotations(t *testing.T) {
 		if a.parent != c {
 			t.Errorf("Expected a.parent to be c(20), but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != b {
@@ -2180,7 +2181,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != c {
 			t.Errorf("Expected e.parent to be c(20), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -2193,7 +2194,7 @@ func TestRotations(t *testing.T) {
 		if b.parent != a {
 			t.Errorf("Expected b.parent to be a(10), but got\n%v", b.parent)
 		}
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("Expected b.color to be 'Black', but got '%v'", b.color)
 		}
 		if b.left != nil {
@@ -2206,7 +2207,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("Expected d.parent to be a(10), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2235,7 +2236,7 @@ func TestRotations(t *testing.T) {
 		if b.parent != a {
 			t.Errorf("Expected b.parent to be a(10), but got\n%v", b.parent)
 		}
-		if b.color != nodes.Black {
+		if b.color != node.Black {
 			t.Errorf("Expected b.color to be 'Black', but got '%v'", b.color)
 		}
 		if b.left != nil {
@@ -2248,7 +2249,7 @@ func TestRotations(t *testing.T) {
 		if c.parent != a {
 			t.Errorf("Expected c.parent to be a(10), but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != d {
@@ -2261,7 +2262,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != c {
 			t.Errorf("Expected d.parent to be c(20), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2274,7 +2275,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != c {
 			t.Errorf("Expected e.parent to be c(20), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -2305,7 +2306,7 @@ func TestRotations(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("Expected a.parent to be b(5), but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -2318,7 +2319,7 @@ func TestRotations(t *testing.T) {
 		if c.parent != a {
 			t.Errorf("Expected c.parent to be a(10), but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != d {
@@ -2331,7 +2332,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != c {
 			t.Errorf("Expected d.parent to be c(20), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2344,7 +2345,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != c {
 			t.Errorf("Expected e.parent to be c(20), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -2377,7 +2378,7 @@ func TestRotations(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("Expected a.parent to be b(5), but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -2390,7 +2391,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("Expected d.parent to be a(10), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2403,7 +2404,7 @@ func TestRotations(t *testing.T) {
 		if c.parent != d {
 			t.Errorf("Expected c.parent to be d(15), but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -2416,7 +2417,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != c {
 			t.Errorf("Expected e.parent to be c(20), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -2440,7 +2441,7 @@ func TestRotations(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("Expected a.parent to be b(5), but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -2453,7 +2454,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("Expected d.parent to be a(10), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2466,7 +2467,7 @@ func TestRotations(t *testing.T) {
 		if c.parent != d {
 			t.Errorf("Expected c.parent to be d(15), but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {
@@ -2479,7 +2480,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != c {
 			t.Errorf("Expected e.parent to be c(20), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != nil {
@@ -2512,7 +2513,7 @@ func TestRotations(t *testing.T) {
 		if a.parent != b {
 			t.Errorf("Expected a.parent to be b(5), but got\n%v", a.parent)
 		}
-		if a.color != nodes.Black {
+		if a.color != node.Black {
 			t.Errorf("Expected a.color to be 'Black', but got '%v'", a.color)
 		}
 		if a.left != nil {
@@ -2525,7 +2526,7 @@ func TestRotations(t *testing.T) {
 		if d.parent != a {
 			t.Errorf("Expected d.parent to be a(10), but got\n%v", d.parent)
 		}
-		if d.color != nodes.Black {
+		if d.color != node.Black {
 			t.Errorf("Expected d.color to be 'Black', but got '%v'", d.color)
 		}
 		if d.left != nil {
@@ -2538,7 +2539,7 @@ func TestRotations(t *testing.T) {
 		if e.parent != d {
 			t.Errorf("Expected e.parent to be d(15), but got\n%v", e.parent)
 		}
-		if e.color != nodes.Black {
+		if e.color != node.Black {
 			t.Errorf("Expected e.color to be 'Black', but got '%v'", e.color)
 		}
 		if e.left != c {
@@ -2551,7 +2552,7 @@ func TestRotations(t *testing.T) {
 		if c.parent != e {
 			t.Errorf("Expected c.parent to be e(30), but got\n%v", c.parent)
 		}
-		if c.color != nodes.Black {
+		if c.color != node.Black {
 			t.Errorf("Expected c.color to be 'Black', but got '%v'", c.color)
 		}
 		if c.left != nil {

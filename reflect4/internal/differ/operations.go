@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
@@ -19,8 +19,8 @@ import (
 )
 
 func between(tab indent.Indentor, a, b reflect.Value, diff *Strategy) differs.Difference {
-	if diff, invalid := handleInvalidValues(tab, a, b); invalid {
-		return diff
+	if difference, invalid := handleInvalidValues(tab, a, b, diff); invalid {
+		return difference
 	}
 
 	// we don't need to mark NotEquals results since it will cut the flow immediately,
@@ -31,7 +31,7 @@ func between(tab indent.Indentor, a, b reflect.Value, diff *Strategy) differs.Di
 	}
 
 	if a.Kind() <= reflect.Complex128 {
-		return differPrimitives(tab, a, b)
+		return differPrimitives(tab, a, b, diff)
 	}
 
 	switch a.Type().Kind() {
@@ -67,11 +67,8 @@ func between(tab indent.Indentor, a, b reflect.Value, diff *Strategy) differs.Di
 //	- have the same signature and direction
 //	- if they have the same buffer capacity
 func defaultChanDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[differChans] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
 	if a.IsNil() && b.IsNil() {
-		return nilChanSignatureDiff(tab, a, b)
+		return nilChanSignatureDiff(tab, a, b, s)
 	}
 
 	if !a.IsNil() && !b.IsNil() {
@@ -81,27 +78,28 @@ func defaultChanDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 		if a.Pointer() == b.Pointer() {
 			return differs.Equals()
 		}
-		return s.cache(a, b, defaultChanSignatureDiff(tab, a, b))
+		return s.cache(a, b, defaultChanSignatureDiff(tab, a, b, s))
 	}
 
 	if a.IsNil() {
-		name := types.Name(b.Type())
+		name := types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		msg := differs.NilReceived(tab, "chan", name)
 		return differs.NotEquals(msg, "", name, name)
 	}
 
-	name := types.Name(a.Type())
+	name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 	msg := differs.NilExpected(tab, "chan", name)
 	return differs.NotEquals(msg, "", name, name)
 }
 
 // defaultChanSignatureDiff this function compares two channel signatures
 // of relevant differences
-func defaultChanSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.Difference {
+func defaultChanSignatureDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	ta, tb := a.Type(), b.Type()
 
 	if ta.Elem() != tb.Elem() {
-		an, bn := types.ValidValueName(ta.Elem()), types.ValidValueName(tb.Elem())
+		an, bn := types.ValidValueNameSwitch(ta.Elem(), s.useQfName),
+			types.ValidValueNameSwitch(tb.Elem(), s.useQfName)
 		msg := differs.ChanElemTypesMismatch(tab, an, bn)
 		return differs.NotEquals(msg, "", an, bn)
 	}
@@ -124,12 +122,13 @@ func defaultChanSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.D
 	return differs.Equals()
 }
 
-func nilChanSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.Difference {
+func nilChanSignatureDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	// Nil channels capacity is always zero
 	ta, tb := a.Type(), b.Type()
 
 	if ta.Elem() != tb.Elem() {
-		an, bn := types.ValidValueName(ta.Elem()), types.ValidValueName(tb.Elem())
+		an, bn := types.ValidValueNameSwitch(ta.Elem(), s.useQfName),
+			types.ValidValueNameSwitch(tb.Elem(), s.useQfName)
 		msg := differs.NilChanTypesMismatch(tab, an, bn)
 		return differs.NotEquals(msg, "", an, bn)
 	}
@@ -141,22 +140,19 @@ func nilChanSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.Diffe
 	return differs.Equals()
 }
 
-func sameChanDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.Difference {
-	//fmx.Purplef("[differChans] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
+func sameChanDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if !a.IsNil() && !b.IsNil() {
 		if a.Pointer() == b.Pointer() {
 			return differs.Equals()
 		}
-		name := types.ValidValueName(a.Type())
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		msg := differs.ChanAddressMismatch(tab,
 			sprints.Uintptrf(a.Pointer()), sprints.Uintptrf(b.Pointer()))
 		return differs.NotEquals(msg, "", name, name)
 	}
 
 	if a.IsNil() && b.IsNil() {
-		return nilChanSignatureDiff(tab, a, b)
+		return nilChanSignatureDiff(tab, a, b, s)
 	}
 
 	if a.IsNil() {
@@ -168,65 +164,59 @@ func sameChanDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.
 	return differs.NotEquals(msg, "", a.Type().String(), b.Type().String())
 }
 
-// defaultFuncDiff computes the defaultStringDiff between two functions.
+// defaultFuncDiff computes the defaultStringDiff between two function.
 //
-//	it considers as compare functions if they:
+//	it considers as compare function if they:
 //	- both addresses are the same; or
 //	- have the same signature - even if the implementations are different
-func defaultFuncDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.Difference {
-	//fmx.Purplef("[differFunctions] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
+func defaultFuncDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if !a.IsNil() && !b.IsNil() {
-		return funcSignatureDiff(tab, a, b)
+		return funcSignatureDiff(tab, a, b, s)
 	}
 
 	if a.IsNil() && b.IsNil() {
-		return nilFuncSignatureDiff(tab, a, b)
+		return nilFuncSignatureDiff(tab, a, b, s)
 	}
 
 	if a.IsNil() {
-		bb := types.ValidValueName(b.Type())
+		bb := types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		msg := differs.NilReceived(tab, "func", bb)
 		return differs.NotEquals(msg, "", a.Type().String(), b.Type().String())
 	}
 
-	aa := types.ValidValueName(a.Type())
+	aa := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 	msg := differs.NilExpected(tab, "func", aa)
 	return differs.NotEquals(msg, "", a.Type().String(), b.Type().String())
 }
 
-func funcSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.Difference {
+func funcSignatureDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	ta, tb := a.Type(), b.Type()
-	aa := types.ValidValueName(ta)
-	bb := types.ValidValueName(tb)
 	if ta != tb {
+		aa := types.ValidValueNameSwitch(ta, s.useQfName)
+		bb := types.ValidValueNameSwitch(tb, s.useQfName)
 		msg := differs.FuncTypesMismatch(tab, aa, bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
 	return differs.Equals()
 }
 
-func nilFuncSignatureDiff(tab indent.Indentor, a, b reflect.Value) differs.Difference {
+func nilFuncSignatureDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	ta, tb := a.Type(), b.Type()
-	aa := types.ValidValueName(ta)
-	bb := types.ValidValueName(tb)
 	if ta != tb {
+		aa := types.ValidValueNameSwitch(ta, s.useQfName)
+		bb := types.ValidValueNameSwitch(tb, s.useQfName)
 		msg := differs.NilFuncTypesMismatch(tab, aa, bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
 	return differs.Equals()
 }
 
-// defaultFuncDiff computes the defaultStringDiff between two functions.
+// defaultFuncDiff computes the defaultStringDiff between two function.
 //
-//	it considers as compare functions if they:
+//	it considers as compare function if they:
 //	- have the same type
 //	- have the same signature - even if the implementations are different
-func sameFuncDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.Difference {
-	//fmx.Purplef("[differFunctions] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
+func sameFuncDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if !a.IsNil() && !b.IsNil() {
 		if a.Pointer() != b.Pointer() {
 			msg := differs.FuncAddressMismatch(tab,
@@ -237,58 +227,68 @@ func sameFuncDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.
 	}
 
 	if a.IsNil() && b.IsNil() {
-		return nilFuncSignatureDiff(tab, a, b)
+		return nilFuncSignatureDiff(tab, a, b, s)
 	}
 
 	if a.IsNil() {
-		bb := types.ValidValueName(b.Type())
+		bb := types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		msg := differs.NilReceived(tab, "func", bb)
 		return differs.NotEquals(msg, "", bb, bb)
 	}
 
-	aa := types.ValidValueName(a.Type())
+	aa := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 	msg := differs.NilExpected(tab, "func", aa)
 	return differs.NotEquals(msg, "", aa, aa)
 }
 
-// emptyOrNullableIter reports whether two values
-func emptyOrNullableIter(tab indent.Indentor, a, b reflect.Value) (diff differs.Difference, done bool) {
-	if a.IsNil() || b.IsNil() {
-		aa := types.Name(a.Type())
-		bb := types.Name(b.Type())
-		if !a.IsNil() {
-			if a.Len() == 0 {
-				return differs.Equals(), true
-			}
-			msg := differs.NilExpected(tab, b.Kind().String(), bb)
-			return differs.NotEquals(msg, "", a.Type().String(), b.Type().String()), true
-		}
-		if !b.IsNil() {
-			if b.Len() == 0 {
-				return differs.Equals(), true
-			}
-			msg := differs.NilReceived(tab, a.Kind().String(), aa)
-			return differs.NotEquals(msg, "", a.Type().String(), b.Type().String()), true
-		}
+// emptyOrNullableIter reports whether two iterables are equal by its nullability:
+//  1. Both are nil; or
+//     2, Both are empty; or
+//  3. One is nil, the other is empty
+func emptyOrNullableIter(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff differs.Difference, done bool) {
+	if a.IsNil() && b.IsNil() {
 		return differs.Equals(), true
 	}
+
+	handleNonNil := func(nonNilVal, nilVal reflect.Value, isA bool) (differs.Difference, bool) {
+		if nonNilVal.Len() == 0 {
+			return differs.Equals(), true
+		}
+		typeName := types.ValidValueNameSwitch(nilVal.Type(), s.useQfName)
+		var msg string
+		if isA {
+			msg = differs.NilExpected(tab, nilVal.Kind().String(), typeName)
+		} else {
+			msg = differs.NilReceived(tab, nonNilVal.Kind().String(), typeName)
+		}
+		return differs.NotEquals(msg, "", a.Type().String(), b.Type().String()), true
+	}
+
+	if a.IsNil() {
+		// b must be non-nil
+		return handleNonNil(b, a, false)
+	}
+	if b.IsNil() {
+		// a must be non-nil
+		return handleNonNil(a, b, true)
+	}
+
 	return differs.Difference{}, false
 }
 
 func diffArrays(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[diffArrays] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
 
 	if ta.Elem() != tb.Elem() {
+		aa := types.ValidValueNameSwitch(ta, s.useQfName)
+		bb := types.ValidValueNameSwitch(tb, s.useQfName)
 		msg := differs.ArrayTypesMismatch(tab, aa, bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
 
 	if a.Len() != b.Len() {
-		// fmx.Purplef("[diffArrays] '%s'.Len() is different from '%s'.Len()\n", a.String(), b.String())
-
+		aa := types.ValidValueNameSwitch(ta, s.useQfName)
+		bb := types.ValidValueNameSwitch(tb, s.useQfName)
 		msg := differs.ArrayLenMismatch(tab, a.Len(), b.Len())
 		return differs.NotEquals(msg, "", aa, bb)
 	}
@@ -296,8 +296,6 @@ func diffArrays(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Di
 	for i := 0; i < a.Len(); i++ {
 		elemA := a.Index(i)
 		elemB := b.Index(i)
-		//fmx.Purplef("[diffArrays] '%s'.Index(%d) compare '%s'.Index(%d): %t\n", a.String(), i, b.String(), i,
-		//	reflect.DeepEqual(a.Interface(), b.Interface()))
 
 		diff := between(tab.Inc(), elemA, elemB, s)
 		if !diff.Equals {
@@ -308,9 +306,9 @@ func diffArrays(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Di
 	return differs.Equals()
 }
 
-func differBool(tab indent.Indentor, a, b reflect.Value) differs.Difference {
-	name := types.ValidValueName(a.Type())
+func differBool(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if a.Bool() != b.Bool() {
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		return differs.NotEquals(differs.Values(tab, sprints.Typed(name, a.Bool()),
 			sprints.Typed(name, b.Bool())), "", tab.Sprint(sprints.Typed(name, a.Bool())),
 			tab.Sprint(sprints.Typed(name, b.Bool())))
@@ -318,10 +316,9 @@ func differBool(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 	return differs.Equals()
 }
 
-func differComplex(tab indent.Indentor, a, b reflect.Value) differs.Difference {
-	name := types.ValidValueName(a.Type())
+func differComplex(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if a.Complex() != b.Complex() {
-		fmx.Printf("%s: %v != %v\n", name, a.Complex(), b.Complex())
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		return differs.NotEquals(differs.Values(tab, sprints.Typed(name, a.Complex()),
 			sprints.Typed(name, b.Complex())), "", tab.Sprint(sprints.Typed(name, a.Complex())),
 			tab.Sprint(sprints.Typed(name, b.Complex())))
@@ -329,9 +326,9 @@ func differComplex(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 	return differs.Equals()
 }
 
-func differFloat(tab indent.Indentor, a, b reflect.Value) differs.Difference {
-	name := types.ValidValueName(a.Type())
+func differFloat(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if a.Float() != b.Float() {
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		return differs.NotEquals(differs.Values(tab, sprints.Typed(name, a.Float()),
 			sprints.Typed(name, b.Float())), "", tab.Sprint(sprints.TypedRoundFloat(name, a.Float())),
 			tab.Sprint(sprints.TypedRoundFloat(name, b.Float())))
@@ -339,9 +336,9 @@ func differFloat(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 	return differs.Equals()
 }
 
-func differInt(tab indent.Indentor, a, b reflect.Value) differs.Difference {
-	name := types.ValidValueName(a.Type())
+func differInt(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if a.Int() != b.Int() {
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		msg := differs.Values(tab, sprints.Typed(name, a.Int()), sprints.Typed(name, b.Int()))
 		return differs.NotEquals(msg,
 			"", tab.Sprint(sprints.TypedDigit(name, a.Int())),
@@ -357,14 +354,12 @@ func differInt(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 //	B: both interfaces are nil; and
 //	B: both types are equals
 func differInterfaces(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[differInterfaces] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
 
 	if !a.IsNil() && !b.IsNil() {
 		if ta != tb {
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
 			msg := differs.InterfaceTypesMismatch(tab, aa, bb)
 			return differs.NotEquals(msg, "", aa, bb)
 		}
@@ -376,6 +371,9 @@ func differInterfaces(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 		}
 		return differs.Equals()
 	}
+
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 
 	if a.IsNil() && b.IsNil() {
 		if ta != tb {
@@ -393,24 +391,24 @@ func differInterfaces(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 	return differs.NotEquals(msg, "", aa, bb)
 }
 
-func differPrimitives(tab indent.Indentor, a, b reflect.Value) differs.Difference {
+func differPrimitives(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	switch a.Kind() {
 	case reflect.Bool:
-		return differBool(tab, a, b)
+		return differBool(tab, a, b, s)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return differInt(tab, a, b)
+		return differInt(tab, a, b, s)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		return differUint(tab, a, b)
+		return differUint(tab, a, b, s)
 	case reflect.Float32, reflect.Float64:
-		return differFloat(tab, a, b)
+		return differFloat(tab, a, b, s)
 	case reflect.Complex64, reflect.Complex128:
-		return differComplex(tab, a, b)
+		return differComplex(tab, a, b, s)
 	default:
 		return differs.DiffError("no default values for primitives", reflect4.ErrInvalidValue)
 	}
 }
 
-// defaultMapDiff evaluates the defaultStringDiff between two maps given the following constraints:
+// defaultMapDiff evaluates the defaultStringDiff between two dicts given the following constraints:
 //
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
@@ -419,21 +417,22 @@ func differPrimitives(tab indent.Indentor, a, b reflect.Value) differs.Differenc
 //	C: both types are nil: and
 //	C: both types have the same signature
 func defaultMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[defaultMapDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
 	if !a.IsNil() && !b.IsNil() {
 		return notNilMapDiffer(tab, a, b, s)
 	}
 
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
 	if a.IsNil() && b.IsNil() {
 		if a.Type() != b.Type() {
-			msg := differs.NilTypesMismatch(tab, "maps", aa, bb)
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
+			msg := differs.NilTypesMismatch(tab, "dicts", aa, bb)
 			return differs.NotEquals(msg, "", aa, bb)
 		}
 		return differs.Equals()
 	}
+
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 
 	if a.IsNil() {
 		msg := differs.NilReceived(tab, "map", bb)
@@ -443,7 +442,7 @@ func defaultMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 	return differs.NotEquals(msg, "", aa, bb)
 }
 
-// serializableMapDiff evaluates the defaultStringDiff between two maps given the following constraints:
+// serializableMapDiff evaluates the defaultStringDiff between two dicts given the following constraints:
 //
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
@@ -452,24 +451,24 @@ func defaultMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 //	C: both types are nil or empty: and
 //	C: both types have the same signature
 func serializableMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[defaultMapDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
 	if !a.IsNil() && !b.IsNil() {
 		return notNilMapDiffer(tab, a, b, s)
 	}
 
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
 	if (a.IsNil() && b.IsNil()) ||
 		(a.IsNil() && b.Len() == 0) ||
 		(b.IsNil() && a.Len() == 0) {
 		if a.Type() != b.Type() {
-			msg := differs.NilTypesMismatch(tab, "maps", aa, bb)
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
+			msg := differs.NilTypesMismatch(tab, "dicts", aa, bb)
 			return differs.NotEquals(msg, "", aa, bb)
 		}
 		return differs.Equals()
 	}
 
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 	if a.IsNil() {
 		msg := differs.NilReceived(tab, "map", bb)
 		return differs.NotEquals(msg, "", aa, bb)
@@ -478,7 +477,7 @@ func serializableMapDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) d
 	return differs.NotEquals(msg, "", aa, bb)
 }
 
-// notNilMapDiffer evaluates the defaultStringDiff between two maps given the following constraints:
+// notNilMapDiffer evaluates the defaultStringDiff between two dicts given the following constraints:
 //
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
@@ -489,15 +488,18 @@ func notNilMapDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 		return diff
 	}
 
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
 	if a.Pointer() == b.Pointer() {
 		return differs.Equals()
 	}
 	if a.Type() != b.Type() {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		msg := differs.MapTypesMismatch(tab, aa, bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
 	if a.Len() != b.Len() {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		msg := differs.MapLenMismatch(tab, a.Len(), b.Len())
 		diff, _ := mapLengthDiffer(tab, a, b)
 		return s.cache(a, b, differs.NotEquals(msg, diff, aa, bb))
@@ -513,8 +515,6 @@ func notNilMapDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diffe
 // mapShallowDiffer: uses MapIndex(key) fast path, but collects missing/extra keys to provide
 // a more complete keys diff (still returns immediately on a value mismatch).
 func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
-
 	var missingKeysB, extraKeysA, missingKeysA, extraKeysB []string
 
 	iterA := a.MapRange()
@@ -524,7 +524,7 @@ func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 		valB := b.MapIndex(key)
 
 		if !valB.IsValid() {
-			typ := types.ValidValueName(key.Type())
+			typ := types.ValidValueNameSwitch(key.Type(), s.useQfName)
 			keyRepr := fmx.Sprintf("<%s>%v", typ, key.Interface())
 			missingKeysB = append(missingKeysB, keyRepr)
 			extraKeysA = append(extraKeysA, keyRepr)
@@ -543,7 +543,7 @@ func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 	for iterB.Next() {
 		key := iterB.Key()
 		if !maps.HasKey(a, key) {
-			typ := types.ValidValueName(key.Type())
+			typ := types.ValidValueNameSwitch(key.Type(), s.useQfName)
 			keyRepr := fmx.Sprintf("<%s>%v", typ, key.Interface())
 			missingKeysA = append(missingKeysA, keyRepr)
 			extraKeysB = append(extraKeysB, keyRepr)
@@ -551,6 +551,8 @@ func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 	}
 
 	if len(missingKeysA)+len(extraKeysA)+len(missingKeysB)+len(extraKeysB) > 0 {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		diff := differs.MapKeysDiff(indent.Tab(tab.Value()), missingKeysA, extraKeysA, missingKeysB, extraKeysB)
 		return s.cache(a, b, differs.NotEquals(differs.MapKeys(tab), diff, aa, bb))
 	}
@@ -561,8 +563,6 @@ func mapShallowDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 // mapDeepDiffer: O(n^2) semantic key comparison. Ensures matched keyB can't be reused
 // (prevents two different keyA entries from matching a single keyB).
 func mapDeepDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	aa, bb := types.ValidValueName(a.Type()), types.ValidValueName(b.Type())
-
 	// Collect b keys and mark used ones
 	var keysB []reflect.Value
 	iterB := b.MapRange()
@@ -613,7 +613,7 @@ func mapDeepDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs
 				message = differs.MapValue(tab, fmx.Sprint(keyA.Interface())) +
 					" on deep check\n" + lastDiff.Message
 			} else {
-				typ := types.ValidValueName(keyA.Type())
+				typ := types.ValidValueNameSwitch(keyA.Type(), s.useQfName)
 				keyRepr := fmx.Sprintf("<%s>%v", typ, keyA.Interface())
 				message = differs.MapValue(tab, keyRepr) + " missing in target map"
 			}
@@ -626,13 +626,15 @@ func mapDeepDiffer(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs
 		if used[i] {
 			continue
 		}
-		typ := types.ValidValueName(keyB.Type())
+		typ := types.ValidValueNameSwitch(keyB.Type(), s.useQfName)
 		keyRepr := fmx.Sprintf("<%s>%v", typ, keyB.Interface())
 		missingKeysA = append(missingKeysA, keyRepr)
 		extraKeysB = append(extraKeysB, keyRepr)
 	}
 
 	if len(missingKeysA)+len(extraKeysA)+len(missingKeysB)+len(extraKeysB) > 0 {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		diff := differs.MapKeysDiff(indent.Tab(tab.Value()), missingKeysA, extraKeysA, missingKeysB, extraKeysB)
 		return s.cache(a, b, differs.NotEquals(differs.MapKeys(tab)+" on deep check", diff, aa, bb))
 	}
@@ -680,8 +682,6 @@ func mapLengthDiffer(tab indent.Indentor, a, b reflect.Value) (diff string, equa
 //	C: both ptrs are nil; and
 //	C: both ptrs have the same type
 func defaultPtrDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[defaultPtrDiff] comparing ptrs %s vs %s: DeepEqual=%t\n",
-	//	a.String(), b.String(), reflect.DeepEqual(readableValue(a), readableValue(b)))
 	if !a.IsNil() && !b.IsNil() {
 		// Cycle check
 		if diff, done := s.check(a, b); done {
@@ -699,10 +699,11 @@ func defaultPtrDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 		return s.cache(a, b, ptrElemDiff(tab, a, b, s))
 	}
 
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
+
 	if a.IsNil() && b.IsNil() {
 		if a.Type() != b.Type() {
-			aa := types.ValidValueName(a.Type())
-			bb := types.ValidValueName(b.Type())
 			msg := differs.NilPointersSignMismatch(tab, aa, bb)
 			return differs.NotEquals(msg, "", aa, bb)
 		}
@@ -710,14 +711,10 @@ func defaultPtrDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 	}
 
 	if a.IsNil() {
-		aa := types.ValidValueName(a.Type())
-		bb := types.ValidValueName(b.Type())
 		msg := differs.NilReceived(tab, "ptr", bb)
 		return differs.NotEquals(msg, "", aa, bb)
 	}
 
-	aa := types.ValidValueName(a.Type())
-	bb := types.ValidValueName(b.Type())
 	msg := differs.NilExpected(tab, "ptr", aa)
 	return differs.NotEquals(msg, "", aa, bb)
 }
@@ -725,20 +722,13 @@ func defaultPtrDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differ
 // ptrElemDiff evaluates the defaultStringDiff between a not nil pointer element
 func ptrElemDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	// Recurse into the underlying element
-	//fmx.Cyanf("[defaultPtrDiff] recursing into Elem() for %s vs %s\n",
-	//	a.String(), b.String())
 	differ := between(tab.Inc(), a.Elem(), b.Elem(), s)
 
 	if !differ.Equals {
-		//fmx.Redf("[defaultPtrDiff] Elem() differ for %s vs %s: %s\n",
-		//	a.String(), b.String(), differ.Message)
 		message := differs.PointerValues(tab) + "\n" + differ.Message
 		return s.cache(a, b,
 			differs.NotEquals(message, differ.Diff, differ.Received, differ.Expected))
 	}
-
-	//fmx.Greenf("[defaultPtrDiff] ptrs compare after recursion: %s vs %s\n",
-	//	a.String(), b.String())
 	return differs.Equals()
 }
 
@@ -747,7 +737,7 @@ func ptrElemDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.D
 //	A: both ptrs hold the same address; or
 //	B: both ptrs are nil; and
 //	B: both ptrs have the same type
-func samePtrDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.Difference {
+func samePtrDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if !a.IsNil() && !b.IsNil() {
 		pa, pb := a.Pointer(), b.Pointer()
 		if pa != pb {
@@ -759,14 +749,18 @@ func samePtrDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.D
 	}
 
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
 	if a.IsNil() && b.IsNil() {
 		if ta != tb {
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
 			msg := differs.NilPointersSignMismatch(tab, aa, bb)
 			return differs.NotEquals(msg, "", aa, bb)
 		}
 		return differs.Equals()
 	}
+
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 
 	if a.IsNil() {
 		msg := differs.NilReceived(tab, "ptr", bb)
@@ -777,8 +771,6 @@ func samePtrDiff(tab indent.Indentor, a, b reflect.Value, _ *Strategy) differs.D
 }
 
 func diffStrings(tab indent.Indentor, value, expected string, s *Strategy) differs.Difference {
-	//fmx.Purplef("[diffStrings] '%s' compare '%s': %t\n", value, expected,
-	//	reflect.DeepEqual(value, expected))
 	value, expected = formatStrings(s.stringFormat, value, expected)
 	received, expected, idx := s.strings(value, expected)
 	if idx == -1 {
@@ -824,22 +816,23 @@ func diffStrings(tab indent.Indentor, value, expected string, s *Strategy) diffe
 //	B: Both slices have the same type, length, capacity and backing array pointer; or
 //	C: Both slices are nil and have the same type.
 func defaultSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[defaultSliceDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(readableValue(a), readableValue(b)))
-
 	if !a.IsNil() && !b.IsNil() {
 		return defaultNotNilSliceDiff(tab, a, b, s)
 	}
 
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
 
 	if a.IsNil() && b.IsNil() {
 		if ta.Elem() != tb.Elem() {
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
 			return differs.NotEquals(differs.NilTypesMismatch(tab, "slices", aa, bb), "", aa, bb)
 		}
 		return differs.Equals()
 	}
+
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 
 	if a.IsNil() {
 		msg := differs.NilReceived(tab, "slice", bb)
@@ -852,18 +845,20 @@ func defaultSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) diff
 func defaultNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	ta, tb := a.Type(), b.Type()
 	if ta.Elem() != tb.Elem() {
-		aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.SliceTypesMismatch(tab, aa, bb), "", aa, bb)
 	}
 
 	if a.Len() != b.Len() {
-		aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.SliceLenMismatch(tab, a.Len(), b.Len()), "", aa, bb)
 	}
 
 	if a.Cap() != b.Cap() {
-		aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
-		//fmx.Purplef("[differSlice] '%s'.Cap() different from '%s'.Cap()\n", a.String(), b.String())
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.SliceCapMismatch(tab, a.Cap(), b.Cap()),
 			"", aa, bb)
 	}
@@ -875,10 +870,10 @@ func defaultNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy
 	//         Cap  int
 	//     }
 	//
-	// When two slices have the same:
+	// At two slices have the same:
 	//   - Type (already checked earlier),
 	//   - Length (a.Len() == b.Len()),
-	//   - Capacity (a.Cap() == b.Cap()),
+	//   - Len (a.Cap() == b.Cap()),
 	//   - Data pointer (a.pointer() == b.pointer()),
 	//
 	// they reference the same portion of the same underlying array.
@@ -899,9 +894,6 @@ func sliceElemDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs
 	for i := 0; i < a.Len(); i++ {
 		valA := a.Index(i)
 		valB := b.Index(i)
-		//fmx.Purplef("[defaultSliceDiff] '%s'.Index(%d) compare '%s'.Index(%d): %t\n",
-		//	a.String(), i, b.String(), i,
-		//	reflect.DeepEqual(readableValue(valA), readableValue(valB)))
 		differ := between(tab.Inc(), valA, valB, s)
 		if !differ.Equals {
 			msg := differs.SliceValues(tab, i) + "\n" + differ.Message
@@ -919,24 +911,25 @@ func sliceElemDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs
 //	B: Both slices have the same type, length, and backing array pointer; or
 //	C: Both slices are nil or empty and have the same type.
 func serializableSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[serializableSliceDiff] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(readableValue(a), readableValue(b)))
-
 	if !a.IsNil() && !b.IsNil() {
 		return serializableNotNilSliceDiff(tab, a, b, s)
 	}
 
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
 
 	if (a.IsNil() && b.IsNil()) ||
 		(a.IsNil() && b.Len() == 0) ||
 		(a.Len() == 0 && b.IsNil()) {
 		if ta.Elem() != tb.Elem() {
+			aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+				types.ValidValueNameSwitch(b.Type(), s.useQfName)
 			return differs.NotEquals(differs.NilTypesMismatch(tab, "slices", aa, bb), "", aa, bb)
 		}
 		return differs.Equals()
 	}
+
+	aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		types.ValidValueNameSwitch(b.Type(), s.useQfName)
 
 	if a.IsNil() {
 		msg := differs.NilReceived(tab, "slice", bb)
@@ -948,13 +941,16 @@ func serializableSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy)
 
 func serializableNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
 
 	if ta.Elem() != tb.Elem() {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.SliceTypesMismatch(tab, aa, bb), "", aa, bb)
 	}
 
 	if a.Len() != b.Len() {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.SliceLenMismatch(tab, a.Len(), b.Len()), "", aa, bb)
 	}
 
@@ -969,12 +965,12 @@ func serializableNotNilSliceDiff(tab indent.Indentor, a, b reflect.Value, s *Str
 //	A: both structs have the same type; and
 //	A: both struct fields are equals;
 func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff differs.Difference) {
-	//fmx.Purplef("[diffStructs] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(readableValue(a), readableValue(b)))
 	ta, tb := a.Type(), b.Type()
-	aa, bb := types.ValidValueName(ta), types.ValidValueName(tb)
+
 	// Structs can't be nil
 	if ta != tb {
+		aa, bb := types.ValidValueNameSwitch(a.Type(), s.useQfName),
+			types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.NotEquals(differs.StructTypesMismatch(tab, aa, bb), "", aa, bb)
 	}
 
@@ -986,12 +982,10 @@ func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff dif
 
 	s.rideFields(a, b, func(i int, f1, f2 reflect.Value) bool {
 		field := a.Type().Field(i)
-		//fmx.Purplef("[diffStructs] '%s'.'%s' compare '%s'.'%s': %t\n",
-		//	a.String(), field.Name, b.String(), field.Name,
-		//	reflect.DeepEqual(readableValue(f1), readableValue(f2)))
 
 		differ := between(tab.Inc(), f1, f2, s)
 		if !differ.Equals {
+			aa := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 			message := differs.StructFields(tab, aa, field.Name) + "\n" + differ.Message
 			diff = differs.NotEquals(message, differ.Diff, differ.Received, differ.Expected)
 			return false // stop iterating
@@ -1002,9 +996,9 @@ func diffStructs(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff dif
 	return
 }
 
-func differUint(tab indent.Indentor, a, b reflect.Value) differs.Difference {
-	name := types.ValidValueName(a.Type())
+func differUint(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
 	if a.Uint() != b.Uint() {
+		name := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 		return differs.NotEquals(differs.Values(tab, sprints.Typed(name, a.Uint()),
 			sprints.Typed(name, b.Uint())), "", tab.Sprint(sprints.TypedDigit(name, a.Uint())),
 			tab.Sprint(sprints.TypedDigit(name, b.Uint())))
@@ -1017,9 +1011,6 @@ func differUint(tab indent.Indentor, a, b reflect.Value) differs.Difference {
 //	A: both ptrs hold the same address; or
 //	B: both ptrs are nil
 func defaultUnsafePtrs(tab indent.Indentor, a, b reflect.Value, s *Strategy) differs.Difference {
-	//fmx.Purplef("[defaultUnsafePtrs] '%s' compare '%s': %t\n", a.String(), b.String(),
-	//	reflect.DeepEqual(a.Interface(), b.Interface()))
-
 	if a.IsNil() && b.IsNil() {
 		return differs.Equals()
 	}
@@ -1048,15 +1039,6 @@ func defaultUnsafePtrs(tab indent.Indentor, a, b reflect.Value, s *Strategy) dif
 	return differs.NotEquals(msg, "", a.String(), b.String())
 }
 
-func readableValue(v reflect.Value) any {
-	if v.CanInterface() {
-		return v.Interface()
-	}
-	// Use unsafe to bypass unexported access
-	v = reflect.NewAt(v.Type(), unsafe.Pointer(v.UnsafeAddr())).Elem()
-	return v.Interface()
-}
-
 func readAnyField(v reflect.Value, i int) (field reflect.Value, canRead bool) {
 	return v.Field(i), true
 }
@@ -1066,7 +1048,7 @@ func readSettableField(v reflect.Value, i int) (field reflect.Value, canRead boo
 	return f, f.CanSet()
 }
 
-func rideAllFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value]) {
+func rideAllFields(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value]) {
 	for i := 0; i < a.NumField(); i++ {
 		f1 := values.UnsafeFieldValueByIndex(a, i)
 		f2 := values.UnsafeFieldValueByIndex(b, i)
@@ -1076,7 +1058,7 @@ func rideAllFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Va
 	}
 }
 
-func rideSettableFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value]) {
+func rideSettableFields(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value]) {
 	for i := 0; i < a.NumField(); i++ {
 		f1 := a.Field(i)
 		if !f1.CanSet() {

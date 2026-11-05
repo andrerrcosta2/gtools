@@ -6,7 +6,7 @@ package proto
 import (
 	"reflect"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 )
 
 type Prototype struct {
@@ -18,10 +18,10 @@ type Prototype struct {
 	FieldName string // Name of the field
 	Tag       string // struct field tag
 
-	Kind       reflect.Kind            // Kind of type (ReadStruct, slices, array, etc.)
-	Key        *Prototype              // For map
-	Value      *Prototype              // For slice/array/map, or pointer element type
-	EmptyValue functions.Supplier[any] // Empty constructor
+	Kind       reflect.Kind           // Kind of type (ReadStruct, slices, array, etc.)
+	Key        *Prototype             // For map
+	Value      *Prototype             // For slice/array/map, or pointer element type
+	EmptyValue function.Supplier[any] // Empty constructor
 
 	Offset uint32 // Offset of the field in the struct
 

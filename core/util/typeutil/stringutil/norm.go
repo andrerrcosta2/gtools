@@ -3,9 +3,10 @@
 package stringutil
 
 import (
-	"golang.org/x/text/unicode/norm"
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // NormNFC returns the canonical composed form of the string.

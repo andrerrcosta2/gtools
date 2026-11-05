@@ -12,11 +12,8 @@ import (
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
-	"github.com/andrerrcosta2/gtools/gtests"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
+	"github.com/andrerrcosta2/gtools/core/testlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/_testdata"
 )
@@ -94,7 +91,7 @@ func TestValue_BasicTypes(t *testing.T) {
 			),
 		},
 
-		// maps
+		// dicts
 		{
 			name: "Test map[string]int",
 			input: reflect.ValueOf(map[string]int{
@@ -134,7 +131,7 @@ func TestValue_BasicTypes(t *testing.T) {
 			expected: sprints.NilType(zero, "chan int"),
 		},
 
-		// functions
+		// function
 		{
 			name:     "Test func(int) int",
 			input:    reflect.ValueOf(func(x int) int { return x + 1 }),
@@ -166,11 +163,8 @@ func TestValue_BasicTypes(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-			tt.StackTitle(tc.name, tc.expected)
 			result := Of[internal.Option](zero, tc.input)
-			compareMessages(tt, result, tc.expected)
-			tt.StackLn()
+			compareMessages(t, result, tc.expected)
 		})
 	}
 }
@@ -220,9 +214,9 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// Slices of maps
+		// Slices of dicts
 		{
-			name: "Test slice of maps",
+			name: "Test slice of dicts",
 			input: reflect.ValueOf([]map[string]int{
 				{"one": 1, "two": 2},
 				{"three": 3, "four": 4},
@@ -239,7 +233,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// maps with Slicef Values
+		// dicts with Slicef Values
 		{
 			name: "Test map with slice values",
 			input: reflect.ValueOf(map[string][]int{
@@ -316,7 +310,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			)),
 		},
 
-		// Nil maps defaultInterface a ReadStruct
+		// Nil dicts defaultInterface a ReadStruct
 		{
 			name: "Test struct with nil map",
 			input: reflect.ValueOf(struct {
@@ -334,7 +328,7 @@ func TestValue_ComplexTypes(t *testing.T) {
 			),
 		},
 
-		// Empty maps defaultInterface a Slicef
+		// Empty dicts defaultInterface a Slicef
 		{
 			name: "Test slice with empty map",
 			input: reflect.ValueOf([]map[string]int{
@@ -348,11 +342,8 @@ func TestValue_ComplexTypes(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-			tt.StackTitle(tc.name, tc.expected)
 			result := Of[internal.Option](zero, tc.input)
-			compareMessages(tt, result, tc.expected)
-			tt.StackLn()
+			compareMessages(t, result, tc.expected)
 		})
 	}
 }
@@ -377,21 +368,21 @@ func TestValue_EdgeTypes(t *testing.T) {
 		{
 			name:  "Test Self Referenced Next",
 			input: reflect.ValueOf(_testdata.SelfReferencedNode),
-			expected: "*" + sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Node",
+			expected: "*" + sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Node",
 				sprints.Field(zero, "Value", sprints.Typed("int", 1)),
-				sprints.Field(zero, "Next", sprints.Ptr(zero, sprints.CyclicRef(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Node",
+				sprints.Field(zero, "Next", sprints.Ptr(zero, sprints.CyclicRef(zero, "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Node",
 					sprints.Addr(_testdata.SelfReferencedNode)))),
 			),
 		},
 		{
 			name:     "Test named int",
 			input:    reflect.ValueOf(_testdata.NamedInt),
-			expected: sprints.Typed("github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.MyInt", 42),
+			expected: sprints.Typed("github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.MyInt", 42),
 		},
 		{
 			name:  "Test unexported field",
 			input: reflect.ValueOf(_testdata.UnexportedField),
-			expected: sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Person",
+			expected: sprints.BClosedobj(zero, "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Person",
 				sprints.Field(zero, "Name", sprints.TypedString("Alice")),
 				sprints.Field(zero, "age", sprints.Typed("int", 30)),
 			),
@@ -420,18 +411,15 @@ func TestValue_EdgeTypes(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-			tt.StackTitle(tc.name, tc.expected)
 			result := Of[internal.Option](zero, tc.input)
-			compareMessages(tt, result, tc.expected)
-			tt.StackLn()
+			compareMessages(t, result, tc.expected)
 		})
 	}
 }
 
 func buildExpectedTree(base indent.Indentor, depth int) string {
 	if depth == 0 {
-		return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+		return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Tree",
 			sprints.Field(base.Inc(), "Value", sprints.Typed("int", 0)),
 			// reflect can't find the type package of nil elements
 			// this is golang
@@ -442,18 +430,18 @@ func buildExpectedTree(base indent.Indentor, depth int) string {
 		)
 	}
 
-	return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+	return sprints.NestedBClosedobj(base, "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Tree",
 		sprints.Field(base.Inc(), "Value", sprints.Typed("int", depth)),
 		sprints.Field(base.Inc(), "Left", sprints.Ptr(base, buildExpectedTree(base.Inc(), depth-1))),
 		sprints.Field(base.Inc(), "Right", sprints.Ptr(base,
-			sprints.CyclicRef(indent.Zero(), "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Tree",
+			sprints.CyclicRef(indent.Zero(), "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Tree",
 				"0x00000000"))),
 	)
 }
 
 // Custom comparison function to skip address comparison
-func compareMessages(tt gtests.Loggable, result, expected string) bool {
-	tt.Helper()
+func compareMessages(t testlite.LoggerTesting, result, expected string) bool {
+	t.Helper()
 	result = cyclicRefRE.ReplaceAllString(result, "<cyclic-ref|"+fmx.SGreen("0xt3st4ddr")+">")
 	expected = cyclicRefRE.ReplaceAllString(expected, "<cyclic-ref|"+fmx.SGreen("0xt3st4ddr")+">")
 	result = addrRE.ReplaceAllString(result, "<"+fmx.SGreen("0xt3st4ddr")+">")
@@ -461,12 +449,11 @@ func compareMessages(tt gtests.Loggable, result, expected string) bool {
 
 	// Compare the modified result and expected strings
 	if result != expected {
-		tt.Error(gtests.ErrorDiff("Different messages", result, expected))
-		tt.StackError(gtests.ErrorDiff("Different messages", result, expected))
-		tt.StackLog(differs.Quick(result, expected))
+		t.Error(testlite.ErrorDiff("Different messages", result, expected))
+		t.Logf(differs.Quick(result, expected))
 		return false
 	} else {
-		tt.StackSuccessf(gtests.ErrorDiff("Equal messages", result, expected))
+		t.Logf(testlite.ErrorDiff("Equal messages", result, expected))
 	}
 	return true
 }

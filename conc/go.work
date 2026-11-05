@@ -1,0 +1,14 @@
+go 1.26.5
+
+use (
+	.
+	./actors
+	./core
+	./dispatchers
+	./executors
+	./streams
+	./testing
+	./runtimes
+	./runtimes/schedulers/engines
+	./runtimes/schedulers
+)

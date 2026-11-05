@@ -1,11 +1,17 @@
-go 1.23.1
+go 1.26.5
 
 use (
-    ./domain
-    ./data
-    ./format
-    ./testlite
-    ./seeders
-    ./util
 	.
+	./chronos
+	./data
+	./domain
+	./format
+	./io
+	./runtime
+	./search
+	./seeders
+	./selection
+	./sortables
+	./testlite
+	./util
 )

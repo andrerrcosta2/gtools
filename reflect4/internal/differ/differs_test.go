@@ -13,13 +13,10 @@ import (
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/interf"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/interf"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/_testdata"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
@@ -31,14 +28,13 @@ import (
 //
 //	This test must assert:
 //	- equality by value
-//	- pattern messages on differences
+//	- patern messages on differences
 func TestBetween_Primitives(t *testing.T) {
 	var zero indent.Branch
 	var strat []internal.Option
 
 	// Test 1: Equal integers
 	t.Run("Equals integers", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Equals integers",
 			a:       reflect.ValueOf(36),
@@ -47,12 +43,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 2: Different integers
 	t.Run("Different integers", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different integers",
 			a:       reflect.ValueOf(36),
@@ -62,12 +57,11 @@ func TestBetween_Primitives(t *testing.T) {
 				sprints.TypedDigit("int", 84)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 3: Equals floats
 	t.Run("Equals floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Equals floats",
 			a:       reflect.ValueOf(3.14),
@@ -76,12 +70,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 4: Different floats
 	t.Run("Different floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different floats",
 			a:       reflect.ValueOf(3.14),
@@ -91,12 +84,11 @@ func TestBetween_Primitives(t *testing.T) {
 				sprints.TypedRoundFloat("float64", 6.28)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 5: Equals strings
 	t.Run("Equals strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Equals strings",
 			a:       reflect.ValueOf("hello"),
@@ -105,12 +97,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 6: Different strings
 	t.Run("Different strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different strings",
 			a:       reflect.ValueOf("hello"),
@@ -120,12 +111,11 @@ func TestBetween_Primitives(t *testing.T) {
 				differs.Diff(indent.Tab(0), "'"+fmx.SRed("h")+"ello'", "'world'")),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 7: Equals booleans
 	t.Run("Equals booleans", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Equals booleans",
 			a:       reflect.ValueOf(true),
@@ -134,12 +124,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 8: Different booleans
 	t.Run("Different booleans", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different booleans",
 			a:       reflect.ValueOf(true),
@@ -149,12 +138,11 @@ func TestBetween_Primitives(t *testing.T) {
 				sprints.TypedBool(false)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 9: Integer vs float
 	t.Run("Integer vs float", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Integer vs float",
 			a:       reflect.ValueOf(36),
@@ -163,12 +151,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    differs.TypesMismatch(zero, "int", "float64"),
 			equals:  false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 10: Invalid received value
 	t.Run("Invalid received value", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Invalid received value",
 			a:       reflect.Value{},
@@ -177,12 +164,11 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    differs.InvalidReceived(zero, "int"),
 			equals:  false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 11: Invalid expected value
 	t.Run("Invalid expected value", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Invalid expected value",
 			a:       reflect.ValueOf(10),
@@ -191,7 +177,7 @@ func TestBetween_Primitives(t *testing.T) {
 			diff:    differs.InvalidExpected(zero, "int"),
 			equals:  false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 }
 
@@ -200,7 +186,7 @@ func TestBetween_Primitives(t *testing.T) {
 //
 //	This test must assert:
 //	- equality by value
-//	- pattern messages on differences
+//	- patern messages on differences
 func TestBetween_Primitives_EdgeCases(t *testing.T) {
 	var zero indent.Branch
 	var zerostr indent.Tab
@@ -208,7 +194,6 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 
 	// Test 1: Zero Integers
 	t.Run("Zero Integers", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Zero Integers",
 			a:       reflect.ValueOf(0),
@@ -217,12 +202,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 2: Negative vs Positive
 	t.Run("negative vs positive integers", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "negative vs positive integers",
 			a:       reflect.ValueOf(-36),
@@ -232,12 +216,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedDigit("int", -36), sprints.TypedDigit("int", 36)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 3: Different max int
 	t.Run("different max int", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different max int",
 			a:       reflect.ValueOf(math.MaxInt),
@@ -247,12 +230,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedDigit("int", math.MaxInt-1)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 4: Zero Floats
 	t.Run("Zero Floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Zero Floats",
 			a:       reflect.ValueOf(0.0),
@@ -261,12 +243,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 5: Negative vs positive floats
 	t.Run("negative vs positive floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "negative vs positive floats",
 			a:       reflect.ValueOf(-3.14),
@@ -276,7 +257,7 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedRoundFloat("float64", 3.14)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 6: NaN floats
@@ -284,7 +265,6 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 	//  - math.NaN() == math.NaN() // false
 	//  - reflect.DeepEqual(math.NaN(), math.NaN()) // false
 	t.Run("NaN floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "NaN floats",
 			a:       reflect.ValueOf(math.NaN()),
@@ -294,12 +274,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.Typed("float64", math.NaN())),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 7: Infinity floats
 	t.Run("Infinity floats", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Infinity floats",
 			a:       reflect.ValueOf(math.Inf(1)),
@@ -309,12 +288,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedRoundFloat("float64", math.Inf(-1))),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 8: Different max float
 	t.Run("Different max float", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different max float",
 			a:       reflect.ValueOf(math.MaxFloat64),
@@ -324,12 +302,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedRoundFloat("float64", math.MaxFloat64*-1)),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 9: Zero Complex
 	t.Run("Zero Complex", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Zero Complex",
 			a:       reflect.ValueOf(complex(0, 0)),
@@ -338,12 +315,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 10: Negative vs positive complex
 	t.Run("negative vs positive complex", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "negative vs positive complex",
 			a:       reflect.ValueOf(complex(-3.14, 3.14)),
@@ -353,12 +329,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				sprints.TypedComplex128(complex(3.14, -3.14))),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 11: Empty strings
 	t.Run("Empty strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Empty strings",
 			a:       reflect.ValueOf(""),
@@ -367,12 +342,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 12: Whitespace strings
 	t.Run("Whitespace strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Whitespace strings",
 			a:       reflect.ValueOf(" "),
@@ -383,12 +357,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				"''")),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 12: Case-sensitive strings
 	t.Run("Case-sensitive strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Case-sensitive strings",
 			a:       reflect.ValueOf("Hello"),
@@ -398,12 +371,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				"'"+fmx.SRed("H")+"ello'", "'hello'")),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 13: Equals Unicode strings
 	t.Run("Equals Unicode strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Equals Unicode strings",
 			a:       reflect.ValueOf("こんにちは"),
@@ -412,12 +384,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    "",
 			equals:  true,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 14: Different Unicode strings
 	t.Run("Different Unicode strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Different Unicode strings",
 			a:       reflect.ValueOf("こんには"),
@@ -427,12 +398,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 				differs.Diff(zerostr, "'こんに"+fmx.SRedf("は")+"'", "'こんにちは'")),
 			equals: false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 
 	// Test 15: Invalid received value
 	t.Run("Invalid received value", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		tc := TestCase{
 			name:    "Invalid received value",
 			a:       reflect.Value{},
@@ -441,11 +411,11 @@ func TestBetween_Primitives_EdgeCases(t *testing.T) {
 			diff:    differs.InvalidReceived(zero, "int"),
 			equals:  false,
 		}
-		testDifferValues(tt, tc)
+		testDifferValues(t, tc)
 	})
 }
 
-// TestBetween_Arrays_SingleDepth_DefaultStrategy tests the Between function against arrays
+// TestBetween_Arrays_SingleDepth_DefaultStrategy tests the Between function against array
 // based on the default Strategy
 //
 //	this test must assert:
@@ -459,11 +429,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 	var zerostr indent.Tab
 	var strat []internal.Option
 
-	// Test 1: Equal integer arrays
-	t.Run("compare integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Equals integer arrays",
+	// Test 1: Equal integer array
+	t.Run("compare integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Equals integer array",
 			a:       reflect.ValueOf([...]int{1, 2, 3}),
 			b:       reflect.ValueOf([...]int{1, 2, 3}),
 			options: strat,
@@ -472,11 +441,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 2: Equal Float arrays
-	t.Run("compare float arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Equals float arrays",
+	// Test 2: Equal Float array
+	t.Run("compare float array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Equals float array",
 			a:       reflect.ValueOf([...]float64{1.1, 2.2, 3.3}),
 			b:       reflect.ValueOf([...]float64{1.1, 2.2, 3.3}),
 			options: strat,
@@ -485,11 +453,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 3: Equal string arrays
-	t.Run("compare string arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Equals string arrays",
+	// Test 3: Equal string array
+	t.Run("compare string array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Equals string array",
 			a:       reflect.ValueOf([...]string{"a", "b", "c"}),
 			b:       reflect.ValueOf([...]string{"a", "b", "c"}),
 			options: strat,
@@ -498,11 +465,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 4: Different integer arrays
-	t.Run("different integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different integer arrays",
+	// Test 4: Different integer array
+	t.Run("different integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different integer array",
 			a:       reflect.ValueOf([...]int{1, 2, 3}),
 			b:       reflect.ValueOf([...]int{1, 2, 4}),
 			options: strat,
@@ -512,11 +478,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 5: Different float arrays
-	t.Run("different float arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different float arrays",
+	// Test 5: Different float array
+	t.Run("different float array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different float array",
 			a:       reflect.ValueOf([...]float64{1.1, 2.2, 3.3}),
 			b:       reflect.ValueOf([...]float64{1.1, 2.2, 3.4}),
 			options: strat,
@@ -526,11 +491,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 6: Different string arrays
-	t.Run("different string arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different string arrays",
+	// Test 6: Different string array
+	t.Run("different string array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different string array",
 			a:       reflect.ValueOf([...]string{"hello", "world"}),
 			b:       reflect.ValueOf([...]string{"hello", "there"}),
 			options: strat,
@@ -543,8 +507,7 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 
 	// Test 7: Arrays of different lengths
 	t.Run("Arrays of different lengths", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Arrays of different lengths",
 			a:       reflect.ValueOf([...]int{1, 2, 3}),
 			b:       reflect.ValueOf([...]int{1, 2}),
@@ -554,11 +517,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 8: Empty integer arrays
-	t.Run("empty integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Empty integer arrays",
+	// Test 8: Empty integer array
+	t.Run("empty integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Empty integer array",
 			a:       reflect.ValueOf([...]int{}),
 			b:       reflect.ValueOf([...]int{}),
 			options: strat,
@@ -567,11 +529,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 9: empty string arrays
-	t.Run("empty string arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Empty string arrays",
+	// Test 9: empty string array
+	t.Run("empty string array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Empty string array",
 			a:       reflect.ValueOf([...]string{}),
 			b:       reflect.ValueOf([...]string{}),
 			options: strat,
@@ -580,11 +541,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 10: Equals nested integer arrays
-	t.Run("Equals nested integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Equals nested integer arrays",
+	// Test 10: Equals nested integer array
+	t.Run("Equals nested integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Equals nested integer array",
 			a:       reflect.ValueOf([...][]int{{1, 2}, {3, 4}}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, {3, 4}}),
 			options: strat,
@@ -593,11 +553,10 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 11: Different nested integer arrays
-	t.Run("Different nested integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different nested integer arrays",
+	// Test 11: Different nested integer array
+	t.Run("Different nested integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different nested integer array",
 			a:       reflect.ValueOf([...][]int{{1, 2}, {3, 4}}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, {3, 5}}),
 			options: strat,
@@ -609,7 +568,7 @@ func TestBetween_Arrays_SingleDepth_DefaultStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Arrays_EdgeCases_DefaultStrategy tests the Between function against arrays
+// TestBetween_Arrays_EdgeCases_DefaultStrategy tests the Between function against array
 // based on the default Strategy
 //
 //	this test must assert:
@@ -624,8 +583,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Test 1: array with nil values
 	t.Run("array with nil values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "array with nil values",
 			a:       reflect.ValueOf([...]interface{}{1, nil}),
 			b:       reflect.ValueOf([...]interface{}{1, nil}),
@@ -637,8 +595,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Test 2: array with mixed types
 	t.Run("array with mixed types", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "array with mixed types",
 			a:       reflect.ValueOf([...]interface{}{1, "hello"}),
 			b:       reflect.ValueOf([...]interface{}{1, "world"}),
@@ -652,8 +609,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Test 3: Nested array with nil slice
 	t.Run("Nested array with nil slice", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nested array with nil slice",
 			a:       reflect.ValueOf([...][]int{{1, 2}, nil}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, nil}),
@@ -665,8 +621,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Test 4: Nested array with empty sub-array
 	t.Run("Nested array with empty sub-array", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nested array with empty sub-array",
 			a:       reflect.ValueOf([...][]int{{1, 2}, {}}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, {}}),
@@ -678,8 +633,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Test 5: Nested array with nil sub-array
 	t.Run("Nested array with nil sub-array", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nested array with nil sub-array",
 			a:       reflect.ValueOf([...][]int{{1, 2}, nil}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, nil}),
@@ -689,11 +643,10 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 6: Large integer arrays
-	t.Run("Large integer arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name: "Large integer arrays",
+	// Test 6: Large integer array
+	t.Run("Large integer array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name: "Large integer array",
 			a: reflect.ValueOf(func() [1000]int {
 				var arr [1000]int
 				for i := 0; i < 1000; i++ {
@@ -714,11 +667,10 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Test 7: Different type arrays
-	t.Run("Different type arrays", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different type arrays",
+	// Test 7: Different type array
+	t.Run("Different type array", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different type array",
 			a:       reflect.ValueOf([...]int{1, 2, 3}),
 			b:       reflect.ValueOf([...]float64{1.0, 2.0, 3.0}),
 			options: strat,
@@ -728,10 +680,9 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	// Test 8: Arrays of any with different values
-	t.Run("arrays of any with different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Different type arrays",
+	t.Run("array of any with different values", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "Different type array",
 			a:       reflect.ValueOf([...]any{1, 2, 3}),
 			b:       reflect.ValueOf([...]any{1.0, 2.0, 3.0}),
 			options: strat,
@@ -742,13 +693,12 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	// Test 9: Arrays of custom structs
-	t.Run("arrays of custom structs", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		name := "github.com/andrerrcosta2/gtools/reflect4/internal/_testdata.Person2"
-		testDifferValues(tt, TestCase{
+	t.Run("array of custom structs", func(t *testing.T) {
+		name := "github.com/andrerrcosta2/gtools/reflect4/infra/_testdata.Person2"
+		testDifferValues(t, TestCase{
 			name:    "array of custom structs",
-			a:       reflect.ValueOf([...]_testdata.Person2{{"Alice", 30}, {"Bob", 25}}),
-			b:       reflect.ValueOf([...]_testdata.Person2{{"Alice", 30}, {"Charlie", 25}}),
+			a:       reflect.ValueOf([...]_testdata.Person2{{Name: "Alice", Age: 30}, {Name: "Bob", Age: 25}}),
+			b:       reflect.ValueOf([...]_testdata.Person2{{Name: "Alice", Age: 30}, {Name: "Charlie", Age: 25}}),
 			options: strat,
 			diff: differs.Message(differs.Chain(differs.ArrayElem(zero, 1),
 				differs.StructFields(zero.Plus(1), name, "Name"), differs.Strings(zero.Plus(2), 0)),
@@ -758,9 +708,8 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	// Test 10: Arrays of ptrs
-	t.Run("arrays of ptrs - different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+	t.Run("array of ptrs - different values", func(t *testing.T) {
+		testDifferValues(t, TestCase{
 			name:    "array of ptrs",
 			a:       reflect.ValueOf([...]*int{ptrs.New(1), ptrs.New(2), ptrs.New(3)}),
 			b:       reflect.ValueOf([...]*int{ptrs.New(1), ptrs.New(2), ptrs.New(4)}),
@@ -773,9 +722,8 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	// Test 11: Arrays of uninitialized elements
-	t.Run("arrays of uninitialized elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+	t.Run("array of uninitialized elements", func(t *testing.T) {
+		testDifferValues(t, TestCase{
 			name:    "array with uninitialized elements",
 			a:       reflect.ValueOf([...]string{"hello", "", "world"}),
 			b:       reflect.ValueOf([...]string{"hello", "there", "world"}),
@@ -787,9 +735,8 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	// Test 12: Arrays of non-comparable elements
-	t.Run("arrays of non-comparable elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+	t.Run("array of non-comparable elements", func(t *testing.T) {
+		testDifferValues(t, TestCase{
 			name:    "array with non-comparable elements",
 			a:       reflect.ValueOf([...][]int{{1, 2}, {3, 4}}),
 			b:       reflect.ValueOf([...][]int{{1, 2}, {3, 5}}),
@@ -803,7 +750,7 @@ func TestBetween_Arrays_EdgeCases_DefaultStrategy(t *testing.T) {
 }
 
 // TestBetween_Arrays_SingleDepth_SerializableStrategy tests the Between function against
-// single depth arrays allowing nil equals empty
+// single depth array allowing nil equals empty
 //
 //	this test must assert:
 //	1. Arrays are equals only when all the conditions below are met:
@@ -817,7 +764,7 @@ func TestBetween_Arrays_SingleDepth_SerializableStrategy(t *testing.T) {
 }
 
 // TestBetween_Arrays_EdgeCases_SerializableStrategy tests the Between function against
-// single depth arrays allowing nil equals empty
+// single depth array allowing nil equals empty
 //
 //	this test must assert:
 //	1. Arrays are equals only when all the conditions below are met:
@@ -831,7 +778,7 @@ func TestBetween_Arrays_EdgeCases_SerializableStrategy(t *testing.T) {
 }
 
 // TestBetween_Arrays_ErrorHandling_DefaultStrategy tests the Between error handling
-// against arrays based on all strategies
+// against array based on all strategies
 //
 //	this test must assert:
 //	1. Arrays are equals only when all the conditions below are met:
@@ -858,9 +805,8 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("same channel instance", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		c := make(chan int, 100)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "same channel instances",
 			a:       reflect.ValueOf(&c),
 			b:       reflect.ValueOf(&c),
@@ -871,8 +817,7 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("equals unbuffered channels", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Equal unbuffered channels",
 			a:       reflect.ValueOf(make(chan int)),
 			b:       reflect.ValueOf(make(chan int)),
@@ -883,8 +828,7 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("equals buffered channels", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "equals buffered channels",
 			a:       reflect.ValueOf(make(chan int, 5)),
 			b:       reflect.ValueOf(make(chan int, 5)),
@@ -896,8 +840,7 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 
 	// Different channels
 	t.Run("different channel types", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different channel types",
 			a:       reflect.ValueOf(make(chan int)),
 			b:       reflect.ValueOf(make(chan string)),
@@ -908,8 +851,7 @@ func TestBetween_Channels_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different buffer sizes, same signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "different buffer sizes, same signature",
 			a:       reflect.ValueOf(make(chan int, 5)),
 			b:       reflect.ValueOf(make(chan int, 10)),
@@ -936,9 +878,8 @@ func TestBetween_Channels_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Edge cases
 	t.Run("nil channel vs valid channel", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil channel vs valid channel",
 			a:       reflect.ValueOf(generics.Zero[chan int]()),
 			b:       reflect.ValueOf(make(chan int)),
@@ -947,7 +888,7 @@ func TestBetween_Channels_EdgeCases_DefaultStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid channel vs nil channel",
 			a:       reflect.ValueOf(make(chan int)),
 			b:       reflect.ValueOf(generics.Zero[chan int]()),
@@ -958,8 +899,7 @@ func TestBetween_Channels_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("nil channels, same signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil channels, same signature",
 			a:       reflect.ValueOf(ptrs.Nil[chan int]()),
 			b:       reflect.ValueOf(ptrs.Nil[chan int]()),
@@ -971,10 +911,9 @@ func TestBetween_Channels_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Nil channels capacity is always zero
 	t.Run("nil channels, different signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		a := reflect.ValueOf(generics.Zero[chan int]())
 		b := reflect.ValueOf(generics.Zero[chan float32]())
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nil channels, different signatures",
 			a:       a,
 			b:       b,
@@ -986,10 +925,9 @@ func TestBetween_Channels_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Nil channels capacity is always zero
 	t.Run("nil channels, different direction", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		a := reflect.ValueOf(generics.Zero[chan<- int]())
 		b := reflect.ValueOf(generics.Zero[<-chan int]())
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nil channels, different signatures",
 			a:       a,
 			b:       b,
@@ -1013,9 +951,8 @@ func TestBetween_Channels_IdentityStrategy(t *testing.T) {
 	strat := []internal.Option{compare.ChanIdentity}
 
 	t.Run("same channel instance", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		c := make(chan int, 100)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "same channel instances",
 			a:       reflect.ValueOf(&c),
 			b:       reflect.ValueOf(&c),
@@ -1026,10 +963,9 @@ func TestBetween_Channels_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, equals signatures, unbuffered", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(make(chan int))
 		b := reflect.ValueOf(make(chan int))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Equal unbuffered channels",
 			a:       a,
 			b:       b,
@@ -1040,10 +976,9 @@ func TestBetween_Channels_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, equals signatures, equals buffer size", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(make(chan int, 5))
 		b := reflect.ValueOf(make(chan int, 5))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "different instances, equals signatures, equals buffer size",
 			a:       a,
 			b:       b,
@@ -1055,10 +990,9 @@ func TestBetween_Channels_IdentityStrategy(t *testing.T) {
 
 	// Different channels
 	t.Run("different instances, different buffer sizes", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(make(chan int, 5))
 		b := reflect.ValueOf(make(chan int, 10))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different buffer sizes",
 			a:       a,
 			b:       b,
@@ -1084,11 +1018,10 @@ func TestBetween_Channels_EdgeCases_IdentityStrategy(t *testing.T) {
 
 	// Edge cases
 	t.Run("nil channel vs valid channel", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		nilChan := reflect.ValueOf(generics.Zero[chan int]())
 		valChan := reflect.ValueOf(make(chan int))
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil channel vs valid channel",
 			a:       nilChan,
 			b:       valChan,
@@ -1097,7 +1030,7 @@ func TestBetween_Channels_EdgeCases_IdentityStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid channel vs nil channel",
 			a:       valChan,
 			b:       nilChan,
@@ -1108,8 +1041,7 @@ func TestBetween_Channels_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("nil channels, same signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil channels, same signature",
 			a:       reflect.ValueOf(generics.Zero[chan int]()),
 			b:       reflect.ValueOf(generics.Zero[chan int]()),
@@ -1121,10 +1053,9 @@ func TestBetween_Channels_EdgeCases_IdentityStrategy(t *testing.T) {
 
 	// Nil channels capacity is always zero
 	t.Run("nil channels, different signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		a := reflect.ValueOf(generics.Zero[chan int]())
 		b := reflect.ValueOf(generics.Zero[chan float32]())
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Nil channels, different signatures",
 			a:       a,
 			b:       b,
@@ -1135,14 +1066,14 @@ func TestBetween_Channels_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Functions_DefaultStrategy tests the method Between against functions
+// TestBetween_Functions_DefaultStrategy tests the method Between against function
 // based on the default Strategy
 //
 //	This test must assert:
 //	1. channels are equals only when the conditions below are met:
-//	a: both functions have the same signature - input/output
-//	b: both functions are nil with the same signature
-//	c: both functions have the same underlying address pointer
+//	a: both function have the same signature - input/output
+//	b: both function are nil with the same signature
+//	c: both function have the same underlying address pointer
 //	2. Retrieve the standard messages on differences
 func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 	var zero indent.Branch
@@ -1150,8 +1081,7 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 
 	// equals
 	t.Run("same signature, different instance", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "same signature, different instance",
 			a:       reflect.ValueOf(func(int) {}),
 			b:       reflect.ValueOf(func(int) {}),
@@ -1162,9 +1092,8 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Same function reference", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		fn := func() {}
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Same function reference",
 			a:       reflect.ValueOf(fn),
 			b:       reflect.ValueOf(fn),
@@ -1174,10 +1103,9 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	// Different functions
+	// Different function
 	t.Run("different function types", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "different function ",
 			a:       reflect.ValueOf(func(int) {}),
 			b:       reflect.ValueOf(func(string) {}),
@@ -1188,9 +1116,8 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("one function is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, valid expected",
 			a:       reflect.ValueOf(generics.Zero[func()]()),
 			b:       reflect.ValueOf(func() {}),
@@ -1199,7 +1126,7 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid received, nil expected",
 			a:       reflect.ValueOf(func() {}),
 			b:       reflect.ValueOf(generics.Zero[func()]()),
@@ -1209,10 +1136,9 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 		})
 	})
 
-	t.Run("functions with different signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "functions with different signatures",
+	t.Run("function with different signatures", func(t *testing.T) {
+		testDifferValues(t, TestCase{
+			name:    "function with different signatures",
 			a:       reflect.ValueOf(func(int, string) {}),
 			b:       reflect.ValueOf(func(string, int) {}),
 			options: strat,
@@ -1223,13 +1149,13 @@ func TestBetween_Functions_DefaultStrategy(t *testing.T) {
 }
 
 // TestBetween_Functions_EdgeCases_DefaultStrategy tests the method Between against edge case
-// functions based on the default Strategy
+// function based on the default Strategy
 //
 //	This test must assert:
 //	1. channels are equals only when the conditions below are met:
-//	a: both functions have the same signature - input/output
-//	b: both functions are nil
-//	c: both functions have the same underlying address pointer
+//	a: both function have the same signature - input/output
+//	b: both function are nil
+//	c: both function have the same underlying address pointer
 //	2. Retrieve the standard messages on differences
 func TestBetween_Functions_EdgeCases_DefaultStrategy(t *testing.T) {
 	var zero indent.Branch
@@ -1237,8 +1163,7 @@ func TestBetween_Functions_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Edge cases
 	t.Run("both nil, same signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf((func())(nil)),
 			b:       reflect.ValueOf((func())(nil)),
@@ -1249,9 +1174,8 @@ func TestBetween_Functions_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("both nil, different signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Two different nil functions",
+		testDifferValues(t, TestCase{
+			name:    "Two different nil function",
 			a:       reflect.ValueOf(generics.Zero[func()]()),
 			b:       reflect.ValueOf(generics.Zero[func() int]()),
 			options: strat,
@@ -1261,13 +1185,13 @@ func TestBetween_Functions_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Functions_IdentityStrategy tests the method Between against functions
+// TestBetween_Functions_IdentityStrategy tests the method Between against function
 // based on the identity Strategy
 //
 //	This test must assert:
 //	1. channels are equals only when the conditions below are met:
-//	a: both functions have the same underlying address pointer
-//	b: both functions are nil with the same signature
+//	a: both function have the same underlying address pointer
+//	b: both function are nil with the same signature
 //	2. Retrieve the standard messages on differences
 func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 	var zero indent.Branch
@@ -1275,10 +1199,9 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 
 	// equals
 	t.Run("same signature, different instance", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		a := reflect.ValueOf(func(int) {})
 		b := reflect.ValueOf(func(int) {})
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "same signature, different instance",
 			a:       a,
 			b:       b,
@@ -1290,9 +1213,8 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("Same function reference", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		fn := func() {}
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Same function reference",
 			a:       reflect.ValueOf(fn),
 			b:       reflect.ValueOf(fn),
@@ -1302,12 +1224,11 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 		})
 	})
 
-	// Different functions
+	// Different function
 	t.Run("different function ", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(func(int) {})
 		b := reflect.ValueOf(func(string) {})
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "different function ",
 			a:       a,
 			b:       b,
@@ -1319,9 +1240,8 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("one function is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, valid expected",
 			a:       reflect.ValueOf(generics.Zero[func()]()),
 			b:       reflect.ValueOf(func() {}),
@@ -1330,7 +1250,7 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid received, nil expected",
 			a:       reflect.ValueOf(func() {}),
 			b:       reflect.ValueOf(generics.Zero[func()]()),
@@ -1342,12 +1262,12 @@ func TestBetween_Functions_IdentityStrategy(t *testing.T) {
 }
 
 // TestBetween_Functions_EdgeCases_DefaultStrategy tests the method Between against edge case
-// functions based on the default Strategy
+// function based on the default Strategy
 //
 //	This test must assert:
 //	1. channels are equals only when the conditions below are met:
-//	a: both functions have the same underlying address pointer
-//	b: both functions are nil with the same signature
+//	a: both function have the same underlying address pointer
+//	b: both function are nil with the same signature
 //	2. Retrieve the standard messages on differences
 func TestBetween_Functions_EdgeCases_IdentituStrategy(t *testing.T) {
 	var zero indent.Branch
@@ -1355,8 +1275,7 @@ func TestBetween_Functions_EdgeCases_IdentituStrategy(t *testing.T) {
 
 	// Edge cases
 	t.Run("both nil, same signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf((func())(nil)),
 			b:       reflect.ValueOf((func())(nil)),
@@ -1367,9 +1286,8 @@ func TestBetween_Functions_EdgeCases_IdentituStrategy(t *testing.T) {
 	})
 
 	t.Run("both nil, different signature", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name:    "Two different nil functions",
+		testDifferValues(t, TestCase{
+			name:    "Two different nil function",
 			a:       reflect.ValueOf(generics.Zero[func()]()),
 			b:       reflect.ValueOf(generics.Zero[func() int]()),
 			options: strat,
@@ -1395,8 +1313,7 @@ func TestBetween_Interfaces(t *testing.T) {
 	float := reflect.ValueOf(ptrs.New(interf.FloatTypeCastable(1, 45))).Elem()
 
 	t.Run("same type and value", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.New[interface{}](36)).Elem(),
 			b:       reflect.ValueOf(ptrs.New[interface{}](36)).Elem(),
@@ -1407,8 +1324,7 @@ func TestBetween_Interfaces(t *testing.T) {
 	})
 
 	t.Run("same interfaces, different implementations", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       boolean,
 			b:       float,
@@ -1421,9 +1337,8 @@ func TestBetween_Interfaces(t *testing.T) {
 	})
 
 	t.Run("same interfaces, same impl, different fields", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		snm := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.SimpleUnsafeCastableFloat"
-		testDifferValues(tt, TestCase{
+		snm := "github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models.SimpleUnsafeCastableFloat"
+		testDifferValues(t, TestCase{
 			name:    "Same type, different values",
 			a:       reflect.ValueOf(ptrs.New(interf.FloatTypeCastable(1, 36))).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interf.FloatTypeCastable(1, 38))).Elem(),
@@ -1437,9 +1352,8 @@ func TestBetween_Interfaces(t *testing.T) {
 	})
 
 	t.Run("One interface is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received",
 			a:       reflect.ValueOf(ptrs.Nil[interface{}]()).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interface{}(36))).Elem(),
@@ -1448,7 +1362,7 @@ func TestBetween_Interfaces(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil expected",
 			a:       reflect.ValueOf(ptrs.New(interface{}(36))).Elem(),
 			b:       reflect.ValueOf(ptrs.Nil[interface{}]()).Elem(),
@@ -1459,8 +1373,7 @@ func TestBetween_Interfaces(t *testing.T) {
 	})
 
 	t.Run("same interfaces, different slices", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.New(interface{}([]int{1, 2, 3}))).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interface{}([]int{1, 2, 4}))).Elem(),
@@ -1472,8 +1385,7 @@ func TestBetween_Interfaces(t *testing.T) {
 	})
 
 	t.Run("same interfaces, different channel signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Interfaces holding channels",
 			a:       reflect.ValueOf(ptrs.New(interface{}(make(chan int)))).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interface{}(make(chan string)))).Elem(),
@@ -1499,8 +1411,7 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("Both interfaces are nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Both interfaces are nil",
 			a:       reflect.ValueOf(ptrs.Nil[interface{}]()).Elem(),
 			b:       reflect.ValueOf(ptrs.Nil[interface{}]()).Elem(),
@@ -1511,8 +1422,7 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("nil vs nil, different interfaces", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.Nil[interface{}]()).Elem(),
 			b:       reflect.ValueOf(ptrs.Nil[interf.Closer]()).Elem(),
@@ -1523,8 +1433,7 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("generic interfaces, different structs fields", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.New(interface{}(struct{ Name string }{"Alice"}))).Elem(),
 			b:       reflect.ValueOf(ptrs.New(interface{}(struct{ Name string }{"Bob"}))).Elem(),
@@ -1537,11 +1446,11 @@ func TestBetween_Interfaces_EdgeCases(t *testing.T) {
 	})
 }
 
-// TestBetween_Maps_DefaultStrategy tests the method Between against maps
+// TestBetween_Maps_DefaultStrategy tests the method Between against dicts
 // based on the default Strategy
 //
 //	This test must assert
-//	1. maps are equals only when the conditions below are met:
+//	1. dicts are equals only when the conditions below are met:
 //	a: their signatures are equals
 //	a: their lengths are equals
 //	a: each pair key-value they hold are equals or have the same address
@@ -1552,9 +1461,8 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		m := make(map[string]int)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(m),
 			b:       reflect.ValueOf(m),
@@ -1565,8 +1473,7 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, length and values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:       reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
@@ -1577,8 +1484,7 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signatures, different key values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "c": 2}),
@@ -1589,8 +1495,7 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "Different values",
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "b": 3}),
@@ -1601,8 +1506,7 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different sizes", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "Different sizes",
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1}),
@@ -1613,9 +1517,8 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("One map is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "nil received, valid expected",
 			a:      reflect.ValueOf((map[string]int)(nil)),
 			b:      reflect.ValueOf(map[string]int{"a": 1}),
@@ -1623,7 +1526,7 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 			equals: false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "valid received, nil expected",
 			a:      reflect.ValueOf(map[string]int{"a": 1}),
 			b:      reflect.ValueOf((map[string]int)(nil)),
@@ -1633,11 +1536,11 @@ func TestBetween_Maps_DefaultStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Maps_DefaultStrategy tests the method Between against edge case maps
+// TestBetween_Maps_DefaultStrategy tests the method Between against edge case dicts
 // based on the default Strategy
 //
 //	This test must assert
-//	1. maps are equals only when the conditions below are met:
+//	1. dicts are equals only when the conditions below are met:
 //	a: their signatures are equals
 //	a: their lengths are equals
 //	a: each pair key-value they hold are equals or have the same address
@@ -1648,8 +1551,7 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("different instances, both nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.Nil[map[string]int]()),
 			b:       reflect.ValueOf(ptrs.Nil[map[string]int]()),
@@ -1660,9 +1562,8 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signatures, nil vs empty", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received, empty expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "nil received, empty expected",
 			a:      reflect.ValueOf(generics.Zero[map[string]int]()),
 			b:      reflect.ValueOf(map[string]int{}),
@@ -1670,7 +1571,7 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 			equals: false,
 		})
 		// empty received, nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "empty received, nil expected",
 			a:      reflect.ValueOf(map[string]int{}),
 			b:      reflect.ValueOf(generics.Zero[map[string]int]()),
@@ -1680,8 +1581,7 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, different nested slice values as elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string][]int{"a": {1, 2}, "b": {3, 4}}),
 			b:    reflect.ValueOf(map[string][]int{"a": {1, 2}, "b": {3, 5}}),
@@ -1692,8 +1592,7 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, different non-comparable values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string][]int{"a": {1, 2}}),
 			b:    reflect.ValueOf(map[string][]int{"a": {1, 3}}),
@@ -1704,9 +1603,8 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, different struct elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name: "maps with struct values",
+		testDifferValues(t, TestCase{
+			name: "dicts with struct values",
 			a:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Bob"}}),
 			b:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Charlie"}}),
 			diff: differs.Message(differs.Chain(differs.MapValue(root, "b"),
@@ -1718,11 +1616,11 @@ func TestBetween_Maps_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Maps_SerializableStrategy tests the method Between against maps
+// TestBetween_Maps_SerializableStrategy tests the method Between against dicts
 // based on the serializable Strategy
 //
 //	This test must assert
-//	1. maps are equals only when the conditions below are met:
+//	1. dicts are equals only when the conditions below are met:
 //	a: their signatures are equals
 //	a: their lengths are equals
 //	a: each pair key-value they hold are equals or have the same address
@@ -1733,9 +1631,8 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	strat := []internal.Option{compare.Serializable}
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		m := make(map[string]int)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(m),
 			b:       reflect.ValueOf(m),
@@ -1746,8 +1643,7 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, length and values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:       reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
@@ -1758,8 +1654,7 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signatures, different key values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "c": 2}),
@@ -1770,8 +1665,7 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("Different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "Different values",
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1, "b": 3}),
@@ -1782,8 +1676,7 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("Different sizes", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "Different sizes",
 			a:    reflect.ValueOf(map[string]int{"a": 1, "b": 2}),
 			b:    reflect.ValueOf(map[string]int{"a": 1}),
@@ -1794,9 +1687,8 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("One map is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "nil received, valid expected",
 			a:      reflect.ValueOf((map[string]int)(nil)),
 			b:      reflect.ValueOf(map[string]int{"a": 1}),
@@ -1804,7 +1696,7 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 			equals: false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "valid received, nil expected",
 			a:      reflect.ValueOf(map[string]int{"a": 1}),
 			b:      reflect.ValueOf((map[string]int)(nil)),
@@ -1814,11 +1706,11 @@ func TestBetween_Maps_SerializableStrategy(t *testing.T) {
 	})
 }
 
-// TestBetween_Maps_EdgeCases_SerializableStrategy tests the method Between against edge case maps
+// TestBetween_Maps_EdgeCases_SerializableStrategy tests the method Between against edge case dicts
 // based on the serializable Strategy
 //
 //	This test must assert
-//	1. maps are equals only when the conditions below are met:
+//	1. dicts are equals only when the conditions below are met:
 //	a: their signatures are equals
 //	a: their lengths are equals
 //	a: each pair key-value they hold are equals or have the same address or
@@ -1829,8 +1721,7 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 	strat := []internal.Option{compare.Serializable}
 
 	t.Run("same sign, both nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(generics.Zero[map[string]int]()),
 			b:       reflect.ValueOf(generics.Zero[map[string]int]()),
@@ -1841,21 +1732,19 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different sign, both nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(generics.Zero[map[string]int]()),
 			b:       reflect.ValueOf(generics.Zero[map[any]int]()),
 			options: strat,
-			diff:    differs.NilTypesMismatch(root, "maps", "map[string]int", "map[interface {}]int"),
+			diff:    differs.NilTypesMismatch(root, "dicts", "map[string]int", "map[interface {}]int"),
 			equals:  false,
 		})
 	})
 
 	t.Run("same signatures, nil vs empty", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		// nil received, empty expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, empty expected",
 			a:       reflect.ValueOf(generics.Zero[map[string]int]()),
 			b:       reflect.ValueOf(map[string]int{}),
@@ -1864,7 +1753,7 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 			equals:  true,
 		})
 		// empty received, nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "empty received, nil expected",
 			a:       reflect.ValueOf(map[string]int{}),
 			b:       reflect.ValueOf(generics.Zero[map[string]int]()),
@@ -1875,8 +1764,7 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, different nested slice values as elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string][]int{"a": {1, 2}, "b": {3, 4}}),
 			b:    reflect.ValueOf(map[string][]int{"a": {1, 2}, "b": {3, 5}}),
@@ -1886,8 +1774,7 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 		})
 	})
 	t.Run("different instances, same signature, different non-comparable values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(map[string][]int{"a": {1, 2}}),
 			b:    reflect.ValueOf(map[string][]int{"a": {1, 3}}),
@@ -1898,9 +1785,8 @@ func TestBetween_Maps_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, different struct elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
-			name: "maps with struct values",
+		testDifferValues(t, TestCase{
+			name: "dicts with struct values",
 			a:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Bob"}}),
 			b:    reflect.ValueOf(map[string]struct{ Name string }{"a": {"Alice"}, "b": {"Charlie"}}),
 			diff: differs.Message(differs.Chain(differs.MapValue(root, "b"),
@@ -1925,9 +1811,8 @@ func TestBetween_Pointers_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		x := ptrs.New(10)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(x),
 			b:       reflect.ValueOf(x),
@@ -1938,8 +1823,7 @@ func TestBetween_Pointers_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   t.Name(),
 			a:      reflect.ValueOf(ptrs.New(36)),
 			b:      reflect.ValueOf(ptrs.New(36)),
@@ -1949,8 +1833,7 @@ func TestBetween_Pointers_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances and values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(ptrs.New(36)),
 			b:    reflect.ValueOf(ptrs.New(38)),
@@ -1975,8 +1858,7 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("both nil, same signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.Nil[int]()),
 			b:       reflect.ValueOf(ptrs.Nil[int]()),
@@ -1987,10 +1869,9 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("both nil, different signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(ptrs.Nil[int]())
 		b := reflect.ValueOf(ptrs.Nil[string]())
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2001,11 +1882,10 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("one is nil, other is valid", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		nilPtr := reflect.ValueOf(ptrs.Nil[int]())
 		valPtr := reflect.ValueOf(ptrs.New(10))
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, valid expected",
 			a:       nilPtr,
 			b:       valPtr,
@@ -2014,7 +1894,7 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid received, nil expected",
 			a:       valPtr,
 			b:       nilPtr,
@@ -2025,8 +1905,7 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("cyclic references, equals values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   t.Name(),
 			a:      reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
 			b:      reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
@@ -2036,9 +1915,8 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("cyclic references, different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		snm := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.SimpleNode"
-		testDifferValues(tt, TestCase{
+		snm := "github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models.SimpleNode"
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(models.CyclicSimpleNode(36, 38)),
 			b:    reflect.ValueOf(models.CyclicSimpleNode(38, 36)),
@@ -2053,8 +1931,7 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("cyclic linked list, equals values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   t.Name(),
 			a:      reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
 			b:      reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
@@ -2064,10 +1941,9 @@ func TestBetween_Pointers_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("cyclic linked list, different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		sn1 := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.LinkedList"
-		sn2 := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.BinaryNode"
-		testDifferValues(tt, TestCase{
+		sn1 := "github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models.LinkedList"
+		sn2 := "github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models.BinaryNode"
+		testDifferValues(t, TestCase{
 			name: t.Name(),
 			a:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD")),
 			b:    reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerE")),
@@ -2096,9 +1972,8 @@ func TestBetween_Pointers_IdentityStrategy(t *testing.T) {
 	strat := []internal.Option{compare.PtrIdentity}
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		x := ptrs.New(10)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(x),
 			b:       reflect.ValueOf(x),
@@ -2109,10 +1984,9 @@ func TestBetween_Pointers_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(10))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2124,10 +1998,9 @@ func TestBetween_Pointers_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances and values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(ptrs.New(10))
 		b := reflect.ValueOf(ptrs.New(12))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2152,8 +2025,7 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	strat := []internal.Option{compare.PtrIdentity}
 
 	t.Run("both nil, same signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(ptrs.Nil[int]()),
 			b:       reflect.ValueOf(ptrs.Nil[int]()),
@@ -2164,10 +2036,9 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("both nil, different signatures", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(ptrs.Nil[int]())
 		b := reflect.ValueOf(ptrs.Nil[string]())
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2178,11 +2049,10 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("one is nil, other is valid", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 		nilPtr := reflect.ValueOf(ptrs.Nil[int]())
 		valPtr := reflect.ValueOf(ptrs.New(10))
 		// nil received
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, valid expected",
 			a:       nilPtr,
 			b:       valPtr,
@@ -2191,7 +2061,7 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 			equals:  false,
 		})
 		// nil expected
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid received, nil expected",
 			a:       valPtr,
 			b:       nilPtr,
@@ -2202,11 +2072,10 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("same instances, cyclic references", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		n := models.CyclicSimpleNode(36, 38)
 		a := reflect.ValueOf(n)
 		b := reflect.ValueOf(n)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2217,10 +2086,9 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, cyclic references, equals values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(models.CyclicSimpleNode(36, 38))
 		b := reflect.ValueOf(models.CyclicSimpleNode(36, 38))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2232,10 +2100,9 @@ func TestBetween_Pointers_EdgeCases_IdentityStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, cyclic linked list, equals values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD"))
 		b := reflect.ValueOf(models.CyclicLinkedList("innerA", "innerB", "innerC", "innerD"))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2262,9 +2129,8 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		s := make([]int, 3)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(s),
 			b:       reflect.ValueOf(s),
@@ -2275,8 +2141,7 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, equals slices", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf([]int{1, 2, 3}),
 			b:       reflect.ValueOf([]int{1, 2, 3}),
@@ -2287,8 +2152,7 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signature, different elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf([]int{1, 2, 3}),
 			b:       reflect.ValueOf([]int{1, 2, 5}),
@@ -2300,8 +2164,7 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signatures, different lengths", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:   "different lengths",
 			a:      reflect.ValueOf([]int{1, 2, 3}),
 			b:      reflect.ValueOf([]int{1, 2}),
@@ -2311,8 +2174,7 @@ func TestBetween_Slices_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("slices with different structs", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "slices with structs",
 			a:    reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Bob"}}),
 			b:    reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Charlie"}}),
@@ -2340,8 +2202,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("both slices are nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Both slices are nil",
 			a:       reflect.ValueOf(([]int)(nil)),
 			b:       reflect.ValueOf(([]int)(nil)),
@@ -2352,8 +2213,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("One slice is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "One slice is nil, the other is not",
 			a:       reflect.ValueOf(([]int)(nil)),
 			b:       reflect.ValueOf([]int{1, 2, 3}),
@@ -2364,8 +2224,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Empty slice vs nil slice", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Empty slice vs nil slice",
 			a:       reflect.ValueOf([]int{}),
 			b:       reflect.ValueOf(([]int)(nil)),
@@ -2376,8 +2235,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same amount of nil elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "slices with nil elements",
 			a:       reflect.ValueOf([]*int{ptrs.Nil[int]()}),
 			b:       reflect.ValueOf([]*int{ptrs.Nil[int]()}),
@@ -2388,8 +2246,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("slices with nested slices", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Slices with nested slices",
 			a:       reflect.ValueOf([][]int{{1, 2}, {3, 4}}),
 			b:       reflect.ValueOf([][]int{{1, 2}, {3, 5}}),
@@ -2402,8 +2259,7 @@ func TestBetween_Slices_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different int  as any", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different int  as any",
 			a:       reflect.ValueOf([]any{1, 2, 3, 4, 5, 6}),
 			b:       reflect.ValueOf([]any{int8(1), int8(2), int8(3), int8(4), int8(5), int8(6)}),
@@ -2430,9 +2286,8 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 	strat := []internal.Option{compare.Serializable}
 
 	t.Run("same instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		s := make([]int, 3)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(s),
 			b:       reflect.ValueOf(s),
@@ -2443,8 +2298,7 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, equals slices", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf([]int{1, 2, 3}),
 			b:       reflect.ValueOf([]int{1, 2, 3}),
@@ -2455,8 +2309,7 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("same signature, different elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf([]int{1, 2, 3}),
 			b:       reflect.ValueOf([]int{1, 2, 5}),
@@ -2468,8 +2321,7 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("same signatures, different lengths", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different lengths",
 			a:       reflect.ValueOf([]int{1, 2, 3}),
 			b:       reflect.ValueOf([]int{1, 2}),
@@ -2480,8 +2332,7 @@ func TestBetween_Slices_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("slices with different structs", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Slices with structs",
 			a:       reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Bob"}}),
 			b:       reflect.ValueOf([]struct{ Name string }{{"Alice"}, {"Charlie"}}),
@@ -2509,8 +2360,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	strat := []internal.Option{compare.Serializable}
 
 	t.Run("Both slices are nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Both slices are nil",
 			a:       reflect.ValueOf(([]int)(nil)),
 			b:       reflect.ValueOf(([]int)(nil)),
@@ -2521,8 +2371,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("One slice is nil", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "One slice is nil, the other is not",
 			a:       reflect.ValueOf(([]int)(nil)),
 			b:       reflect.ValueOf([]int{1, 2, 3}),
@@ -2533,8 +2382,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("Empty slice vs nil slice", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Empty slice vs nil slice",
 			a:       reflect.ValueOf([]int{}),
 			b:       reflect.ValueOf(([]int)(nil)),
@@ -2545,8 +2393,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("different instances, same amount of nil elements", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "slices with nil elements",
 			a:       reflect.ValueOf([]*int{ptrs.Nil[int]()}),
 			b:       reflect.ValueOf([]*int{ptrs.Nil[int]()}),
@@ -2557,8 +2404,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("slices with nested slices", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Slices with nested slices",
 			a:       reflect.ValueOf([][]int{{1, 2}, {3, 4}}),
 			b:       reflect.ValueOf([][]int{{1, 2}, {3, 5}}),
@@ -2571,8 +2417,7 @@ func TestBetween_Slices_EdgeCases_SerializableStrategy(t *testing.T) {
 	})
 
 	t.Run("Different int  as any", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different int  as any",
 			a:       reflect.ValueOf([]any{1, 2, 3, 4, 5, 6}),
 			b:       reflect.ValueOf([]any{int8(1), int8(2), int8(3), int8(4), int8(5), int8(6)}),
@@ -2596,8 +2441,7 @@ func TestBetween_Strings(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("Equal strings", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Equal strings",
 			a:       reflect.ValueOf("hello"),
 			b:       reflect.ValueOf("hello"),
@@ -2608,8 +2452,7 @@ func TestBetween_Strings(t *testing.T) {
 	})
 
 	t.Run("Both strings are empty", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Both strings are empty",
 			a:       reflect.ValueOf(""),
 			b:       reflect.ValueOf(""),
@@ -2621,8 +2464,7 @@ func TestBetween_Strings(t *testing.T) {
 
 	// Different strings
 	t.Run("Different lengths", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different lengths",
 			a:       reflect.ValueOf("hello"),
 			b:       reflect.ValueOf("hell"),
@@ -2634,8 +2476,7 @@ func TestBetween_Strings(t *testing.T) {
 	})
 
 	t.Run("Same length, different characters", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Same length, different characters",
 			a:       reflect.ValueOf("hello"),
 			b:       reflect.ValueOf("hallo"),
@@ -2652,8 +2493,7 @@ func TestBetween_Strings_EdgeCases(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("Unicode characters", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Unicode characters",
 			a:       reflect.ValueOf("こんにちは"), // Japanese greeting
 			b:       reflect.ValueOf("こんばんは"), // Japanese evening greeting
@@ -2665,8 +2505,7 @@ func TestBetween_Strings_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("Empty string vs non-empty string", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Empty string vs non-empty string",
 			a:       reflect.ValueOf(""),
 			b:       reflect.ValueOf("non-empty"),
@@ -2678,8 +2517,7 @@ func TestBetween_Strings_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("Case sensitivity", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Case sensitivity",
 			a:       reflect.ValueOf("Hello"),
 			b:       reflect.ValueOf("hello"),
@@ -2704,8 +2542,7 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("Equal structs", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Equal structs",
 			a:       reflect.ValueOf(struct{ Name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ Name string }{"Alice"}),
@@ -2716,8 +2553,7 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different field values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different field values",
 			a:       reflect.ValueOf(struct{ Name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ Name string }{"Bob"}),
@@ -2730,8 +2566,7 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different field names", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different field names",
 			a:       reflect.ValueOf(struct{ Name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ FullName string }{"Alice"}),
@@ -2743,8 +2578,7 @@ func TestBetween_Structs_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("Different field ", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "Different field ",
 			a:       reflect.ValueOf(struct{ Age int }{25}),
 			b:       reflect.ValueOf(struct{ Age string }{"25"}),
@@ -2770,8 +2604,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 
 	// Edge cases
 	t.Run("same signature, different field values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "structs with nested structs",
 			a:       reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{25}}),
 			b:       reflect.ValueOf(struct{ Info struct{ Age int } }{Info: struct{ Age int }{30}}),
@@ -2784,8 +2617,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signature, slice fields with different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "structs with slices",
 			a:       reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 3}}),
 			b:       reflect.ValueOf(struct{ Numbers []int }{Numbers: []int{1, 2, 4}}),
@@ -2798,8 +2630,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signature, unexported fields with different values", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "StructsPtr with unexported fields",
 			a:       reflect.ValueOf(struct{ name string }{"Alice"}),
 			b:       reflect.ValueOf(struct{ name string }{"Bob"}),
@@ -2812,8 +2643,7 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("same signature, cyclic references with same field value", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "StructsPtr with cyclic references",
 			a:       reflect.ValueOf(models.CyclicSimpleNode(42, 43)),
 			b:       reflect.ValueOf(models.CyclicSimpleNode(42, 43)),
@@ -2824,9 +2654,8 @@ func TestBetween_Structs_EdgeCases_DefaultStrategy(t *testing.T) {
 	})
 
 	t.Run("complex equal structs", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		account := models.AccountAsRandValue()
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "complex structs",
 			a:       reflect.ValueOf(account),
 			b:       reflect.ValueOf(account),
@@ -2874,8 +2703,7 @@ func TestBetween_UnsafePointers(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("same addresses", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       reflect.ValueOf(unsafe.Pointer(models.UnsafeCastableStringZeroInst)),
 			b:       reflect.ValueOf(unsafe.Pointer(models.UnsafeCastableStringZeroInst)),
@@ -2886,10 +2714,9 @@ func TestBetween_UnsafePointers(t *testing.T) {
 	})
 
 	t.Run("same type, different instances", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		a := reflect.ValueOf(unsafe.Pointer(models.SimpleUnsafeCastableStringAsRef(1, "test")))
 		b := reflect.ValueOf(unsafe.Pointer(models.SimpleUnsafeCastableStringAsRef(1, "test")))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    t.Name(),
 			a:       a,
 			b:       b,
@@ -2913,8 +2740,7 @@ func TestBetween_UnsafePointers_EdgeCases(t *testing.T) {
 	var strat []internal.Option
 
 	t.Run("", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "both unsafe.PointerValues are nil",
 			a:       reflect.ValueOf(unsafe.Pointer(nil)),
 			b:       reflect.ValueOf(unsafe.Pointer(nil)),
@@ -2925,10 +2751,9 @@ func TestBetween_UnsafePointers_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("one is nil, other is not", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
 		nonNull := reflect.ValueOf(unsafe.Pointer(models.SimpleUnsafeCastableStringAsRef(1, "test")))
 		null := reflect.ValueOf(unsafe.Pointer(nil))
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "nil received, valid expected",
 			a:       null,
 			b:       nonNull,
@@ -2936,7 +2761,7 @@ func TestBetween_UnsafePointers_EdgeCases(t *testing.T) {
 			diff:    differs.NilReceived(zero, "unsafe.pointer", sprints.Uintptrf(nonNull.Pointer())),
 			equals:  false,
 		})
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name:    "valid received, nil expected",
 			a:       nonNull,
 			b:       null,
@@ -2949,8 +2774,7 @@ func TestBetween_UnsafePointers_EdgeCases(t *testing.T) {
 	// This is a case where two unsafe ptrs are nil
 	// and the api sees them as equals
 	t.Run("uninitialized ptrs, different ", func(t *testing.T) {
-		tt := testingtools.LoggersLite(t, testlogs.OnFailure, themes.Color)
-		testDifferValues(tt, TestCase{
+		testDifferValues(t, TestCase{
 			name: "uninitialized ptrs",
 			a: func() reflect.Value {
 				var x *int

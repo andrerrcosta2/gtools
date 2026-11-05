@@ -2,7 +2,11 @@
 
 package arrays
 
-import "github.com/andrerrcosta2/gtools/core/domain/functions"
+import (
+	"github.com/andrerrcosta2/gtools/core/data/str/tuple"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
+	"github.com/andrerrcosta2/gtools/core/domain/function/functions"
+)
 
 // IsReversed checks if two slices are the same, but in a reversed order.
 //
@@ -12,7 +16,7 @@ import "github.com/andrerrcosta2/gtools/core/domain/functions"
 //
 // Returns:
 // - bool: true if the slices are the same, but in a reversed order, false otherwise
-func IsReversed[T comparable](a, b []T) bool {
+func IsReversed[S ~[]E, E comparable](a, b S) bool {
 	// If the lengths are different, they can't be reversed versions of each other.
 	if len(a) != len(b) {
 		return false // Different lengths
@@ -54,7 +58,7 @@ func Empty[S ~[]E, E any](arr ...S) bool {
 //
 // Returns:
 // - bool: true if the index is out of bounds, false otherwise
-func OutOfBounds[T any](arr []T, i int) bool {
+func OutOfBounds[S ~[]E, E any](arr S, i int) bool {
 	// Check if the index is less than 0 or greater than or compare to the length of the slice
 	return i < 0 || i >= len(arr)
 }
@@ -70,7 +74,7 @@ func OutOfBounds[T any](arr []T, i int) bool {
 //
 // Returns:
 // - bool: true if the value is found in the slice, false otherwise
-func Contains[T comparable](arr []T, val T) bool {
+func Contains[S ~[]E, E comparable](arr S, val E) bool {
 	// Iterate over the elements of the slice
 	for _, element := range arr {
 		// Check if the current element is compare to the value
@@ -97,7 +101,7 @@ func Contains[T comparable](arr []T, val T) bool {
 //
 // Returns:
 // - bool: true if the value is found in the slice, false otherwise
-func ContainsBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) bool {
+func ContainsBy[S ~[]E, E any, K any](arr S, val K, f function.BiPredicate[E, K]) bool {
 	// Iterate over the elements of the slice
 	for _, v := range arr {
 		// Check if the predicate function returns the specified value for the current element
@@ -120,7 +124,7 @@ func ContainsBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) boo
 //
 // Returns:
 // - bool: true if all elements in exp are present in res, false otherwise
-func ContainsAllBy[T any, R any](exp []T, all []R, compare functions.BiPredicate[T, R]) bool {
+func ContainsAllBy[S1 ~[]T, T any, S2 ~[]R, R any](exp S1, all S2, compare function.BiPredicate[T, R]) bool {
 	if len(exp) > len(all) {
 		return false
 	}
@@ -152,7 +156,7 @@ func ContainsAllBy[T any, R any](exp []T, all []R, compare functions.BiPredicate
 //
 // Returns:
 // - bool: true if the slices are compare, false otherwise
-func Equals[T comparable](a, b []T) bool {
+func Equals[S ~[]E, E comparable](a, b S) bool {
 	wa, wb := a, b
 	// Check if the slices have different lengths
 	if len(wa) != len(wb) {
@@ -181,7 +185,7 @@ func Equals[T comparable](a, b []T) bool {
 //
 // Returns:
 // - bool: true if the slices are compare, false otherwise
-func EqualsBy[A any](a, b []A, f functions.BiPredicate[A, A]) bool {
+func EqualsBy[S ~[]E, E any](a, b S, f function.Equals[E]) bool {
 	wa, wb := a, b
 	// Check if the slices have different lengths
 	if len(wa) != len(wb) {
@@ -210,7 +214,7 @@ func EqualsBy[A any](a, b []A, f functions.BiPredicate[A, A]) bool {
 //
 // Returns:
 // - bool: true if the slices are compare, false otherwise
-func EqualsByHash[T any, K comparable](a, b []T, f functions.Function[T, K]) bool {
+func EqualsByHash[S ~[]E, E any, K comparable](a, b S, f function.Function[E, K]) bool {
 	wa, wb := a, b
 	// Check if the slices have different lengths
 	if len(wa) != len(wb) {
@@ -228,6 +232,67 @@ func EqualsByHash[T any, K comparable](a, b []T, f functions.Function[T, K]) boo
 	return true
 }
 
+// EqualFuncWithMismatches compares two slices using a comparison function and returns the mismatches
+func EqualFuncWithMismatches[S ~[]E, E any](
+	slice1 S,
+	slice2 S,
+	compare function.Equals[E],
+) (equal bool, mismatches []*tuple.Pair[E, E]) {
+	// Check if both slices are nil or both empty
+	if len(slice1) == 0 && len(slice2) == 0 {
+		return true, nil
+	}
+
+	// If lengths differ, consider all elements as mismatches (up to the shorter length)
+	maxLen := len(slice1)
+	if len(slice2) > maxLen {
+		maxLen = len(slice2)
+	}
+
+	mismatches = make([]*tuple.Pair[E, E], 0)
+
+	for i := 0; i < maxLen; i++ {
+		var a, b E
+		var aExists, bExists bool
+
+		if i < len(slice1) {
+			a = slice1[i]
+			aExists = true
+		}
+		if i < len(slice2) {
+			b = slice2[i]
+			bExists = true
+		}
+
+		// If only one exists at this position, it's a mismatch
+		if !aExists || !bExists {
+			var zeroA, zeroB E
+			if !aExists && bExists {
+				// Only second has value
+				mismatches = append(mismatches, tuple.NewPair(zeroA, b))
+			} else if aExists && !bExists {
+				// Only first has value
+				mismatches = append(mismatches, tuple.NewPair(a, zeroB))
+			}
+			continue
+		}
+
+		if !compare(a, b) {
+			mismatches = append(mismatches, tuple.NewPair(a, b))
+		}
+	}
+
+	return len(mismatches) == 0, mismatches
+}
+
+// EqualWithMismatches is a convenience function for when both slices have the same type
+func EqualWithMismatches[S ~[]E, E comparable](
+	slice1 S,
+	slice2 S,
+) (bool, []*tuple.Pair[E, E]) {
+	return EqualFuncWithMismatches(slice1, slice2, functions.ComparableEquality)
+}
+
 // SortedEqualsBy checks if two sorted slices of elements are compare based on a given equality function.
 // The function eq is used to compare elements of the slices.
 // The function returns true if the slices are compare, false otherwise.
@@ -239,7 +304,7 @@ func EqualsByHash[T any, K comparable](a, b []T, f functions.Function[T, K]) boo
 //
 // Returns:
 // - bool: true if the slices are compare, false otherwise
-func SortedEqualsBy[T any](a, b []T, eq functions.BiPredicate[T, T]) bool {
+func SortedEqualsBy[S ~[]E, E any](a, b S, eq function.Equals[E]) bool {
 	// Check if the slices have different lengths
 	if len(a) != len(b) {
 		// If lengths are different, slices cannot be compare

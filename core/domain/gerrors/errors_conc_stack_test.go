@@ -173,7 +173,7 @@ func TestConcurrentStackableError_Error(t *testing.T) {
 }
 
 func TestConcurrentStackableError_From(t *testing.T) {
-	t.Run("initial state", func(t *testing.T) {
+	t.Run("initial states", func(t *testing.T) {
 		cse := ConcStack()
 		baseErr := fmt.Errorf("base error")
 		result := cse.From(baseErr)

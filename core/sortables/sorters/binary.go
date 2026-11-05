@@ -3,11 +3,11 @@
 package sorters
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
 )
 
-func Binary[T any, S ~[]T](comparator comparators.Typed[T]) Sorter[T, S] {
-	return &binarySorter[T, S]{
+func Binary[S ~[]E, E any](comparator comparator.EqComparer[E]) Sorter[S, E] {
+	return &binarySorter[S, E]{
 		comparator: comparator,
 	}
 }
@@ -21,11 +21,11 @@ func Binary[T any, S ~[]T](comparator comparators.Typed[T]) Sorter[T, S] {
 //
 // Space Complexity: O(1) due to no additional data structures used.
 // Stability: Stable - Preserves the relative order of compare elements.
-type binarySorter[T any, S ~[]T] struct {
-	comparator comparators.Typed[T]
+type binarySorter[S ~[]E, E any] struct {
+	comparator comparator.EqComparer[E]
 }
 
-func (b *binarySorter[T, S]) Sort(arr *S) {
+func (b *binarySorter[S, E]) Sort(arr *S) {
 	work := *arr
 	for i := 1; i < len(work); i++ {
 		// Get the current element
@@ -42,7 +42,7 @@ func (b *binarySorter[T, S]) Sort(arr *S) {
 	}
 }
 
-func (b *binarySorter[T, S]) obs(arr []T, key T, lo, hi int) int {
+func (b *binarySorter[S, E]) obs(arr S, key E, lo, hi int) int {
 	for lo <= hi {
 		mid := lo + (hi-lo)/2
 		c := b.comparator.Compare(key, arr[mid])
@@ -57,5 +57,5 @@ func (b *binarySorter[T, S]) obs(arr []T, key T, lo, hi int) int {
 	return lo
 }
 
-var _ Sorter[any, []any] = (*binarySorter[any, []any])(nil)
-var _ Sorter[string, []string] = (*binarySorter[string, []string])(nil)
+var _ Sorter[[]any, any] = (*binarySorter[[]any, any])(nil)
+var _ Sorter[[]string, string] = (*binarySorter[[]string, string])(nil)

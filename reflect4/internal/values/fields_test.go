@@ -7,12 +7,10 @@ import (
 	"testing"
 
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/gtests"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 )
 
 // TestAccessField Tests if the method is able to access a field from a struct
@@ -22,24 +20,21 @@ import (
 //		- Be able to set if the field is addressable
 //	 Non exported fields shouldn't be able to interface nor set.
 func TestAccessField(t *testing.T) {
-	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
 	t.Run("should interface but not set exported unaddressable field", func(t *testing.T) {
 		ef := models.ExportedFieldsAsValue(1, "")
 
 		err := AccessFieldByName(reflect.ValueOf(ef), "Unaddressable", func(field reflect.Value) {
 			// should interface
-			assertlite.NoPanic(t, func() {
+			assertlite.NoPanics(t, func() {
 				val := field.Interface()
-				tt.StackLogf("Unaddressable: %d", val)
 				assertlite.Equals(t, val, 1)
 			})
 
 			// Shouldn't be able to set an unaddressable field
-			assertlite.Panic(t, func() {
+			assertlite.Panics(t, func() {
 				field.Set(reflect.ValueOf(2))
-				newVal := field.Interface()
-				tt.StackErrorf("unaddressable field was setted: %d", newVal)
+				_ = field.Interface()
 				t.Fail()
 			})
 		})
@@ -50,16 +45,14 @@ func TestAccessField(t *testing.T) {
 		x := models.ExportedFieldsAsRef(1, "test")
 
 		err := AccessFieldByName(reflect.ValueOf(x).Elem(), "Addressable", func(field reflect.Value) {
-			assertlite.NoPanic(t, func() {
+			assertlite.NoPanics(t, func() {
 				// should interface
 				val := field.Elem().Interface()
-				tt.StackLogf("Addressable: %d", val)
 				assertlite.Equals(t, val, "test")
 
 				// the field should be addressable
 				field.Elem().Set(reflect.ValueOf("test2"))
 				newVal := field.Elem().Interface()
-				tt.StackLogf("Addressable after set: %d", newVal)
 				assertlite.Equals(t, newVal, "test2")
 			})
 		})
@@ -71,17 +64,15 @@ func TestAccessField(t *testing.T) {
 		u := models.UnexportedFieldsAsValue(1, "test")
 
 		err := AccessFieldByName(reflect.ValueOf(u), "unaddressable", func(field reflect.Value) {
-			assertlite.Panic(t, func() {
+			assertlite.Panics(t, func() {
 				// should panic interface
-				val := field.Interface()
-				tt.StackErrorf("unexported field retrieved its value: '%d'", val)
+				_ = field.Interface()
 				t.Fail()
 			})
 
-			assertlite.Panic(t, func() {
+			assertlite.Panics(t, func() {
 				// the field shouldn't be addressable
 				field.Set(reflect.ValueOf("2"))
-				tt.StackErrorf("unaddressable field was setted: %d", field.Interface())
 				t.Fail()
 			})
 		})
@@ -93,17 +84,15 @@ func TestAccessField(t *testing.T) {
 		u := models.UnexportedFieldsAsRef(1, "address")
 
 		err := AccessFieldByName(reflect.ValueOf(u).Elem(), "addressable", func(field reflect.Value) {
-			assertlite.Panic(t, func() {
+			assertlite.Panics(t, func() {
 				// should not interface
 				val := field.Interface()
-				tt.StackErrorf("addressable: %d", val)
 				t.Fail()
 			})
 
-			assertlite.Panic(t, func() {
+			assertlite.Panics(t, func() {
 				// the field shouldn't be accessible
 				field.Set(reflect.ValueOf("test2"))
-				tt.StackErrorf("not exported field was set")
 				t.Fail()
 			})
 		})
@@ -113,13 +102,12 @@ func TestAccessField(t *testing.T) {
 }
 
 func TestAccessFields(t *testing.T) {
-	tt := testingtools.LoggersLite(t, testlogs.OnErrors, themes.Color)
 
 	t.Run("value: exported addressable/unaddressable fields", func(t *testing.T) {
 		x := models.ExportedFieldsAsValue(1, "address")
 		RideFieldsByName(reflect.ValueOf(x), func(name string, field reflect.Value) bool {
 			if name == "Addressable" {
-				assertlite.NoPanic(t, func() {
+				assertlite.NoPanics(t, func() {
 					// should interface
 					value := field.Elem().Interface()
 					assertlite.Equals(t, value, "address")
@@ -128,17 +116,16 @@ func TestAccessFields(t *testing.T) {
 					field.Elem().Set(reflect.ValueOf("new"))
 				})
 			} else {
-				assertlite.NoPanic(t, func() {
+				assertlite.NoPanics(t, func() {
 					// should interface
 					u := field.Interface()
 					assertlite.Equals(t, u, 1)
 				})
 
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't set unnadressable value
 					field.Set(reflect.ValueOf(20))
-					tt.StackErrorf("set on unaddressable value: %d", field.Interface())
-					tt.Fail()
+					t.Fail()
 				})
 			}
 			return true
@@ -151,7 +138,7 @@ func TestAccessFields(t *testing.T) {
 		x := models.ExportedFieldsAsRef(1, "address")
 		RideFieldsByName(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) bool {
 			if name == "Addressable" {
-				assertlite.NoPanic(t, func() {
+				assertlite.NoPanics(t, func() {
 					// should interface
 					value := field.Elem().Interface()
 					assertlite.Equals(t, value, "address")
@@ -160,7 +147,7 @@ func TestAccessFields(t *testing.T) {
 					field.Elem().Set(reflect.ValueOf("new"))
 				})
 			} else {
-				assertlite.NoPanic(t, func() {
+				assertlite.NoPanics(t, func() {
 					// should interface
 					u := field.Interface()
 					assertlite.Equals(t, u, 1)
@@ -179,32 +166,28 @@ func TestAccessFields(t *testing.T) {
 		x := models.UnexportedFieldsAsValue(1, "address")
 		RideFieldsByName(reflect.ValueOf(x), func(name string, field reflect.Value) bool {
 			if name == "addressable" {
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't interface unexported values
-					value := field.Elem().Interface()
-					tt.StackErrorf("interface of unexported value: %d", value)
-					tt.Fail()
+					_ = field.Elem().Interface()
+					t.Fail()
 				})
 
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't set unexported unaddressable value
 					field.Elem().Set(reflect.ValueOf("new"))
-					tt.StackErrorf("set unexported unaddressable value: %s", field.Elem().String())
-					tt.Fail()
+					t.Fail()
 				})
 			} else {
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't interface unexported values
-					value := field.Interface()
-					tt.StackErrorf("interface of unexported value: %d", value)
-					tt.Fail()
+					_ = field.Interface()
+					t.Fail()
 				})
 
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't set unexported unaddressable value
 					field.Set(reflect.ValueOf("new"))
-					tt.StackErrorf("set unexported unaddressable value: %s", field.String())
-					tt.Fail()
+					t.Fail()
 				})
 			}
 			return true
@@ -217,32 +200,28 @@ func TestAccessFields(t *testing.T) {
 		x := models.UnexportedFieldsAsRef(1, "address")
 		RideFieldsByName(reflect.ValueOf(x).Elem(), func(name string, field reflect.Value) bool {
 			if name == "addressable" {
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't interface unexported values
-					value := field.Elem().Interface()
-					tt.StackErrorf("interface of unexported value: %d", value)
-					tt.Fail()
+					_ = field.Elem().Interface()
+					t.Fail()
 				})
 
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't set unexported unaddressable value
 					field.Elem().Set(reflect.ValueOf("new"))
-					tt.StackErrorf("set unexported unaddressable value: %s", field.Elem().String())
-					tt.Fail()
+					t.Fail()
 				})
 			} else {
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't interface unexported values
-					value := field.Interface()
-					tt.StackErrorf("interface of unexported value: %d", value)
-					tt.Fail()
+					_ = field.Interface()
+					t.Fail()
 				})
 
-				assertlite.Panic(t, func() {
+				assertlite.Panics(t, func() {
 					// shouldn't set unexported unaddressable value
 					field.Set(reflect.ValueOf("new"))
-					tt.StackErrorf("set unexported unaddressable value: %s", field.String())
-					tt.Fail()
+					t.Fail()
 				})
 			}
 			return true
@@ -256,14 +235,14 @@ func TestAccessFields(t *testing.T) {
 //
 //	This test should be able to extract only exported fields
 func TestFields(t *testing.T) {
-	structs := gtests.Structs.Fuzz().Categories().Values()
+	structs := testseeds.Structs.Fuzz().Categories().Values()
 
 	t.Run("Structs with only exported fields", func(t *testing.T) {
 		structs.OfExportedFieldsOnly().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := Fields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
+				testlite.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 		})
 	})
 
@@ -272,7 +251,7 @@ func TestFields(t *testing.T) {
 			rv := reflect.ValueOf(seed)
 			fields := Fields(rv)
 			assertlite.False(t, len(fields) == 0,
-				gtests.ErrorMismatchValues("Number of fields matched", len(fields), 0))
+				testlite.ErrorMismatchValues("Number of fields matched", len(fields), 0))
 		})
 	})
 }
@@ -395,7 +374,7 @@ func TestNoNilFields(t *testing.T) {
 //   - The method retrieves its name and its reflect.Value
 func TestRideFields(t *testing.T) {
 	t.Run("unaddressable struct", func(t *testing.T) {
-		gtests.Structs.Fuzz().Categories().Values().All().Each(func(seed any) {
+		testseeds.Structs.Fuzz().Categories().Values().All().Each(func(seed any) {
 			v := reflect.ValueOf(seed)
 			count := 0
 			RideFields(v, func(idx int, field reflect.Value) bool {
@@ -412,7 +391,7 @@ func TestRideFields(t *testing.T) {
 
 func TestSetField(t *testing.T) {
 	t.Run("unaddressable structs", func(t *testing.T) {
-		gtests.Structs.Fuzz().Categories().Values().All().Each(func(seed any) {
+		testseeds.Structs.Fuzz().Categories().Values().All().Each(func(seed any) {
 			s := reflect.ValueOf(seed)
 			// Get field name and type
 			for i := 0; i < s.NumField(); i++ {
@@ -434,14 +413,14 @@ func TestSetField(t *testing.T) {
 // TestUnsafeGetAllFields Tests if the method is able to extract all fields from a struct using
 // the unsafe package
 func TestUnsafeGetAllFields(t *testing.T) {
-	structs := gtests.Structs.Fuzz().Categories().Values()
+	structs := testseeds.Structs.Fuzz().Categories().Values()
 
 	t.Run("Structs with exported fields", func(t *testing.T) {
 		structs.OfExportedFieldsOnly().Each(func(seed any) {
 			rv := reflect.ValueOf(seed)
 			fields := UnsafeGetAllFields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
+				testlite.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 			for k, v := range fields {
 				assertlite.NotNil(t, v, "field '%s' is nil", k)
 			}
@@ -453,23 +432,10 @@ func TestUnsafeGetAllFields(t *testing.T) {
 			rv := reflect.ValueOf(seed)
 			fields := UnsafeGetAllFields(rv)
 			assertlite.True(t, len(fields) == rv.NumField(),
-				gtests.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
+				testlite.ErrorMismatchValues("Number of fields mismatch", len(fields), rv.NumField()))
 			for k, v := range fields {
 				assertlite.NotNil(t, v, "field '%s' is nil", k)
 			}
 		})
 	})
 }
-
-// TestUnsafeRideFields Tests if the method is able to ride over all fields from a struct using
-// the unsafe package
-//
-//   - All fields (exported/unexported) should be accessible as unsafe ptrs.
-//func TestUnsafeRideFields(t *testing.T) {
-//	values := gtests.Structs.Fuzz().Categories().Values()
-//	refs := gtests.Structs.Fuzz().Categories().Refs()
-//
-//	t.Run("Unsafe Ride Fields: values", func(t *testing.T) {
-//
-//	})
-//}

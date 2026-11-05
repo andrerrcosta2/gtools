@@ -3,14 +3,17 @@
 package reflectrand
 
 import (
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
-	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
-	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/core/testlite/testseed"
-	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 	"reflect"
 	"slices"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/prng"
+	"github.com/andrerrcosta2/gtools/core/seeders/random/internal/reflectutils"
+	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/interf"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
+	"github.com/andrerrcosta2/gtools/core/util/typeutil/charsets"
 )
 
 const (
@@ -201,7 +204,7 @@ func TestInterface(t *testing.T) {
 func TestInterfaceOf(t *testing.T) {
 	// interface with methods should be Zero
 	t.Run("interface with methods should be zeroed", func(t *testing.T) {
-		typ := reflect.TypeOf((*testseed.InterfaceCloser)(nil)).Elem()
+		typ := reflect.TypeOf((*interf.Closer)(nil)).Elem()
 
 		assertlite.True(t, typ.Kind() == reflect.Interface, "type should be interface, "+
 			"but got %v", typ.Kind())
@@ -227,7 +230,7 @@ func TestInterfaceOf(t *testing.T) {
 			"testseed.InterfaceCloser, but is %v", val.String())
 		assertlite.False(t, val.IsZero(), "Interface should be valid")
 
-		assertlite.NoPanic(t, func() {
+		assertlite.NoPanics(t, func() {
 			elem := val.Elem()
 			assertlite.True(t, elem.IsValid(), "Interface element should be valid")
 		}, "expected not to panic calling the element of an any interface")
@@ -526,7 +529,7 @@ func TestStringOf(t *testing.T) {
 //   - All values must be of kind 'reflect.Struct'
 //   - No fields - except interface with methods - can be nil
 func TestStructOf(t *testing.T) {
-	for _, zero := range testseed.ZeroValues() {
+	for _, zero := range testseeds.Structs.Zero().Categories().Values().All() {
 		tt := reflect.TypeOf(zero)
 		assertlite.True(t, tt.Kind() == reflect.Struct,
 			"expected seed to be a struct, but got '%s' for '%T'", tt.Kind(), zero)
@@ -539,9 +542,9 @@ func TestStructOf(t *testing.T) {
 }
 
 func TestStructOf_EdgeCase(t *testing.T) {
-	tt := reflect.TypeOf(testseed.Account{})
+	tt := reflect.TypeOf(models.Account{})
 	assertlite.True(t, tt.Kind() == reflect.Struct, "expected seed to be a struct, but "+
-		"got '%s' for '%T'", tt.Kind(), testseed.Account{})
+		"got '%s' for '%T'", tt.Kind(), models.Account{})
 	rand := StructOf(tt, 3)
 	assertlite.True(t, rand.IsValid(), "invalid random struct")
 	assertlite.True(t, rand.Kind() == reflect.Struct, "expected random struct, but got '%s'", rand.Kind())

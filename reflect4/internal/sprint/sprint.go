@@ -20,16 +20,16 @@ func sprintOf(tab indent.Indentor, value reflect.Value, s *Strategy) string {
 	}
 
 	if value.Kind() <= reflect.Complex128 || value.Kind() == reflect.String {
-		return sprintPrimitive(tab, value)
+		return sprintPrimitive(tab, value, s)
 	}
 
 	switch value.Kind() {
 	case reflect.Array:
 		return defaultArray(tab, value, s)
 	case reflect.Chan:
-		return defaultChan(tab, value)
+		return defaultChan(tab, value, s)
 	case reflect.Func:
-		return defaultFunc(tab, value)
+		return defaultFunc(tab, value, s)
 	case reflect.Interface:
 		return defaultInterface(tab, value, s)
 	case reflect.Map:

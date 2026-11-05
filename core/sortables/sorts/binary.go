@@ -3,8 +3,8 @@
 package sorts
 
 import (
+	"github.com/andrerrcosta2/gtools/core/domain/constraints"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/gtools"
 )
 
 // Binary performs a Binary insertion sort on the given slice of elements.
@@ -70,7 +70,7 @@ func obs[T prim.Ordered](arr []T, key T, low, high int) int {
 		// Calculate the midpoint of the range
 		mid := (low + high) / 2
 
-		// Compare the key with the element at the midpoint
+		// TryCompare the key with the element at the midpoint
 		if key < arr[mid] {
 			// If the key is less than the midpoint, search the left half
 			high = mid
@@ -92,7 +92,7 @@ func obsp[T prim.Ordered](arr []*T, key *T, low, high int) int {
 		// Calculate the midpoint of the range
 		mid := (low + high) / 2
 
-		// Compare the key with the element at the midpoint
+		// TryCompare the key with the element at the midpoint
 		if *key < *arr[mid] {
 			// If the key is less than the midpoint, search the left half
 			high = mid
@@ -111,7 +111,7 @@ func obsp[T prim.Ordered](arr []*T, key *T, low, high int) int {
 // The time complexity of this function is O(n log n) in the average case and O(n^2) in the worst case.
 // The space complexity is O(1) as no additional data structures are used.
 // The function is stable, meaning it preserves the relative order of compare elements.
-func BinaryOf[T gtools.SortableOf](arr *[]T) {
+func BinaryOf[T constraints.Sortable[T]](arr *[]T) {
 	for i := 1; i < len(*arr); i++ {
 		key := (*arr)[i]
 		pos := sbs(*arr, key, 0, i)
@@ -124,7 +124,7 @@ func BinaryOf[T gtools.SortableOf](arr *[]T) {
 	}
 }
 
-func OptimisticBinaryOf[T gtools.SortableOf](arr *[]T) {
+func OptimisticBinaryOf[T constraints.Sortable[T]](arr *[]T) {
 	for i := 1; i < len(*arr); i++ {
 		key := (*arr)[i]
 		pos := sbs(*arr, key, 0, i)
@@ -142,13 +142,13 @@ func OptimisticBinaryOf[T gtools.SortableOf](arr *[]T) {
 
 // sbs finds the correct position for insertion in a sorted slice of SortableOf type.
 // It uses a Binary search algorithm to achieve this in O(log n) time complexity.
-func sbs[T gtools.SortableOf](arr []T, key T, low, high int) int {
+func sbs[T constraints.Sortable[T]](arr []T, key T, low, high int) int {
 	// Continue the search until the low and high indices converge
 	for low < high {
 		// Calculate the midpoint of the current search range
 		mid := (low + high) / 2
 
-		// Compare the key with the element at the midpoint
+		// TryCompare the key with the element at the midpoint
 		if arr[mid].Less(key) {
 			// If the key is greater, move the low index to the right half
 			low = mid + 1

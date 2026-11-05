@@ -46,11 +46,25 @@ func unwrapName(t reflect.Type) string {
 	return ptr.String() + t.String()
 }
 
+func ValidValueNameSwitch(t reflect.Type, qf bool) string {
+	if qf {
+		return ValidValueName(t)
+	}
+	return ValidShortName(t)
+}
+
 func ValidValueName(t reflect.Type) string {
 	if t.Name() != "" {
 		if pkgPath := t.PkgPath(); pkgPath != "" {
 			return pkgPath + "." + t.Name()
 		}
+		return t.Name()
+	}
+	return t.String()
+}
+
+func ValidShortName(t reflect.Type) string {
+	if t.Name() != "" {
 		return t.Name()
 	}
 	return t.String()

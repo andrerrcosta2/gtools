@@ -17,18 +17,18 @@ var (
 	ErrInvalidExpected = errors.New("couldn't diff because the expected type is invalid")
 )
 
-func handleInvalidValues(tab indent.Indentor, a, b reflect.Value) (diff differs.Difference, invalids bool) {
+func handleInvalidValues(tab indent.Indentor, a, b reflect.Value, s *Strategy) (diff differs.Difference, invalids bool) {
 	if !a.IsValid() || !b.IsValid() {
 		if !a.IsValid() && !b.IsValid() {
 			return differs.DiffError(differs.BothInvalid(tab), ErrInvalidVTypes),
 				true
 		}
 		if a.IsValid() {
-			aa := types.ValidValueName(a.Type())
+			aa := types.ValidValueNameSwitch(a.Type(), s.useQfName)
 			return differs.DiffError(differs.InvalidExpected(tab, aa),
 				ErrInvalidReceived), true
 		}
-		bb := types.ValidValueName(b.Type())
+		bb := types.ValidValueNameSwitch(b.Type(), s.useQfName)
 		return differs.DiffError(differs.InvalidReceived(tab, bb),
 			ErrInvalidExpected), true
 	}

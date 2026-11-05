@@ -3,10 +3,11 @@
 package fmx
 
 import (
-	"github.com/andrerrcosta2/gtools/core/domain/execution"
-	"github.com/andrerrcosta2/gtools/core/format/printer"
 	"runtime"
 	"strings"
+
+	"github.com/andrerrcosta2/gtools/core/format/fmx/internal/execlite"
+	"github.com/andrerrcosta2/gtools/core/format/printer"
 )
 
 const (
@@ -21,9 +22,9 @@ func Call(s ...any) {
 	}
 
 	msg := printer.Sprint(s...)
-	displayFile := execution.GetFileDisplayPath(file, "")
+	displayFile := execlite.GetFileDisplayPath(file, "")
 
-	if execution.SupportsTerminalHyperlink {
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		printer.Printf(ansi, fullPath, displayFile, line, msg)
 	} else {
@@ -39,9 +40,9 @@ func Callf(format string, args ...any) {
 	}
 
 	msg := printer.Sprintf(format, args...)
-	displayFile := execution.GetFileDisplayPath(file, "")
+	displayFile := execlite.GetFileDisplayPath(file, "")
 
-	if execution.SupportsTerminalHyperlink {
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		printer.Printf(ansi, fullPath, displayFile, line, msg)
 	} else {
@@ -57,9 +58,9 @@ func Callln(s ...any) {
 	}
 
 	msg := printer.Sprintln(s...)
-	displayFile := execution.GetFileDisplayPath(file, "")
+	displayFile := execlite.GetFileDisplayPath(file, "")
 
-	if execution.SupportsTerminalHyperlink {
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		printer.Printf(ansi, fullPath, displayFile, line, msg)
 	} else {
@@ -74,9 +75,9 @@ func SCall(s ...any) string {
 	}
 
 	msg := printer.Sprint(s...)
-	displayFile := execution.GetFileDisplayPath(file, "")
+	displayFile := execlite.GetFileDisplayPath(file, "")
 
-	if execution.SupportsTerminalHyperlink {
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		return printer.Sprintf(ansi, fullPath, displayFile, line, msg)
 	} else {
@@ -91,8 +92,8 @@ func SCallf(format string, args ...any) string {
 	}
 
 	msg := printer.Sprintf(format, args...)
-	displayFile := execution.GetFileDisplayPath(file, "")
-	if execution.SupportsTerminalHyperlink {
+	displayFile := execlite.GetFileDisplayPath(file, "")
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		return printer.Sprintf(ansi, fullPath, displayFile, line, msg)
 	} else {
@@ -107,9 +108,9 @@ func SCallln(s ...any) string {
 	}
 
 	msg := printer.Sprintln(s...)
-	displayFile := execution.GetFileDisplayPath(file, "")
+	displayFile := execlite.GetFileDisplayPath(file, "")
 
-	if execution.SupportsTerminalHyperlink {
+	if execlite.SupportsTerminalHyperlink {
 		fullPath := "file://" + file
 		return printer.Sprintf(ansi, fullPath, displayFile, line, msg)
 	} else {

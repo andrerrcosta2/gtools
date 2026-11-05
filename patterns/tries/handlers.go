@@ -3,29 +3,30 @@
 package tries
 
 import (
-	"github.com/andrerrcosta2/gtools/conc/syncs/semaph"
+	"log"
+	"sync"
+
+	"github.com/andrerrcosta2/gtools/conc/core/syncs/semaph"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/handlers/insert"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/handlers/remove"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/handlers/search"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/nodes"
-	"log"
-	"sync"
 )
 
 // searchSymbol is a wrapper for search.Concurrently. It abstracts the complexity of the synchronization by creating a
-// SynchronizableSet and listening to it. It returns the nodes found and whether any node was found.
+// SynchronizableSet and listening to it. It returns the node found and whether any node was found.
 func searchSymbolsByPattern(from nodes.PatternTrie, pattern string, maxParallels int) (symbols []grammar.Symbol, found bool) {
 	wg := &sync.WaitGroup{}
 
 	//wg.Add(1)
-	// Start the search concurrently.
-	//go search.Concurrently(nodes.NewSearch(from, pattern, &symbols), wg, semaph.Channel(maxParallels))
-	search.Concurrently(nodes.NewSearch(from, pattern, &symbols), wg, semaph.Channel(maxParallels))
+	// start the search concurrently.
+	//go search.Concurrently(node.NewSearch(from, pattern, &symbols), wg, semaph.Limiter(maxParallels))
+	search.Concurrently(nodes.NewSearch(from, pattern, &symbols), wg, semaph.Limiter(maxParallels))
 	// set the synchronization ending point
 	wg.Wait()
 
-	// Return the nodes found and whether any node was found.
+	// Return the node found and whether any node was found.
 	return symbols, len(symbols) > 0
 }
 
@@ -33,7 +34,7 @@ func searchSymbolsByPattern(from nodes.PatternTrie, pattern string, maxParallels
 // It traverses the trie by moving forward one node at a time, until it finds a node
 // that doesn't have a child with the next character in the pattern. At that point, it
 // returns the last node it found, which is the insertion point. Then it deploys the
-// symbol into the trie by recursively creating new nodes if necessary
+// symbol into the trie by recursively creating new node if necessary
 func addSymbolToTrie(t *patternTrie, from nodes.PatternTrie, pattern string, symbol grammar.Symbol) error {
 	// insert the symbol
 	length, err := insert.Symbol(from, pattern, symbol)

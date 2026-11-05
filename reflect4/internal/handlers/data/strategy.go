@@ -5,7 +5,7 @@ package data
 import (
 	"reflect"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/tracker"
 	"github.com/andrerrcosta2/gtools/reflect4/op"
@@ -75,7 +75,7 @@ type CopyStrategy struct {
 	CopyFunc   func(v reflect.Value, _ *CopyStrategy) (reflect.Value, error)
 	CopyPtr    func(v reflect.Value, s *CopyStrategy) (reflect.Value, error)
 	ReadField  func(v reflect.Value, i int) (field reflect.Value, canRead bool)
-	RideFields func(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value])
+	RideFields func(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value])
 }
 
 func DefaultCopyStrat() *CopyStrategy {

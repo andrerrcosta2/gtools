@@ -3,7 +3,7 @@
 package redblack
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
 	"testing"
 )
 
@@ -15,7 +15,7 @@ func assertValidRoot[V any](t *testing.T, tag string, a, b *Node[V]) {
 	if a.parent != nil {
 		t.Errorf("Expected root parent to be 'nil', but got\n%v", a.parent)
 	}
-	if a.color != nodes.Black {
+	if a.color != node.Black {
 		t.Errorf("Expected root color to be 'black', but got '%v'", a.color)
 	}
 }

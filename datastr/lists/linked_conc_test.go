@@ -5,13 +5,11 @@ package lists
 import (
 	"testing"
 
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
+	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/themes"
 )
 
 // TestConcHashLinked_Concurrency_Add tests the add method
@@ -24,10 +22,10 @@ import (
 //   - the tail value points to the last value inserted
 //   - the index map is updated and can be used to retrieve the inserted value by its hash
 func TestConcHashLinked_Concurrency_Add(t *testing.T) {
-	// Helper
-	tt := testingtools.ConcLitetm(t, testlogs.OnFailure, themes.Default)
+	counter := testlite.Map(t)
+	consts := testlite.Constants(t)
 	// Test empty
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 	if cast.size() != 0 {
@@ -39,17 +37,17 @@ func TestConcHashLinked_Concurrency_Add(t *testing.T) {
 	it.Parallel(func(i, v int) { // Assert real time states
 		hash := cast.hash(v)
 		idx := list.Add(v)
-		tt.RegisterConst(idx, hash)
-		tt.RegisterCalls(1, "add")
+		consts.Register(hash, idx)
+		counter.Add(1, "add")
 		if idx == 0 {
-			tt.RegisterConst(v, "head")
+			consts.Register("head", v)
 		}
 		// assert the size is compare to the number of calls
-		if cast.size() < tt.CallsTo("add") {
-			t.Errorf("Expected size to be %d, but received %d", tt.CallsTo("add"), cast.size())
+		if cast.size() < counter.Get("add") {
+			t.Errorf("Expected size to be %d, but received %d", counter.Get("add"), cast.size())
 		}
 		// assert the head still always the same
-		if cast.head().Value() != tt.Const("head").(int) {
+		if cast.head().Value() != consts.Get("head").(int) {
 			t.Errorf("Expected head value to be first inserted '%d' at '%d', but received '%d'", cast.head().Value(), i, cast.head().Value())
 		}
 		// assert the hash map contains the same values
@@ -72,7 +70,7 @@ func TestConcHashLinked_Concurrency_Add(t *testing.T) {
 		t.Errorf("Expected index length to be %d, but received %d", it.Len(), len(cast.idx))
 	}
 
-	head := tt.Const("head").(int)
+	head := consts.Get("head").(int)
 	if cast.head().Value() != head {
 		t.Errorf("Expected head value to be '%d', but received '%d'", head, cast.head().Value())
 	}
@@ -85,7 +83,7 @@ func TestConcHashLinked_Concurrency_Add(t *testing.T) {
 //   - the element is found if it was inserted
 //   - the element is not found if it was not inserted
 func TestConcHashLinked_Concurrency_Contains(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -110,16 +108,16 @@ func TestConcHashLinked_Concurrency_Contains(t *testing.T) {
 //   - the element is not found if it was not inserted
 //   - the element is not found if the index is negative
 func TestConcHashLinked_Concurrency_Get(t *testing.T) {
-	tt := testingtools.ConcLite(t, testlogs.Default)
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
+	consts := testlite.Constants(t)
 
 	it := iterables.OfSlice(2, 4, 6, 8, 10, 12)
 
 	it.Parallel(func(i, v int) {
-		hash := cmp.Hash(v)
+		hash := cmp.Key(v)
 		idx := list.Add(v)
-		tt.RegisterConst(idx, hash)
+		consts.Register(hash, idx)
 		if val, ok := list.Get(idx); !ok {
 			t.Errorf("Expected list to contain inserted index, but received %d", val)
 		}
@@ -128,12 +126,12 @@ func TestConcHashLinked_Concurrency_Get(t *testing.T) {
 
 // TestConcHashLinked_Concurrency_IndexOf tests the indexOf method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - the index map can be used to retrieve the inserted value
 //   - the IndexOf can retrieve the same index the value was inserted
 //   - not inserted values must retrieve '-1'
 func TestConcHashLinked_Concurrency_IndexOf(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -152,12 +150,12 @@ func TestConcHashLinked_Concurrency_IndexOf(t *testing.T) {
 
 // TestConcHashLinked_Concurrency_Insert tests the insert method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - its size is increase
 //   - the insertion index can be used to retrieve the inserted value
 //   - the index map can be used to retrieve the inserted value
 func TestConcHashLinked_Concurrency_Insert(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp, 1, 3, 5, 7, 9, 11)
 	cast := list.(*concHashLinked[int, string])
 
@@ -182,30 +180,32 @@ func TestConcHashLinked_Concurrency_Insert(t *testing.T) {
 
 // TestConcHashLinked_Concurrency_Remove tests the remove method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - its size is decrease
 //   - the index map can't be used to retrieve the removed value
 //   - the removed value is not present in the list
 //   - the removed value cannot be reached by the list iteration
 func TestConcHashLinked_Concurrency_Remove(t *testing.T) {
 	// Helper
-	tt := testingtools.ConcLite(t, testlogs.OnFailure)
-	cmp := comparators.StringOrdered[int]{}
+	counter := testlite.Map(t)
+	consts := testlite.Constants(t)
+
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
 	it := iterables.OfSlice(0, 3, 6, 9, 12, 15, 18, 21, 24)
-	tt.RegisterCalls(cast.size(), "current-size")
-	tt.AssertCalls(0, "current-size")
+	counter.Add(cast.size(), "current-size")
+	counter.AssertCounts(0, "current-size")
 
 	it.Parallel(func(i, v int) {
-		hash := cmp.Hash(v)
+		hash := cmp.Key(v)
 		idx := list.Add(v)
-		tt.RegisterConst(idx, hash)
-		tt.RegisterCalls(1, "add", "current-size")
+		consts.Register(hash, idx)
+		counter.Add(1, "add", "current-size")
 		rv := i * 2
-		rhash := cmp.Hash(rv)
-		shouldRemove := tt.Const(rhash) != nil
+		rhash := cmp.Key(rv)
+		shouldRemove := consts.Get(rhash) != nil
 		wasRemoved := list.Remove(i * 2)
 		if shouldRemove {
 			if !wasRemoved {
@@ -213,26 +213,26 @@ func TestConcHashLinked_Concurrency_Remove(t *testing.T) {
 			}
 
 			// Clear registers
-			tt.RegisterCalls(1, "removed")
-			tt.RegisterCalls(-1, "current-size")
-			tt.RegisterConst(nil, rhash)
+			counter.Add(1, "removed")
+			counter.Add(-1, "current-size")
+			consts.Register(rhash, nil)
 			it.RemoveAt(idx)
 		} else if wasRemoved {
 			t.Errorf("Expected list to not remove value at index '%d', but received '%t'", rv, wasRemoved)
 		}
 	}, 3)
 
-	tt.AssertCalls(tt.CallsTo("add")-tt.CallsTo("removed"), "current-size")
-	tt.AssertCalls(9, "add")
+	counter.AssertCounts(counter.Get("add")-counter.Get("removed"), "current-size")
+	counter.AssertCounts(9, "add")
 
-	if cast.size() != tt.CallsTo("current-size") {
+	if cast.size() != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked.size() to end up from '%d' to '%d', but received %d", it.Len(),
-			tt.CallsTo("current-size"), cast.size())
+			counter.Get("current-size"), cast.size())
 	}
 
-	if len(cast.idx) != tt.CallsTo("current-size") {
+	if len(cast.idx) != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked.idx length to decrease from '%d' to '%d', but received %d", it.Len(),
-			tt.CallsTo("current-size"), len(cast.idx))
+			counter.Get("current-size"), len(cast.idx))
 	}
 
 	// Can't know which value was inserted first.
@@ -243,7 +243,7 @@ func TestConcHashLinked_Concurrency_Remove(t *testing.T) {
 			t.Errorf("Expected list to have value at index '%d', but received '%t'", i, ok)
 		}
 		// Deletions can only decrease the index
-		idx := tt.Const(cmp.Hash(v)).(int)
+		idx := consts.Get(cmp.Key(v)).(int)
 		if idx < i {
 			t.Errorf("Expected list to have value '%d' at index '%d', but received '%d'", v, i, idx)
 		}
@@ -253,12 +253,12 @@ func TestConcHashLinked_Concurrency_Remove(t *testing.T) {
 
 // TestConcHashLinked_Concurrency_RemoveAt tests the removeAt method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - the removed value is the same as inserted at the same index
 //   - the removed value cannot be reached by the list iteration
 //   - the index map can't be used to retrieve the removed value
 func TestConcHashLinked_Concurrency_RemoveAt(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -305,7 +305,7 @@ func TestConcHashLinked_Concurrency_RemoveAt(t *testing.T) {
 				t.Errorf("Loop[%d]: Expected *concHashLinked.idx length to be '%d' after removing "+
 					"inserted value '%d', but received '%d'", i, initSize, val, len(cast.idx))
 			}
-			hash := cmp.Hash(val)
+			hash := cmp.Key(val)
 			nodes, ok := cast.idx[hash]
 			if ok || nodes != nil {
 				t.Errorf("Loop[%d]: Expected *concHashLinked.idx to not have deleted value [%d]: '%d', "+
@@ -317,13 +317,13 @@ func TestConcHashLinked_Concurrency_RemoveAt(t *testing.T) {
 
 // TestConcHashLinked_Concurrency_Set tests the ToSet method
 //
-// after the method set is called the list state should assert
+// after the method set is called the list states should assert
 //   - the set value is the same as inserted at the same index
 //   - the set value can be reached by the list iteration
 //   - if an earlier value was set, the index map can't be used to retrieve the removed value
 //   - the index map should be able to retrieve the current one at the same address (performance)
 func TestConcHashLinked_Concurrency_Set(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp, 2, 4, 6, 8, 10)
 	cast := list.(*concHashLinked[int, string])
 
@@ -336,11 +336,11 @@ func TestConcHashLinked_Concurrency_Set(t *testing.T) {
 		if _, ok := list.Get(i); !ok {
 			t.Errorf("Expected list to contain '%d' at index '%d', but it did not", v, i)
 		}
-		if node, ok := cast.idx[cmp.Hash(v+1)]; ok || node != nil {
+		if node, ok := cast.idx[cmp.Key(v+1)]; ok || node != nil {
 			t.Errorf("Expected list to not contain '%d' after replacing it by '%d', "+
 				"but found a node '%v", v+1, v, node)
 		}
-		if cast.idx[cmp.Hash(v)][0].Value() != v {
+		if cast.idx[cmp.Key(v)][0].Value() != v {
 			t.Errorf("Expected tail to have value at the same insertion index '%d', "+
 				"but received '%d'", i, v)
 		}
@@ -358,10 +358,10 @@ func TestConcHashLinked_Concurrency_Set(t *testing.T) {
 // after each insertion the list size should be increased
 // after each removal the list size should be decreased
 func TestConcHashLinked_Concurrency_Size(t *testing.T) {
-	// std
-	tt := testingtools.ConcLitetm(t, testlogs.OnFailure, themes.Default)
+	counter := testlite.Map(t)
+	consts := testlite.Constants(t)
 
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 	if list.Size() != 0 {
@@ -371,60 +371,62 @@ func TestConcHashLinked_Concurrency_Size(t *testing.T) {
 	// test with different elements
 	iterables.OfSlice(1, 3, 5, 7, 9).Parallel(func(i, v int) {
 		list.Add(v)
-		tt.RegisterCalls(1, "add", "current-size")
+		counter.Add(1, "add", "current-size")
 	}, 3)
 
 	// assertions
-	if list.Size() != tt.CallsTo("current-size") {
+	if list.Size() != counter.Get("current-size") {
 		t.Errorf("Expected list size to grow from %d to %d, but received %d", initSize,
-			tt.CallsTo("current-size"), list.Size())
+			counter.Get("current-size"), list.Size())
 	}
-	if cast.size() != tt.CallsTo("current-size") {
+	if cast.size() != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked.size() to grow from %d to %d, but received %d", initSize,
-			tt.CallsTo("current-size"), cast.size())
+			counter.Get("current-size"), cast.size())
 	}
-	if cast._size != tt.CallsTo("current-size") {
+	if cast._size != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked._size to grow from %d to %d, but received %d", initSize,
-			tt.CallsTo("current-size"), cast._size)
+			counter.Get("current-size"), cast._size)
 	}
-	if len(cast.idx) != tt.CallsTo("current-size") {
+	if len(cast.idx) != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked.idx length to grow from %d to %d, but received %d", initSize,
-			tt.CallsTo("current-size"), len(cast.idx))
+			counter.Get("current-size"), len(cast.idx))
 	}
 
 	list.SoftClear()
-	tt.Clear()
+	counter.Reset()
+	consts.Reset()
+
 	initSize = cast.size()
-	tt.RegisterCalls(initSize, "current-size")
+	counter.Add(initSize, "current-size")
 	// test with repeated elements
 	iterables.OfSlice(1, 1, 3, 3, 5, 5, 7, 7, 9, 9).Parallel(func(i, v int) {
 		list.Add(v)
 
 		// register assertion informations
-		hash := cmp.Hash(v)
-		tt.RegisterCalls(1, "add", "current-size")
-		if tt.Const(hash) == nil {
-			tt.RegisterCalls(1, "hash-size")
+		hash := cmp.Key(v)
+		counter.Add(1, "add", "current-size")
+		if !consts.Has(hash) {
+			counter.Add(1, "hash-size")
 		}
-		tt.RegisterConst(v, cmp.Hash(v))
+		consts.Register(cmp.Key(v), v)
 	}, 3)
 
 	// assertions
-	if list.Size() != tt.CallsTo("current-size") {
+	if list.Size() != counter.Get("current-size") {
 		t.Errorf("Expected list size to grow from %d to %d, but received %d", initSize,
-			tt.CallsTo("current-size"), list.Size())
+			counter.Get("current-size"), list.Size())
 	}
-	if cast.size() != tt.CallsTo("current-size") {
+	if cast.size() != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked.size() to grow from %d to %d, but received %d",
-			initSize, tt.CallsTo("current-size"), cast.size())
+			initSize, counter.Get("current-size"), cast.size())
 	}
-	if cast._size != tt.CallsTo("current-size") {
+	if cast._size != counter.Get("current-size") {
 		t.Errorf("Expected *concHashLinked._size to grow from %d to %d, but received %d",
-			initSize, tt.CallsTo("current-size"), cast._size)
+			initSize, counter.Get("current-size"), cast._size)
 	}
 
-	if len(cast.idx) != tt.CallsTo("hash-size") {
+	if len(cast.idx) != counter.Get("hash-size") {
 		t.Errorf("Expected *concHashLinked.idx length to grow from %d to %d, but received %d",
-			initSize, tt.CallsTo("hash-size"), len(cast.idx))
+			initSize, counter.Get("hash-size"), len(cast.idx))
 	}
 }

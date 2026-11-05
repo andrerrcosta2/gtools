@@ -2,6 +2,6 @@
 
 package search
 
-type Search[T any] interface {
-	Search([]T, T) (int, bool)
+type Search[S ~[]E, E any] interface {
+	Search(S, E) (int, bool)
 }

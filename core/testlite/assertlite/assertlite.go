@@ -6,8 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/core/testlite/internal/ask"
 )
@@ -38,17 +39,19 @@ func AllFieldsAreNil(t testlite.HelperTesting, checkUnexported bool, target any,
 	return true
 }
 
-func AreFalse[T any](t testlite.HelperTesting, data []T, fn functions.Function[T, bool], msgAndArgs ...any) bool {
+// AreFalse asserts the predicate returns false for every element.
+func AreFalse[T any](t testlite.HelperTesting, data []T, fn function.Function[T, bool], msgAndArgs ...any) bool {
 	for _, d := range data {
 		if fn(d) {
 			t.Helper()
-			fail(t, fmt.Sprintf("expected all elements to be false, but got true for '%v'\n", d), msgAndArgs...)
+			fail(t, fmt.Sprintf("❌ assertion failed. expected all elements to be false, but got true for '%v'\n", d), msgAndArgs...)
 			return false
 		}
 	}
 	return true
 }
 
+// AreNotNil asserts the slice itself is non-nil and has no nil elements.
 func AreNotNil[S ~[]E, E any](t testlite.HelperTesting, values S, msgAndArgs ...any) bool {
 	if values == nil {
 		t.Helper()
@@ -70,27 +73,127 @@ func AreNotNil[S ~[]E, E any](t testlite.HelperTesting, values S, msgAndArgs ...
 	return true
 }
 
-func AreTrue[T any](t testlite.HelperTesting, data []T, fn functions.Function[T, bool], msgAndArgs ...any) bool {
+// AreTrue asserts the predicate returns true for every element.
+func AreTrue[T any](t testlite.HelperTesting, data []T, fn function.Function[T, bool], msgAndArgs ...any) bool {
 	for _, d := range data {
 		if !fn(d) {
 			t.Helper()
-			fail(t, fmt.Sprintf("expected all elements to be true, but got false for '%v'\n", d), msgAndArgs...)
+			fail(t, fmt.Sprintf("❌ assertion failed. expected all elements to be true, but got "+
+				"false for '%v'\n", d), msgAndArgs...)
 			return false
 		}
 	}
 	return true
 }
 
+// Contains asserts that elem exists in slice a.
+func Contains[S ~[]E, E comparable](t testlite.HelperTesting,
+	a S, elem E,
+	msgAndArgs ...any) bool {
+	for _, e := range a {
+		if elem == e {
+			return true
+		}
+	}
+	t.Helper()
+	fail(t, fmt.Sprintf("❌ assertion failed. expected elements to exist inside slice, but element '%v' "+
+		"wasn't found\n", elem), msgAndArgs...)
+	return false
+}
+
+type sliceDiff[T any] struct {
+	idx int
+	a   T
+	b   T
+}
+
+func (s sliceDiff[T]) String() string {
+	return fmt.Sprintf("{ idx: %v, a: %v, b: %v }", s.idx, s.a, s.b)
+}
+
+// ElementsMatch asserts two slices contain the same elements, regardless of order.
+// Element multiplicity is respected.
+func ElementsMatch[S ~[]E, E any](
+	t testlite.HelperTesting,
+	a, b S,
+	msgAndArgs ...any,
+) bool {
+	t.Helper()
+
+	// nil handling
+	if a == nil || b == nil {
+		if a == nil && b == nil {
+			return true
+		}
+		fail(t, fmt.Sprintf(
+			"❌ assertion failed. expected slices to match elements, but one is nil: a=%v, b=%v",
+			a, b,
+		), msgAndArgs...)
+		return false
+	}
+
+	// length check
+	if len(a) != len(b) {
+		fail(t, fmt.Sprintf(
+			"❌ assertion failed. expected slices to have same elements, but lengths differ: a=%d, b=%d",
+			len(a), len(b),
+		), msgAndArgs...)
+		return false
+	}
+
+	used := make([]bool, len(b))
+	unmatchedA := make([]E, 0)
+
+	for _, av := range a {
+		found := false
+		for i, bv := range b {
+			if used[i] {
+				continue
+			}
+			if reflect.DeepEqual(av, bv) {
+				used[i] = true
+				found = true
+				break
+			}
+		}
+		if !found {
+			unmatchedA = append(unmatchedA, av)
+		}
+	}
+
+	if len(unmatchedA) > 0 {
+		unmatchedB := make([]E, 0)
+		for i, used := range used {
+			if !used {
+				unmatchedB = append(unmatchedB, b[i])
+			}
+		}
+
+		fail(t, fmt.Sprintf(
+			"❌ assertion failed. slices do not match elements.\n"+
+				"unmatched in a: %v\n"+
+				"unmatched in b: %v",
+			unmatchedA,
+			unmatchedB,
+		), msgAndArgs...)
+		return false
+	}
+
+	return true
+}
+
+// EqualMaps asserts two dicts have equal keys and values.
 func EqualMaps[M ~map[K]V, K comparable, V any](t testlite.HelperTesting, a, b M, msgAndArgs ...any) bool {
 	if !ask.AreEqualMaps(a, b) {
 		t.Helper()
-		fail(t, fmt.Sprintf("❌ assertion failed. maps are not equals: a = <%T>%v, "+
+		fail(t, fmt.Sprintf("❌ assertion failed. dicts are not equals: a = <%T>%v, "+
 			"b = <%T>%v\n", a, a, b, b), msgAndArgs...)
 		return false
 	}
 	return true
 }
 
+// Equals asserts two values are deeply equal.
 func Equals(t testlite.HelperTesting, a, b any, msgAndArgs ...any) bool {
 	if !ask.AreEquals(a, b) {
 		t.Helper()
@@ -101,7 +204,9 @@ func Equals(t testlite.HelperTesting, a, b any, msgAndArgs ...any) bool {
 	return true
 }
 
-func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) bool {
+// EqualSlices asserts two slices are equal by length and element order.
+// Nil and empty slices are considered different.
+func EqualSlices[S ~[]E, E any](t testlite.HelperTesting, a, b S, msgAndArgs ...any) bool {
 	if a == nil || b == nil {
 		if a == nil && b == nil {
 			return true
@@ -115,16 +220,12 @@ func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) b
 	if len(a) != len(b) {
 		t.Helper()
 		fail(t, fmt.Sprintf("❌ assertion failed. expected slices to be equals, but got different"+
-			" lengths: a = %v, b = %v\n",
-			len(a), len(b)), msgAndArgs...)
+			" lengths: a = %d:%v, b = %d:%v\n",
+			len(a), a, len(b), b), msgAndArgs...)
 		return false
 	}
 
-	diff := make([]struct {
-		idx int
-		a   T
-		b   T
-	}, 0)
+	diff := make([]sliceDiff[E], 0)
 
 	va, vb := reflect.ValueOf(a), reflect.ValueOf(b)
 	knd := va.Type().Elem().Kind()
@@ -133,11 +234,7 @@ func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) b
 		for i := 0; i < len(a); i++ {
 			if va.Index(i).IsNil() || vb.Index(i).IsNil() {
 				if !va.Index(i).IsNil() || !vb.Index(i).IsNil() {
-					diff = append(diff, struct {
-						idx int
-						a   T
-						b   T
-					}{
+					diff = append(diff, sliceDiff[E]{
 						idx: i,
 						a:   a[i],
 						b:   b[i],
@@ -146,11 +243,7 @@ func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) b
 			}
 			if !reflect.DeepEqual(a[i], b[i]) {
 				t.Helper()
-				diff = append(diff, struct {
-					idx int
-					a   T
-					b   T
-				}{
+				diff = append(diff, sliceDiff[E]{
 					idx: i,
 					a:   a[i],
 					b:   b[i],
@@ -161,11 +254,7 @@ func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) b
 		for i := 0; i < len(a); i++ {
 			if !reflect.DeepEqual(a[i], b[i]) {
 				t.Helper()
-				diff = append(diff, struct {
-					idx int
-					a   T
-					b   T
-				}{
+				diff = append(diff, sliceDiff[E]{
 					idx: i,
 					a:   a[i],
 					b:   b[i],
@@ -182,13 +271,43 @@ func EqualSlices[T any](t testlite.HelperTesting, a, b []T, msgAndArgs ...any) b
 	return true
 }
 
+// Eventually asserts condition becomes true before timeout.
+// The condition is polled every 5ms.
+func Eventually(t testlite.HelperTesting, timeout time.Duration, condition func() bool, msgAndArgs ...any) bool {
+	start := time.Now()
+	for {
+		if condition() {
+			return true
+		}
+		if time.Since(start) >= timeout {
+			break
+		}
+		time.Sleep(5 * time.Millisecond)
+	}
+	fail(t, fmt.Sprintf("❌ assertion failed. condition did not become true within '%v'", timeout),
+		msgAndArgs...)
+	return false
+}
+
 // False asserts that the given condition is false.
 // Returns true if the given condition is false
 // Otherwise returns false and flags the test as failed
 func False(t testlite.HelperTesting, b bool, msgAndArgs ...any) bool {
 	if b {
 		t.Helper()
-		fail(t, "expected false, but got true\n", msgAndArgs...)
+		fail(t, "❌ assertion failed. expected false, but got true\n", msgAndArgs...)
+		return false
+	}
+	return true
+}
+
+// IsEmpty asserts the slice isn't nil and doesn't contain any element
+func IsEmpty[S ~[]E, E any](t testlite.HelperTesting, s S, msgAndArgs ...any) bool {
+	size := len(s)
+	if size != 0 {
+		t.Helper()
+		fail(t, fmt.Sprintf("❌ assertion failed. expected slice to be empty, but it has '%d' element(s)", size),
+			msgAndArgs...)
 		return false
 	}
 	return true
@@ -196,14 +315,26 @@ func False(t testlite.HelperTesting, b bool, msgAndArgs ...any) bool {
 
 // IsErrorOf asserts that the error is not nil and any error in error's tree matches
 // the target.
-func IsErrorOf(t testlite.HelperTesting, err error, expected error, msgAndArgs ...any) {
+func IsErrorOf(t testlite.HelperTesting, err error, expected error, msgAndArgs ...any) bool {
 	t.Helper()
 	if err == nil {
-		fail(t, "expected error, but got nil\n", msgAndArgs...)
+		fail(t, fmt.Sprintf("❌ assertion failed. expected error of '%v', but got nil\n", expected), msgAndArgs...)
 	}
 	if !errors.Is(err, expected) {
-		fail(t, fmt.Sprintf("expected error to be '%v', but got '%v'\n", expected, err), msgAndArgs...)
+		fail(t, fmt.Sprintf("❌ assertion failed. expected error to be '%v', but got '%v'\n", expected, err), msgAndArgs...)
+		return false
 	}
+	return true
+}
+
+// IsErrorMessage asserts that the error is not nil and it has the same message of the target
+func IsErrorMessage(t testlite.HelperTesting, err error, expected string) bool {
+	t.Helper()
+	if err == nil || err.Error() != expected {
+		fail(t, "expected error message '%s', got '%v'", expected, err)
+		return false
+	}
+	return true
 }
 
 // IsNil asserts the value is nil or flag the test as failed.
@@ -226,6 +357,18 @@ func IsTypeOf[T any](t testlite.HelperTesting, v any, msgAndArgs ...any) bool {
 		typx := reflect.TypeOf((*T)(nil)).Elem()
 		fail(t, fmt.Sprintf("❌ assertion failed. expected data to be of type '%s',"+
 			" but got '%T'\n", typx, v), msgAndArgs...)
+		return false
+	}
+	return true
+}
+
+// Len asserts the slice length equals the expected length.
+func Len[S ~[]E, E any](t testlite.HelperTesting, s S, length int, msgAndArgs ...any) bool {
+	slen := len(s)
+	if slen != length {
+		t.Helper()
+		fail(t, fmt.Sprintf("❌ assertion failed. expected length to be '%d', but got '%d.'", length, slen),
+			msgAndArgs...)
 		return false
 	}
 	return true
@@ -322,8 +465,8 @@ func NotNil(t testlite.HelperTesting, value any, msgAndArgs ...any) bool {
 	return true
 }
 
-// NoPanic asserts that the function doesn't panic or flag the test as failed
-func NoPanic(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
+// NoPanics asserts that the function doesn't panic or flag the test as failed
+func NoPanics(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
 	t.Helper()
 	defer noPanic(t, &res, msgAndArgs...)
 	f()
@@ -334,7 +477,7 @@ func noPanic(t testlite.HelperTesting, res *bool, msgAndArgs ...any) {
 	t.Helper()
 	o := true
 	if r := recover(); r != nil {
-		fail(t, fmt.Sprintf("expected no panic, but got 'panic: %v'\n", r), msgAndArgs...)
+		fail(t, fmt.Sprintf("❌ assertion failed. expected no panic, but got 'panic: %v'\n", r), msgAndArgs...)
 		o = false
 	}
 	res = &o
@@ -365,8 +508,8 @@ func NotTypeOf[T any](t testlite.HelperTesting, v any, msgAndArgs ...any) bool {
 	return true
 }
 
-// Panic asserts that the function panics or flag the test as failed
-func Panic(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
+// Panics asserts that the function panics or flag the test as failed
+func Panics(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
 	t.Helper()
 	defer func() {
 		if r := recover(); r != nil {
@@ -376,7 +519,7 @@ func Panic(t testlite.HelperTesting, f func(), msgAndArgs ...any) (res bool) {
 	f()
 
 	if !res {
-		fail(t, "expected a panic, but got none\n", msgAndArgs...)
+		fail(t, "❌ assertion failed. expected a panic, but got none\n", msgAndArgs...)
 		return false
 	}
 	return
@@ -403,7 +546,7 @@ func Same(t testlite.HelperTesting, a, b any, msgAndArgs ...any) bool {
 func True(t testlite.HelperTesting, condition bool, msgAndArgs ...any) bool {
 	if !condition {
 		t.Helper()
-		fail(t, "expected true, but got false\n", msgAndArgs...)
+		fail(t, "❌ assertion failed. expected true, but got false\n", msgAndArgs...)
 		return false
 	}
 	return true

@@ -5,14 +5,40 @@ package io
 import (
 	"io"
 	"log"
+
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 )
 
 // CloseOrLog closes a resource and logs any error that occurs.
-//
-// It returns an error if the resource couldn't be closed.
-func CloseOrLog(c io.Closer, name string) {
+func CloseOrLog(c io.Closer, tags ...string) {
 	if err := c.Close(); err != nil {
-		log.Printf("Error while closing resource %q: %+v", name, err)
+		label := "resource"
+
+		// Priority 1: Explicitly passed tags
+		if len(tags) > 0 {
+			label = tags[0]
+		} else if n, ok := c.(interface{ Name() string }); ok {
+			// Priority 2: Does the object have a Name() method? (like *os.File)
+			label = n.Name()
+		}
+
+		log.Printf("Error closing %s: %v", label, err)
+	}
+}
+
+// CloseOrConsume closes a resource and consumes any error that occurs.
+func CloseOrConsume(c io.Closer, handler function.BiConsumer[string, error], tags ...string) {
+	if err := c.Close(); err != nil {
+		label := "resource"
+
+		// Priority 1: Explicitly passed tags
+		if len(tags) > 0 {
+			label = tags[0]
+		} else if n, ok := c.(interface{ Name() string }); ok {
+			// Priority 2: Does the object have a Name() method? (like *os.File)
+			label = n.Name()
+		}
+		handler(label, err)
 	}
 }
 

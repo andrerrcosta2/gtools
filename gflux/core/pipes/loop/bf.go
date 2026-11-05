@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 )
 
@@ -15,7 +15,7 @@ import (
 var ErrEmptyElements = errors.New("elements slice is empty")
 
 // BF brute force loop, order matters, repetition allowed (cartesian power)
-func BF[S ~[]E, E any](ctx context.Context, elems S, min, max, step int, fn functions.Function[S, error]) error {
+func BF[S ~[]E, E any](ctx context.Context, elems S, min, max, step int, fn function.Function[S, error]) error {
 	if len(elems) == 0 {
 		return ErrEmptyElements
 	}

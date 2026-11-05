@@ -18,7 +18,7 @@ import (
 // defaultArray extracts the sprint from an array
 func defaultArray(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	sb := strings.Builder{}
 	if v.Len() == 0 {
 		return sprints.EmptyIterable(tab, name)
@@ -37,9 +37,9 @@ func defaultArray(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 }
 
 // defaultChan extracts the sprint from a channel
-func defaultChan(tab indent.Indentor, v reflect.Value) string {
+func defaultChan(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	if v.IsNil() {
 		return sprints.NilType(tab, name)
 	}
@@ -55,17 +55,9 @@ func defaultFields(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 
 		if field.IsZero() && values.CanNil(field) {
 			sb.WriteString(sprints.Lfield(tab, name, sprints.NilType(indent.Zero(),
-				types.ValidValueName(field.Type()))) + ",")
+				types.ValidValueNameSwitch(field.Type(), s.UseQfName))) + ",")
 			continue
 		}
-
-		//if !field.CanInterface() {
-		//	// since only fields can be unexported
-		//	// here is the only method we need to use unsafe operations
-		//	if !field.IsZero() {
-		//		field = values.UnsafeForceOfUnaddr(field)
-		//	}
-		//}
 		sb.WriteString(sprints.Lfield(tab, name, sprintOf(tab, field, s)) + ",")
 	}
 	return sb.String()
@@ -95,9 +87,9 @@ func exportedFields(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 }
 
 // defaultFunc extracts the sprint from a function
-func defaultFunc(tab indent.Indentor, v reflect.Value) string {
+func defaultFunc(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	if v.IsNil() {
 		return sprints.NilType(tab, name)
 	}
@@ -106,7 +98,7 @@ func defaultFunc(tab indent.Indentor, v reflect.Value) string {
 
 func defaultInterface(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	if v.IsNil() {
 		return sprints.NilType(tab, name)
 	}
@@ -117,7 +109,7 @@ func defaultInterface(tab indent.Indentor, v reflect.Value, s *Strategy) string 
 // defaultMap extracts the sprint from a map
 func defaultMap(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 
 	if v.IsNil() || v.IsZero() {
 		return sprints.NilType(tab, name)
@@ -133,7 +125,7 @@ func defaultMap(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	s.Mark(v, sprints.CyclicRef(tab, name, sprints.Uintptrf(uintptr(addr))))
 
 	sb := strings.Builder{}
-	// Empty maps can hold nil elements, we need to extract the kind using its
+	// Empty dicts can hold nil elements, we need to extract the kind using its
 	// type declaration
 	if v.Len() == 0 {
 		return sprints.Closedobj(tab, name)
@@ -167,8 +159,9 @@ func defaultMap(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 
 func defaultPointer(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	if v.IsNil() {
-		return sprints.NilType(tab, "*"+types.ValidValueName(typ.Elem()))
+		return sprints.NilType(tab, "*"+name)
 	}
 	spr, ok := s.Check(v)
 	if ok {
@@ -178,14 +171,14 @@ func defaultPointer(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	// The correct approach is to mark it as cycle early and replace it on the same level
 	// before the return. Because it isn't a cycle just because it will be printed
 	// again later.
-	s.Mark(v, sprints.CyclicRef(tab, "*"+types.ValidValueName(typ.Elem()), sprints.Uintptrf(addr)))
+	s.Mark(v, sprints.CyclicRef(tab, "*"+name, sprints.Uintptrf(addr)))
 	val := tab.Trim(sprintOf(tab, v.Elem(), s))
 	return sprints.PointerElem(tab, val)
 }
 
 // sprintPrimitive extracts a sprint from a primitive
-func sprintPrimitive(tab indent.Indentor, v reflect.Value) string {
-	name := types.ValidValueName(v.Type())
+func sprintPrimitive(tab indent.Indentor, v reflect.Value, s *Strategy) string {
+	name := types.ValidValueNameSwitch(v.Type(), s.UseQfName)
 	switch v.Kind() {
 	case reflect.Bool:
 		return tab.Sprintf("<%v>%t", name, v.Bool())
@@ -206,7 +199,7 @@ func sprintPrimitive(tab indent.Indentor, v reflect.Value) string {
 
 // defaultSlice extracts the sprint from a slice
 func defaultSlice(tab indent.Indentor, v reflect.Value, s *Strategy) string {
-	name := types.ValidValueName(v.Type())
+	name := types.ValidValueNameSwitch(v.Type(), s.UseQfName)
 	if v.IsNil() {
 		return sprints.NilType(tab, name)
 	}
@@ -233,16 +226,13 @@ func defaultSlice(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 // defaultStruct extracts the sprint from a struct
 func defaultStruct(tab indent.Indentor, v reflect.Value, s *Strategy) string {
 	typ := v.Type()
-	name := types.ValidValueName(typ)
+	name := types.ValidValueNameSwitch(typ, s.UseQfName)
 	if v.NumField() == 0 {
 		return sprints.BClosedobj(tab, name)
 	}
 	sb := strings.Builder{}
 	sb.WriteString(tab.Sprint(fmx.SBold(name) + "{"))
 
-	//if !v.CanAddr() {
-	//	v = values.ForceOfUnaddr(v)
-	//}
 	sb.WriteString(s.Fields(tab.Inc(), v, s))
 	sb.WriteString("\n" + tab.Sprint("}"))
 	return sb.String()
@@ -257,7 +247,7 @@ func defaultUnsafe(tab indent.Indentor, v reflect.Value) string {
 }
 
 func skipDeep(tab indent.Indentor, v reflect.Value, s *Strategy) string {
-	name := types.ValidValueName(v.Type())
+	name := types.ValidValueNameSwitch(v.Type(), s.UseQfName)
 	return sprints.Errorf(tab, "<%v>(skipped)", name)
 }
 

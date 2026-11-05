@@ -41,7 +41,7 @@ func IsSimilarGenDecl(decl, other *ast.GenDecl) bool {
 	}
 	for _, spec := range decl.Specs {
 		for _, oSpec := range other.Specs {
-			if !spec.IsSimilarSpec(spec, oSpec) {
+			if !IsSimilarSpec(spec, oSpec) {
 				return false
 			}
 		}
@@ -53,7 +53,7 @@ func IsSimilarFuncDecl(decl, other *ast.FuncDecl) bool {
 	if decl == nil || other == nil {
 		return decl == nil && other == nil
 	}
-	if !expr.IsSimilarIdent(decl.Name, other.Name) {
+	if !IsSimilarIdent(decl.Name, other.Name) {
 		return false
 	}
 	return IsSimilarBlockStmt(decl.Body, other.Body)

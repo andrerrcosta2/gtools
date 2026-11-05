@@ -16,11 +16,11 @@ import (
 // DeepCopy creates a clone of the value pointed to by `t`.
 //
 // If `deep` is true, it performs a deep clone—recursively cloning all nested
-// values such as structs, slices, maps, and interfaces.
+// values such as structs, slices, dicts, and interfaces.
 // This ensures the returned clone is completely independent of the original, including all referenced data.
 //
 // If `deep` is false, it performs a shallow clone—only copying the immediate value,
-// sharing references to nested structures like slices, maps, and ptrs.
+// sharing references to nested structures like slices, dicts, and ptrs.
 //
 // DeepCopy handles cyclic references safely and preserves the structure of complex
 // data graphs.
@@ -30,13 +30,13 @@ import (
 //     The same channel reference is reused in the clone.
 //     You may implement a custom strategy to replace or close them if needed.
 //
-//   - functions: cannot be copied.
+//   - function: cannot be copied.
 //     Function values are preserved as-is, but will
 //     always compare as unequal across copies, even if they have identical logic.
 //
 //   - unsafe.Pointers: not traversed or copied, for safety reasons.
 //
-// Because of these limitations, values containing channels or functions will not
+// Because of these limitations, values containing channels or function will not
 // compare as deep-compare - `reflect.DeepDiffer` returns false - even if logically similar.
 //
 // Requirements:
@@ -45,7 +45,7 @@ import (
 // Returns:
 //   - A copied value of type `T`.
 //   - An error if the clone op fails - due to unhandled types or
-//     internal reflection issues - or if the result cannot be cast back to `T`.
+//     infra reflection issues - or if the result cannot be cast back to `T`.
 //
 // Example:
 //
@@ -78,13 +78,13 @@ func DeepCopy[T any](t *T, o ...Option) (cp T, err error) {
 // - **channels**: Two channels are considered compare if:
 //   - They have the same type - including element type.
 //   - They have the same buffer capacity.
-//   - Internal state - open/closed, data in buffer - and identity are ignored.
+//   - Internal states - open/closed, data in buffer - and identity are ignored.
 //     Example:
 //     ch1 := make(chan int, 10)
 //     ch2 := make(chan int, 10)
 //     DeepDiffer(ch1, ch2) // → true
 //
-// - **functions**: Considered compare if they have the same **signature**
+// - **function**: Considered compare if they have the same **signature**
 //   - parameter and return types -, regardless of closure context or implementation.
 //     Example:
 //     fn1 := func(x int) int { return x + 1 }
@@ -118,7 +118,7 @@ func DeepCopy[T any](t *T, o ...Option) (cp T, err error) {
 // This function prioritizes **logical equivalence** over memory identity.
 // It should
 // not be used in contexts where reference aliasing, pointer identity, or channel
-// state is semantically significant.
+// states is semantically significant.
 //
 // ### Example:
 //

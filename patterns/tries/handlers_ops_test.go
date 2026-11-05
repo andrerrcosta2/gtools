@@ -3,14 +3,14 @@
 package tries
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
+	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/nodes"
 )
 
-func HANDLERS_shouldFindNSymbols(t gtests.Loggable, from nodes.PatternTrie, s str.Entry[string, symbols.Logical], n int) {
-	t.StackLogf("searchSymbolsByPattern: '%s'\n", s.Key())
+func HANDLERS_shouldFindNSymbols(t testlite.LoggerTesting, from nodes.PatternTrie, s dict.Entry[string, symbols.Logical], n int) {
+	t.Logf("searchSymbolsByPattern: '%s'\n", s.Key())
 	// Assert only one entry is found
 	ss, ok := searchSymbolsByPattern(from, s.Key(), 6)
 	if !ok {

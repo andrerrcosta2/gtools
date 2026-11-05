@@ -4,12 +4,12 @@ package trees
 
 import (
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
+	"github.com/andrerrcosta2/gtools/core/data/str/tree"
 	"github.com/andrerrcosta2/gtools/datastr/trees/internal/binary"
 )
 
-func BinarySearch[V any](cmp comparators.Typed[V]) str.BinaryTree[V] {
+func BinarySearch[V any](cmp comparator.EqComparer[V]) tree.BinaryTree[V] {
 	return &binTree[V]{
 		cmp: cmp,
 	}
@@ -17,7 +17,7 @@ func BinarySearch[V any](cmp comparators.Typed[V]) str.BinaryTree[V] {
 
 type binTree[V any] struct {
 	abstract[*binary.Node[V], V]
-	cmp comparators.Typed[V]
+	cmp comparator.EqComparer[V]
 }
 
 func (t *binTree[V]) String() string {

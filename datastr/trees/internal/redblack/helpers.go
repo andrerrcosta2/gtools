@@ -3,16 +3,17 @@
 package redblack
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 )
 
-func NewNode[V any](value V, color nodes.RBColor, parentLeftRight ...*Node[V]) *Node[V] {
+func NewNode[V any](value V, color node.RBColor, parentLeftRight ...*Node[V]) *Node[V] {
 	n := &Node[V]{
 		value: value,
 		color: color,
+		size:  1, // novo nó sempre tem tamanho 1
 	}
 	if len(parentLeftRight) > 0 && parentLeftRight[0] != nil {
 		n.parent = parentLeftRight[0]
@@ -27,17 +28,18 @@ func NewNode[V any](value V, color nodes.RBColor, parentLeftRight ...*Node[V]) *
 }
 
 func Black[V any](value V, parentLeftRight ...*Node[V]) *Node[V] {
-	return NewNode(value, nodes.Black, parentLeftRight...)
+	return NewNode(value, node.Black, parentLeftRight...)
 }
 
 func Red[V any](value V, parentLeftRight ...*Node[V]) *Node[V] {
-	return NewNode(value, nodes.Red, parentLeftRight...)
+	return NewNode(value, node.Red, parentLeftRight...)
 }
 
 func Root[V any](value V, LeftRight ...*Node[V]) *Node[V] {
 	n := &Node[V]{
 		value: value,
-		color: nodes.Black,
+		color: node.Black,
+		size:  1,
 	}
 	if len(LeftRight) > 0 {
 		n.left = LeftRight[0]
@@ -50,13 +52,14 @@ func Root[V any](value V, LeftRight ...*Node[V]) *Node[V] {
 
 type Node[V any] struct {
 	value  V
-	color  nodes.RBColor
 	left   *Node[V]
 	right  *Node[V]
 	parent *Node[V]
+	size   int
+	color  node.RBColor
 }
 
-func (n *Node[V]) Color() nodes.RBColor {
+func (n *Node[V]) Color() node.RBColor {
 	return n.color
 }
 
@@ -76,7 +79,7 @@ func (n *Node[V]) RightChild() *Node[V] {
 	return n.right
 }
 
-func (n *Node[V]) SetColor(color nodes.RBColor) {
+func (n *Node[V]) SetColor(color node.RBColor) {
 	n.color = color
 }
 
@@ -98,6 +101,14 @@ func (n *Node[V]) SetValue(value V) {
 
 func (n *Node[V]) Value() V {
 	return n.value
+}
+
+// Size retorna o tamanho da subárvore
+func (n *Node[V]) Size() int {
+	if n == nil {
+		return 0
+	}
+	return n.size
 }
 
 func (n *Node[V]) String() string {
@@ -126,8 +137,19 @@ func (n *Node[V]) Sprint(tab indent.Indentor) string {
 	)
 }
 
+// updateSize recalcula o size baseado nos filhos
+func (n *Node[V]) updateSize() {
+	n.size = 1
+	if n.left != nil {
+		n.size += n.left.size
+	}
+	if n.right != nil {
+		n.size += n.right.size
+	}
+}
+
 // Ceiling returns the ceiling of a value in the tree.
-func Ceiling[V any](from *Node[V], value V, compare functions.BiFunction[V, V, int]) (V, bool) {
+func Ceiling[V any](from *Node[V], value V, compare function.BiFunction[V, V, int]) (V, bool) {
 	var ceil V
 	var found bool
 
@@ -148,9 +170,9 @@ func Ceiling[V any](from *Node[V], value V, compare functions.BiFunction[V, V, i
 }
 
 // colorOf returns the color of a node. If the node is nil, it returns Black
-func colorOf[V any](n *Node[V]) nodes.RBColor {
+func colorOf[V any](n *Node[V]) node.RBColor {
 	if n == nil {
-		return nodes.Black
+		return node.Black
 	}
 	return n.color
 }
@@ -159,7 +181,7 @@ func colorOf[V any](n *Node[V]) nodes.RBColor {
 // most complex ops on red black trees because it involves not only removing a
 // node but also ensuring that the tree maintains its properties after the removal.
 //
-// the deletion must be done in three main steps
+// the deletion must be done in three main step
 //
 //  1. find the node to delete. (this was performed on the previous step)
 //  2. delete the node:
@@ -187,9 +209,9 @@ func DeleteNode[V any](root, target *Node[V]) *Node[V] {
 		// does not affect the black height.
 		// 3. if the replacement was a red node and the tree was balanced before,
 		// the height can be fixed painting the replacement black
-		if fixup != root && target.color == nodes.Black {
+		if fixup != root && target.color == node.Black {
 			if isRed(fixup) { // quick fixup
-				fixup.color = nodes.Black
+				fixup.color = node.Black
 			} else { // long fixup
 				root = deleteFixup(root, parent, fixup == parent.left)
 			}
@@ -197,9 +219,9 @@ func DeleteNode[V any](root, target *Node[V]) *Node[V] {
 		// Case 2: target has no right child → replace it with targetLeft
 	} else if target.right == nil {
 		root, parent, fixup = halfTransplantLeft(root, target)
-		if fixup != root && target.color == nodes.Black {
+		if fixup != root && target.color == node.Black {
 			if isRed(fixup) { // quick fixup
-				fixup.color = nodes.Black
+				fixup.color = node.Black
 			} else { // long fixup
 				root = deleteFixup(root, parent, fixup == parent.left)
 			}
@@ -211,7 +233,7 @@ func DeleteNode[V any](root, target *Node[V]) *Node[V] {
 		root, parent, fixup = fullTransplantSuccessor(root, target)
 		if fixup != root {
 			if isRed(fixup) {
-				fixup.color = nodes.Black
+				fixup.color = node.Black
 			} else {
 				root = deleteFixup(root, parent, fixup == parent.left)
 			}
@@ -220,13 +242,30 @@ func DeleteNode[V any](root, target *Node[V]) *Node[V] {
 	return root
 }
 
+// DeleteByIndex removes the node at the given index (0-based) in inorder traversal
+// Returns the removed value and whether the deletion was successful
+func DeleteByIndex[V any](root *Node[V], index int) (newRoot *Node[V], deletedNode V, exists bool) {
+	if root == nil || index < 0 || index >= root.Size() {
+		return root, *new(V), false
+	}
+
+	target, found := findNodeByIndex(root, index)
+	if !found {
+		return root, *new(V), false
+	}
+
+	value := target.value
+	newRoot = DeleteNode(root, target)
+	return newRoot, value, true
+}
+
 func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 	for parent != nil {
 		if left {
 			sibl := parent.right
 			if isRed(sibl) {
-				sibl.color = nodes.Black
-				parent.color = nodes.Red
+				sibl.color = node.Black
+				parent.color = node.Red
 				rotateLeft(root, parent)
 				// the sibling is the only one can replace the root
 				if sibl.parent == nil {
@@ -236,12 +275,12 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 			}
 			if isNilOrHasOnlyBlackChildren(sibl) {
 				if sibl != nil {
-					sibl.color = nodes.Red
+					sibl.color = node.Red
 				}
 				// if the parent is red, the loop should break,
 				// paint it black and return the root
-				if parent.color == nodes.Red {
-					parent.color = nodes.Black
+				if parent.color == node.Red {
+					parent.color = node.Black
 					if parent.parent == nil {
 						return parent
 					}
@@ -254,14 +293,14 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 				parent = parent.parent
 			} else {
 				if isNilOrBlack(sibl.right) { // sibl.left is red
-					sibl.left.color = nodes.Black
-					sibl.color = nodes.Red
+					sibl.left.color = node.Black
+					sibl.color = node.Red
 					rotateRight(root, sibl)
 					sibl = parent.right
 				}
 				sibl.color = parent.color
-				parent.color = nodes.Black
-				sibl.right.color = nodes.Black
+				parent.color = node.Black
+				sibl.right.color = node.Black
 				rotateLeft(root, parent)
 				if sibl.parent == nil {
 					root = sibl
@@ -272,8 +311,8 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 		} else {
 			sibl := parent.left
 			if isRed(sibl) {
-				sibl.color = nodes.Black
-				parent.color = nodes.Red
+				sibl.color = node.Black
+				parent.color = node.Red
 				rotateRight(root, parent)
 				// the sibling is the only one can replace the root
 				if sibl.parent == nil {
@@ -283,10 +322,10 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 			}
 			if isNilOrHasOnlyBlackChildren(sibl) {
 				if sibl != nil {
-					sibl.color = nodes.Red
+					sibl.color = node.Red
 				}
-				if parent.color == nodes.Red {
-					parent.color = nodes.Black
+				if parent.color == node.Red {
+					parent.color = node.Black
 					if parent.parent == nil {
 						return parent
 					}
@@ -299,14 +338,14 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 				parent = parent.parent
 			} else {
 				if isNilOrBlack(sibl.left) {
-					sibl.right.color = nodes.Black
-					sibl.color = nodes.Red
+					sibl.right.color = node.Black
+					sibl.color = node.Red
 					rotateLeft(root, sibl)
 					sibl = parent.left
 				}
 				sibl.color = parent.color
-				parent.color = nodes.Black
-				sibl.left.color = nodes.Black
+				parent.color = node.Black
+				sibl.left.color = node.Black
 				rotateRight(root, parent)
 				if sibl.parent == nil {
 					root = sibl
@@ -316,12 +355,12 @@ func deleteFixup[V any](root, parent *Node[V], left bool) *Node[V] {
 		}
 	}
 
-	root.color = nodes.Black
+	root.color = node.Black
 	return root
 }
 
 // Floor returns the floor of the given value
-func Floor[V any](from *Node[V], value V, compare functions.BiFunction[V, V, int]) (V, bool) {
+func Floor[V any](from *Node[V], value V, compare function.BiFunction[V, V, int]) (V, bool) {
 	var floor V
 	var found bool
 
@@ -342,21 +381,21 @@ func Floor[V any](from *Node[V], value V, compare functions.BiFunction[V, V, int
 }
 
 func hasOnlyBlackChildren[V any](n *Node[V]) bool {
-	return (n.left == nil || n.left.color == nodes.Black) &&
-		(n.right == nil || n.right.color == nodes.Black)
+	return (n.left == nil || n.left.color == node.Black) &&
+		(n.right == nil || n.right.color == node.Black)
 }
 
 func isRed[V any](n *Node[V]) bool {
 	return !isNilOrBlack(n)
 }
 
-func isNilOrBlack[V any](n *Node[V]) bool { return n == nil || n.color == nodes.Black }
+func isNilOrBlack[V any](n *Node[V]) bool { return n == nil || n.color == node.Black }
 
 func isNilOrHasOnlyBlackChildren[V any](n *Node[V]) bool {
 	return n == nil || hasOnlyBlackChildren(n)
 }
 
-func FindNode[V any](root *Node[V], value V, cmp functions.BiFunction[V, V, int]) (*Node[V], bool) {
+func FindNode[V any](root *Node[V], value V, cmp function.BiFunction[V, V, int]) (*Node[V], bool) {
 	current := root
 	for current != nil {
 		c := cmp(value, current.value)
@@ -371,7 +410,27 @@ func FindNode[V any](root *Node[V], value V, cmp functions.BiFunction[V, V, int]
 	return nil, false
 }
 
-func InsertNode[V any](root, node *Node[V], compare functions.BiFunction[V, V, int]) (*Node[V], bool) {
+// findNodeByIndex finds the node at the given index in inorder traversal
+func findNodeByIndex[V any](n *Node[V], index int) (*Node[V], bool) {
+	if n == nil {
+		return nil, false
+	}
+
+	// Get size of left subtree
+	leftSize := 0
+	if n.left != nil {
+		leftSize = n.left.Size()
+	}
+
+	if index < leftSize {
+		return findNodeByIndex(n.left, index)
+	} else if index == leftSize {
+		return n, true
+	}
+	return findNodeByIndex(n.right, index-leftSize-1)
+}
+
+func InsertNode[V any](root, n *Node[V], compare function.BiFunction[V, V, int]) (*Node[V], bool) {
 	// Find the correct position for the new node
 	var parent *Node[V]
 	var current = root
@@ -379,7 +438,7 @@ func InsertNode[V any](root, node *Node[V], compare functions.BiFunction[V, V, i
 
 	for current != nil {
 		parent = current
-		i = compare(node.value, current.value)
+		i = compare(n.value, current.value)
 		if i < 0 {
 			current = current.left
 		} else if i > 0 {
@@ -390,54 +449,60 @@ func InsertNode[V any](root, node *Node[V], compare functions.BiFunction[V, V, i
 	}
 
 	// Attach the new node to its parent
-	node.parent = parent
+	n.parent = parent
+	n.size = 1
 	if parent == nil {
-		return node, true // New node becomes the root
+		return n, true // New node becomes the root
 	}
 	if i < 0 {
-		parent.left = node
+		parent.left = n
 	} else {
-		parent.right = node
+		parent.right = n
+	}
+
+	// Atualiza sizes na subida
+	for nn := n.parent; nn != nil; nn = nn.parent {
+		nn.updateSize()
 	}
 
 	// assert the node starts out red
-	node.color = nodes.Red
+	n.color = node.Red
 	// Fix the Red-Black Tree properties
-	return insertFixup(root, node), true
+	return insertFixup(root, n), true
 }
 
 // insertFixup restores the trees.RedBlack Tree properties after insertion.
 func insertFixup[V any](root, n *Node[V]) *Node[V] {
-	// When inserting a new node into a Red-Black Tree, it is always initially red.
-	// However, this might cause two consecutive red nodes (violating Property 4).
+	// At inserting a new node into a Red-Black Tree, it is always initially red.
+	// However, this might cause two consecutive red node (violating Property 4).
 	// The insertFixup function restores the tree's balance by checking if the parent
 	// is red and applying rotations and recoloring when necessary.
 	// This algorithm only runs if the node was inserted as a child of a red node.
-	for n.parent != nil && n.parent.color == nodes.Red {
-		// When a parent is red, there are three cases to consider:
+	for n.parent != nil && n.parent.color == node.Red {
+		// At a parent is red, there are three cases to consider:
 		grandparent := n.parent.parent
 		if n.parent == grandparent.left {
 			uncle := grandparent.right
 
-			// Case 1: When the uncle node is red, the algorithm performs recoloring.
+			// Case 1: At the uncle node is red, the algorithm performs recoloring.
 			// assigning the grandparent to n we are propagating the issue upwards because
 			// the grandparent might now violate the Red-Black property.
-			if uncle != nil && uncle.color == nodes.Red {
-				n.parent.color = nodes.Black
-				uncle.color = nodes.Black
-				grandparent.color = nodes.Red
+			if uncle != nil && uncle.color == node.Red {
+				n.parent.color = node.Black
+				uncle.color = node.Black
+				grandparent.color = node.Red
 				n = grandparent
 			} else {
 				// Case 2: Rotation for Zigzag (Triangle Shape)
-				// When the uncle node is black, the algorithm performs rotations
+				// At the uncle node is black, the algorithm performs rotations
 				// If the node is the right child of the parent, it must first ensure the primary
 				// property of binary search trees: the left child of a node is less
 				// than the parent and the right child is greater than the parent.
 				// So we flat it out by making the node the parent and then rotating it to the left.
-				// The goal is to transform the tree into a linear structure (a straight line of nodes)
+				// The goal is to transform the tree into a linear structure (a straight line of node)
 				// so that a single right rotation and recoloring can resolve the violation.
 				// If n is the right child of its parent, a left rotation on the parent is needed to
-				// make the nodes line up.
+				// make the node line up.
 				// If n is the left child of its parent, no left rotation is needed.
 				// If the parent is the left child of the grandparent and n is the right child of its parent
 				// that means we are handling a triangle shaped tree (ofter referred to as a zigzag pattern)
@@ -459,13 +524,13 @@ func insertFixup[V any](root, n *Node[V]) *Node[V] {
 					//  (P[RED])
 				}
 				// Case 3: Right Rotation
-				// Now that the structure is properly aligned (straight line),
+				// AtNow that the structure is properly aligned (straight line),
 				// we recolor and perform a final right rotation.
 				//     (n[RED])
 				//    /     \
 				//  (P[RED]) (GP)
-				n.parent.color = nodes.Black
-				grandparent.color = nodes.Red
+				n.parent.color = node.Black
+				grandparent.color = node.Red
 				//     (n[BLACK])
 				//    /     \
 				//  (P[RED]) (GP[RED])
@@ -476,10 +541,10 @@ func insertFixup[V any](root, n *Node[V]) *Node[V] {
 			uncle := grandparent.left
 
 			// Case 1: Recoloring
-			if uncle != nil && uncle.color == nodes.Red {
-				n.parent.color = nodes.Black
-				uncle.color = nodes.Black
-				grandparent.color = nodes.Red
+			if uncle != nil && uncle.color == node.Red {
+				n.parent.color = node.Black
+				uncle.color = node.Black
+				grandparent.color = node.Red
 				n = grandparent
 			} else {
 				// Case 2: Rotation for Zigzag (Triangle Shape)
@@ -489,13 +554,13 @@ func insertFixup[V any](root, n *Node[V]) *Node[V] {
 				}
 
 				// Case 3: Left Rotation
-				n.parent.color = nodes.Black
-				grandparent.color = nodes.Red
+				n.parent.color = node.Black
+				grandparent.color = node.Red
 				root = rotateLeft(root, grandparent)
 			}
 		}
 	}
-	root.color = nodes.Black // Ensure the root is always black
+	root.color = node.Black // Ensure the root is always black
 	return root
 }
 
@@ -549,8 +614,12 @@ func rotateLeft[V any](root, x *Node[V]) *Node[V] {
 	top.left = x
 	x.parent = top
 
+	// Atualiza sizes após rotação
+	x.updateSize()
+	top.updateSize()
+
 	// always set the root color to black
-	root.color = nodes.Black
+	root.color = node.Black
 	return root
 }
 
@@ -584,8 +653,12 @@ func rotateRight[V any](root, x *Node[V]) *Node[V] {
 	top.right = x
 	x.parent = top
 
+	// Atualiza sizes após rotação
+	x.updateSize()
+	top.updateSize()
+
 	// always set the root color to black
-	root.color = nodes.Black
+	root.color = node.Black
 	return root
 }
 
@@ -599,7 +672,7 @@ func halfTransplantLeft[V any](root, target *Node[V]) (newRoot, parent, x *Node[
 			return nil, nil, nil
 		}
 		repl.parent = nil
-		repl.color = nodes.Black
+		repl.color = node.Black
 		return repl, nil, repl
 	}
 	if target == target.parent.left {
@@ -613,6 +686,12 @@ func halfTransplantLeft[V any](root, target *Node[V]) (newRoot, parent, x *Node[
 			repl.parent = target.parent
 		}
 	}
+
+	// Atualiza sizes na subida
+	for nn := target.parent; nn != nil; nn = nn.parent {
+		nn.updateSize()
+	}
+
 	return root, target.parent, repl
 }
 
@@ -626,7 +705,7 @@ func halfTransplantRight[V any](root, target *Node[V]) (newRoot, parent, x *Node
 			return nil, nil, nil
 		}
 		repl.parent = nil
-		repl.color = nodes.Black
+		repl.color = node.Black
 		return repl, nil, repl
 	}
 	if target == target.parent.left {
@@ -640,6 +719,12 @@ func halfTransplantRight[V any](root, target *Node[V]) (newRoot, parent, x *Node
 			repl.parent = target.parent
 		}
 	}
+
+	// Atualiza sizes na subida
+	for nn := target.parent; nn != nil; nn = nn.parent {
+		nn.updateSize()
+	}
+
 	return root, target.parent, repl
 }
 
@@ -650,7 +735,7 @@ func fullTransplantLeft[V any](root, target *Node[V]) (newRoot, parent, x *Node[
 	repl := target.left
 	if target.parent == nil {
 		repl.parent = nil
-		repl.color = nodes.Black
+		repl.color = node.Black
 		newRoot = repl
 	} else {
 		newRoot = root
@@ -674,7 +759,7 @@ func fullTransplantRight[V any](root, target *Node[V]) (newRoot, parent, x *Node
 	repl := target.right
 	if target.parent == nil {
 		repl.parent = nil
-		repl.color = nodes.Black
+		repl.color = node.Black
 		newRoot = repl
 	} else {
 		newRoot = root
@@ -720,7 +805,7 @@ func fullTransplantSuccessor[V any](root, target *Node[V]) (newRoot, parent, x *
 			repl.parent = nil
 			newRoot = repl
 		}
-		newRoot.color = nodes.Black
+		newRoot.color = node.Black
 		repl.right = target.right
 		repl.right.parent = repl
 		repl.left = target.left

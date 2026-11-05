@@ -11,14 +11,14 @@ const (
 	PtrIdentity op.Clone = 1 << iota
 	// ChanIdentity clones all channels underlying memory address - shallow clone.
 	ChanIdentity
-	// FuncIdentity clones all functions underlying memory address - shallow clone.
+	// FuncIdentity clones all function underlying memory address - shallow clone.
 	FuncIdentity
 
 	// SkipUnexportedFields skips copying unexported struct fields.
 	SkipUnexportedFields
 	// SkipChan skip copying channels
 	SkipChan
-	// SkipFunc skip copying functions
+	// SkipFunc skip copying function
 	SkipFunc
 	// SkipPtr skip copying pointers
 	SkipPtr

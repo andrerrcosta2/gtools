@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/reflect4"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/values"
 )
@@ -198,7 +198,7 @@ func defaultDeepCopyFunc(v reflect.Value, _ *CopyStrategy) (reflect.Value, error
 	if v.IsNil() {
 		return reflect.Zero(v.Type()), nil
 	}
-	// I suppose that we can't actually clone functions in golang
+	// I suppose that we can't actually clone function in golang
 	// if we have closures, the locked value might be modifiable be both.
 	return reflect.New(v.Type()).Elem(), nil
 }
@@ -224,7 +224,7 @@ func readSettableField(v reflect.Value, i int) (field reflect.Value, canRead boo
 	return f, f.CanSet()
 }
 
-func rideSettableFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value]) {
+func rideSettableFields(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value]) {
 	for i := 0; i < a.NumField(); i++ {
 		f1 := a.Field(i)
 		if !f1.CanSet() {
@@ -237,7 +237,7 @@ func rideSettableFields(a, b reflect.Value, fn functions.TriPredicate[int, refle
 	}
 }
 
-func rideAllFields(a, b reflect.Value, fn functions.TriPredicate[int, reflect.Value, reflect.Value]) {
+func rideAllFields(a, b reflect.Value, fn function.TriPredicate[int, reflect.Value, reflect.Value]) {
 	for i := 0; i < a.NumField(); i++ {
 		f1 := a.Field(i)
 		f2 := b.Field(i)
@@ -251,7 +251,7 @@ func shallowCopyFunc(v reflect.Value) (reflect.Value, error) {
 	if v.IsNil() {
 		return reflect.Zero(v.Type()), nil
 	}
-	// I suppose that we can't actually clone functions in golang
+	// I suppose that we can't actually clone function in golang
 	// if we have closures the locked value might be modifiable be both.
 	return reflect.New(v.Type()).Elem(), nil
 }

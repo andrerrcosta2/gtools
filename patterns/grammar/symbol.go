@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim/bins"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"regexp"
 )
 
@@ -93,7 +93,7 @@ type Symbol interface {
 	// It returns a new symbol with the transformed characters.
 	// For example, if the symbol is "test-test2" and the BiFunction is a lambda that takes the index and the character and returns the character incremented by 1,
 	// it will return a symbol with the value "uvft-uvfu3".
-	Map(fn functions.BiFunction[int, byte, byte]) Symbol
+	Map(fn function.BiFunction[int, byte, byte]) Symbol
 	// Remove returns a new symbol that is the result of removing the sub symbol
 	// from the given i index to the given j index from the current symbol.
 	Remove(i, j int) Symbol
@@ -406,7 +406,7 @@ func (s ByteSymbol) Len() int {
 // The function takes a byte and returns a new byte.
 // The function is applied to each byte of the symbol.
 // The resulting bytes are concatenated to form the new symbol.
-func (s ByteSymbol) Map(fn functions.BiFunction[int, byte, byte]) Symbol {
+func (s ByteSymbol) Map(fn function.BiFunction[int, byte, byte]) Symbol {
 	out := make(ByteSymbol, len(s))
 	for i, b := range s {
 		// Apply the function to the current byte and store the result in the output slice

@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
 )
@@ -63,7 +63,7 @@ type DeepEqualTest struct {
 	eq   bool
 }
 
-// Simple functions for DeepEqual tests.
+// Simple function for DeepEqual tests.
 var (
 	fnil1        func()                    // nil.
 	fnil2        func()                    // nil.

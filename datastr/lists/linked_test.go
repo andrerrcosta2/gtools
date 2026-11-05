@@ -5,7 +5,7 @@ package lists
 import (
 	"testing"
 
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
@@ -24,7 +24,7 @@ import (
 //   - the index map is empty if it is created with no elements
 //   - the index map is not empty if it is created with elements and can be used to retrieve the inserted value by its hash
 func TestHashLinked(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	// Test empty
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
@@ -90,7 +90,7 @@ func TestHashLinked(t *testing.T) {
 //   - the index map is updated and can be used to retrieve the inserted value by its hash
 func TestHashLinked_Add(t *testing.T) {
 	// Test empty
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 	if cast.size() != 0 {
@@ -127,7 +127,7 @@ func TestHashLinked_Add(t *testing.T) {
 //   - the element is found if it was inserted
 //   - the element is not found if it was not inserted
 func TestHashLinked_Contains(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 
@@ -152,7 +152,7 @@ func TestHashLinked_Contains(t *testing.T) {
 //   - the element is not found if it was not inserted
 //   - the element is not found if the index is negative
 func TestHashLinked_Get(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 
 	it := iterables.OfSlice(2, 4, 6, 8, 10, 12)
@@ -181,7 +181,7 @@ func TestHashLinked_Get(t *testing.T) {
 //   - the list tail is nil
 //   - the index map is empty
 func TestHashLinked_HardClear(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp, 1, 2, 3, 5, 6, 7)
 	cast := list.(*hashLinked[int, string])
 
@@ -244,12 +244,12 @@ func TestHashLinked_HardClear(t *testing.T) {
 
 // TestHashLinked_IndexOf tests the indexOf method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - the index map can be used to retrieve the inserted value
 //   - the IndexOf can retrieve the same index the value was inserted
 //   - not inserted values must retrieve '-1'
 func TestHashLinked_IndexOf(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 
@@ -267,12 +267,12 @@ func TestHashLinked_IndexOf(t *testing.T) {
 
 // TestHashLinked_Insert tests the insert method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - its size is increase
 //   - the insertion index can be used to retrieve the inserted value
 //   - the index map can be used to retrieve the inserted value
 func TestHashLinked_Insert(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp, 1, 3, 5, 7, 9, 11)
 	cast := list.(*hashLinked[int, string])
 
@@ -293,9 +293,9 @@ func TestHashLinked_Insert(t *testing.T) {
 			t.Errorf("Expected list to insert '%d' at index '%d', but it did not", v, i)
 		}
 
-		if cast.idx[cmp.Hash(v)][0].Value() != get {
+		if cast.idx[cmp.Key(v)][0].Value() != get {
 			t.Errorf("Expected tail to have value at the same insertion index '%d', "+
-				"but received \n%v != \n%v", i, cast.idx[cmp.Hash(v)], cast.tail())
+				"but received \n%v != \n%v", i, cast.idx[cmp.Key(v)], cast.tail())
 		}
 
 		if cast.IndexOf(v) != at {
@@ -315,11 +315,11 @@ func TestHashLinked_Insert(t *testing.T) {
 
 // TestHashLinked_IsEmpty tests the isEmpty method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - the list is empty if its size is 0
 //   - the list is not empty if its size is greater than 0
 func TestHashLinked_IsEmpty(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 
@@ -339,13 +339,13 @@ func TestHashLinked_IsEmpty(t *testing.T) {
 
 // TestHashLinked_Remove tests the remove method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - its size is decrease
 //   - the index map can't be used to retrieve the removed value
 //   - the removed value is not present in the list
 //   - the removed value cannot be reached by the list iteration
 func TestHashLinked_Remove(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 
@@ -373,7 +373,7 @@ func TestHashLinked_Remove(t *testing.T) {
 				t.Errorf("Expected *hashLinked.idx length to be '%d' after trying to remove not inserted "+
 					"value '%d', but received '%d'", initSize, remove, len(cast.idx))
 			}
-			hash := cmp.Hash(it.At(i))
+			hash := cmp.Key(it.At(i))
 			if cast.idx[hash] == nil {
 				t.Errorf("Expected *hashLinked.idx to have value '%d', but received nil", remove)
 			}
@@ -393,7 +393,7 @@ func TestHashLinked_Remove(t *testing.T) {
 				t.Errorf("Expected *hashLinked.idx length to be '%d' after removing inserted value '%d',"+
 					"but received '%d'", initSize, remove, len(cast.idx))
 			}
-			hash := cmp.Hash(remove)
+			hash := cmp.Key(remove)
 			nodes, ok := cast.idx[hash]
 			if ok || nodes != nil {
 				t.Errorf("Expected *hashLinked.idx to not have value '%d', but it retrieved '%v' when "+
@@ -409,12 +409,12 @@ func TestHashLinked_Remove(t *testing.T) {
 
 // TestHashLinked_RemoveAt tests the removeAt method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - the removed value is the same as inserted at the same index
 //   - the removed value cannot be reached by the list iteration
 //   - the index map can't be used to retrieve the removed value
 func TestHashLinked_RemoveAt(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 
@@ -461,7 +461,7 @@ func TestHashLinked_RemoveAt(t *testing.T) {
 				t.Errorf("Loop[%d]: Expected *hashLinked.idx length to be '%d' after removing "+
 					"inserted value '%d', but received '%d'", i, initSize, val, len(cast.idx))
 			}
-			hash := cmp.Hash(val)
+			hash := cmp.Key(val)
 			nodes, ok := cast.idx[hash]
 			if ok || nodes != nil {
 				t.Errorf("Loop[%d]: Expected *hashLinked.idx to not have deleted value [%d]: '%d', "+
@@ -472,7 +472,7 @@ func TestHashLinked_RemoveAt(t *testing.T) {
 }
 
 func TestHashLinked_Set(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp, 2, 4, 6, 8, 10)
 	cast := list.(*hashLinked[int, string])
 
@@ -485,11 +485,11 @@ func TestHashLinked_Set(t *testing.T) {
 		if _, ok := list.Get(i); !ok {
 			t.Errorf("Expected list to contain '%d' at index '%d', but it did not", v, i)
 		}
-		if node, ok := cast.idx[cmp.Hash(v+1)]; ok || node != nil {
+		if node, ok := cast.idx[cmp.Key(v+1)]; ok || node != nil {
 			t.Errorf("Expected list to not contain '%d' after replacing it by '%d', "+
 				"but found a node '%v", v+1, v, node)
 		}
-		if cast.idx[cmp.Hash(v)][0].Value() != v {
+		if cast.idx[cmp.Key(v)][0].Value() != v {
 			t.Errorf("Expected tail to have value at the same insertion index '%d', "+
 				"but received '%d'", i, v)
 		}
@@ -503,7 +503,7 @@ func TestHashLinked_Set(t *testing.T) {
 }
 
 func TestHashLinked_Size(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 	if list.Size() != 0 {
@@ -549,7 +549,7 @@ func TestHashLinked_Size(t *testing.T) {
 }
 
 func TestHashLinked_SoftClear(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast := list.(*hashLinked[int, string])
 	list.SoftClear()
@@ -599,7 +599,7 @@ func TestHashLinked_SoftClear(t *testing.T) {
 //   - the slice is in the same order as the list
 //   - the slice is the same size as the list
 func TestHashLinked_ToSlice(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := HashLinked[int, string](cmp)
 	cast, ok := list.(*hashLinked[int, string])
 	if !ok {
@@ -638,7 +638,7 @@ func TestHashLinked_ToSlice(t *testing.T) {
 //   - the index map is empty if it is created with no elements
 //   - the index map is not empty if it is created with elements and can be used to retrieve the inserted value by its hash
 func TestConcHashLinked(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	// Test empty
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
@@ -698,7 +698,7 @@ func TestConcHashLinked(t *testing.T) {
 //   - the index map is updated and can be used to retrieve the inserted value by its hash
 func TestConcHashLinked_Add(t *testing.T) {
 	// Test empty
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 	if cast.size() != 0 {
@@ -735,7 +735,7 @@ func TestConcHashLinked_Add(t *testing.T) {
 //   - the element is found if it was inserted
 //   - the element is not found if it was not inserted
 func TestConcHashLinked_Contains(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -760,7 +760,7 @@ func TestConcHashLinked_Contains(t *testing.T) {
 //   - the element is not found if it was not inserted
 //   - the element is not found if the index is negative
 func TestConcHashLinked_Get(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 
 	it := iterables.OfSlice(2, 4, 6, 8, 10, 12)
@@ -789,7 +789,7 @@ func TestConcHashLinked_Get(t *testing.T) {
 //   - the list tail is nil
 //   - the index map is empty
 func TestConcHashLinked_HardClear(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp, 1, 2, 3, 5, 6, 7)
 	cast := list.(*concHashLinked[int, string])
 
@@ -852,12 +852,12 @@ func TestConcHashLinked_HardClear(t *testing.T) {
 
 // TestConcHashLinked_IndexOf tests the indexOf method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - the index map can be used to retrieve the inserted value
 //   - the IndexOf can retrieve the same index the value was inserted
 //   - not inserted values must retrieve '-1'
 func TestConcHashLinked_IndexOf(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -875,12 +875,12 @@ func TestConcHashLinked_IndexOf(t *testing.T) {
 
 // TestConcHashLinked_Insert tests the insert method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - its size is increase
 //   - the insertion index can be used to retrieve the inserted value
 //   - the index map can be used to retrieve the inserted value
 func TestConcHashLinked_Insert(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp, 1, 3, 5, 7, 9, 11)
 	cast := list.(*concHashLinked[int, string])
 
@@ -901,9 +901,9 @@ func TestConcHashLinked_Insert(t *testing.T) {
 			t.Errorf("Expected list to insert '%d' at index '%d', but it did not", v, i)
 		}
 
-		if cast.idx[cmp.Hash(v)][0].Value() != get {
+		if cast.idx[cmp.Key(v)][0].Value() != get {
 			t.Errorf("Expected tail to have value at the same insertion index '%d', "+
-				"but received \n%v != \n%v", i, cast.idx[cmp.Hash(v)], cast.tail())
+				"but received \n%v != \n%v", i, cast.idx[cmp.Key(v)], cast.tail())
 		}
 
 		if cast.IndexOf(v) != at {
@@ -923,11 +923,11 @@ func TestConcHashLinked_Insert(t *testing.T) {
 
 // TestConcHashLinked_IsEmpty tests the isEmpty method
 //
-// after each insertion the list state should assert
+// after each insertion the list states should assert
 //   - the list is empty if its size is 0
 //   - the list is not empty if its size is greater than 0
 func TestConcHashLinked_IsEmpty(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -947,13 +947,13 @@ func TestConcHashLinked_IsEmpty(t *testing.T) {
 
 // TestConcHashLinked_Remove tests the remove method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - its size is decrease
 //   - the index map can't be used to retrieve the removed value
 //   - the removed value is not present in the list
 //   - the removed value cannot be reached by the list iteration
 func TestConcHashLinked_Remove(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -981,7 +981,7 @@ func TestConcHashLinked_Remove(t *testing.T) {
 				t.Errorf("Expected *concHashLinked.idx length to be '%d' after trying to remove not inserted "+
 					"value '%d', but received '%d'", initSize, remove, len(cast.idx))
 			}
-			hash := cmp.Hash(it.At(i))
+			hash := cmp.Key(it.At(i))
 			if cast.idx[hash] == nil {
 				t.Errorf("Expected *concHashLinked.idx to have value '%d', but received nil", remove)
 			}
@@ -1001,7 +1001,7 @@ func TestConcHashLinked_Remove(t *testing.T) {
 				t.Errorf("Expected *concHashLinked.idx length to be '%d' after removing inserted value '%d',"+
 					"but received '%d'", initSize, remove, len(cast.idx))
 			}
-			hash := cmp.Hash(remove)
+			hash := cmp.Key(remove)
 			nodes, ok := cast.idx[hash]
 			if ok || nodes != nil {
 				t.Errorf("Expected *concHashLinked.idx to not have value '%d', but it retrieved '%v' when "+
@@ -1017,12 +1017,12 @@ func TestConcHashLinked_Remove(t *testing.T) {
 
 // TestConcHashLinked_RemoveAt tests the removeAt method
 //
-// after each removal the list state should assert
+// after each removal the list states should assert
 //   - the removed value is the same as inserted at the same index
 //   - the removed value cannot be reached by the list iteration
 //   - the index map can't be used to retrieve the removed value
 func TestConcHashLinked_RemoveAt(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 
@@ -1069,7 +1069,7 @@ func TestConcHashLinked_RemoveAt(t *testing.T) {
 				t.Errorf("Loop[%d]: Expected *concHashLinked.idx length to be '%d' after removing "+
 					"inserted value '%d', but received '%d'", i, initSize, val, len(cast.idx))
 			}
-			hash := cmp.Hash(val)
+			hash := cmp.Key(val)
 			nodes, ok := cast.idx[hash]
 			if ok || nodes != nil {
 				t.Errorf("Loop[%d]: Expected *concHashLinked.idx to not have deleted value [%d]: '%d', "+
@@ -1081,13 +1081,13 @@ func TestConcHashLinked_RemoveAt(t *testing.T) {
 
 // TestConcHashLinked_Set tests the ToSet method
 //
-// after the method set is called the list state should assert
+// after the method set is called the list states should assert
 //   - the set value is the same as inserted at the same index
 //   - the set value can be reached by the list iteration
 //   - if an earlier value was set, the index map can't be used to retrieve the removed value
 //   - the index map should be able to retrieve the current one at the same address (performance)
 func TestConcHashLinked_Set(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp, 2, 4, 6, 8, 10)
 	cast := list.(*concHashLinked[int, string])
 
@@ -1100,11 +1100,11 @@ func TestConcHashLinked_Set(t *testing.T) {
 		if _, ok := list.Get(i); !ok {
 			t.Errorf("Expected list to contain '%d' at index '%d', but it did not", v, i)
 		}
-		if node, ok := cast.idx[cmp.Hash(v+1)]; ok || node != nil {
+		if node, ok := cast.idx[cmp.Key(v+1)]; ok || node != nil {
 			t.Errorf("Expected list to not contain '%d' after replacing it by '%d', "+
 				"but found a node '%v", v+1, v, node)
 		}
-		if cast.idx[cmp.Hash(v)][0].Value() != v {
+		if cast.idx[cmp.Key(v)][0].Value() != v {
 			t.Errorf("Expected tail to have value at the same insertion index '%d', "+
 				"but received '%d'", i, v)
 		}
@@ -1118,7 +1118,7 @@ func TestConcHashLinked_Set(t *testing.T) {
 }
 
 func TestConcHashLinked_Size(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 	if list.Size() != 0 {
@@ -1165,13 +1165,13 @@ func TestConcHashLinked_Size(t *testing.T) {
 
 // TestConcHashLinked_SoftClear tests the SoftClear method
 //
-// after a SoftClear, the list state should:
+// after a SoftClear, the list states should:
 //   - have a size of 0
 //   - have a _size of 0
 //   - have an idx length of 0
-//   - have no nodes
+//   - have no node
 func TestConcHashLinked_SoftClear(t *testing.T) {
-	cmp := comparators.StringOrdered[int]{}
+	cmp := comparators.StringOrdered[int]()
 	list := ConcHashLinked[int, string](cmp)
 	cast := list.(*concHashLinked[int, string])
 	list.SoftClear()

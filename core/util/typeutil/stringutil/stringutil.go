@@ -4,11 +4,12 @@ package stringutil
 
 import (
 	"bytes"
-	"golang.org/x/text/unicode/norm"
 	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // PadLeft returns the string s left-padded with pad until the total length reaches width.
@@ -104,7 +105,7 @@ func RemoveAccents(s string) string {
 }
 
 // SplitByLength splits a string into substrings of maximum length n.
-// Each part will have at most n **bytes**, not runes.
+// Range part will have at most n **bytes**, not runes.
 // If n <= 0, returns nil.
 // Warning: May split multi-byte runes if n falls inside one.
 // Example: SplitByLength("hello", 2) → ["he", "ll", "o"]

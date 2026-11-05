@@ -3,36 +3,32 @@
 package graphs
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/data/str/edges"
+	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/data/str/edge"
 	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/core/sortables"
+	"github.com/andrerrcosta2/gtools/datastr/dicts"
+	"github.com/andrerrcosta2/gtools/datastr/graphs/edges"
 	"github.com/andrerrcosta2/gtools/datastr/internal/tests"
-	"github.com/andrerrcosta2/gtools/datastr/maps"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools"
-	"github.com/andrerrcosta2/gtools/gtests/testingtools/config/testlogs"
 	"github.com/andrerrcosta2/gtools/numbers/prog"
-	"testing"
 )
 
-// TestAddingNodesAndEdges Test the basics of adding nodes and edges
+// TestAddingNodesAndEdges Test the basics of adding node and edge
 // and expecting them to be present
 func TestAddingNodesAndEdges(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
-	type E = edges.SortableSingleTypedWeighted[N, W]
-	type G = str.WOrderedGraphOf[N, W, E]
+	type E = edge.ComparableWeighted[N, W]
 	// Graph
-	g := WeightedSortableDigraphOf[N, W]()
+	g := WeightedDigraphOf[N, W]()
 
 	var expEdges []E
 	weights, err := prog.Sqrt(1_073_741_824, 2, 30)
 	if err != nil {
-		tt.Fatal(err)
+		t.Fatal(err)
 	}
 
 	random.Struct[N](30).Each(g.AddNode).
@@ -41,36 +37,31 @@ func TestAddingNodesAndEdges(t *testing.T) {
 			if 2*i+1 < n.Len() {
 				err := g.AddEdge(n.At(i), n.At(2*i+1), weights[i])
 				if err != nil {
-					tt.Fatal(err)
+					t.Fatal(err)
 				}
-				expEdges = append(expEdges, SingleTypedWeightedEdge(n.At(i), n.At(2*i+1), weights[i], true))
+				expEdges = append(expEdges, edges.ComparableWeighted(n.At(i), n.At(2*i+1), weights[i], true))
 			}
 			// RightChild child
 			if 2*i+2 < n.Len() {
 				err := g.AddEdge(n.At(i), n.At(2*i+2), weights[i])
 				if err != nil {
-					tt.Fatal(err)
+					t.Fatal(err)
 				}
-				expEdges = append(expEdges, SingleTypedWeightedEdge(n.At(i), n.At(2*i+1), weights[i], true))
+				expEdges = append(expEdges, edges.ComparableWeighted(n.At(i), n.At(2*i+1), weights[i], true))
 			}
 		})
 
-	shouldContainAllEdgesBy[N, E, N, N](tt, g, expEdges, sortables.Equality[E])
+	shouldContainAllEdgesBy[E, N](t, g, expEdges, sortables.Equality[E])
 
-	tt.PrintLogStack()
 }
 
-// TestNodeExistence Test the existence of nodes after being inserted
+// TestNodeExistence Test the existence of node after being inserted
 func TestNodeExistence(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
-	type E = edges.SortableSingleTypedWeighted[N, W]
-	type G = str.WOrderedGraphOf[N, W, E]
 	// Graph
-	g := WeightedSortableDigraphOf[N, W]()
+	g := WeightedDigraphOf[N, W]()
 
 	a := tests.NewSortableNode("A")
 	b := tests.NewSortableNode("C")
@@ -79,23 +70,19 @@ func TestNodeExistence(t *testing.T) {
 
 	exp := []N{a, b}
 
-	shouldContainAllNodesBy[N](tt, g, exp, sortables.Equality[N])
+	shouldContainAllNodesBy[N](t, g, exp, sortables.Equality[N])
 
-	tt.PrintLogStack()
 }
 
-// TestEdgeExistenceAndWeight Test the existence of edges after being inserted
+// TestEdgeExistenceAndWeight Test the existence of edge after being inserted
 // and their weights
 func TestEdgeExistenceAndWeight(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
-	type E = edges.SortableSingleTypedWeighted[N, W]
-	type G = str.WOrderedGraphOf[N, W, E]
+	type E = edge.ComparableWeighted[N, W]
 	// Graph
-	g := WeightedSortableDigraphOf[N, W]()
+	g := WeightedDigraphOf[N, W]()
 
 	var expectedEdges = make([]E, 2)
 
@@ -105,29 +92,30 @@ func TestEdgeExistenceAndWeight(t *testing.T) {
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
-	g.AddEdge(a, b, 10)
-	expectedEdges[0] = SingleTypedWeightedEdge(a, b, 10, true)
-	g.AddEdge(b, c, 20)
-	expectedEdges[1] = SingleTypedWeightedEdge(b, c, 20, true)
+	err := g.AddEdge(a, b, 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedEdges[0] = edges.ComparableWeighted(a, b, 10, true)
+	err = g.AddEdge(b, c, 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedEdges[1] = edges.ComparableWeighted(b, c, 20, true)
 
-	shouldContainAllEdgesBy[N, E, N, N](tt, g, expectedEdges, sortables.Equality[E])
-
-	tt.PrintLogStack()
+	shouldContainAllEdgesBy[E, N](t, g, expectedEdges, sortables.Equality[E])
 }
 
 // TestNeighborsRetrieval Test the retrieval of neighbors
 func TestNeighborsRetrieval(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
-	type E = edges.SortableSingleTypedWeighted[N, W]
-	type G = str.WOrderedGraphOf[N, W, E]
+	type E = edge.ComparableWeighted[N, W]
 	// Graph
-	g := WeightedSortableDigraphOf[N, W]()
+	g := WeightedDigraphOf[N, W]()
 
-	expNeighbors := maps.SortableOf[N, []N]()
+	expNeighbors := dicts.ComparableOf[N, []N]()
 
 	a := tests.NewSortableNode("A")
 	b := tests.NewSortableNode("C")
@@ -135,27 +123,28 @@ func TestNeighborsRetrieval(t *testing.T) {
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
-	g.AddEdge(a, b, 10)
+	err := g.AddEdge(a, b, 10)
+	if err != nil {
+		t.Fatal(err)
+	}
 	expNeighbors.Put(a, []N{b})
-	g.AddEdge(b, c, 20)
+	err = g.AddEdge(b, c, 20)
+	if err != nil {
+		t.Fatal(err)
+	}
 	expNeighbors.Put(b, []N{c})
 
-	shouldContainAllNeighborsBy[N](tt, g, expNeighbors, sortables.Equality[N])
-
-	tt.PrintLogStack()
+	shouldContainAllNeighborsBy[N](t, g, expNeighbors, sortables.Equality[N])
 }
 
 // TestDisconnectedGraph Test a disconnected graph
 func TestDisconnectedGraph(t *testing.T) {
-	// Helper
-	tt := testingtools.LoggersLite(t, testlogs.OnFailure)
 	// Types
 	type N = *tests.SortableNode
 	type W = int
-	type E = edges.SortableSingleTypedWeighted[N, W]
-	type G = str.WOrderedGraphOf[N, W, E]
+	type E = edge.ComparableWeighted[N, W]
 	// Graph
-	g := WeightedSortableDigraphOf[N, W]()
+	g := WeightedDigraphOf[N, W]()
 
 	a := tests.NewSortableNode("A")
 	b := tests.NewSortableNode("C")
@@ -163,15 +152,16 @@ func TestDisconnectedGraph(t *testing.T) {
 	g.AddNode(a)
 	g.AddNode(b)
 	g.AddNode(c)
-	g.AddEdge(a, b, 10)
+	err := g.AddEdge(a, b, 10)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !g.HasEdge(a, b) {
-		tt.Errorf("Graph should have an edge from A to C.")
+		t.Errorf("Graph should have an edge from A to C.")
 	}
 
 	if g.HasEdge(b, c) {
-		tt.Errorf("Graph should not have an edge from C to C.")
+		t.Errorf("Graph should not have an edge from C to C.")
 	}
-
-	tt.PrintLogStack()
 }

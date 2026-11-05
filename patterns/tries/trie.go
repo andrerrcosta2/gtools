@@ -3,15 +3,16 @@
 package tries
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"strings"
+	"sync"
+
+	"github.com/andrerrcosta2/gtools/core/data/str/tree"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/def"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/filter"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/nodes"
 	"github.com/andrerrcosta2/gtools/patterns/tries/internal/validate"
-	"strings"
-	"sync"
 )
 
 var (
@@ -19,7 +20,7 @@ var (
 	ROOT = def.Root
 )
 
-type Pattern str.IOTrie[string, symbols.Logical, grammar.Symbol]
+type Pattern tree.IOTrie[string, symbols.Logical, grammar.Symbol]
 
 // OfPatterns creates a new empty str.Trie of grammar.ByteSymbol
 // It is safe to be used concurrently
@@ -64,21 +65,21 @@ func newStrictPatternTrie(maxParallel int) *patternTrie {
 // patternTrieTransitionNode or patternTrieSymbolNode.
 //
 // A patternTrieTransitionNode is a node that has a key and
-// a map of children nodes. It is used to represent transitions
+// a map of children node. It is used to represent transitions
 // between symbols.
 //
 // A patternTrieSymbolNode is a node that has a key, a value and
-// a map of children nodes. It is used to represent symbols.
+// a map of children node. It is used to represent symbols.
 type patternTrie struct {
 	mtx         sync.RWMutex
 	root        nodes.PatternTrie
 	size        int // Number of symbols in the trie. Must keep track of it
-	length      int // Number of nodes in the trie. Must keep track of it
+	length      int // Number of node in the trie. Must keep track of it
 	maxParallel int
 	strict      map[string]bool // TODO: Is a set to keep track of inserted values to apply strict rules
 }
 
-// Clear is a soft clear which relies on the garbage collector to remove dangling nodes.
+// Clear is a soft clear which relies on the garbage collector to remove dangling node.
 // It might not be enough if the algorithm keeps references to any node.
 func (t *patternTrie) Clear() {
 	t.root = nodes.Transition(def.Root.String(), nil)
@@ -98,7 +99,7 @@ func (t *patternTrie) Size() int {
 	return t.size
 }
 
-// Length returns the number of nodes in the newPatternTrie.
+// Length returns the number of node in the newPatternTrie.
 func (t *patternTrie) Length() int {
 	t.mtx.RLock()
 	defer t.mtx.RUnlock()
@@ -148,7 +149,7 @@ func (t *patternTrie) Search(s string) ([]grammar.Symbol, bool) {
 }
 
 // Delete removes a pattern from the newPatternTrie.
-// It backtracks and removes nodes that don't have other children or symbols.
+// It backtracks and removes node that don't have other children or symbols.
 // The symbol must be provided to avoid false-positives
 func (t *patternTrie) Delete(pattern string, symbol symbols.Logical) bool {
 	// validate the symbol to avoid unnecessary search
@@ -166,7 +167,7 @@ func (t *patternTrie) String() string {
 	return t.printTrie()
 }
 
-// printTrie is a recursive function that prints the trie nodes in a hierarchical manner.
+// printTrie is a recursive function that prints the trie node in a hierarchical manner.
 func (t *patternTrie) printTrie() string {
 	t.mtx.RLock()
 	defer t.mtx.RUnlock()
@@ -178,5 +179,5 @@ func (t *patternTrie) printTrie() string {
 	return result.String()
 }
 
-var _ str.Tree[grammar.Symbol] = (*patternTrie)(nil)
-var _ str.IOTrie[string, symbols.Logical, grammar.Symbol] = (*patternTrie)(nil)
+var _ tree.Tree[grammar.Symbol] = (*patternTrie)(nil)
+var _ tree.IOTrie[string, symbols.Logical, grammar.Symbol] = (*patternTrie)(nil)

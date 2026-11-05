@@ -96,3 +96,52 @@ func FindNodeByCommentPrefix(fset *token.FileSet, file *ast.File, prefix string)
 
 	return results
 }
+
+// RangeNodeByCommentPrefix percorre a AST e chama fn para cada nó cujo comentário bate com o prefixo.
+// Se fn retornar false, a iteração para.
+func RangeNodeByCommentPrefix(
+	fset *token.FileSet,
+	file *ast.File,
+	prefix string,
+	fn func(node ast.Node, comment *ast.CommentGroup, pos token.Position, text string) bool,
+) {
+	ast.Inspect(file, func(n ast.Node) bool {
+		if n == nil {
+			return false
+		}
+
+		var doc *ast.CommentGroup
+
+		switch x := n.(type) {
+		case *ast.GenDecl:
+			doc = x.Doc
+		case *ast.FuncDecl:
+			doc = x.Doc
+		case *ast.TypeSpec:
+			doc = x.Doc
+		case *ast.Field:
+			doc = x.Doc
+		case *ast.ValueSpec:
+			doc = x.Doc
+		default:
+			return true
+		}
+
+		if doc == nil {
+			return true
+		}
+
+		for _, c := range doc.List {
+			text := strings.TrimSpace(strings.TrimPrefix(c.Text, "//"))
+			if strings.HasPrefix(text, prefix) {
+				// Chama a função passada e verifica se o usuário quer cancelar a busca
+				if !fn(n, doc, fset.Position(c.Pos()), text) {
+					return false
+				}
+				break
+			}
+		}
+
+		return true
+	})
+}

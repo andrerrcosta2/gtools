@@ -2,12 +2,14 @@
 
 package seeders
 
-import "github.com/andrerrcosta2/gtools/core/domain/gtools"
+import (
+	"github.com/andrerrcosta2/gtools/core/domain/contracts/stream"
+)
 
 type Slice[T any] interface {
 	Seed(int) []T
 }
 
 type Stream[T any] interface {
-	Seed(int) gtools.Stream[T]
+	Seed(int) stream.Readable[T]
 }

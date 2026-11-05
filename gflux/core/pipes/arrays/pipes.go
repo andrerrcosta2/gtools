@@ -4,8 +4,18 @@ package arrays
 
 import (
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 )
+
+// InsertAt inserts the element at the specified index from the slice and
+// returns true if the index is reachable, false otherwise
+func InsertAt[S ~[]E, E any](arr S, value E, index int) (S, bool) {
+	if index >= 0 && index < len(arr) {
+		return append(arr[:index],
+			append(S{value}, arr[index:]...)...), true
+	}
+	return S{}, false
+}
 
 // RemoveByIndex removes the element at the specified index from the slice.
 //
@@ -15,14 +25,14 @@ import (
 //
 // Returns:
 // - []T: the new slice with the element removed
-func RemoveByIndex[T any](arr []T, index int) []T {
+func RemoveByIndex[S ~[]E, E any](arr S, index int) (S, bool) {
 	// Check if the index is within the bounds of the slice
 	if index >= 0 && index < len(arr) {
 		// Use the append function to remove the element at the specified index
-		return append(arr[:index], arr[index+1:]...)
+		return append(arr[:index], arr[index+1:]...), true
 	}
 	// Return the original slice if the index is out of bounds
-	return arr
+	return arr, false
 }
 
 // Reverse reverses the order of elements in a slice.
@@ -32,7 +42,7 @@ func RemoveByIndex[T any](arr []T, index int) []T {
 //
 // Returns:
 // - The reversed slice.
-func Reverse[T any](arr []T) []T {
+func Reverse[S ~[]E, E any](arr S) S {
 	// Use two ptrs, one starting from the beginning and the other from the end.
 	// Swap the elements at these ptrs until they meet in the middle.
 	for i, j := 0, len(arr)-1; i < j; i, j = i+1, j-1 {
@@ -50,12 +60,12 @@ func Reverse[T any](arr []T) []T {
 //
 // Returns:
 // - []T: a new slice containing only the unique elements from the input slice
-func Unique[T comparable](arr []T) []T {
+func Unique[S ~[]E, E comparable](arr S) S {
 	// Create a map to keep track of the seen elements
-	keys := make(map[T]bool)
+	keys := make(map[E]bool)
 
 	// Create an empty slice to store the unique elements
-	var list []T
+	var list []E
 
 	// Iterate over the input slice
 	for _, entry := range arr {
@@ -80,12 +90,12 @@ func Unique[T comparable](arr []T) []T {
 //
 // Returns:
 // - []T: a new slice containing only the unique elements from the input slice
-func UniqueBy[T any, K comparable](arr []T, f functions.Function[T, K]) []T {
+func UniqueBy[S ~[]E, E any, K comparable](arr S, f function.Function[E, K]) S {
 	// Create a map to keep track of the seen keys
 	keys := make(map[K]bool)
 
 	// Create an empty slice to store the unique elements
-	var list []T
+	var list []E
 
 	// Iterate over the input slice
 	for _, entry := range arr {
@@ -105,7 +115,7 @@ func UniqueBy[T any, K comparable](arr []T, f functions.Function[T, K]) []T {
 
 // Last returns the last element of a given slice.
 // It panics if the slice is empty.
-func Last[T any](arr []T) T {
+func Last[S ~[]E, E any](arr S) E {
 	// Check if the slice is empty
 	if len(arr) == 0 {
 		panic("slice is empty")
@@ -117,9 +127,9 @@ func Last[T any](arr []T) T {
 
 // First returns the first element of the given slice.
 // If the slice is empty, it returns the zero value of the element type.
-func First[T any](arr []T) T {
+func First[S ~[]E, E any](arr S) E {
 	if len(arr) == 0 {
-		var zeroValue T
+		var zeroValue E
 		return zeroValue
 	}
 	return arr[0]
@@ -135,7 +145,7 @@ func First[T any](arr []T) T {
 //
 // Returns:
 // - int: the index of the last occurrence of the value, or -1 if not found
-func LastIndexOf[T comparable](arr []T, val T) int {
+func LastIndexOf[S ~[]E, E comparable](arr S, val E) int {
 	// Iterate over the slice in reverse order
 	for i := len(arr) - 1; i >= 0; i-- {
 		// Check if the current element is compare to the target value
@@ -159,7 +169,7 @@ func LastIndexOf[T comparable](arr []T, val T) int {
 //
 // Returns:
 // - int: the index of the last element that satisfies the condition, or -1 if no elements satisfy the condition
-func LastIndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) int {
+func LastIndexOfBy[S ~[]E, E any, K any](arr S, val K, f function.BiPredicate[E, K]) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if f(arr[i], val) {
 			return i
@@ -178,7 +188,7 @@ func LastIndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) 
 //
 // Returns:
 // - int: the index of the first occurrence of the value, or -1 if not found
-func IndexOf[T comparable](arr []T, val T) int {
+func IndexOf[S ~[]E, E comparable](arr S, val E) int {
 	for i, v := range arr {
 		if v == val {
 			return i
@@ -198,7 +208,7 @@ func IndexOf[T comparable](arr []T, val T) int {
 //
 // Returns:
 // - int: the index of the first element that satisfies the condition, or -1 if no elements satisfy the condition
-func IndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) int {
+func IndexOfBy[S ~[]E, E any, K any](arr S, val K, f function.BiPredicate[E, K]) int {
 	for i, v := range arr {
 		if f(v, val) {
 			return i
@@ -217,7 +227,7 @@ func IndexOfBy[T any, K any](arr []T, val K, f functions.BiPredicate[T, K]) int 
 //
 // Returns:
 // - int: the index of the first element that satisfies the condition, or -1 if no elements satisfy the condition
-func Find[T any](arr []T, f functions.Function[T, bool]) int {
+func Find[S ~[]E, E any](arr S, f function.Function[E, bool]) int {
 	// Iterate over the slice
 	for i, v := range arr {
 		// Check if the current element satisfies the condition defined by the provided function
@@ -239,7 +249,7 @@ func Find[T any](arr []T, f functions.Function[T, bool]) int {
 //
 // Returns:
 // - []int: a slice of indexes of elements that satisfy the condition
-func FindAll[T any](arr []T, f functions.Function[T, bool]) []int {
+func FindAll[S ~[]E, E any](arr S, f function.Function[E, bool]) []int {
 	var indexes []int // slice to store the indexes
 
 	// Iterate over the slice
@@ -265,7 +275,7 @@ func FindAll[T any](arr []T, f functions.Function[T, bool]) []int {
 //
 // Returns:
 // - []int: a slice of indexes of elements that satisfy the comparison function
-func Compare[T any, R any](arr1 []T, arr2 []R, compare functions.BiFunction[T, R, bool]) []int {
+func Compare[S1 ~[]T, T any, S2 ~[]R, R any](arr1 S1, arr2 S2, compare function.BiFunction[T, R, bool]) []int {
 	var indexes []int
 
 	// Iterate over the first slice
@@ -294,7 +304,7 @@ func Compare[T any, R any](arr1 []T, arr2 []R, compare functions.BiFunction[T, R
 //
 // Returns:
 // - R: the final result
-func Fold[T, R any](arr []T, initial R, f functions.BiFunction[R, T, R]) R {
+func Fold[S ~[]E, E any, R any](arr S, initial R, f function.BiFunction[R, E, R]) R {
 	// Initialize the result with the initial value
 	result := initial
 
@@ -318,7 +328,7 @@ func Fold[T, R any](arr []T, initial R, f functions.BiFunction[R, T, R]) R {
 //
 // Returns:
 // - R: the final result
-func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R {
+func FoldRight[S ~[]E, E any, R any](arr S, initial R, f function.BiFunction[E, R, R]) R {
 	// Initialize the result with the initial value
 	result := initial
 
@@ -339,10 +349,10 @@ func FoldRight[T, R any](arr []T, initial R, f functions.BiFunction[T, R, R]) R 
 //
 // Returns:
 // - T: the highest value from the slice.
-func Higher[T prim.Ordered](arr []T) T {
+func Higher[S ~[]E, E prim.Ordered](arr S) E {
 	// If the slice is empty, return the zero value of the element type.
 	if len(arr) == 0 {
-		var zero T
+		var zero E
 		return zero
 	}
 
@@ -375,10 +385,10 @@ func Higher[T prim.Ordered](arr []T) T {
 //
 // Returns:
 // - bool: true if the value is found in the slice, false otherwise
-func HigherBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
+func HigherBy[S ~[]E, E any](arr S, f function.BiFunction[E, E, E]) E {
 	// If the slice is empty, return the zero value of the element type.
 	if len(arr) == 0 {
-		var zero T
+		var zero E
 		return zero
 	}
 
@@ -403,10 +413,10 @@ func HigherBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
 //
 // Returns:
 // - T: the lowest value from the slice.
-func Lower[T prim.Ordered](arr []T) T {
+func Lower[S ~[]E, E prim.Ordered](arr S) E {
 	// If the slice is empty, return the zero value of the element type.
 	if len(arr) == 0 {
-		var zero T
+		var zero E
 		return zero
 	}
 
@@ -427,10 +437,10 @@ func Lower[T prim.Ordered](arr []T) T {
 }
 
 // LowerBy returns the lowest value from a slice of elements using a BiFunction function.
-func LowerBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
+func LowerBy[S ~[]E, E any](arr S, f function.BiFunction[E, E, E]) E {
 	// If the slice is empty, return the zero value of the element type.
 	if len(arr) == 0 {
-		var zero T
+		var zero E
 		return zero
 	}
 
@@ -462,7 +472,7 @@ func LowerBy[T any](arr []T, f functions.BiFunction[T, T, T]) T {
 //
 // Returns:
 // - int: the maximum sum of a contiguous subarray in the array
-func Kadane[T prim.Ordered](arr []T) (maxSoFar T) {
+func Kadane[S ~[]E, E prim.Ordered](arr S) (maxSoFar E) {
 	// If the array is empty, return 0
 	if len(arr) == 0 {
 		return
@@ -470,7 +480,7 @@ func Kadane[T prim.Ordered](arr []T) (maxSoFar T) {
 	// Initialize maxSoFar and maxEndingHere to the first element
 	maxSoFar = arr[0]
 	maxEndingHere := arr[0]
-	for _, v := range arr[1:] { // Start iterating from the second element
+	for _, v := range arr[1:] { // start iterating from the second element
 		// Update maxEndingHere to be either the current element itself
 		// or the sum of maxEndingHere and the current element
 		maxEndingHere = max(v, maxEndingHere+v)
@@ -491,9 +501,9 @@ func Kadane[T prim.Ordered](arr []T) (maxSoFar T) {
 //
 // Returns:
 // - T: the element that appears more than half the time
-func Majority[T comparable](arr []T) T {
-	var zero T
-	var k T
+func Majority[S ~[]E, E comparable](arr S) E {
+	var zero E
+	var k E
 	var count int
 
 	for _, e := range arr {

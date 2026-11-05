@@ -4,20 +4,22 @@ package sets
 
 import (
 	"encoding/json"
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"slices"
+	"sync"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
+	"github.com/andrerrcosta2/gtools/core/data/str/list"
+	"github.com/andrerrcosta2/gtools/core/data/str/set"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/datastr/lists"
-	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
-	"sync"
 )
 
-// Insertion is a set that preserves insertion order of elements
+// Insertion is a backingMap that preserves insertion order of elements
 // This map uses a linked list to keep the elements orders and avoid overhead during removal.
 // for that reason its performance for traversals is less efficient than slice based sets
-func Insertion[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], values ...T) str.OrderedSet[T] {
+func Insertion[T any, H prim.Hashable](cmp comparator.EqCmpKeyer[T, H], values ...T) set.MutableOrdered[T] {
 	return &insertion[T, H]{
 		list: lists.HashLinked[T, H](cmp, Filter[T, H](cmp, values...)...),
 		cmp:  cmp,
@@ -25,8 +27,8 @@ func Insertion[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], values ..
 }
 
 type insertion[T any, H prim.Hashable] struct {
-	list str.List[T]
-	cmp  comparators.KeyTyped[T, H]
+	list list.Mutable[T]
+	cmp  comparator.EqCmpKeyer[T, H]
 }
 
 func (s *insertion[T, H]) Add(t T) {
@@ -48,7 +50,7 @@ func (s *insertion[T, H]) Delete(i int) bool {
 	return ok
 }
 
-func (s *insertion[T, H]) Equals(other str.Set[T]) bool {
+func (s *insertion[T, H]) Equals(other set.Readable[T]) bool {
 	if other == nil {
 		return false
 	}
@@ -58,7 +60,7 @@ func (s *insertion[T, H]) Equals(other str.Set[T]) bool {
 	if s.Len() != other.Len() {
 		return false
 	}
-	return arrays.EqualsBy[T](s.Values(), other.Values(), s.cmp.Equals)
+	return slices.EqualFunc(s.Elements(), other.Elements(), s.cmp.Equals)
 }
 
 func (s *insertion[T, H]) Get(i int) (T, bool) {
@@ -85,16 +87,28 @@ func (s *insertion[T, H]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.list.ToSlice())
 }
 
+func (s *insertion[T, H]) Range(callback func(t T) bool) {
+	for _, value := range s.Elements() {
+		if !callback(value) {
+			return
+		}
+	}
+}
+
 func (s *insertion[T, H]) Remove(t T) {
 	s.list.Remove(t)
 }
 
-func (s *insertion[T, H]) Sprint(tab indent.Indentor) string {
-	return tab.Sprint(sprints.TypedSlice(tab, s.list.ToSlice(), "ConcInsertion"))
+func (s *insertion[T, H]) String() string {
+	return s.sprint(indent.Zero())
 }
 
-func (s *insertion[T, H]) String() string {
-	return sprints.TypedSlice(indent.Zero(), s.list.ToSlice(), "ConcInsertion")
+func (s *insertion[T, H]) Sprint(tab indent.Indentor) string {
+	return s.sprint(tab)
+}
+
+func (s *insertion[T, H]) sprint(tab indent.Indentor) string {
+	return sprints.TypedSlice(tab, s.list.ToSlice(), "sets.Insertion")
 }
 
 func (s *insertion[T, H]) UnmarshalJSON(data []byte) error {
@@ -110,15 +124,15 @@ func (s *insertion[T, H]) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s *insertion[T, H]) Values() []T {
+func (s *insertion[T, H]) Elements() []T {
 	return s.list.ToSlice()
 }
 
-var _ str.Set[int] = (*insertion[int, int])(nil)
-var _ str.OrderedSet[int] = (*insertion[int, int])(nil)
+var _ set.Mutable[int] = (*insertion[int, int])(nil)
+var _ set.MutableOrdered[int] = (*insertion[int, int])(nil)
 
-// ConcInsertion is a thread safe set that preserves the insertion order of elements
-func ConcInsertion[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], values ...T) str.OrderedSet[T] {
+// ConcInsertion is a thread safe backingMap that preserves the insertion order of elements
+func ConcInsertion[T any, H prim.Hashable](cmp comparator.EqCmpKeyer[T, H], values ...T) set.MutableOrdered[T] {
 	return &insertion[T, H]{
 		list: lists.ConcHashLinked[T, H](cmp, Filter[T, H](cmp, values...)...),
 		cmp:  cmp,
@@ -127,8 +141,8 @@ func ConcInsertion[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], value
 
 type concIns[T any, H prim.Hashable] struct {
 	mtx  sync.RWMutex
-	list str.List[T]
-	cmp  comparators.KeyTyped[T, H]
+	list list.Mutable[T]
+	cmp  comparator.EqCmpKeyer[T, H]
 }
 
 func (s *concIns[T, H]) Add(t T) {
@@ -144,19 +158,16 @@ func (s *concIns[T, H]) Delete(i int) bool {
 	return ok
 }
 
-func (s *concIns[T, H]) Equals(other str.Set[T]) bool {
+func (s *concIns[T, H]) Equals(other set.Readable[T]) bool {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	if other == nil {
-		return false
-	}
 	if other == s {
 		return true
 	}
 	if s.Len() != other.Len() {
 		return false
 	}
-	return arrays.EqualsBy[T](s.Values(), other.Values(), s.cmp.Equals)
+	return slices.EqualFunc(s.Elements(), other.Elements(), s.cmp.Equals)
 }
 
 func (s *concIns[T, H]) Get(i int) (T, bool) {
@@ -185,20 +196,34 @@ func (s *concIns[T, H]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.list.ToSlice())
 }
 
-func (s *concIns[T, H]) Remove(t T) {
-	s.list.Remove(t)
-}
-
-func (s *concIns[T, H]) Sprint(tab indent.Indentor) string {
+func (s *concIns[T, H]) Range(callback func(t T) bool) {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	return tab.Sprint(sprints.TypedSlice(tab, s.list.ToSlice(), "ConcInsertion"))
+	for _, value := range s.Elements() {
+		if !callback(value) {
+			return
+		}
+	}
+}
+
+func (s *concIns[T, H]) Remove(t T) {
+	s.list.Remove(t)
 }
 
 func (s *concIns[T, H]) String() string {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	return sprints.TypedSlice(indent.Zero(), s.list.ToSlice(), "ConcInsertion")
+	return s.sprint(indent.Zero())
+}
+
+func (s *concIns[T, H]) Sprint(tab indent.Indentor) string {
+	s.mtx.RLock()
+	defer s.mtx.RUnlock()
+	return s.sprint(tab)
+}
+
+func (s *concIns[T, H]) sprint(tab indent.Indentor) string {
+	return sprints.TypedSlice(tab, s.list.ToSlice(), "sets.ConcInsertion")
 }
 
 func (s *concIns[T, H]) UnmarshalJSON(data []byte) error {
@@ -216,9 +241,9 @@ func (s *concIns[T, H]) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s *concIns[T, H]) Values() []T {
+func (s *concIns[T, H]) Elements() []T {
 	return s.list.ToSlice()
 }
 
-var _ str.Set[int] = (*concIns[int, int])(nil)
-var _ str.OrderedSet[int] = (*concIns[int, int])(nil)
+var _ set.Mutable[int] = (*concIns[int, int])(nil)
+var _ set.MutableOrdered[int] = (*concIns[int, int])(nil)

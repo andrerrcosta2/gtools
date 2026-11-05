@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/differ"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/equals"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/sprint"
@@ -15,11 +15,11 @@ import (
 )
 
 // TestDeepCopyArray_Default should have equal copy based on the constraints:
-//   - functions aren't copied
+//   - function aren't copied
 //   - unsafe pointers
 func TestDeepCopyArray_Default(t *testing.T) {
 	s := DefaultCopyStrat()
-	gtests.Arrays.Fuzz().Values().All().Each(func(arr any) {
+	testseeds.Arrays.Fuzz().Values().All().Each(func(arr any) {
 		a := reflect.ValueOf(arr)
 		b, err := deepCopyArray(a, s)
 		assertlite.NoError(t, err)
@@ -36,7 +36,7 @@ func TestDeepCopyArray_Default(t *testing.T) {
 
 func TestDeepCopyMap_Default(t *testing.T) {
 	s := DefaultCopyStrat()
-	gtests.Maps.Fuzz().Values().All().Each(func(arr any) {
+	testseeds.Maps.Fuzz().Values().All().Each(func(arr any) {
 		a := reflect.ValueOf(arr)
 		b, err := deepCopyMap(a, s)
 		assertlite.NoError(t, err)
@@ -54,7 +54,7 @@ func TestDeepCopyMap_Default(t *testing.T) {
 func TestDeepCopySlice_Default(t *testing.T) {
 	s := DefaultCopyStrat()
 
-	gtests.Slices.Fuzz().Values().All().Each(func(slice any) {
+	testseeds.Slices.Fuzz().Values().All().Each(func(slice any) {
 		a := reflect.ValueOf(slice)
 		b, err := deepCopySlice(a, s)
 		assertlite.NoError(t, err)
@@ -71,7 +71,7 @@ func TestDeepCopySlice_Default(t *testing.T) {
 
 func TestDeepCopyStruct_Default(t *testing.T) {
 	s := DefaultCopyStrat()
-	gtests.Structs.Fuzz().Categories().Values().All().Each(func(stc any) {
+	testseeds.Structs.Fuzz().Categories().Values().All().Each(func(stc any) {
 		a := reflect.ValueOf(stc)
 		b, err := deepCopyStruct(a, s)
 		assertlite.NoError(t, err)
@@ -88,7 +88,7 @@ func TestDeepCopyStruct_Default(t *testing.T) {
 
 func TestDeepCopyChan_Default(t *testing.T) {
 	s := DefaultCopyStrat()
-	gtests.Chans.Fuzz().Values().All().Each(func(stc any) {
+	testseeds.Chans.Fuzz().Values().All().Each(func(stc any) {
 		a := reflect.ValueOf(stc)
 		b, err := defaultDeepCopyChan(a, s)
 		assertlite.NoError(t, err)
@@ -105,7 +105,7 @@ func TestDeepCopyChan_Default(t *testing.T) {
 
 func TestDeepCopyFunc_Default(t *testing.T) {
 	s := DefaultCopyStrat()
-	gtests.Funcs.Consumers().Values().All().Each(func(stc any) {
+	testseeds.Funcs.Consumers().Values().All().Each(func(stc any) {
 		a := reflect.ValueOf(stc)
 		b, err := defaultDeepCopyFunc(a, s)
 		assertlite.NoError(t, err)
@@ -123,7 +123,7 @@ func TestDeepCopyFunc_Default(t *testing.T) {
 func TestDeepCopyPointer_Default(t *testing.T) {
 	s := DefaultCopyStrat()
 	t.Run("array references", func(t *testing.T) {
-		gtests.Arrays.Fuzz().Refs().All().Each(func(arr any) {
+		testseeds.Arrays.Fuzz().Refs().All().Each(func(arr any) {
 			a := reflect.ValueOf(arr)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)
@@ -139,7 +139,7 @@ func TestDeepCopyPointer_Default(t *testing.T) {
 	})
 
 	t.Run("map references", func(t *testing.T) {
-		gtests.Maps.Fuzz().Refs().All().Each(func(arr any) {
+		testseeds.Maps.Fuzz().Refs().All().Each(func(arr any) {
 			a := reflect.ValueOf(arr)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)
@@ -155,7 +155,7 @@ func TestDeepCopyPointer_Default(t *testing.T) {
 	})
 
 	t.Run("slice references", func(t *testing.T) {
-		gtests.Slices.Fuzz().Refs().All().Each(func(slice any) {
+		testseeds.Slices.Fuzz().Refs().All().Each(func(slice any) {
 			a := reflect.ValueOf(slice)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)
@@ -171,7 +171,7 @@ func TestDeepCopyPointer_Default(t *testing.T) {
 	})
 
 	t.Run("struct references", func(t *testing.T) {
-		gtests.Structs.Fuzz().Categories().Refs().All().Each(func(stc any) {
+		testseeds.Structs.Fuzz().Categories().Refs().All().Each(func(stc any) {
 			a := reflect.ValueOf(stc)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)
@@ -187,7 +187,7 @@ func TestDeepCopyPointer_Default(t *testing.T) {
 	})
 
 	t.Run("chan references", func(t *testing.T) {
-		gtests.Chans.Fuzz().Refs().All().Each(func(stc any) {
+		testseeds.Chans.Fuzz().Refs().All().Each(func(stc any) {
 			a := reflect.ValueOf(stc)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)
@@ -203,7 +203,7 @@ func TestDeepCopyPointer_Default(t *testing.T) {
 	})
 
 	t.Run("func references", func(t *testing.T) {
-		gtests.Funcs.Consumers().Refs().All().Each(func(stc any) {
+		testseeds.Funcs.Consumers().Refs().All().Each(func(stc any) {
 			a := reflect.ValueOf(stc)
 			b, err := defaultDeepCopyPointer(a, s)
 			assertlite.NoError(t, err)

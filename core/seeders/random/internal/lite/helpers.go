@@ -76,7 +76,6 @@ func RandAny() any {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
-		return nil
 	}
 }
 
@@ -147,7 +146,6 @@ func RandCmp() any {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("RandCmp: unsupported comparable kind: '%v'\n", kind))
-		return nil
 	}
 }
 

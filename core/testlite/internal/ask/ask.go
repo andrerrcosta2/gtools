@@ -5,9 +5,10 @@ package ask
 import (
 	"bytes"
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/testlite/internal/meml"
 	"reflect"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/testlite/internal/meml"
 )
 
 func AreEquals(a, b any) bool {

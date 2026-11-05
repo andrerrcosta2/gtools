@@ -35,7 +35,8 @@ func Struct(tab indent.Tab, a, b reflect.Value, s *Strategy) (diff string, isDif
 		b = ptr.Elem()
 	}
 	differ := diffStructs(tab, a, b, s)
-	message := differs.Append(tab, differs.StructFields(tab, types.ValidValueName(a.Type()), a.Type().Field(0).Name),
+	message := differs.Append(tab, differs.StructFields(tab, types.ValidValueNameSwitch(a.Type(), s.useQfName),
+		a.Type().Field(0).Name),
 		differ.Message)
 	return differs.Message(message, tab.Sprint(differ.Diff)), differ.Equals, differ.Err
 }

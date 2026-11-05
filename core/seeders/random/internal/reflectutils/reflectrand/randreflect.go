@@ -74,7 +74,6 @@ func AnyValue(maxDepth ...int) reflect.Value {
 		return UnsafeOf()
 	default:
 		panic(fmx.Sprintf("AnyValue: Invalid kind '%v' of type %s", t.Kind(), t.String()))
-		return InvalidValue()
 	}
 }
 
@@ -137,7 +136,6 @@ func anyInterfaceValue(tt *reflectutils.Tracker) reflect.Value {
 	default:
 		panic(fmx.Sprintf("anyInterfaceValue: Invalid kind '%v' of type %s",
 			t.Kind(), t.String()))
-		return InvalidValue()
 	}
 }
 
@@ -248,7 +246,6 @@ func Cmp() reflect.Type {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("Cmp: Invalid kind '%v'", kind))
-		return InvalidType()
 	}
 }
 
@@ -330,13 +327,12 @@ func Hashable() reflect.Type {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("interfaceType: Invalid kind '%v'", kind))
-		return InvalidType()
 	}
 }
 
 // hashableOf generates a random value for a hashable type
 // Note> this method still accepts non hashable types, like
-// non-comparable structs and arrays.
+// non-comparable structs and array.
 // this control must be done outside for performance.
 func hashableOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 	if reflectutils.IsAnyInterface(t) {
@@ -392,7 +388,6 @@ func hashableOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 	default:
 		panic(fmx.Sprintf("hashableOf: Invalid kind '%v' of type %s",
 			t.Kind(), t.String()))
-		return InvalidValue()
 	}
 }
 
@@ -471,7 +466,6 @@ func interfaceType() reflect.Type {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("interfaceType: Invalid kind '%v'", kind))
-		return InvalidType()
 	}
 }
 
@@ -645,7 +639,6 @@ func Type() reflect.Type {
 	default:
 		// Unreachable
 		panic(fmx.Sprintf("Type: Invalid kind '%v'", kind))
-		return InvalidType()
 	}
 }
 
@@ -725,7 +718,6 @@ func valueOf(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 		return UnsafeOf()
 	default:
 		panic(fmx.Sprintf("ValueOf: Invalid kind '%v' of type %s", t.Kind(), t.String()))
-		return InvalidValue()
 	}
 }
 
@@ -792,6 +784,5 @@ func valueOfCmp(t reflect.Type, tt *reflectutils.Tracker) reflect.Value {
 		return UnsafeOf()
 	default:
 		panic(fmx.Sprintf("ValueOf: Invalid kind '%v' of type %s", t.Kind(), t.String()))
-		return InvalidValue()
 	}
 }

@@ -6,9 +6,9 @@ import (
 	"sync"
 
 	"github.com/andrerrcosta2/gtools/core/data"
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
+	"github.com/andrerrcosta2/gtools/core/data/str/tree"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
@@ -16,7 +16,7 @@ import (
 )
 
 // RedBlack returns a new red-black tree
-func RedBlack[V any](comparator comparators.Typed[V], values ...V) str.RedBlackTree[V] {
+func RedBlack[V any](comparator comparator.EqComparer[V], values ...V) tree.RedBlackTree[V] {
 	if comparator == nil {
 		panic("comparator must be provided")
 	}
@@ -27,17 +27,17 @@ func RedBlack[V any](comparator comparators.Typed[V], values ...V) str.RedBlackT
 	return rb
 }
 
-var _ str.RedBlackTree[any] = (*redBlack[any])(nil)
+var _ tree.RedBlackTree[any] = (*redBlack[any])(nil)
 
 // redBlack is a red-black tree implementation
 // A red black tree is a tree with the following properties:
 // 1. A node it either red or black
 // 2. The root and leaves (leaves are nil) are black
 // 3. If a node is red, then both its children are black
-// 4. All paths from a node to its NIL descendants contain the same number of black nodes
+// 4. All paths from a node to its NIL descendants contain the same number of black node
 type redBlack[V any] struct {
 	abstract[*redblack.Node[V], V]
-	cmp comparators.Typed[V]
+	cmp comparator.EqComparer[V]
 }
 
 // Ceiling returns the smallest value greater than or compare to the given value
@@ -52,12 +52,12 @@ func (t *redBlack[V]) Clear() {
 }
 
 // ColorOf returns the color of the node for a given value
-func (t *redBlack[V]) ColorOf(value V) (nodes.RBColor, bool) {
+func (t *redBlack[V]) ColorOf(value V) (node.RBColor, bool) {
 	n, ok := redblack.FindNode[V](t.Root(), value, t.cmp.Compare)
 	if ok {
 		return n.Color(), true
 	}
-	return nodes.Black, false
+	return node.Black, false
 }
 
 // Contains returns true if the tree contains the given value
@@ -75,6 +75,16 @@ func (t *redBlack[V]) Delete(value V) {
 	root := redblack.DeleteNode[V](t.Root(), n)
 	t.SetRoot(root)
 	t.SetSize(t.Size() - 1)
+}
+
+// DeleteByIndex percorre a arvore em O(logn) remove o elemento e o retorna
+func (t *redBlack[V]) DeleteByIndex(index int) (V, bool) {
+	root, value, ok := redblack.DeleteByIndex(t.Root(), index)
+	if ok {
+		t.SetRoot(root)
+		t.SetSize(t.Size() - 1)
+	}
+	return value, ok
 }
 
 // Floor returns the largest value less than or compare to the given value
@@ -135,12 +145,12 @@ func (t *redBlack[V]) String() string {
 	)
 }
 
-func redBlackIterator[V any](cmp comparators.Typed[V], min *redblack.Node[V]) data.Iterator[V] {
+func redBlackIterator[V any](cmp comparator.EqComparer[V], min *redblack.Node[V]) data.Iterator[V] {
 	return &rbtIterator[V]{cmp: cmp, it: min}
 }
 
 type rbtIterator[V any] struct {
-	cmp comparators.Typed[V]
+	cmp comparator.EqComparer[V]
 	it  *redblack.Node[V]
 }
 
@@ -173,7 +183,7 @@ func (i *rbtIterator[V]) HasNext() bool {
 	return i.it != nil
 }
 
-func ConcRedBlack[V any](cmp comparators.Typed[V], values ...V) str.RedBlackTree[V] {
+func ConcRedBlack[V any](cmp comparator.EqComparer[V], values ...V) tree.RedBlackTree[V] {
 	if cmp == nil {
 		panic("comparator must be provided")
 	}
@@ -195,7 +205,7 @@ func ConcRedBlack[V any](cmp comparators.Typed[V], values ...V) str.RedBlackTree
 
 type concRedBlack[V any] struct {
 	abstract[*redblack.Node[V], V]
-	cmp comparators.Typed[V]
+	cmp comparator.EqComparer[V]
 	mtx sync.RWMutex
 }
 
@@ -215,14 +225,14 @@ func (t *concRedBlack[V]) Clear() {
 }
 
 // ColorOf returns the color of the node for a given value
-func (t *concRedBlack[V]) ColorOf(value V) (nodes.RBColor, bool) {
+func (t *concRedBlack[V]) ColorOf(value V) (node.RBColor, bool) {
 	t.mtx.RLock()
 	defer t.mtx.RUnlock()
 	n, ok := redblack.FindNode[V](t.Root(), value, t.cmp.Compare)
 	if ok {
 		return n.Color(), true
 	}
-	return nodes.Black, false
+	return node.Black, false
 }
 
 // Contains returns true if the tree contains the given value
@@ -244,6 +254,17 @@ func (t *concRedBlack[V]) Delete(value V) {
 	root := redblack.DeleteNode[V](t.Root(), n)
 	t.SetRoot(root)
 	t.SetSize(t.Size() - 1)
+}
+
+func (t *concRedBlack[V]) DeleteByIndex(index int) (V, bool) {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	root, value, ok := redblack.DeleteByIndex(t.Root(), index)
+	if ok {
+		t.SetRoot(root)
+		t.SetSize(t.Size() - 1)
+	}
+	return value, ok
 }
 
 // Floor returns the largest value less than or compare to the given value

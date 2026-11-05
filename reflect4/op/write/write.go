@@ -11,4 +11,6 @@ const (
 	SkipFunctions
 	SkipPtr
 	SkipUnsafePtr
+	// QualifiedName writes full qualified names of types
+	QualifiedName
 )

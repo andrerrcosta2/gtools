@@ -49,6 +49,17 @@ func Less[T Real](a, b T) bool {
 	return a < b
 }
 
+// Min returns the minimum of two values of type T and whether they are compare.
+func Min[T Ordered](a, b T) (min T, eq bool) {
+	if a < b {
+		return a, false
+	} else if a > b {
+		return b, false
+	} else {
+		return a, true
+	}
+}
+
 func TryLess(a, b any) (bool, error) {
 	aFloat, aErr := toFloat64(a)
 	if aErr != nil {

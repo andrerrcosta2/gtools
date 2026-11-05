@@ -3,18 +3,19 @@
 package trees
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
 	"testing"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/str/iterables"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
 )
 
 // TestRedBlack_Creation tests the creation of a RBT
 //
 // after being created the tree should:
-//   - contain the same number of nodes as the number of elements passed
+//   - contain the same number of node as the number of elements passed
 func TestRedBlack_Creation(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := RedBlack[int](cmp)
 	if tree == nil {
 		t.Errorf("tree is nil")
@@ -37,7 +38,7 @@ func TestRedBlack_Creation(t *testing.T) {
 //   - the value retrieved is the smallest value greater than
 //     or compare to the given value
 func TestRedBlack_Ceiling(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Only positive values
 	t.Run("only positive values", func(t *testing.T) {
@@ -195,7 +196,7 @@ func TestRedBlack_Ceiling(t *testing.T) {
 // after it is called this test must assert:
 //   - the size of the tree is 0
 func TestRedBlack_Clear(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := RedBlack[int](cmp)
 	iterables.OfSlice(1, 2, 3, 5, 6, 7).EachN(func(i, v int) {
 		tree.Insert(v)
@@ -210,7 +211,7 @@ func TestRedBlack_Clear(t *testing.T) {
 }
 
 func TestRedBlack_ColorOf(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := RedBlack[int](cmp, 1, 2, 3, 5, 6, 7)
 	// Expected tree
 	//
@@ -218,21 +219,21 @@ func TestRedBlack_ColorOf(t *testing.T) {
 	if !ok {
 		t.Errorf("tree should contain 1")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '1' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(2)
 	if !ok {
 		t.Errorf("tree should contain 2")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '2' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(3)
 	if !ok {
 		t.Errorf("tree should contain 3")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '3' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(4)
@@ -243,21 +244,21 @@ func TestRedBlack_ColorOf(t *testing.T) {
 	if !ok {
 		t.Errorf("tree should contain 5")
 	}
-	if c != nodes.Red {
+	if c != node.Red {
 		t.Errorf("node '5' should be 'red' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(6)
 	if !ok {
 		t.Errorf("tree should contain 6")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '6' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(7)
 	if !ok {
 		t.Errorf("tree should contain 7")
 	}
-	if c != nodes.Red {
+	if c != node.Red {
 		t.Errorf("node '7' should be 'black' but got '%s'", c)
 	}
 }
@@ -268,7 +269,7 @@ func TestRedBlack_ColorOf(t *testing.T) {
 //   - the element is found if it was inserted
 //   - the element is not found if it was not inserted
 func TestRedBlack_Contains(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := RedBlack[int](cmp)
 	if tree.Contains(0) {
 		t.Errorf("tree should not contain 0")
@@ -287,12 +288,12 @@ func TestRedBlack_Contains(t *testing.T) {
 
 // TestRedBlack_Delete tests the Delete method
 //
-// after each deletion the tree state should assert
+// after each deletion the tree states should assert
 //   - its size is decrease
 //   - the method Contains returns false for the deleted value
 //   - the iteration cannot find the deleted value
 func TestRedBlack_Delete(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: delete from empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -393,7 +394,7 @@ func TestRedBlack_Delete(t *testing.T) {
 }
 
 func TestRedBlack_Floor(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Only positive values
 	t.Run("only positive values", func(t *testing.T) {
@@ -521,13 +522,13 @@ func TestRedBlack_Floor(t *testing.T) {
 
 // TestRedBlack_Insert tests the Insert method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - its size is increase
 //   - the method Contains returns true for the inserted value
 //   - the method Contains returns false for the not inserted value
 //   - the iteration can find the inserted value
 func TestRedBlack_Insert(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := RedBlack[int](cmp)
 	iterables.OfSlice(1, 2, 3, 5, 6, 7).EachN(func(i, v int) {
 		tree.Insert(v)
@@ -544,7 +545,7 @@ func TestRedBlack_Insert(t *testing.T) {
 }
 
 func TestRedBlack_IsEmpty(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Case 1: Empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -618,7 +619,7 @@ func TestRedBlack_IsEmpty(t *testing.T) {
 // the iterator should be able to iterate over the tree
 // from its minimum to its maximum value
 func TestRedBlack_Iterator(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -652,10 +653,10 @@ func TestRedBlack_Iterator(t *testing.T) {
 
 // TestRedBlack_Max tests the Max method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - the method Max returns the max value of the tree
 func TestRedBlack_Max(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Empty tree
 	t.Run("max on empty tree", func(t *testing.T) {
@@ -699,10 +700,10 @@ func TestRedBlack_Max(t *testing.T) {
 
 // TestRedBlack_Min tests the Min method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - the method Min returns the min value of the tree
 func TestRedBlack_Min(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: empty tree
 	t.Run("min on empty tree", func(t *testing.T) {
@@ -747,9 +748,9 @@ func TestRedBlack_Min(t *testing.T) {
 // TestRedBlack_Creation tests the creation of a RBT
 //
 // after being created the tree should:
-//   - contain the same number of nodes as the number of elements passed
+//   - contain the same number of node as the number of elements passed
 func TestConcRedBlack_Creation(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := ConcRedBlack[int](cmp)
 	if tree == nil {
 		t.Errorf("tree is nil")
@@ -772,7 +773,7 @@ func TestConcRedBlack_Creation(t *testing.T) {
 //   - the value retrieved is the smallest value greater than
 //     or compare to the given value
 func TestConcRedBlack_Ceiling(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Only positive values
 	t.Run("only positive values", func(t *testing.T) {
@@ -930,7 +931,7 @@ func TestConcRedBlack_Ceiling(t *testing.T) {
 // after it is called this test must assert:
 //   - the size of the tree is 0
 func TestConcRedBlack_Clear(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := ConcRedBlack[int](cmp)
 	iterables.OfSlice(1, 2, 3, 5, 6, 7).EachN(func(i, v int) {
 		tree.Insert(v)
@@ -945,7 +946,7 @@ func TestConcRedBlack_Clear(t *testing.T) {
 }
 
 func TestConcRedBlack_ColorOf(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := ConcRedBlack[int](cmp, 1, 2, 3, 5, 6, 7)
 	// Expected tree
 	//
@@ -953,21 +954,21 @@ func TestConcRedBlack_ColorOf(t *testing.T) {
 	if !ok {
 		t.Errorf("tree should contain 1")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '1' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(2)
 	if !ok {
 		t.Errorf("tree should contain 2")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '2' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(3)
 	if !ok {
 		t.Errorf("tree should contain 3")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '3' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(4)
@@ -978,21 +979,21 @@ func TestConcRedBlack_ColorOf(t *testing.T) {
 	if !ok {
 		t.Errorf("tree should contain 5")
 	}
-	if c != nodes.Red {
+	if c != node.Red {
 		t.Errorf("node '5' should be 'red' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(6)
 	if !ok {
 		t.Errorf("tree should contain 6")
 	}
-	if c != nodes.Black {
+	if c != node.Black {
 		t.Errorf("node '6' should be 'black' but got '%s'", c)
 	}
 	c, ok = tree.ColorOf(7)
 	if !ok {
 		t.Errorf("tree should contain 7")
 	}
-	if c != nodes.Red {
+	if c != node.Red {
 		t.Errorf("node '7' should be 'black' but got '%s'", c)
 	}
 }
@@ -1003,7 +1004,7 @@ func TestConcRedBlack_ColorOf(t *testing.T) {
 //   - the element is found if it was inserted
 //   - the element is not found if it was not inserted
 func TestConcRedBlack_Contains(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := ConcRedBlack[int](cmp)
 	if tree.Contains(0) {
 		t.Errorf("tree should not contain 0")
@@ -1022,12 +1023,12 @@ func TestConcRedBlack_Contains(t *testing.T) {
 
 // TestConcRedBlack_Delete tests the Delete method
 //
-// after each deletion the tree state should assert
+// after each deletion the tree states should assert
 //   - its size is decrease
 //   - the method Contains returns false for the deleted value
 //   - the iteration cannot find the deleted value
 func TestConcRedBlack_Delete(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: delete from empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -1128,7 +1129,7 @@ func TestConcRedBlack_Delete(t *testing.T) {
 }
 
 func TestConcRedBlack_Floor(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Only positive values
 	t.Run("only positive values", func(t *testing.T) {
@@ -1256,13 +1257,13 @@ func TestConcRedBlack_Floor(t *testing.T) {
 
 // TestConcRedBlack_Insert tests the Insert method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - its size is increase
 //   - the method Contains returns true for the inserted value
 //   - the method Contains returns false for the not inserted value
 //   - the iteration can find the inserted value
 func TestConcRedBlack_Insert(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 	tree := ConcRedBlack[int](cmp)
 	iterables.OfSlice(1, 2, 3, 5, 6, 7).EachN(func(i, v int) {
 		tree.Insert(v)
@@ -1279,7 +1280,7 @@ func TestConcRedBlack_Insert(t *testing.T) {
 }
 
 func TestConcRedBlack_IsEmpty(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Case 1: Empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -1353,7 +1354,7 @@ func TestConcRedBlack_IsEmpty(t *testing.T) {
 // the iterator should be able to iterate over the tree
 // from its minimum to its maximum value
 func TestConcRedBlack_Iterator(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Empty tree
 	t.Run("empty tree", func(t *testing.T) {
@@ -1387,10 +1388,10 @@ func TestConcRedBlack_Iterator(t *testing.T) {
 
 // TestConcRedBlack_Max tests the Max method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - the method Max returns the max value of the tree
 func TestConcRedBlack_Max(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: Empty tree
 	t.Run("max on empty tree", func(t *testing.T) {
@@ -1434,10 +1435,10 @@ func TestConcRedBlack_Max(t *testing.T) {
 
 // TestConcRedBlack_Min tests the Min method
 //
-// after each insertion the tree state should assert
+// after each insertion the tree states should assert
 //   - the method Min returns the min value of the tree
 func TestConcRedBlack_Min(t *testing.T) {
-	cmp := comparators.Ordered[int]{}
+	cmp := comparators.Ordered[int]()
 
 	// Test 1: empty tree
 	t.Run("min on empty tree", func(t *testing.T) {

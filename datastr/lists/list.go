@@ -3,12 +3,12 @@
 package lists
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/str/list"
 	"github.com/andrerrcosta2/gtools/datastr/nodes"
 )
 
 type LinkedList[T any] interface {
-	str.List[T]
+	list.Mutable[T]
 	head() *nodes.TypedDoubleLinked[T]
 	setHead(head *nodes.TypedDoubleLinked[T])
 	setTail(tail *nodes.TypedDoubleLinked[T])
@@ -65,15 +65,3 @@ func removeLinkedNode[T any](l LinkedList[T], node *nodes.TypedDoubleLinked[T]) 
 		l.setTail(node.Prev())
 	}
 }
-
-// This is weird
-//func ToSlice[T any](l str.List[T]) []T {
-//	if ll, ok := l.(LinkedList[T]); ok {
-//		var s []T
-//		for node := ll.head(); node != nil; node = node.Next() {
-//			s = append(s, node.Value())
-//		}
-//		return s
-//	}
-//	return nil
-//}

@@ -22,6 +22,6 @@ func (s semaphore) Cap() int {
 	return cap(s.ch)
 }
 
-func (s semaphore) Rem() int {
+func (s semaphore) Len() int {
 	return len(s.ch)
 }

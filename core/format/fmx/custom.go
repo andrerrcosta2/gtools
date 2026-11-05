@@ -4,11 +4,12 @@ package fmx
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/custom"
 	"github.com/andrerrcosta2/gtools/core/format/custom/term"
 	"github.com/andrerrcosta2/gtools/core/format/printer"
-	"strings"
 )
 
 func Bold(s ...any) {

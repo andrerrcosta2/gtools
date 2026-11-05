@@ -107,7 +107,7 @@ func FindPathContainingFileRecursivelyBackward(startDir string, filename string)
 
 // ImportPath constructs a full filesystem path by combining the module directory and additional path components.
 func ImportPath(modDir string, parts ...string) (string, error) {
-	// Start with the module directory
+	// start with the module directory
 	fullPath := modDir
 
 	// Append additional path components

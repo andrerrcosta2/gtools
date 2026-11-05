@@ -3,93 +3,91 @@
 package sets
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/gtools"
-	"github.com/andrerrcosta2/gtools/datastr/trees"
 	"sync"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
+	"github.com/andrerrcosta2/gtools/core/data/comparator/comparators"
+	"github.com/andrerrcosta2/gtools/core/data/keyer/keyers"
+	"github.com/andrerrcosta2/gtools/core/data/str/set"
+	"github.com/andrerrcosta2/gtools/core/data/str/tree"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints"
+	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
+	"github.com/andrerrcosta2/gtools/datastr/internal/hash"
+	"github.com/andrerrcosta2/gtools/datastr/trees"
 )
+
+func OrderedOf[T constraints.Sortable[T]](values ...T) set.MutableOrdered[T] {
+	cmp := comparators.KeySortableOf[T, string](keyers.FingerPrint[T]())
+	s := &ordered[T, string]{
+		tree:  trees.RedBlack[T](cmp, values...),
+		table: make(hash.Table[string], len(values)),
+		cmp:   cmp,
+	}
+	for _, value := range values {
+		s.table.TryAddHash(cmp.Key(value))
+	}
+	return s
+}
 
 // Ordered creates a new ordered.
 //
-// This function returns a pointer to a new ordered, which is a set that maintains the order of its elements by its
+// This function returns a pointer to a new ordered, which is a backingMap that maintains the order of its elements by its
 // natural order.
 //
 // Type parameter K must satisfy the constraints.Ordered constraint, meaning it must be a type that supports ordering.
-func Ordered[T prim.Ordered](values ...T) str.OrderedSet[T] {
-	set := &ordered[T]{
-		tree: trees.RedBlack[T](comparators.Ordered[T]{}, values...),
-		set:  make(map[T]struct{}, len(values)),
+func Ordered[T prim.Ordered](values ...T) set.MutableOrdered[T] {
+	cmp := comparators.IdEqCmpKeyer[T]()
+	s := &ordered[T, T]{
+		tree:  trees.RedBlack[T](cmp, values...),
+		table: make(hash.Table[T], len(values)),
+		cmp:   cmp,
 	}
 	for _, value := range values {
-		set.set[value] = struct{}{}
+		s.table.TryAddHash(cmp.Key(value))
 	}
-	return set
+	return s
 }
 
-type ordered[T prim.Ordered] struct {
-	set  map[T]struct{}
-	tree str.RedBlackTree[T]
+var _ set.MutableOrdered[any] = (*ordered[any, any])(nil)
+
+type ordered[T any, H comparable] struct {
+	table hash.Table[H]
+	tree  tree.RedBlackTree[T]
+	cmp   comparator.EqCmpKeyer[T, H]
 }
 
-// Add inserts an element into the set if it doesn't already exist.
-func (s *ordered[T]) Add(t T) {
-	s.tree.Insert(t)
-	s.set[t] = struct{}{}
+// Add inserts an element into the backingMap if it doesn't already exist.
+func (s *ordered[T, H]) Add(t T) {
+	if s.table.TryAddHash(s.cmp.Key(t)) {
+		s.tree.Insert(t)
+	}
 }
 
-func (s *ordered[T]) Clear() {
+func (s *ordered[T, H]) Clear() {
 	s.tree.Clear()
-	s.set = make(map[T]struct{})
+	s.table.Clear()
 }
 
-func (s *ordered[T]) Delete(idx int) bool {
+func (s *ordered[T, H]) Delete(idx int) bool {
 	if idx < 0 || idx >= s.tree.Size() {
 		return false
 	}
-	it := s.tree.Iterator()
-	var del T
-	for i := 0; i <= idx; i++ {
-		del = it.Next()
+	if v, ok := s.tree.DeleteByIndex(idx); ok {
+		s.table.TryRemoveHash(s.hash(v))
+		return true
 	}
-	// I might have to implement this on the red black tree
-	// this is performing 2 lookups
-	s.tree.Delete(del)
-	delete(s.set, del)
-	return true
+	return false
 }
 
-func (s *ordered[T]) Equals(other str.Set[T]) bool {
-	if s.Len() != other.Len() {
-		return false
-	}
-	switch set := other.(type) {
-	case *ordered[T]:
-		if len(s.set) != len(set.set) {
-			return false
-		}
-		for k := range s.set {
-			if _, ok := set.set[k]; !ok {
-				return false
-			}
-		}
-		return true
-	default:
-		if s.Len() != set.Len() {
-			return false
-		}
-		for _, v := range set.Values() {
-			if !s.Has(v) {
-				return false
-			}
-		}
+func (s *ordered[T, H]) Equals(other set.Readable[T]) bool {
+	if s == other {
 		return true
 	}
+	return eqHashableOrdered(s.table, other, s.cmp)
 }
 
 // Get returns the element at the given idx.
-func (s *ordered[T]) Get(idx int) (value T, ok bool) {
+func (s *ordered[T, H]) Get(idx int) (value T, ok bool) {
 	if idx < 0 || idx >= s.tree.Size() {
 		return
 	}
@@ -101,144 +99,152 @@ func (s *ordered[T]) Get(idx int) (value T, ok bool) {
 	return value, true
 }
 
-// Has checks if the set contains the element.
-func (s *ordered[T]) Has(t T) bool {
-	return s.tree.Contains(t)
+// Has checks if the backingMap contains the element.
+func (s *ordered[T, H]) Has(t T) bool {
+	return s.table.HasHash(s.cmp.Key(t))
 }
 
-func (s *ordered[T]) IndexOf(t T) int {
-	it := s.tree.Iterator()
-	for i := 0; it.HasNext(); i++ {
-		if it.Next() == t {
-			return i
+func (s *ordered[T, H]) hash(t T) H {
+	return s.cmp.Key(t)
+}
+
+func (s *ordered[T, H]) IndexOf(t T) int {
+	if s.table.HasHash(s.cmp.Key(t)) {
+		it := s.tree.Iterator()
+		for i := 0; it.HasNext(); i++ {
+			if s.cmp.Equals(it.Next(), t) {
+				return i
+			}
 		}
 	}
 	return -1
 }
 
-// IsEmpty checks if the set is empty.
-func (s *ordered[T]) IsEmpty() bool {
-	return len(s.set) == 0
+// IsEmpty checks if the backingMap is empty.
+func (s *ordered[T, H]) IsEmpty() bool {
+	return s.table.IsEmpty()
 }
 
-// Len returns the number of elements in the set.
-func (s *ordered[T]) Len() int {
-	return len(s.set)
+// Len returns the number of elements in the backingMap.
+func (s *ordered[T, H]) Len() int {
+	return s.table.Len()
 }
 
-// Remove deletes an element from the set.
-func (s *ordered[T]) Remove(t T) {
-	if s.Has(t) {
-		s.tree.Delete(t)
-		delete(s.set, t)
+func (s *ordered[T, H]) Range(f func(t T) bool) {
+	it := s.tree.Iterator()
+	for i := 0; it.HasNext(); i++ {
+		if !f(it.Next()) {
+			return
+		}
 	}
 }
 
-// Values returns the ordered elements in the set.
-func (s *ordered[T]) Values() []T {
-	var values = make([]T, 0, len(s.set))
-	for k := range s.set {
-		values = append(values, k)
+// Remove deletes an element from the backingMap.
+func (s *ordered[T, H]) Remove(t T) {
+	if s.table.TryRemoveHash(s.cmp.Key(t)) {
+		s.tree.Delete(t)
+	}
+}
+
+// Values returns the ordered elements in the backingMap.
+func (s *ordered[T, H]) Elements() []T {
+	var values = make([]T, 0, s.Len())
+	it := s.tree.Iterator()
+	for it.HasNext() {
+		values = append(values, it.Next())
 	}
 	return values
 }
 
-func (s *ordered[T]) Stream() gtools.Stream[T] {
+func (s *ordered[T, H]) Stream() <-chan T {
 	ch := make(chan T)
-
+	it := s.tree.Iterator()
 	go func() {
 		defer close(ch)
-		for item := range s.set {
-			ch <- item
+		for it.HasNext() {
+			ch <- it.Next()
 		}
 	}()
 
 	return ch
 }
 
-var _ str.Set[int] = (*ordered[int])(nil)
+var _ set.Mutable[int] = (*ordered[int, int])(nil)
 
-func ConcOrdered[T prim.Ordered](values ...T) str.OrderedSet[T] {
-	set := &concOrdered[T]{
-		tree: trees.RedBlack[T](comparators.Ordered[T]{}, values...),
-		set:  make(map[T]struct{}, len(values)),
+func ConcOrderedOf[T constraints.Sortable[T]](values ...T) set.MutableOrdered[T] {
+	cmp := comparators.KeySortableOf[T, string](keyers.FingerPrint[T]())
+	s := &concOrdered[T, string]{
+		mtx:   sync.RWMutex{},
+		tree:  trees.RedBlack[T](cmp, values...),
+		table: make(hash.Table[string], len(values)),
+		cmp:   cmp,
 	}
 	for _, value := range values {
-		set.set[value] = struct{}{}
+		s.table.TryAddHash(cmp.Key(value))
 	}
-	return set
+	return s
 }
 
-type concOrdered[T prim.Ordered] struct {
-	mtx  sync.RWMutex
-	set  map[T]struct{}
-	tree str.RedBlackTree[T]
+func ConcOrdered[T prim.Ordered](values ...T) set.MutableOrdered[T] {
+	cmp := comparators.IdEqCmpKeyer[T]()
+	s := &concOrdered[T, T]{
+		mtx:   sync.RWMutex{},
+		tree:  trees.RedBlack[T](cmp, values...),
+		table: make(hash.Table[T], len(values)),
+		cmp:   cmp,
+	}
+	for _, value := range values {
+		s.table.TryAddHash(cmp.Key(value))
+	}
+	return s
 }
 
-func (s *concOrdered[T]) Add(t T) {
+type concOrdered[T any, H comparable] struct {
+	mtx   sync.RWMutex
+	table hash.Table[H]
+	tree  tree.RedBlackTree[T]
+	cmp   comparator.EqCmpKeyer[T, H]
+}
+
+func (s *concOrdered[T, H]) Add(t T) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
-	s.set[t] = struct{}{}
-	s.tree.Insert(t)
+	if s.table.TryAddHash(s.cmp.Key(t)) {
+		s.tree.Insert(t)
+	}
 }
 
-func (s *concOrdered[T]) Clear() {
+func (s *concOrdered[T, H]) Clear() {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	s.tree.Clear()
-	s.set = make(map[T]struct{})
+	s.table.Clear()
 }
 
-func (s *concOrdered[T]) Delete(idx int) bool {
+func (s *concOrdered[T, H]) Delete(idx int) bool {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	if idx < 0 || idx >= s.tree.Size() {
 		return false
 	}
-	it := s.tree.Iterator()
-	var del T
-	for i := 0; i <= idx; i++ {
-		del = it.Next()
+	if v, ok := s.tree.DeleteByIndex(idx); ok {
+		s.table.TryRemoveHash(s.hash(v))
+		return true
 	}
-	// I might have to implement this on the red black tree
-	// this is performing 2 lookups
-	s.tree.Delete(del)
-	delete(s.set, del)
-	return true
+	return false
 }
 
-func (s *concOrdered[T]) Equals(other str.Set[T]) bool {
+func (s *concOrdered[T, H]) Equals(other set.Readable[T]) bool {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	if s.Len() != other.Len() {
-		return false
-	}
-	switch set := other.(type) {
-	case *ordered[T]:
-		if len(s.set) != len(set.set) {
-			return false
-		}
-		for k := range s.set {
-			if _, ok := set.set[k]; !ok {
-				return false
-			}
-		}
-		return true
-	default:
-		if s.Len() != set.Len() {
-			return false
-		}
-		for _, v := range set.Values() {
-			if !s.Has(v) {
-				return false
-			}
-		}
+	if s == other {
 		return true
 	}
+	return eqHashableOrdered(s.table, other, s.cmp)
 }
 
 // Get returns the element at the given idx.
-func (s *concOrdered[T]) Get(idx int) (value T, ok bool) {
+func (s *concOrdered[T, H]) Get(idx int) (value T, ok bool) {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
 	if idx < 0 || idx >= s.tree.Size() {
@@ -252,70 +258,87 @@ func (s *concOrdered[T]) Get(idx int) (value T, ok bool) {
 	return value, true
 }
 
-// Has checks if the set contains the element.
-func (s *concOrdered[T]) Has(t T) bool {
+// Has checks if the backingMap contains the element.
+func (s *concOrdered[T, H]) Has(t T) bool {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
 	return s.tree.Contains(t)
 }
 
-func (s *concOrdered[T]) IndexOf(t T) int {
+func (s *concOrdered[T, H]) hash(v T) H {
+	return s.cmp.Key(v)
+}
+
+func (s *concOrdered[T, H]) IndexOf(t T) int {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	it := s.tree.Iterator()
-	for i := 0; it.HasNext(); i++ {
-		if it.Next() == t {
-			return i
+	if s.table.HasHash(s.cmp.Key(t)) {
+		it := s.tree.Iterator()
+		for i := 0; it.HasNext(); i++ {
+			if s.cmp.Equals(it.Next(), t) {
+				return i
+			}
 		}
 	}
 	return -1
 }
 
-// IsEmpty checks if the set is empty.
-func (s *concOrdered[T]) IsEmpty() bool {
+// IsEmpty checks if the backingMap is empty.
+func (s *concOrdered[T, H]) IsEmpty() bool {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	return len(s.set) == 0
+	return s.table.IsEmpty()
 }
 
-// Len returns the number of elements in the set.
-func (s *concOrdered[T]) Len() int {
+// Len returns the number of elements in the backingMap.
+func (s *concOrdered[T, H]) Len() int {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	return len(s.set)
+	return s.table.Len()
 }
 
-// Remove deletes an element from the set.
-func (s *concOrdered[T]) Remove(t T) {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-	if _, ok := s.set[t]; ok {
-		s.tree.Delete(t)
-		delete(s.set, t)
+func (s *concOrdered[T, H]) Range(callback func(value T) bool) {
+	it := s.tree.Iterator()
+	for i := 0; it.HasNext(); i++ {
+		if !callback(it.Next()) {
+			return
+		}
 	}
 }
 
-// Values returns the ordered elements in the set.
-func (s *concOrdered[T]) Values() []T {
+// Remove deletes an element from the backingMap.
+func (s *concOrdered[T, H]) Remove(t T) {
+	s.mtx.Lock()
+	defer s.mtx.Unlock()
+	if s.table.TryRemoveHash(s.cmp.Key(t)) {
+		s.tree.Delete(t)
+	}
+}
+
+// Values returns the ordered elements in the backingMap.
+func (s *concOrdered[T, H]) Elements() []T {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
-	var values = make([]T, 0, len(s.set))
-	for k := range s.set {
-		values = append(values, k)
+	var values = make([]T, 0, s.Len())
+	it := s.tree.Iterator()
+	for it.HasNext() {
+		values = append(values, it.Next())
 	}
 	return values
 }
 
-func (s *concOrdered[T]) Stream() gtools.Stream[T] {
+func (s *concOrdered[T, H]) Stream() <-chan T {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
 
 	ch := make(chan T)
+	it := s.tree.Iterator()
 	go func() {
 		defer close(ch)
-		for item := range s.set {
-			ch <- item
+		for it.HasNext() {
+			ch <- it.Next()
 		}
 	}()
+
 	return ch
 }

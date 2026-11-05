@@ -10,7 +10,7 @@ import (
 )
 
 // Of returns an uintptr representing the stable identity of a reflect.Value.
-// It only supports pointer-like types - Ptr, slices, maps, channel, functions, UnsafePointer.
+// It only supports pointer-like types - Ptr, slices, dicts, channel, function, UnsafePointer.
 // Returns an error if the kind doesn't naturally support a stable pointer.
 func Of(v reflect.Value) (uintptr, error) {
 	switch v.Kind() {
@@ -27,8 +27,8 @@ func Of(v reflect.Value) (uintptr, error) {
 }
 
 // StableOf returns the memory address on which the pointer-like kind points to.
-// Stable kinds are channels, maps, functions, ptrs, and unsafe ptrs.
-// Despite slices and arrays be underlying ptrs in golang, their pointer method call
+// Stable kinds are channels, dicts, function, ptrs, and unsafe ptrs.
+// Despite slices and array be underlying ptrs in golang, their pointer method call
 // is not reliable since they retrieve the same address of their first element.
 func StableOf(v reflect.Value) (uintptr, error) {
 	switch v.Kind() {

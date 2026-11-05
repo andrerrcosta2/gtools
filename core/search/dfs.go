@@ -2,68 +2,59 @@
 
 package search
 
-/*
-Generalize it
-*/
-//import (
-//	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-//	"github.com/andrerrcosta2/gtools/core/domain/gtools"
-//	"github.com/andrerrcosta2/gtools/pkg/datastr/iterables"
-//	"github.com/andrerrcosta2/gtools/pkg/sortables"
-//)
-//
-//// DepthFirst performs a depth-first search on the graph starting from the given node.
-//// It returns a slice of visited nodes in the order they were visited.
-//func DepthFirst[T any, K prim.Ordered](g iterables.Deliverer[T], nodeKey K) []T {
-//	// Initialize the result slice to store the visited nodes.
-//	var result []T
-//
-//	// Create a set to track visited nodes and avoid revisiting them.
-//	visited := map[K]struct{}{}
-//
-//	// Start the depth-first search from the given start node.
-//	dfs(g, nodeKey, visited, &result)
-//
-//	// Return the slice of visited nodes in the order they were visited.
-//	return result
-//}
-//
-//// dfs performs a recursive depth-first search on the graph starting from the given node.
-//// It marks the node as visited, adds it to the result, and recursively visits all its neighbors.
-//func dfs[T any, K prim.Ordered](g iterables.Deliverer[T], currentKey K, visited map[K]struct{}, result *[]T) {
-//	// Check if the node has already been visited to avoid infinite loops.
-//	if _, ok := visited[currentKey]; ok {
-//		// If the node is already visited, return immediately to prevent revisiting.
-//		return
-//	}
-//
-//	// Mark the node as visited to keep track of visited nodes.
-//	visited[currentKey] = struct{}{}
-//
-//	// Convert the key back to the node type (T) to add it to the result.
-//	currentNode := any(currentKey).(T)
-//	// Addf the current node to the result slice.
-//	*result = append(*result, currentNode)
-//
-//	// Recursively visit all neighbors of the current node.
-//	for _, neighbor := range g.Deliver(currentNode) {
-//		// Convert the neighbor to the appropriate key type (K) for the recursive call.
-//		neighborKey := xnk(neighbor).(K)
-//		// Recursively call dfs on the neighbor node.
-//		dfs(g, neighborKey, visited, result)
-//	}
-//}
-//
-//// xnk is a std function to convert a node to its key type.
-//// It takes a node of any type and returns its corresponding key type.
-//func xnk(n any) any {
-//	// Use type switching to determine the type of the node
-//	switch n := n.(type) {
-//	// If the node is of type gtools.SortableOf, return its unique key
-//	case gtools.SortableOf:
-//		return sortables.Unique(n)
-//	// If the node is of any other type, return the node itself
-//	default:
-//		return n
-//	}
-//}
+import (
+	"github.com/andrerrcosta2/gtools/core/domain/function"
+)
+
+// DepthFirst performs a depth-first search on the graph starting from the given node.
+// It returns a slice of visited node in the order they were visited.
+func DepthFirst[N comparable](expand function.ExpandEach[N], start, target N) []N {
+	visited := map[N]bool{}
+	parent := map[N]N{}
+
+	var found bool
+
+	var walk function.Predicate[N]
+	walk = func(n N) bool {
+		if visited[n] {
+			return true
+		}
+		visited[n] = true
+
+		if n == target {
+			found = true
+			return false
+		}
+
+		return expand(n, func(next N) bool {
+			if !visited[next] {
+				parent[next] = n
+				return walk(next)
+			}
+			return true
+		})
+	}
+
+	walk(start)
+
+	if !found {
+		return nil
+	}
+
+	// reconstruct path (only allocation we keep)
+	path := make([]N, 0, 8) // small hint capacity
+
+	for cur := target; ; cur = parent[cur] {
+		path = append(path, cur)
+		if cur == start {
+			break
+		}
+	}
+
+	// reverse
+	for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+		path[i], path[j] = path[j], path[i]
+	}
+
+	return path
+}

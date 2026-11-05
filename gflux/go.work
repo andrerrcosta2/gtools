@@ -1,8 +1,10 @@
-go 1.23.1
+go 1.26.5
 
 use (
-	./core
-	./obs
-	./event
 	.
+	./core
+	./core/domain
+	./events
+	./interceptors
+	./obs
 )

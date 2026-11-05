@@ -4,9 +4,10 @@ package fmx
 
 import (
 	"fmt"
+	"io"
+
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/custom"
-	"io"
 )
 
 type Sprinter interface {

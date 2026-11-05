@@ -12,10 +12,10 @@ const (
 	// This option enforces strict identity, useful when channel aliasing matters.
 	ChanIdentity op.Compare = 1 << iota
 	// FuncIdentity requires function values to be identical - same pointer/reference -
-	// or both nil to be considered compare. By default, functions with the same signature are treated as compare,
+	// or both nil to be considered compare. By default, function with the same signature are treated as compare,
 	// regardless of implementation. This option enforces strict identity, matching reflect.DeepEqual.
 	//
-	// Note: Even reflect.DeepEqual(f, f) returns false for non-nil functions. This flag forces identity
+	// Note: Even reflect.DeepEqual(f, f) returns false for non-nil function. This flag forces identity
 	// comparison only if your API explicitly supports it through unsafe or reflect-based techniques.
 	// In Go, function values are only compare if both are nil or refer to the exact same compiled function
 	// - pointer equality cannot be obtained safely at runtime.
@@ -25,7 +25,7 @@ const (
 	//	By default, ptrs with the same signature rely on their element equality
 	//	// regardless of implementation.
 	PtrIdentity
-	// AllowNilVsEmpty treats nil slices and maps as compare to their empty - but allocated - counterparts:
+	// AllowNilVsEmpty treats nil slices and dicts as compare to their empty - but allocated - counterparts:
 	//   - nil []T == []T{}
 	//   - nil map[K]V == map[K]V{}
 	//
@@ -55,7 +55,7 @@ const (
 	//
 	// Note: Even this mode may differ slightly from reflect.DeepEqual in edge cases involving
 	// unexported struct fields or cyclic data, due to implementation safeguards.
-	// Most precisely on functions where reflect package considers both to be the compare only when both are nil
+	// Most precisely on function where reflect package considers both to be the compare only when both are nil
 	ReflectSemantics = ChanIdentity | FuncIdentity
 	// Strict combines a ReflectSemantics and PtrIdentity
 	Strict = ReflectSemantics | PtrIdentity

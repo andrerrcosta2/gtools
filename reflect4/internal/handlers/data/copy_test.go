@@ -8,7 +8,7 @@ import (
 
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/testlite/assertlite"
-	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/differ"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/equals"
@@ -22,7 +22,7 @@ func TestDeepCopy(t *testing.T) {
 
 func TestDeepCopyStruct(t *testing.T) {
 	t.Run("default write", func(t *testing.T) {
-		gtests.Structs.Fuzz().Categories().Refs().All().Each(func(ptr any) {
+		testseeds.Structs.Fuzz().Categories().Refs().All().Each(func(ptr any) {
 			value := reflect.ValueOf(ptr)
 			cp, err := DeepCopy[internal.Option](value)
 			assertlite.NoError(t, err, "error while deep copying:\n%v\n", err)

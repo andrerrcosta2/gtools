@@ -3,6 +3,7 @@
 package util
 
 import (
+	_ "github.com/andrerrcosta2/gtools/core/util/bitwise"
 	_ "github.com/andrerrcosta2/gtools/core/util/casters"
 	_ "github.com/andrerrcosta2/gtools/core/util/typeutil"
 )

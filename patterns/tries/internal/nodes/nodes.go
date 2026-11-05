@@ -4,7 +4,7 @@ package nodes
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries/errs"
@@ -14,7 +14,7 @@ import (
 )
 
 type PatternTrie interface {
-	nodes.Trie[string, grammar.Symbol, PatternTrie]
+	node.Trie[string, grammar.Symbol, PatternTrie]
 	AddChild(key string, child PatternTrie) error
 	GetChild(key string) (PatternTrie, bool)
 	HasChildren() bool
@@ -25,7 +25,7 @@ type PatternTrie interface {
 	die() error
 }
 
-var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (PatternTrie)(nil)
+var _ node.Trie[string, grammar.Symbol, PatternTrie] = (PatternTrie)(nil)
 
 // Transition creates a new transitionNode with the given key and parent.
 func Transition(key string, parent PatternTrie) PatternTrie {
@@ -38,10 +38,10 @@ func Transition(key string, parent PatternTrie) PatternTrie {
 
 type transitionNode struct {
 	mtx      sync.RWMutex
-	inner    sync.RWMutex // Fine-grained lock for inner nodes
+	inner    sync.RWMutex // Fine-grained lock for inner node
 	key      string
 	parent   PatternTrie            // Parent node
-	children map[string]PatternTrie // Map of child nodes (character or Placeholder key)
+	children map[string]PatternTrie // Map of child node (character or Placeholder key)
 }
 
 func (p *transitionNode) Value() grammar.Symbol {
@@ -175,7 +175,7 @@ func (p *transitionNode) die() error {
 	return nil
 }
 
-var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (*transitionNode)(nil)
+var _ node.Trie[string, grammar.Symbol, PatternTrie] = (*transitionNode)(nil)
 var _ PatternTrie = (*transitionNode)(nil)
 
 // Symbol creates a new symbol node with the given key, parent, and symbol.
@@ -190,7 +190,7 @@ func Symbol(key string, parent PatternTrie, symbol grammar.Symbol) PatternTrie {
 
 type symbolNode struct {
 	mtx      sync.RWMutex
-	inner    sync.RWMutex // Fine-grained lock for inner nodes
+	inner    sync.RWMutex // Fine-grained lock for inner node
 	key      string
 	parent   PatternTrie
 	symbol   grammar.Symbol
@@ -211,7 +211,7 @@ func (p *symbolNode) HasChildren() bool {
 	return len(p.children) > 0
 }
 
-// Children return the direct children nodes and its recursive children nodes
+// Children return the direct children node and its recursive children node
 func (p *symbolNode) Children() []PatternTrie {
 	p.mtx.RLock()
 	defer p.mtx.RUnlock()
@@ -329,7 +329,7 @@ func (p *symbolNode) die() error {
 	return nil
 }
 
-var _ nodes.Trie[string, grammar.Symbol, PatternTrie] = (*symbolNode)(nil)
+var _ node.Trie[string, grammar.Symbol, PatternTrie] = (*symbolNode)(nil)
 var _ PatternTrie = (*symbolNode)(nil)
 
 func NewSearch(root PatternTrie, pattern string, output *[]grammar.Symbol) *Search {

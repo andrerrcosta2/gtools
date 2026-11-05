@@ -3,30 +3,28 @@
 package sorters
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"slices"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
 )
 
 // Native returns a Sorter that uses the native sort function from the standard
 // library.
-func Native[T any, S ~[]T](comparator comparators.Typed[T]) Sorter[T, S] {
+func Native[S ~[]E, E any](comparator comparator.EqComparer[E]) Sorter[S, E] {
 	// Return a new instance of pdqSort with the given comparator.
-	return &pdqSort[T, S]{
+	return &pdqSort[S, E]{
 		comparator: comparator,
 	}
 }
 
-type pdqSort[T any, S ~[]T] struct {
-	comparator comparators.Typed[T]
+type pdqSort[S ~[]E, E any] struct {
+	comparator comparator.EqComparer[E]
 }
 
 // Sort sorts the given slice in ascending order using the provided comparator.
-func (s *pdqSort[T, S]) Sort(slice *S) {
+func (s *pdqSort[S, E]) Sort(slice *S) {
 	// Sorter the slice using the given comparator.
-	slices.SortFunc(*slice, func(a, b T) int {
-		// Compare the two elements and return an integer indicating their order.
-		return s.comparator.Compare(a, b)
-	})
+	slices.SortFunc(*slice, s.comparator.Compare)
 }
 
-var _ Sorter[int, []int] = (*pdqSort[int, []int])(nil)
+var _ Sorter[[]int, int] = (*pdqSort[[]int, int])(nil)

@@ -13,7 +13,7 @@ type K = string
 type S = symbols.Logical
 
 // This is the simplest dictionary that can be used to build a OfPatterns
-// It does not contain any placeholder neither collapses nodes
+// It does not contain any placeholder neither collapses node
 var linearOpenSymbolsDictionary = &grammar.SymbolDictionary[K, []S, S]{
 	"abc": []S{symbols.OpenOf(grammar.ByteSymbol("abc"))},
 	"def": []S{symbols.OpenOf(grammar.ByteSymbol("def"))},

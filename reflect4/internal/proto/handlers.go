@@ -16,7 +16,7 @@ package proto
 //}
 //
 //// gdp generates a deep prototype representation of a given reflective type.
-//// It handles various kinds of types, including primitives, ptrs, iterables, maps, and structs,
+//// It handles various kinds of types, including primitives, ptrs, iterables, dicts, and structs,
 //// recursively extracting detailed metadata for each type class.
 //// If the type is invalid or unrecognized, it returns an error.
 //func gdp(t *reflective.Prototype) (proto *reflective.Prototype, err error) {
@@ -59,7 +59,7 @@ package proto
 //	}
 //
 //	proto = &reflective.Prototype{
-//		Kind:  reflect.maps,
+//		Kind:  reflect.dicts,
 //		Key:   keyPrototype,
 //		Value: valuePrototype,
 //	}

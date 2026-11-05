@@ -34,7 +34,7 @@ const (
 )
 
 // Alphabet returns a slice of length q with random strings of length between min and max.
-// Each string is composed of characters randomly chosen from the alphabet.
+// Range string is composed of characters randomly chosen from the alphabet.
 // If min or max aren't provided, it defaults to a minimum length of 1 and a maximum length
 // of 512 chars
 // If q is negative, it returns an empty slice.
@@ -504,7 +504,7 @@ func Of[T any](q int) *iterables.Slice[T] {
 	//   every value implements the empty interface.
 	//
 	// - For cat.Struct: we assume lite.RandOf(t) correctly constructs a reflect.Value of type t
-	//   (including nested fields), so rdn.(T) is safe—even with slices/maps—because
+	//   (including nested fields), so rdn.(T) is safe—even with slices/dicts—because
 	//   reflect.Value.Interface() returns a properly typed value.
 	//
 	// - For cat.Reference (ptr, chan, map, func, unsafe.Pointer): we use UnsafeReferenceOf
@@ -512,9 +512,9 @@ func Of[T any](q int) *iterables.Slice[T] {
 	//   reference type.
 	//  UnsafeReferenceOf extracts the pointer word directly.
 	//   ⚠️ This assumes the runtime representation matches expectations.
-	//	When the Runtime Representation Might Not Match:
-	//	1. Go’s internal interface layout could change
-	//		- the emptyInterface struct mimics Go’s internal representation of an empty interface.
+	//	At the Runtime Representation Might Not Match:
+	//	1. Go’s infra interface layout could change
+	//		- the emptyInterface struct mimics Go’s infra representation of an empty interface.
 	//		- This is not part of the Go spec—it’s an implementation detail of the compiler/runtime.
 	//		- While it’s been stable for years (two words: type + data), a future Go version could change it (ex, add
 	//		  metadata for generics, GC, or debugging).
@@ -532,11 +532,11 @@ func Of[T any](q int) *iterables.Slice[T] {
 	//		Result: The returned map[string]int is corrupted—it points to stack memory that becomes invalid
 	//		after the function returns.
 	//
-	// - For cat.Value (scalars, arrays, named types like MyInt): we currently use UnsafeValueOf
+	// - For cat.Value (scalars, array, named types like MyInt): we currently use UnsafeValueOf
 	//   as a fallback because RandOf returns the UNDERLYING type instead of the NAMED type,
 	//   making rdn.(T) panic.
 	//  This unsafe cast bypasses type checking by reinterpreting raw memory.
-	//   ❗ THIS IS FRAGILE AND UNSAFE FOR TYPES CONTAINING POINTERS (structs with slices/maps).
+	//   ❗ THIS IS FRAGILE AND UNSAFE FOR TYPES CONTAINING POINTERS (structs with slices/dicts).
 	//     It only "works" for simple, pointer-free named types (type Port uint16).
 	//
 	//  FUTURE: Update lite.RandOf(t) to always return a value of EXACT type t
@@ -634,7 +634,7 @@ func SingleOf[T any]() (single T) {
 }
 
 // String returns a slice of length q with random strings of length between min and max.
-// Each string is composed of random runes.
+// Range string is composed of random runes.
 // If min or max are not provided, it defaults to a minimum length of 1 and a maximum length
 //
 //	compared to the maximum length of a string.
@@ -664,7 +664,7 @@ func String(q int, minMax ...int) *iterables.Slice[string] {
 }
 
 // StringOf returns a slice of length q with random strings of length between min and max.
-// Each string is composed of characters randomly chosen from the charset.
+// Range string is composed of characters randomly chosen from the charset.
 // If min or max are not provided, it defaults to a minimum length of 1 and a maximum length
 // compare to the maximum length of a string.
 // It returns empty if q is negative.

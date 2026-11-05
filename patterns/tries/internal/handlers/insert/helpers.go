@@ -13,7 +13,7 @@ import (
 func Symbol(from nodes.PatternTrie, pattern string, symbol grammar.Symbol) (length int, err error) {
 	// Find the insertion point
 	point, skip := findInsertionPoint(from, pattern)
-	// Deploy the symbol into the trie by recursively creating new nodes if necessary
+	// Deploy the symbol into the trie by recursively creating new node if necessary
 	return deploySymbol(point, pattern[skip:], symbol)
 }
 
@@ -75,7 +75,7 @@ func deploySymbol(from nodes.PatternTrie, pattern string, symbol grammar.Symbol)
 }
 
 // deploySymbolRecursively creates a new symbol path from the given string and symbol.
-// It returns the final node of the path, the number of nodes created and an error.
+// It returns the final node of the path, the number of node created and an error.
 // If the error isn't nil, it means that the path couldn't be created.
 func deploySymbolRecursively(p nodes.PatternTrie, s string, symbol grammar.Symbol, track []nodes.PatternTrie) ([]nodes.PatternTrie, error) {
 	// If the given string matches the Placeholder symbol
@@ -111,18 +111,18 @@ func deploySymbolRecursively(p nodes.PatternTrie, s string, symbol grammar.Symbo
 		}
 		track = append(track, child)
 
-		// Return the track of created nodes
+		// Return the track of created node
 		return track, nil
 	}
 
-	return track, nil // Return track of created nodes
+	return track, nil // Return track of created node
 }
 
-// cancelInsertion undoes the insert of a symbol in the trie by removing the nodes created during the insert.
+// cancelInsertion undoes the insert of a symbol in the trie by removing the node created during the insert.
 // It is used when there is an error during the insert to backtrack the trie and return the error.
 func cancelInsertion(track []nodes.PatternTrie) {
-	// Iterate over the nodes created in reverse order
-	// and remove the nodes that were created
+	// Iterate over the node created in reverse order
+	// and remove the node that were created
 	for i := len(track) - 1; i > 0; i-- {
 		// Dereference the node
 		_, err := nodes.Deref(track[i])

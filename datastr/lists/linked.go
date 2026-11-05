@@ -4,12 +4,13 @@ package lists
 
 import (
 	"fmt"
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"sync"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
+	"github.com/andrerrcosta2/gtools/core/data/str/list"
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
 	"github.com/andrerrcosta2/gtools/datastr/nodes"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/arrays"
-	"sync"
 )
 
 type doubleLinked[T any] struct {
@@ -39,7 +40,7 @@ func (l *doubleLinked[T]) size() int {
 }
 
 // HashLinked creates a linked list with a hash table from the given elements.
-func HashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ...T) str.List[T] {
+func HashLinked[T any, H prim.Hashable](cmp comparator.EqCmpKeyer[T, H], e ...T) list.Mutable[T] {
 	if len(e) == 0 {
 		return &hashLinked[T, H]{
 			doubleLinked: doubleLinked[T]{},
@@ -52,14 +53,14 @@ func HashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ...T) 
 	head := nodes.NewTypedDoubleLinked[T](nil, nil, e[0])
 	tail := head
 	size := len(e)
-	idx[cmp.Hash(e[0])] = append(idx[cmp.Hash(e[0])], head)
+	idx[cmp.Key(e[0])] = append(idx[cmp.Key(e[0])], head)
 
-	// Iterate from the second element, linking nodes normally
+	// Iterate from the second element, linking node normally
 	for i := 1; i < size; i++ {
 		newNode := nodes.NewTypedDoubleLinked[T](tail, nil, e[i])
 		tail.SetNext(newNode)
 		tail = newNode
-		idx[cmp.Hash(e[i])] = append(idx[cmp.Hash(e[i])], newNode)
+		idx[cmp.Key(e[i])] = append(idx[cmp.Key(e[i])], newNode)
 	}
 
 	return &hashLinked[T, H]{
@@ -76,7 +77,7 @@ func HashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ...T) 
 type hashLinked[T any, H prim.Hashable] struct {
 	doubleLinked[T]
 	idx map[H][]*nodes.TypedDoubleLinked[T]
-	cmp comparators.KeyTyped[T, H]
+	cmp comparator.EqCmpKeyer[T, H]
 }
 
 func (l *hashLinked[T, H]) Add(t T) (index int) {
@@ -142,7 +143,7 @@ func (l *hashLinked[T, H]) HardClear() {
 }
 
 func (l *hashLinked[T, H]) hash(t T) H {
-	return l.cmp.Hash(t)
+	return l.cmp.Key(t)
 }
 
 func (l *hashLinked[T, H]) IndexOf(t T) int {
@@ -239,13 +240,17 @@ func (l *hashLinked[T, H]) removeKey(key H, n *nodes.TypedDoubleLinked[T]) bool 
 		return false
 	}
 
-	// Handle multiple nodes with the same hash (collision)
+	// Handle multiple node with the same hash (collision)
 	for i, node := range nodes {
 		if node == n {
 			if len(l.idx[key]) == 1 {
 				delete(l.idx, key)
 			} else {
-				l.idx[key] = arrays.RemoveByIndex(l.idx[key], i)
+				v, ok := arrays.RemoveByIndex(l.idx[key], i)
+				if !ok {
+					return false
+				}
+				l.idx[key] = v
 			}
 			return true
 		}
@@ -287,7 +292,7 @@ func (l *hashLinked[T, H]) ToSlice() []T {
 
 var _ LinkedList[int] = (*hashLinked[int, string])(nil)
 
-func ConcHashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ...T) str.List[T] {
+func ConcHashLinked[T any, H prim.Hashable](cmp comparator.EqCmpKeyer[T, H], e ...T) list.Mutable[T] {
 	if len(e) == 0 {
 		return &concHashLinked[T, H]{
 			doubleLinked: doubleLinked[T]{},
@@ -300,14 +305,14 @@ func ConcHashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ..
 	head := nodes.NewTypedDoubleLinked[T](nil, nil, e[0])
 	tail := head
 	size := len(e)
-	idx[cmp.Hash(e[0])] = append(idx[cmp.Hash(e[0])], head)
+	idx[cmp.Key(e[0])] = append(idx[cmp.Key(e[0])], head)
 
-	// Iterate from the second element, linking nodes normally
+	// Iterate from the second element, linking node normally
 	for i := 1; i < size; i++ {
 		newNode := nodes.NewTypedDoubleLinked[T](tail, nil, e[i])
 		tail.SetNext(newNode)
 		tail = newNode
-		idx[cmp.Hash(e[i])] = append(idx[cmp.Hash(e[i])], newNode)
+		idx[cmp.Key(e[i])] = append(idx[cmp.Key(e[i])], newNode)
 	}
 
 	return &concHashLinked[T, H]{
@@ -324,7 +329,7 @@ func ConcHashLinked[T any, H prim.Hashable](cmp comparators.KeyTyped[T, H], e ..
 type concHashLinked[T any, H prim.Hashable] struct {
 	doubleLinked[T]
 	idx map[H][]*nodes.TypedDoubleLinked[T]
-	cmp comparators.KeyTyped[T, H]
+	cmp comparator.EqCmpKeyer[T, H]
 	mtx sync.RWMutex
 }
 
@@ -397,7 +402,7 @@ func (l *concHashLinked[T, H]) HardClear() {
 }
 
 func (l *concHashLinked[T, H]) hash(t T) H {
-	return l.cmp.Hash(t)
+	return l.cmp.Key(t)
 }
 
 func (l *concHashLinked[T, H]) IndexOf(t T) int {
@@ -499,13 +504,14 @@ func (l *concHashLinked[T, H]) removeKey(key H, n *nodes.TypedDoubleLinked[T]) b
 		return false
 	}
 
-	// Handle multiple nodes with the same hash (collision)
+	// Handle multiple node with the same hash (collision)
 	for i, node := range nodes {
 		if node == n {
 			if len(l.idx[key]) == 1 {
 				delete(l.idx, key)
 			} else {
-				l.idx[key] = arrays.RemoveByIndex(l.idx[key], i)
+				sl := l.idx[key]
+				l.idx[key] = append(sl[:i], sl[i+1:]...)
 			}
 			return true
 		}

@@ -3,13 +3,13 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
 	"github.com/andrerrcosta2/gtools/patterns/regex/dictionaries"
 	"github.com/andrerrcosta2/gtools/patterns/regex/tokens"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 )
 
 // Dictionary returns a dictionary of regular expression tokens
-func Dictionary() str.Dictionary[string, []symbols.Logical] {
-	return str.MergeDictionaries[string, []symbols.Logical](dictionaries.Word, tokens.Regexp)
+func Dictionary() dict.Dictionary[string, []symbols.Logical] {
+	return dict.MergeDictionaries[string, []symbols.Logical](dictionaries.Word, tokens.Regexp)
 }

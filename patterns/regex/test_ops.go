@@ -3,8 +3,8 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
-	"github.com/andrerrcosta2/gtools/gtests"
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
+	"github.com/andrerrcosta2/gtools/core/testlite"
 	"github.com/andrerrcosta2/gtools/patterns/grammar"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries"
@@ -12,30 +12,30 @@ import (
 
 // shouldInsertEntrySuc is a std function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
-func shouldInsertEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
+func shouldInsertEntrySuc(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Entry: %v, length: %d", e, len(e.Key()))
+	t.Logf("Entry: %v, length: %d", e, len(e.Key()))
 
 	// Insert the entry into the trie
 	err := trie.Insert(e.Key(), e.Value())
 	if err != nil {
-		// Log the error if it occurred
+		// Log the error if it occurredS
 		t.Errorf("error while inserting '%v': %v\n", e.Key(), err)
 	}
 
-	t.StackLogf("Entry inserted '%v'", e)
+	t.Logf("Entry inserted '%v'", e)
 
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
 // shouldNotInsertEntry is a std function that tests the insertion of a single entry into a str.Trie.
 // It logs the entry and the trie states before and after the insertion and checks if an error occurred.
-func shouldNotInsertEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
+func shouldNotInsertEntry(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Entry: %v, length: %d", e, len(e.Key()))
+	t.Logf("Entry: %v, length: %d", e, len(e.Key()))
 
 	// Insert the entry into the trie
 	err := trie.Insert(e.Key(), e.Value())
@@ -45,59 +45,59 @@ func shouldNotInsertEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[str
 	}
 
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
 // shouldDeleteEntrySuc is a std function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
-func shouldDeleteEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
+func shouldDeleteEntrySuc(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Deleting entry '%v'...", e)
+	t.Logf("Deleting entry '%v'...", e)
 
 	// Delete the entry from the trie
 	if !trie.Delete(e.Key(), e.Value()) {
 		// Mark as failed if was not deleted
 		t.Errorf("expected to delete '%v' but was not found\n", e.Key())
 		// Log the entry for debugging
-		t.StackLogf("[Not deleted]: %v", e)
+		t.Logf("[Not deleted]: %v", e)
 	} else {
 		// Log the entry for debugging
-		t.StackLogf("Deleted: %v", e)
+		t.Logf("Deleted: %v", e)
 	}
 
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
 // shouldNotDeleteEntry is a std function that tests the deletion of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the deletion and checks if an error occurred.
-func shouldNotDeleteEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
+func shouldNotDeleteEntry(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Deleting entry '%v'...", e)
+	t.Logf("Deleting entry '%v'...", e)
 
 	// Delete the entry from the trie
 	if trie.Delete(e.Key(), e.Value()) {
 		// Mark as failed if was not deleted
 		t.Errorf("expected to not delete '%v' but was found\n", e.Key())
 		// Log the entry for debugging
-		t.StackLogf("[Deleted]: %v", e)
+		t.Logf("[Deleted]: %v", e)
 	} else {
 		// Log the entry for debugging
-		t.StackLogf("Not Deleted: %v", e)
+		t.Logf("Not Deleted: %v", e)
 	}
 
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }\n", trie.Size(), trie.Length())
 }
 
 // shouldFindEntrySuc is a std function that tests the search of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the search and checks if an error occurred.
-func shouldFindEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) []grammar.Symbol {
+func shouldFindEntrySuc(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) []grammar.Symbol {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Entry: %v", e)
+	t.Logf("Entry: %v", e)
 
 	// Search for the entry in the PatternTrie
 	sym, exists := trie.Search(e.Key())
@@ -108,33 +108,33 @@ func shouldFindEntrySuc(t gtests.Loggable, trie tries.Pattern, e str.Entry[strin
 	}
 
 	// Log the result for debugging
-	t.StackLogf("search: %v, result: %v\n", e.Key(), sym)
+	t.Logf("search: %v, result: %v\n", e.Key(), sym)
 
 	return sym
 }
 
 // shouldNotFindEntry is a std function that tests the search of a single entry from a str.Trie.
 // It logs the entry and the trie states before and after the search and checks if an error occurred.
-func shouldNotFindEntry(t gtests.Loggable, trie tries.Pattern, e str.Entry[string, symbols.Logical]) {
+func shouldNotFindEntry(t testlite.LoggerTesting, trie tries.Pattern, e dict.Entry[string, symbols.Logical]) {
 	t.Helper()
 	// Log the entry
-	t.StackLogf("Entry: %v", e)
+	t.Logf("Entry: %v", e)
 
 	// Search for the entry in the PatternTrie
 	if sym, exists := trie.Search(e.Key()); exists {
 		// Check if the entry was found
 		t.Errorf("expected to not find '%v' but was found\n", e.Key())
 		// Log the result for debugging
-		t.StackLogf("search: %v, result: %v\n", e.Key(), sym)
+		t.Logf("search: %v, result: %v\n", e.Key(), sym)
 	}
 }
 
 // shouldBeEmpty is a std function that tests if a str.Trie is empty.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldBeEmpty(t gtests.Loggable, trie tries.Pattern) {
+func shouldBeEmpty(t testlite.LoggerTesting, trie tries.Pattern) {
 	t.Helper()
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
 
 	// Check if the PatternTrie is empty
 	if !trie.IsEmpty() {
@@ -154,10 +154,10 @@ func shouldBeEmpty(t gtests.Loggable, trie tries.Pattern) {
 
 // shouldNotBeEmpty is a std function that tests if a str.Trie is not empty.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldNotBeEmpty(t gtests.Loggable, trie tries.Pattern) {
+func shouldNotBeEmpty(t testlite.LoggerTesting, trie tries.Pattern) {
 	t.Helper()
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
 
 	// Check if the PatternTrie is not empty
 	if trie.IsEmpty() {
@@ -177,10 +177,10 @@ func shouldNotBeEmpty(t gtests.Loggable, trie tries.Pattern) {
 
 // shouldHaveSize is a std function that tests if a str.Trie has a certain size.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveSize(t gtests.Loggable, trie tries.Pattern, size int) {
+func shouldHaveSize(t testlite.LoggerTesting, trie tries.Pattern, size int) {
 	t.Helper()
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
 
 	// Assert size
 	if trie.Size() != size {
@@ -190,10 +190,10 @@ func shouldHaveSize(t gtests.Loggable, trie tries.Pattern, size int) {
 
 // shouldHaveLength is a std function that tests if a str.Trie has a certain length.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveLength(t gtests.Loggable, trie tries.Pattern, length int) {
+func shouldHaveLength(t testlite.LoggerTesting, trie tries.Pattern, length int) {
 	t.Helper()
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
 
 	// Assert length
 	if trie.Length() != length {
@@ -203,10 +203,10 @@ func shouldHaveLength(t gtests.Loggable, trie tries.Pattern, length int) {
 
 // shouldHaveSizeAndLength is a std function that tests if a str.Trie has a certain size and length.
 // It logs the trie states before and after the search and checks if an error occurred.
-func shouldHaveSizeAndLength(t gtests.Loggable, trie tries.Pattern, size int, length int) {
+func shouldHaveSizeAndLength(t testlite.LoggerTesting, trie tries.Pattern, size int, length int) {
 	t.Helper()
 	// Log the trie states for debugging
-	t.StackLogf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
+	t.Logf("trie: { size: %v, length: %v }", trie.Size(), trie.Length())
 
 	// Assert size
 	if trie.Size() != size {

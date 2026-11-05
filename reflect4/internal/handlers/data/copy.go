@@ -89,11 +89,11 @@ func DeepCopyStruct[O internal.Option](v reflect.Value, o ...O) (reflect.Value, 
 
 // ShallowCopyFunc does the clone we can do in golang.
 //
-//	functions are shallow-copied by reference.
+//	function are shallow-copied by reference.
 //
-// If the function is a closure, the captured state is shared between the original and clone.
+// If the function is a closure, the captured states is shared between the original and clone.
 // There's no way to isolate or deep-clone the closure environment in Go.
-// Therefore, you should avoid to clone structures containing closure functions
+// Therefore, you should avoid to clone structures containing closure function
 // if their shared states can lead to inconsistency
 func ShallowCopyFunc(v reflect.Value) (reflect.Value, error) {
 	if v.Kind() != reflect.Func {

@@ -11,7 +11,7 @@ import (
 )
 
 // Slicef formats the elements of a slice into a single string by applying
-// the function `f` to each element. Elements are joined with ", ".
+// the function `f` to each element. Values are joined with ", ".
 //
 // Example:
 //

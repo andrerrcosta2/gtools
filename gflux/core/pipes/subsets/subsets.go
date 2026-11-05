@@ -4,7 +4,7 @@ package subsets
 
 import (
 	"github.com/andrerrcosta2/gtools/core/domain/constraints/prim"
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/sortables/sorts"
 )
 
@@ -65,7 +65,7 @@ func Permute(arr []int) [][]int {
 	return result
 }
 
-func XorFilter(min, max, k int, filter functions.BiPredicate2[[]int, []int]) [][]int {
+func XorFilter(min, max, k int, filter function.BiPredicate2[[]int, []int]) [][]int {
 	var subsets [][]int
 	n := max - min
 
@@ -143,7 +143,7 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 	}
 
 	// Sorter the indexes to ensure they are in ascending order
-	sorts.Quick[int](indexes)
+	sorts.Quick(indexes)
 
 	// Allocate slices with the correct size
 	excl := make([]T, 0, len(arr)-len(indexes))
@@ -155,7 +155,7 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 	for i, idx := range indexes {
 		// Append the elements before the current index to the excluded slice
 		excl = append(excl, arr[currIdx:idx]...)
-		// Addf the current index element to the included slice
+		// Add the current index element to the included slice
 		incl[i] = arr[idx]
 		// Move the current index forward
 		currIdx = idx + 1
@@ -167,7 +167,7 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 	return excl, incl
 }
 
-//func OperatorAggregator[T prim.Ordered](arr []T, filter func(arr []T, left, right T) bool) []*tuple.Pair[T, T] {
+//func OperatorAggregator[T prim.ordered](arr []T, filter func(arr []T, left, right T) bool) []*tuple.Pair[T, T] {
 //	var filtered []*tuple.Pair[T, T]
 //	op := make([]T, len(arr)-2)
 //	sen := sentinels.Double(0, 1)
@@ -185,7 +185,7 @@ func Of[T any](arr []T, indexes ...int) ([]T, []T) {
 //	return filtered
 //}
 //
-//func ExclusiveOperatorAggregator[T prim.Ordered](arr []T, filter func(arr []T, left, right T) bool) []*tuple.Pair[T, T] {
+//func ExclusiveOperatorAggregator[T prim.ordered](arr []T, filter func(arr []T, left, right T) bool) []*tuple.Pair[T, T] {
 //	var filtered []*tuple.Pair[T, T]
 //	op := make([]T, len(arr)-2)
 //	sen := sentinels.Double(0, 1)

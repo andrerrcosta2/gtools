@@ -4,9 +4,10 @@ package prog
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/andrerrcosta2/gtools/numbers"
 	"github.com/andrerrcosta2/gtools/numbers/polyn"
-	"math/rand"
 )
 
 // Seq generates a sequence of length `n` with a given starting value.
@@ -55,15 +56,14 @@ func Fib[T numbers.Real](length int) (fib []T, err error) {
 		return
 	} else if length == 1 {
 		return []T{0}, nil
-	} else {
-		fib = make([]T, length)
-		fib[0] = 0
-		fib[1] = 1
-		for i := 2; i < length; i++ {
-			fib[i] = fib[i-1] + fib[i-2]
-		}
-		return
 	}
+	fib = make([]T, length)
+	fib[0] = 0
+	fib[1] = 1
+	for i := 2; i < length; i++ {
+		fib[i] = fib[i-1] + fib[i-2]
+	}
+	return
 }
 
 // Rand generates a slice of random numbers of type `T` with the specified range.

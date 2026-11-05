@@ -5,7 +5,7 @@ package equals
 import (
 	"reflect"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/stringutil"
 	"github.com/andrerrcosta2/gtools/reflect4/internal"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/tracker"
@@ -84,7 +84,7 @@ type Strategy struct {
 	structs    DeepFunc
 	unsafe     ShallowFunc
 
-	rideFields   func(v reflect.Value, fn functions.BiPredicate[int, reflect.Value])
+	rideFields   func(v reflect.Value, fn function.BiPredicate[int, reflect.Value])
 	stringFormat op.Compare
 	idChan       bool
 	idFunc       bool

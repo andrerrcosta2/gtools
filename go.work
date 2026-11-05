@@ -1,17 +1,41 @@
-go 1.23.1
+go 1.26.5
 
 use (
+	.
+	./ast4
 	./conc
+	./conc/actors
+	./conc/core
+	./conc/dispatchers
+	./conc/executors
+	./conc/streams
+	./conc/testing
+	./conc/runtimes
+	./conc/runtimes/schedulers/engines
+	./conc/runtimes/schedulers
 	./core
+	./core/chronos
+	./core/data
+	./core/domain
+	./core/format
+	./core/io
+	./core/runtime
+	./core/search
+	./core/seeders
+	./core/selection
+	./core/sortables
+	./core/testlite
+	./core/util
 	./datastr
+	./datastr/testing
 	./gflux
-	./security
-	./gtests
+	./gflux/core
+	./gflux/core/domain
+	./gflux/events
+	./gflux/interceptors
+	./gflux/obs
 	./gvalidation
 	./numbers
 	./patterns
 	./reflect4
-	.
-	gflux/core
-	ast4
 )

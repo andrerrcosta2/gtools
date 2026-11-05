@@ -3,7 +3,7 @@
 package regex
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str"
+	"github.com/andrerrcosta2/gtools/core/data/str/dict"
 	"github.com/andrerrcosta2/gtools/patterns/symbols"
 	"github.com/andrerrcosta2/gtools/patterns/tries"
 )
@@ -12,6 +12,6 @@ import (
 // It supports both building concurrently using the given semaphore or sequentially.
 // If the strict flag is true, the OfPatterns is built in strict mode.
 func Trie(strict bool, maxParallelOps, buildInParallel int) (tries.Pattern, error) {
-	var dictionary str.Dictionary[string, []symbols.Logical] = Dictionary()
+	var dictionary dict.Dictionary[string, []symbols.Logical] = Dictionary()
 	return tries.OfPatternsFrom(dictionary, strict, maxParallelOps, buildInParallel)
 }

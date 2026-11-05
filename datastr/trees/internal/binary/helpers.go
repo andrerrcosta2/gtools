@@ -2,7 +2,7 @@
 
 package binary
 
-import "github.com/andrerrcosta2/gtools/core/domain/functions"
+import "github.com/andrerrcosta2/gtools/core/domain/function"
 
 func NewNode[V any](value V) *Node[V] {
 	return &Node[V]{
@@ -79,7 +79,7 @@ func DeleteNode[V any](root, n *Node[V]) bool {
 	return true
 }
 
-func FindNode[V any](root *Node[V], value V, compare functions.BiFunction[V, V, int]) *Node[V] {
+func FindNode[V any](root *Node[V], value V, compare function.BiFunction[V, V, int]) *Node[V] {
 	current := root
 	for current != nil {
 		cmp := compare(value, current.value)
@@ -94,7 +94,7 @@ func FindNode[V any](root *Node[V], value V, compare functions.BiFunction[V, V, 
 	return nil
 }
 
-func InsertNode[V any](root, n *Node[V], compare functions.BiFunction[V, V, int]) bool {
+func InsertNode[V any](root, n *Node[V], compare function.BiFunction[V, V, int]) bool {
 	current := root
 	for {
 		cmp := compare(n.value, current.value)

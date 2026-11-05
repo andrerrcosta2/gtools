@@ -2,10 +2,6 @@
 
 package sorters
 
-type Sorter[T any, S ~[]T] interface {
+type Sorter[S ~[]E, E any] interface {
 	Sort(arr *S)
-}
-
-func shouldSort[T any](arr []T) bool {
-	return len(arr) > 1
 }

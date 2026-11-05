@@ -4,123 +4,115 @@ package tasks
 
 import (
 	"errors"
+	"sync"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
-	"github.com/andrerrcosta2/gtools/core/domain/gerrors"
+	"github.com/andrerrcosta2/gtools/gflux/core/domain/task"
 )
 
-var ReleaseErrorTag = "release-error"
-
-func NewStep(hash string, fn functions.Supplier[error]) *Step {
-	return &Step{
-		hash:     hash,
-		fn:       fn,
-		released: false,
+func SeqTaskChain[T task.Runnable](tasks ...T) task.Chain[T] {
+	return &seqTaskChain[T]{
+		tasks: tasks,
 	}
 }
 
-type Step struct {
-	hash     string
-	released bool
-	fn       functions.Supplier[error]
+type seqTaskChain[T task.Runnable] struct {
+	mtx   sync.Mutex
+	tasks []T
 }
 
-func (s *Step) Unique() string {
-	return s.hash
-}
-
-func (s *Step) Release() {
-	s.released = true
-}
-
-func (s *Step) Run() error {
-	if s.released {
-		return s.fn()
+func (t *seqTaskChain[T]) Insert(i int, task T) error {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	if i > len(t.tasks) {
+		return errors.New("index out of range")
 	}
-	return gerrors.Tagged(errors.New("step is not released"))
+	t.tasks = append(t.tasks[:i], append([]T{task}, t.tasks[i:]...)...)
+	return nil
 }
 
-func NewChunk(hash string, fn ...functions.Supplier[error]) *Chunk {
-	return &Chunk{
-		hash:     hash,
-		released: false,
-		fn:       fn,
-	}
+func (t *seqTaskChain[T]) Append(tasks ...T) {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	t.append(tasks...)
 }
 
-type Chunk struct {
-	hash     string
-	released bool
-	fn       []functions.Supplier[error]
+func (t *seqTaskChain[T]) append(tasks ...T) {
+	t.tasks = append(t.tasks, tasks...)
 }
 
-func (c *Chunk) Unique() string {
-	return c.hash
+func (t *seqTaskChain[T]) Prepend(tasks ...T) {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	t.prepend(tasks...)
 }
 
-func (c *Chunk) Release() {
-	c.released = true
+func (t *seqTaskChain[T]) prepend(tasks ...T) {
+	t.tasks = append(tasks, t.tasks...)
 }
 
-func (c *Chunk) Run() error {
-	if c.released {
-		for _, f := range c.fn {
-			if err := f(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-	return gerrors.Tagged(errors.New("Chunk is not released"), ReleaseErrorTag)
+func (t *seqTaskChain[T]) Remove(i int) {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	t.remove(i)
 }
 
-func NewStepBranch(hash string, fn functions.Supplier[error]) *StepBranch {
-	return &StepBranch{
-		hash:     hash,
-		fn:       fn,
-		released: false,
-	}
+func (t *seqTaskChain[T]) remove(i int) {
+	t.tasks = append(t.tasks[:i], t.tasks[i+1:]...)
 }
 
-type StepBranch struct {
-	hash     string
-	fn       functions.Supplier[error]
-	branch   Runnable
-	children []Runnable
-	released bool
+func (t *seqTaskChain[T]) clear() {
+	t.tasks = make([]T, 0)
 }
 
-func (s *StepBranch) AddChild(branch Runnable) {
-	s.children = append(s.children, branch)
-}
-
-func (s *StepBranch) Branch() (Runnable, bool) {
-	return s.branch, s.branch != nil
-}
-
-func (s *StepBranch) Children() []Runnable {
-	return s.children
-}
-
-func (s *StepBranch) Release() {
-	s.released = true
-}
-
-func (s *StepBranch) Run() (err error) {
-	if s.released {
-		if err = s.fn(); err != nil {
-			return
-		} else {
-			for _, child := range s.children {
-				if err = child.Run(); err != nil {
-					return err
-				}
-			}
+func (t *seqTaskChain[T]) Run() error {
+	t.mtx.Lock()
+	defer t.mtx.Unlock()
+	for i, task := range t.tasks {
+		if err := task.Run(); err != nil {
+			t.tasks = t.tasks[i:]
+			return err
 		}
 	}
-	return gerrors.Tagged(errors.New("Step is not released"), ReleaseErrorTag)
+	t.clear()
+	return nil
 }
 
-func (s *StepBranch) Unique() string {
-	return s.hash
-}
+//func DependencyTaskTree[D comparable](id D, fn function.Supplier[error]) runners.Releaser {
+//	return &dependencyTree{
+//		id:    id,
+//		fn:    fn,
+//		chain: make([]*dependencyTree[ID], 0),
+//	}
+//}
+//
+//type dependencyTree[D comparable] struct {
+//	mtx        sync.Mutex
+//	dependency D
+//	released   bool
+//	fn         function.Supplier[error]
+//	chain      []*dependencyTree[D]
+//}
+//
+//func (c *dependencyTree[D]) Release() error {
+//	c.mtx.Lock()
+//	defer c.mtx.Unlock()
+//	c.released = true
+//	for _, step := range c.chain {
+//		if step.released {
+//			// must acknowledge the nature of each error
+//			step.run()
+//		}
+//	}
+//}
+//
+//func (c *dependencyTree[D]) run() error {
+//	if c.released {
+//		for _, f := range c.fn {
+//			if err := f(); err != nil {
+//				return err
+//			}
+//		}
+//		return nil
+//	}
+//	return errors.New("step is not released")
+//}

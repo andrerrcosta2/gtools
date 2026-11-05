@@ -3,10 +3,10 @@
 package trees
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/str/nodes"
+	"github.com/andrerrcosta2/gtools/core/data/str/node"
 )
 
-type abstract[N nodes.Typed[V], V any] struct {
+type abstract[N node.Typed[V], V any] struct {
 	_root N
 	_size int
 }

@@ -3,10 +3,11 @@
 package trackers
 
 import (
-	"github.com/andrerrcosta2/gtools/core/data/comparators"
 	"sort"
 	"strings"
 	"unsafe"
+
+	"github.com/andrerrcosta2/gtools/core/data/comparator"
 )
 
 func Instance() *InstanceTracker {
@@ -38,7 +39,7 @@ func (t *InstanceTracker) Mark(inst any) {
 	}
 }
 
-func Operation[D any, R any](comparator comparators.KeyTyped[D, string]) *OpTracker[D, R] {
+func Operation[D any, R any](comparator comparator.EqCmpKeyer[D, string]) *OpTracker[D, R] {
 	return &OpTracker[D, R]{
 		cmp: comparator,
 		ops: make(map[string]R),
@@ -46,7 +47,7 @@ func Operation[D any, R any](comparator comparators.KeyTyped[D, string]) *OpTrac
 }
 
 type OpTracker[D any, R any] struct {
-	cmp comparators.KeyTyped[D, string]
+	cmp comparator.EqCmpKeyer[D, string]
 	ops map[string]R // Tracks pairs of objects by their memory address
 }
 
@@ -73,7 +74,7 @@ func (t *OpTracker[D, R]) computeKey(a ...D) string {
 
 	hashes := make([]string, 0, len(a))
 	for _, x := range a {
-		hash := t.cmp.Hash(x)
+		hash := t.cmp.Key(x)
 		hashes = append(hashes, hash)
 	}
 

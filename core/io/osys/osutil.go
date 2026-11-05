@@ -91,7 +91,7 @@ func ReadFiles(paths []fsys.Path, maxConcurrency int) ([][]byte, error) {
 				return
 			}
 
-			// Store the file contents in the data slice
+			// store the file contents in the data slice
 			dataSlices[i] = data
 		}(i, path)
 	}

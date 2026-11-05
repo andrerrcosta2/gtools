@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function/functions"
 	"github.com/andrerrcosta2/gtools/core/seeders/random"
 	"github.com/andrerrcosta2/gtools/gflux/core/pipes/internal/tests"
 )
@@ -52,23 +52,23 @@ func TestContainsAllBy_Success(t *testing.T) {
 	dat, dup := random.Struct[tests.Comparable](10).Duplicate()
 
 	// Expects a part to be contained
-	if !ContainsAllBy(dat.Some(7).Values(), dat.Values(), functions.Equality[tests.Comparable]) {
+	if !ContainsAllBy(dat.Some(7).Values(), dat.Values(), functions.ComparableEquality[tests.Comparable]) {
 		t.Errorf("expected all elements to be found, but got false\n")
 	}
 
 	// Expects all elements to be contained
-	if !ContainsAllBy(dat.Values(), dup.Values(), functions.Equality[tests.Comparable]) {
+	if !ContainsAllBy(dat.Values(), dup.Values(), functions.ComparableEquality[tests.Comparable]) {
 		t.Errorf("expected all elements to be found, but got false\n")
 	}
 
 	// Expects false after addition
 	dup.Append(random.Struct[tests.Comparable](2).Values()...)
-	if ContainsAllBy(dup.Values(), dat.Values(), functions.Equality[tests.Comparable]) {
+	if ContainsAllBy(dup.Values(), dat.Values(), functions.ComparableEquality[tests.Comparable]) {
 		t.Errorf("expected false, but got true\n")
 	}
 
 	// Expected true for empty exp
-	if !ContainsAllBy([]tests.Comparable{}, dat.Values(), functions.Equality[tests.Comparable]) {
+	if !ContainsAllBy([]tests.Comparable{}, dat.Values(), functions.ComparableEquality[tests.Comparable]) {
 		t.Errorf("expected true, but got false\n")
 	}
 }

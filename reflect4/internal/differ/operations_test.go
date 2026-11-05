@@ -8,16 +8,16 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/andrerrcosta2/gtools/core/domain/functions"
+	"github.com/andrerrcosta2/gtools/core/domain/function"
 	"github.com/andrerrcosta2/gtools/core/format/code/indent"
 	"github.com/andrerrcosta2/gtools/core/format/differs"
 	"github.com/andrerrcosta2/gtools/core/format/fmx"
 	"github.com/andrerrcosta2/gtools/core/format/sprints"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/interf"
+	"github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/generics"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/ptrs"
 	"github.com/andrerrcosta2/gtools/core/util/typeutil/slices"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/interf"
-	"github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/standards"
 	"github.com/andrerrcosta2/gtools/reflect4/internal/types"
 	"github.com/andrerrcosta2/gtools/reflect4/op/compare"
@@ -119,19 +119,19 @@ func TestDefaultChanDiff_EdgeCases(t *testing.T) {
 //	- both have the same signature, direction and capacity;
 func TestChanSignatureDiff(t *testing.T) {
 	var zero indent.Branch
-
+	s := DefaultStrat()
 	t.Run("same instance", func(t *testing.T) {
 		c := make(chan bool)
 		a := reflect.ValueOf(c)
 		b := reflect.ValueOf(c)
-		diff := defaultChanSignatureDiff(zero, a, b)
+		diff := defaultChanSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("same type, direction and buffer size", func(t *testing.T) {
 		a := reflect.ValueOf(make(<-chan bool, 3))
 		b := reflect.ValueOf(make(<-chan bool, 3))
-		diff := defaultChanSignatureDiff(zero, a, b)
+		diff := defaultChanSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
@@ -139,14 +139,14 @@ func TestChanSignatureDiff(t *testing.T) {
 		a, b := reflect.ValueOf(make(chan bool)), reflect.ValueOf(make(chan int))
 		expMsg := differs.ChanElemTypesMismatch(zero,
 			types.ValidValueName(a.Type().Elem()), types.ValidValueName(b.Type().Elem()))
-		diff := defaultChanSignatureDiff(zero, a, b)
+		diff := defaultChanSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
 	t.Run("equals signature, different buffer size", func(t *testing.T) {
 		a, b := make(chan bool, 100), make(chan bool, 1000)
 		expMsg := differs.ChanBufSizeMismatch(zero, 100, 1000)
-		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b))
+		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b), s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
@@ -154,7 +154,7 @@ func TestChanSignatureDiff(t *testing.T) {
 		a, b := reflect.ValueOf(make(<-chan bool, 100)), reflect.ValueOf(make(chan bool, 100))
 		expMsg := differs.ChanDirMismatch(zero, a.Type().ChanDir().String(),
 			b.Type().ChanDir().String())
-		diff := defaultChanSignatureDiff(zero, a, b)
+		diff := defaultChanSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 }
@@ -166,16 +166,16 @@ func TestChanSignatureDiff(t *testing.T) {
 //	- both have the same signature, direction and capacity;
 func TestChanSignatureDiffEdgeCases(t *testing.T) {
 	var zero indent.Branch
-
+	s := DefaultStrat()
 	t.Run("same nil instance", func(t *testing.T) {
 		var c chan int
-		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(c), reflect.ValueOf(c))
+		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(c), reflect.ValueOf(c), s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, both nil", func(t *testing.T) {
 		var a, b chan int
-		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b))
+		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b), s)
 		assertEquals(t, diff)
 	})
 }
@@ -187,16 +187,16 @@ func TestChanSignatureDiffEdgeCases(t *testing.T) {
 //	- both have the same signature and direction - nil channel capacities are always zero
 func TestNilChanSignatureDiff(t *testing.T) {
 	var zero indent.Branch
-
+	s := DefaultStrat()
 	t.Run("same nil instance", func(t *testing.T) {
 		var c chan int
-		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(c), reflect.ValueOf(c))
+		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(c), reflect.ValueOf(c), s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, equals signatures, both nil", func(t *testing.T) {
 		var a, b chan int
-		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b))
+		diff := defaultChanSignatureDiff(zero, reflect.ValueOf(a), reflect.ValueOf(b), s)
 		assertEquals(t, diff)
 	})
 
@@ -207,7 +207,7 @@ func TestNilChanSignatureDiff(t *testing.T) {
 		bb := reflect.ValueOf(b)
 		expMsg := differs.NilChanTypesMismatch(zero,
 			types.ValidValueName(aa.Type().Elem()), types.ValidValueName(bb.Type().Elem()))
-		diff := nilChanSignatureDiff(zero, aa, bb)
+		diff := nilChanSignatureDiff(zero, aa, bb, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
@@ -217,7 +217,7 @@ func TestNilChanSignatureDiff(t *testing.T) {
 		a, b := reflect.ValueOf(aa), reflect.ValueOf(bb)
 		expMsg := differs.NilChanDirMismatch(zero, a.Type().ChanDir().String(),
 			b.Type().ChanDir().String())
-		diff := nilChanSignatureDiff(zero, a, b)
+		diff := nilChanSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 }
@@ -313,7 +313,7 @@ func TestSameChanDiff_EdgeCases(t *testing.T) {
 // TestDefaultFuncDiff tests the function defaultFuncDiff
 //
 //	this test must assert:
-//	1: the functions are equals if:
+//	1: the function are equals if:
 //	- both addresses are the same; or
 //	- have the same signature - even if the implementations are different
 func TestDefaultFuncDiff(t *testing.T) {
@@ -348,7 +348,7 @@ func TestDefaultFuncDiff(t *testing.T) {
 // TestDefaultFuncDiff tests the function defaultFuncDiff against edge cases
 //
 //	this test must assert:
-//	1: the functions are equals if:
+//	1: the function are equals if:
 //	- both addresses are the same; or
 //	- have the same signature - even if the implementations are different
 func TestDefaultFuncDiff_EdgeCases(t *testing.T) {
@@ -356,7 +356,7 @@ func TestDefaultFuncDiff_EdgeCases(t *testing.T) {
 	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
-		f := ptrs.Nil[functions.Supplier[any]]()
+		f := ptrs.Nil[function.Supplier[any]]()
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
 		diff := defaultFuncDiff(zero, a, b, strat)
@@ -364,15 +364,15 @@ func TestDefaultFuncDiff_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
 		diff := defaultFuncDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different signatures, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Supplier[any]]())
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Supplier[any]]())
 		expMsg := differs.NilFuncTypesMismatch(zero, types.ValidValueName(a.Type()),
 			types.ValidValueName(b.Type()))
 		diff := defaultFuncDiff(zero, a, b, strat)
@@ -400,19 +400,19 @@ func TestDefaultFuncDiff_EdgeCases(t *testing.T) {
 
 func TestFuncSignatureDiff(t *testing.T) {
 	var zero indent.Branch
-
+	s := DefaultStrat()
 	t.Run("same instance", func(t *testing.T) {
 		f := func() string { return "hello world" }
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
-		diff := funcSignatureDiff(zero, a, b)
+		diff := funcSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, same signature, different implementations", func(t *testing.T) {
 		a := reflect.ValueOf(func() string { return "hello world" })
 		b := reflect.ValueOf(func() string { return "hello universe" })
-		diff := funcSignatureDiff(zero, a, b)
+		diff := funcSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
@@ -421,26 +421,27 @@ func TestFuncSignatureDiff(t *testing.T) {
 		b := reflect.ValueOf(func() int { return 10 })
 		expMsg := differs.FuncTypesMismatch(zero, types.ValidValueName(a.Type()),
 			types.ValidValueName(b.Type()))
-		diff := funcSignatureDiff(zero, a, b)
+		diff := funcSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 }
 
 func TestFuncSignatureDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
+	s := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
-		f := ptrs.Nil[functions.Supplier[any]]()
+		f := ptrs.Nil[function.Supplier[any]]()
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
-		diff := funcSignatureDiff(zero, a, b)
+		diff := funcSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, same signature, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		diff := funcSignatureDiff(zero, a, b)
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		diff := funcSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
@@ -449,12 +450,12 @@ func TestFuncSignatureDiff_EdgeCases(t *testing.T) {
 		notNull := reflect.ValueOf(func() {})
 		// nil received
 		t.Run("nil received", func(t *testing.T) {
-			diff := funcSignatureDiff(zero, null, notNull)
+			diff := funcSignatureDiff(zero, null, notNull, s)
 			assertEquals(t, diff)
 		})
 		// nil expected
 		t.Run("nil expected", func(t *testing.T) {
-			diff := funcSignatureDiff(zero, notNull, null)
+			diff := funcSignatureDiff(zero, notNull, null, s)
 			assertEquals(t, diff)
 		})
 	})
@@ -462,19 +463,20 @@ func TestFuncSignatureDiff_EdgeCases(t *testing.T) {
 
 func TestNilFuncSignatureDiff(t *testing.T) {
 	var zero indent.Branch
+	s := DefaultStrat()
 
 	t.Run("same instance", func(t *testing.T) {
 		f := func() string { return "hello world" }
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
-		diff := nilFuncSignatureDiff(zero, a, b)
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, same signature, different implementations", func(t *testing.T) {
 		a := reflect.ValueOf(func() string { return "hello world" })
 		b := reflect.ValueOf(func() string { return "hello universe" })
-		diff := nilFuncSignatureDiff(zero, a, b)
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
@@ -483,35 +485,35 @@ func TestNilFuncSignatureDiff(t *testing.T) {
 		b := reflect.ValueOf(func() int { return 10 })
 		expMsg := differs.NilFuncTypesMismatch(zero, types.ValidValueName(a.Type()),
 			types.ValidValueName(b.Type()))
-		diff := nilFuncSignatureDiff(zero, a, b)
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 }
 
 func TestNilFuncSignatureDiff_EdgeCases(t *testing.T) {
 	var zero indent.Branch
-
+	s := DefaultStrat()
 	t.Run("same nil instance", func(t *testing.T) {
-		f := ptrs.Nil[functions.Supplier[any]]()
+		f := ptrs.Nil[function.Supplier[any]]()
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
-		diff := nilFuncSignatureDiff(zero, a, b)
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different instances, same signature, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		diff := nilFuncSignatureDiff(zero, a, b)
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different signatures, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Supplier[any]]())
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Supplier[any]]())
 		expMsg := differs.NilFuncTypesMismatch(zero, types.ValidValueName(a.Type()),
 			types.ValidValueName(b.Type()))
-		diff := nilFuncSignatureDiff(zero, a, b)
+		diff := nilFuncSignatureDiff(zero, a, b, s)
 		assertNotEquals(t, diff, expMsg, "")
 	})
 
@@ -520,12 +522,12 @@ func TestNilFuncSignatureDiff_EdgeCases(t *testing.T) {
 		notNull := reflect.ValueOf(func() {})
 		// nil received
 		t.Run("nil received", func(t *testing.T) {
-			diff := nilFuncSignatureDiff(zero, null, notNull)
+			diff := nilFuncSignatureDiff(zero, null, notNull, s)
 			assertEquals(t, diff)
 		})
 		// nil expected
 		t.Run("nil expected", func(t *testing.T) {
-			diff := nilFuncSignatureDiff(zero, notNull, null)
+			diff := nilFuncSignatureDiff(zero, notNull, null, s)
 			assertEquals(t, diff)
 		})
 	})
@@ -534,7 +536,7 @@ func TestNilFuncSignatureDiff_EdgeCases(t *testing.T) {
 // TestSameFuncDiff tests the function sameFuncDiff
 //
 //	this test must assert:
-//	1: the functions are equals if:
+//	1: the function are equals if:
 //	- both addresses are the same; or
 //	- both are nil and have the same signature - even if the implementations are different
 func TestSameFuncDiff(t *testing.T) {
@@ -571,7 +573,7 @@ func TestSameFuncDiff(t *testing.T) {
 // TestSameFuncDiff_EdgeCases tests the function sameFuncDiff against edge cases
 //
 //	this test must assert:
-//	1: the functions are equals if:
+//	1: the function are equals if:
 //	- both addresses are the same; or
 //	- both are nil and have the same signature - even if the implementations are different
 func TestSameFuncDiff_EdgeCases(t *testing.T) {
@@ -579,7 +581,7 @@ func TestSameFuncDiff_EdgeCases(t *testing.T) {
 	strat := DefaultStrat()
 
 	t.Run("same nil instance", func(t *testing.T) {
-		f := ptrs.Nil[functions.Supplier[any]]()
+		f := ptrs.Nil[function.Supplier[any]]()
 		a := reflect.ValueOf(f)
 		b := reflect.ValueOf(f)
 		diff := sameFuncDiff(zero, a, b, strat)
@@ -587,15 +589,15 @@ func TestSameFuncDiff_EdgeCases(t *testing.T) {
 	})
 
 	t.Run("different instances, same signature, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
 		diff := sameFuncDiff(zero, a, b, strat)
 		assertEquals(t, diff)
 	})
 
 	t.Run("different signatures, both nil", func(t *testing.T) {
-		a := reflect.ValueOf(ptrs.Nil[functions.Function[any, any]]())
-		b := reflect.ValueOf(ptrs.Nil[functions.Supplier[any]]())
+		a := reflect.ValueOf(ptrs.Nil[function.Function[any, any]]())
+		b := reflect.ValueOf(ptrs.Nil[function.Supplier[any]]())
 		expMsg := differs.NilFuncTypesMismatch(zero, types.ValidValueName(a.Type()),
 			types.ValidValueName(b.Type()))
 		diff := sameFuncDiff(zero, a, b, strat)
@@ -637,7 +639,7 @@ func TestDifferArrays(t *testing.T) {
 		assertEquals(t, diff)
 	})
 
-	// if fact, arrays with different length are considered different types
+	// if fact, array with different length are considered different types
 	t.Run("same element, different length", func(t *testing.T) {
 		var a1 [3]int
 		var a2 [2]int
@@ -805,7 +807,7 @@ func TestDifferPrimitives(t *testing.T) {
 // TestDefaultMapDiff tests the method defaultMapDiff
 //
 //	this method must assert:
-//	1. two maps are equals only if:
+//	1. two dicts are equals only if:
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -862,7 +864,7 @@ func TestDefaultMapDiff(t *testing.T) {
 // TestDefaultMapDiff tests the method defaultMapDiff for edge cases.
 //
 //	this method must assert:
-//	1. two maps are equals only if:
+//	1. two dicts are equals only if:
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -911,7 +913,7 @@ func TestDefaultMapDiff_EdgeCases(t *testing.T) {
 // TestSerializableMapDiff tests the method serializableMapDiff
 //
 //	this method must assert:
-//	1. two maps are equals only if:
+//	1. two dicts are equals only if:
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -968,7 +970,7 @@ func TestSerializableMapDiff(t *testing.T) {
 // TestSerializableMapDiff tests the method serializableMapDiff for edge cases.
 //
 //	this method must assert:
-//	1. two maps are equals only if:
+//	1. two dicts are equals only if:
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -1034,7 +1036,7 @@ func TestSerializableMapDiff_EdgeCases(t *testing.T) {
 // TestNotNilMapDiffer tests the method notNilMapDiffer
 //
 //	this method must assert:
-//	1. two maps are equals only
+//	1. two dicts are equals only
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -1089,7 +1091,7 @@ func TestNotNilMapDiffer(t *testing.T) {
 // TestNotNilMapDiffer_EdgeCases tests the method notNilMapDiffer edge cases
 //
 //	this method must assert:
-//	1. two maps are equals only
+//	1. two dicts are equals only
 //	A: they are exact the same instances; or
 //	B: they have the same signature; and
 //	B: they have the same length; and
@@ -2153,7 +2155,7 @@ func TestDiffStructs_Default(t *testing.T) {
 		a := reflect.ValueOf(models.TwoDataAsValue("abc", 123))
 		b := reflect.ValueOf(models.TwoDataAsValue("abc", 12))
 		diff := diffStructs(zero, a, b, s)
-		name := "github.com/andrerrcosta2/gtools/gtests/testingseeds/static/structs/models.TwoData"
+		name := "github.com/andrerrcosta2/gtools/core/testlite/testseeds/static/structs/models.TwoData"
 		expMsg := differs.Append(zero, differs.StructFields(zero, name, "Age"),
 			differs.Values(zero.Inc(), sprints.Typed("int", 123), sprints.Typed("int", 12)))
 		assertNotEquals(t, diff, expMsg, "")

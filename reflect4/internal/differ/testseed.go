@@ -60,7 +60,7 @@ var intSeed = []primTableTest[int64]{
 		aType:    MyInt(100),
 		bType:    MyInt(101),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyInt",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyInt",
 	},
 	{
 		name:     "MyInt64: equals values",
@@ -69,7 +69,7 @@ var intSeed = []primTableTest[int64]{
 		aType:    MyInt64(-999),
 		bType:    MyInt64(-999),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyInt64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyInt64",
 	},
 }
 
@@ -120,7 +120,7 @@ var floatSeed = []primTableTest[float64]{
 		aType:    MyFloat32(7.0),
 		bType:    MyFloat32(7.0),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyFloat32",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyFloat32",
 	},
 	{
 		name:     "MyFloat64: different values",
@@ -129,7 +129,7 @@ var floatSeed = []primTableTest[float64]{
 		aType:    MyFloat64(9.0),
 		bType:    MyFloat64(10.0),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyFloat64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyFloat64",
 	},
 	{
 		name:     "Inf vs Inf: equals",
@@ -180,7 +180,7 @@ var complexSeed = []primTableTest[complex128]{
 		aType:    MyComplex64(complex(3, 4)),
 		bType:    MyComplex64(complex(3, 4)),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyComplex64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyComplex64",
 	},
 	{
 		name:     "named complex64: different values",
@@ -189,7 +189,7 @@ var complexSeed = []primTableTest[complex128]{
 		aType:    MyComplex64(complex(3, 4)),
 		bType:    MyComplex64(complex(4, 3)),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyComplex64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyComplex64",
 	},
 	{
 		name:     "named complex128: real differs",
@@ -198,7 +198,7 @@ var complexSeed = []primTableTest[complex128]{
 		aType:    MyComplex128(complex(7, 1)),
 		bType:    MyComplex128(complex(8, 1)),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyComplex128",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyComplex128",
 	},
 	{
 		name:     "named complex128: imaginary differs",
@@ -207,7 +207,7 @@ var complexSeed = []primTableTest[complex128]{
 		aType:    MyComplex128(complex(5, 6)),
 		bType:    MyComplex128(complex(5, 7)),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyComplex128",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyComplex128",
 	},
 }
 
@@ -239,7 +239,7 @@ var boolSeed = []primTableTest[bool]{
 		aType:    MyBool(true),
 		bType:    MyBool(false),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyBool",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyBool",
 	},
 	{
 		name:     "named bool: equals values",
@@ -248,7 +248,7 @@ var boolSeed = []primTableTest[bool]{
 		aType:    MyBool(false),
 		bType:    MyBool(false),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyBool",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyBool",
 	},
 }
 
@@ -299,7 +299,7 @@ var uintSeed = []primTableTest[uint64]{
 		aType:    MyUint(100),
 		bType:    MyUint(100),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyUint",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyUint",
 	},
 	{
 		name:     "MyUint: different values",
@@ -308,7 +308,7 @@ var uintSeed = []primTableTest[uint64]{
 		aType:    MyUint(100),
 		bType:    MyUint(101),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyUint",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyUint",
 	},
 	{
 		name:     "MyUint64: equals values",
@@ -317,7 +317,7 @@ var uintSeed = []primTableTest[uint64]{
 		aType:    MyUint64(999),
 		bType:    MyUint64(999),
 		equal:    true,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyUint64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyUint64",
 	},
 	{
 		name:     "MyUint64: different values",
@@ -326,7 +326,7 @@ var uintSeed = []primTableTest[uint64]{
 		aType:    MyUint64(1234),
 		bType:    MyUint64(5678),
 		equal:    false,
-		typeName: "github.com/andrerrcosta2/gtools/reflect4/internal/differ.MyUint64",
+		typeName: "github.com/andrerrcosta2/gtools/reflect4/infra/differ.MyUint64",
 	},
 	// Edge case: max uint64
 	{

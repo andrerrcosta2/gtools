@@ -19,7 +19,7 @@ func ToOrdered[T Ordered](value any) (T, error) {
 			result = value
 		} else {
 			// If the value is not of the correct type, return an error
-			return result, fmt.Errorf("couldn't convert '%v' to Ordered\n", value)
+			return result, fmt.Errorf("couldn't convert '%v' to ordered\n", value)
 		}
 		return result, nil
 
@@ -173,19 +173,19 @@ func TryGreater(a, b any) (bool, error) {
 	return !less, err
 }
 
-// Compare checks if two values are compare.
+// TryCompare checks if two values are compare.
 //
 // It takes two parameters, `x` and `y`, which are compared for equality.
 // If the values are not comparable, an error is returned.
 // If the values are comparable, but not compare, the function returns false.
 // If the values are compare, the function returns true.
-func Compare(x, y any) (bool, error) {
+func TryCompare(x, y any) (bool, error) {
 	// Check if the values are comparable
 	if !IsComparable(x, y) {
 		return false, fmt.Errorf("values are not comparable type")
 	}
 
-	// Compare the values
+	// TryCompare the values
 	switch x := x.(type) {
 	case int:
 		return x == y.(int), nil
